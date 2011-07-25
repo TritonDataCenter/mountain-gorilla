@@ -29,7 +29,7 @@ agents-shar   # or "agents-installer"
 usb-headnode: coal usb upgrade boot
 
 DEPS_DIR=https://216.57.203.66:444/coal/releases/2011-07-14/deps/ make usb-headnode
-RELEASE_DIR=
+RELEASE_DIR=...
 
 
 - build to "build/"
