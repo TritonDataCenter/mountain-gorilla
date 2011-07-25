@@ -5,7 +5,7 @@ Trent's stab at a single repo to build SDC.
 
 # Build
 
-What is a (full) build went like this:
+What if a (full) build went like this:
 
 - take a source "bits" directory or URL
 - download all of that to a "deps" or "bits" or "cache" subdir
