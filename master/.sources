@@ -1,0 +1,27 @@
+# agents
+smartlogin git git@git.joyent.com:smart-login.git
+agents git git@git.joyent.com:agents.git
+ca git git@git.joyent.com:cloud-analytics.git
+agents-installer git git@git.joyent.com:agents-installer.git
+
+# usb, coal, upgrade, boot
+usb-headnode git git@git.joyent.com:usb-headnode.git
+mapi git git@git.joyent.com:mcp_api_gateway.git
+adminui git git@git.joyent.com:mcp_api_admin.git
+portal git git@git.joyent.com:public-web-client.git
+cloudapi git git@git.joyent.com:cloud-api.git
+pubapi git git@git.joyent.com:public_api.git
+booter git git@git.joyent.com:booter.git
+capi git git@git.joyent.com:customers_api.git
+
+# platform
+operator-toolkit git git@git.joyent.com:operator-toolkit.git
+illumos-live git git@git.joyent.com:illumos-live.git
+ur-agent git git@git.joyent.com:ur-agent.git
+illumos-extra git git@github.com:joyent/illumos-extra.git
+illumos-joyent git git@git.joyent.com:illumos-joyent.git
+
+# hvm
+kvm git git@git.joyent.com:kvm.git
+kvm-cmd-14 git git@git.joyent.com:kvm-cmd-14.git
+vmadm git git@git.joyent.com:vmadm.git

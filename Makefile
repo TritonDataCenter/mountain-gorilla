@@ -25,15 +25,26 @@ endif
 
 #---- smartlogin
 
-SMARTLOGIN_BUILDSTAMP=$(SMARTLOGIN_BRANCH)-${TIMESTAMP}-${SMARTLOGIN_SHA}
-SMARTLOGIN_PKG=$(BITS_DIR)/smartlogin/smartlogin-$(SMARTLOGIN_BUILDSTAMP).tgz
-
-smartlogin: $(SMARTLOGIN_PKG)
+SMARTLOGIN_BUILDSTAMP=$(SMARTLOGIN_BRANCH)-$(TIMESTAMP)-$(SMARTLOGIN_SHA)
 
 # Notes: Re-instate 'gmake lint'?
-$(SMARTLOGIN_PKG): build/smartlogin $(BITS_DIR)
+smartlogin: build/smartlogin $(BITS_DIR)
 	@echo "# Build smartlogin $(SMARTLOGIN_BUILDSTAMP)."
 	(cd build/smartlogin && BUILDSTAMP=$(SMARTLOGIN_BUILDSTAMP) BITS_DIR=$(BITS_DIR) gmake clean all publish)
+
+
+
+#---- agents
+# Bamboo does: ./build.sh -p -n -l /rpool/data/coal/releases/2011-07-14/deps/
+#
+# src_agents:
+# 	git config core.autocrlf false
+
+AGENTS_BUILDSTAMP=$(AGENTS_BRANCH)-$(TIMESTAMP)-$(AGENTS_SHA)
+
+agents: build/agents $(BITS_DIR)
+	@echo "# Build agents $(AGENTS_BUILDSTAMP)."
+	(cd build/agents && BUILDSTAMP=$(SMARTLOGIN_BUILDSTAMP) ./build.sh -p -n -l $(BITS_DIR))
 
 
 
