@@ -9,7 +9,15 @@ agents-installer git git@git.joyent.com:agents-installer.git release-20110714
 # platform
 operator-toolkit git git@git.joyent.com:operator-toolkit.git release-20110714
 illumos-live git git@git.joyent.com:illumos-live.git release-20110714
+ur-agent git git@git.joyent.com:ur-agent.git release-20110714
 #...
 
 # usb, coal, upgrade, boot
 usb-headnode git git@git.joyent.com:usb-headnode.git release-20110714
+mapi git git@git.joyent.com:mcp_api_gateway.git release-20110714
+adminui git git@git.joyent.com:mcp_api_admin.git release-20110714
+portal git git@git.joyent.com:public-web-client.git release-20110714
+cloudapi git git@git.joyent.com:cloud-api.git release-20110714
+pubapi git git@git.joyent.com:public_api.git release-20110714
+booter git git@git.joyent.com:booter.git release-20110714
+capi git git@git.joyent.com:customers_api.git release-20110714
