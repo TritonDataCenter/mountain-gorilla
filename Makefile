@@ -18,6 +18,10 @@ ifeq ($(UNAME), SunOS)
 	TAR = gtar
 endif
 
+# Other
+#TODO: is JOBS=16 reasonable here?
+JOB=16
+
 
 #---- Primary targets
 
@@ -42,9 +46,46 @@ smartlogin: build/smartlogin $(BITS_DIR)
 
 AGENTS_BUILDSTAMP=$(AGENTS_BRANCH)-$(TIMESTAMP)-$(AGENTS_SHA)
 
+#TODO:
+# - drop the "$branch" dir in bits for these on publish
+# - support BUILDSTAMP in build.sh
 agents: build/agents $(BITS_DIR)
 	@echo "# Build agents $(AGENTS_BUILDSTAMP)."
-	(cd build/agents && BUILDSTAMP=$(SMARTLOGIN_BUILDSTAMP) ./build.sh -p -n -l $(BITS_DIR))
+	(cd build/agents && BUILDSTAMP=$(AGENTS_BUILDSTAMP) ./build.sh -p -n -l $(BITS_DIR))
+
+
+
+#---- cloud-analytics
+# Bamboo does:
+# 	./bamboo/build.sh
+# 	PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$PATH" JOBS=16
+#
+#TODO:
+# - add BUILDSTAMP support
+# - explain why the PATH order is necessary here
+# - look at https://hub.joyent.com/wiki/display/dev/Setting+up+Cloud+Analytics+development+on+COAL-147
+#   for env setup. Might be demons in there.
+# - add {.lock-wscript,build} to .gititnore for 
+#   node-kstat
+#   node-libGeoIP
+#   node-libdtrace
+#   node-png
+#   node-uname
+
+CA_BUILDSTAMP=$(CA_BRANCH)-$(TIMESTAMP)-$(CA_SHA)
+
+ca: build/ca $(BITS_DIR)
+	@echo "# Build ca $(CA_BUILDSTAMP)."
+	(cd build/ca && BUILDSTAMP=$(CA_BUILDSTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$PATH" gmake pkg release publish)
+
+
+
+#---- agents shar
+# Bamboo does:
+# 	JOBS=12 COAL_PUBLISH=1
+# 	./build_scripts -l /rpool/data/coal/releases/2011-07-14/deps/
+
+
 
 
 
