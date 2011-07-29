@@ -5,7 +5,7 @@ all the components are still in their existing separate repos.
 
 
 
-# Versioning Packages
+# Package Versioning
 
     NAME-BRANCH-TIMESTAMP[-GITDESCRIBE].TGZ
 
@@ -27,6 +27,12 @@ where:
   and (b) it ensures that simple lexographical sorting of "NAME-BRANCH-*"
   packages in a directory (as done by agents-installer and usb-headnode)
   will make choosing "the latest" possible.
+
+  A timestamp *sucks* because successive builds in a dev tree will get a
+  new timestamp: defeating Makefile dependency attempts to avoid rebuilding.
+  Note that the TIMESTAMP is only necessary for released/published packages,
+  so for projects that care (e.g. ca), the TIMESTAMP can just be added
+  for release.
 
 - GITDESCRIBE gives the git sha for the repo and whether the repo was dirty
   (had local changes) when it was built, e.g. "gfa1afe1-dirty", "gbadf0d".
@@ -57,12 +63,23 @@ where:
   ".sh" (shar), ".md5sum", ".tar.bz2".
 
 
+## Exceptions
+
+The agents shar is a subtle exception:
+
+    agents-release-20110714-20110726T230725Z.sh
+
+That "release-20110714" really refers to the branch used to build the
+agent packages included in the shar. For typical release builds, however,
+the "agents-installer.git" repo is always also on a branch of the same
+name so there shouldn't be a mismatch.
+
 
 
 ## Suggested Versioning Usage
 
 It is suggested that the SDC repos use something like this at the top of
-their Makefile (or main build script) to handle package naming:
+their Makefile to handle package naming:
 
     NAME=smartlogin
     BRANCH=$(shell git symbolic-ref HEAD | awk -F/ '{print $$3}')
@@ -70,8 +87,20 @@ their Makefile (or main build script) to handle package naming:
         TIMESTAMP=$(shell TZ=UTC date "+%Y%m%dT%H%M%SZ")
     endif
     GITDESCRIBE=$(shell git describe --all --long --dirty | cut -d- -f3,4)
-    
+    ...
     TARBALL=$(NAME)-$(BRANCH)-$(TIMESTAMP)-$(GITDESCRIBE).tgz
+
+or like this in a Bash script:
+
+    BRANCH=$(git symbolic-ref HEAD | awk -F/ '{print $3}')
+    if [[ -z "$TIMESTAMP" ]]; then
+        TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
+    fi
+    GITDESCRIBE=$(git describe --all --long --dirty | cut -d- -f3,4)
+    ...
+    TARBALL=${NAME}-${BRANCH}-${TIMESTAMP}-${GITDESCRIBE}.tgz
+
+
 
 Notes:
 - This gives the option of the TIMESTAMP being passed in. This is important
