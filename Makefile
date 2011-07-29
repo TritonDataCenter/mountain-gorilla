@@ -41,7 +41,7 @@ $(SMARTLOGIN_BITS): build/smartlogin
 	mkdir -p $(BITS_DIR)
 	(cd build/smartlogin && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake clean all publish)
 	@echo "# Created smartlogin bits:"
-	@ls $(SMARTLOGIN_BITS)
+	@ls -1 $(SMARTLOGIN_BITS)
 	@echo ""
 
 
@@ -52,15 +52,15 @@ $(SMARTLOGIN_BITS): build/smartlogin
 # src_agents:
 # 	git config core.autocrlf false
 
-_stamp=$(AGENTS_BRANCH)-$(TIMESTAMP)-g$(AGENTS_SHA)-dirty
-AGENTS_BITS=$(BITS_DIR)/heartbeater/heartbeater-$(_stamp).tgz \
-	$(BITS_DIR)/atropos/atropos-$(_stamp).tgz \
-	$(BITS_DIR)/metadata/metadata-$(_stamp).tgz \
-	$(BITS_DIR)/dataset_manager/dataset_manager-$(_stamp).tgz \
-	$(BITS_DIR)/zonetracker/zonetracker-$(_stamp).tgz \
-	$(BITS_DIR)/provisioner-v2/provisioner-v2-$(_stamp).tgz \
-	$(BITS_DIR)/zonetracker-v2/zonetracker-v2-$(_stamp).tgz \
-	$(BITS_DIR)/mock_cloud/mock_cloud-$(_stamp).tgz
+_a_stamp=$(AGENTS_BRANCH)-$(TIMESTAMP)-g$(AGENTS_SHA)
+AGENTS_BITS=$(BITS_DIR)/heartbeater/heartbeater-$(_a_stamp).tgz \
+	$(BITS_DIR)/atropos/atropos-$(_a_stamp).tgz \
+	$(BITS_DIR)/metadata/metadata-$(_a_stamp).tgz \
+	$(BITS_DIR)/dataset_manager/dataset_manager-$(_a_stamp).tgz \
+	$(BITS_DIR)/zonetracker/zonetracker-$(_a_stamp).tgz \
+	$(BITS_DIR)/provisioner-v2/provisioner-v2-$(_a_stamp).tgz \
+	$(BITS_DIR)/zonetracker-v2/zonetracker-v2-$(_a_stamp).tgz \
+	$(BITS_DIR)/mock_cloud/mock_cloud-$(_a_stamp).tgz
 
 agents: $(AGENTS_BITS)
 
@@ -69,7 +69,7 @@ $(AGENTS_BITS): build/agents
 	mkdir -p $(BITS_DIR)
 	(cd build/agents && TIMESTAMP=$(TIMESTAMP) ./build.sh -p -n -l $(BITS_DIR))
 	@echo "# Created agents bits:"
-	@ls $(AGENTS_BITS)
+	@ls -1 $(AGENTS_BITS)
 	@echo ""
 
 
@@ -88,10 +88,10 @@ $(AGENTS_BITS): build/agents
 # - look at https://hub.joyent.com/wiki/display/dev/Setting+up+Cloud+Analytics+development+on+COAL-147
 #   for env setup. Might be demons in there.
 
-_stamp=$(CA_BRANCH)-$(TIMESTAMP)-g$(CA_SHA)-dirty
-CA_BITS=$(BITS_DIR)/cloud_analytics/ca-pkg-$(_stamp).tar.bz2 \
-	$(BITS_DIR)/cloud_analytics/cabase-$(_stamp).tar.gz \
-	$(BITS_DIR)/cloud_analytics/cainstsvc-$(_stamp).tar.gz \
+_ca_stamp=$(CA_BRANCH)-$(TIMESTAMP)-g$(CA_SHA)-dirty
+CA_BITS=$(BITS_DIR)/cloud_analytics/ca-pkg-$(_ca_stamp).tar.bz2 \
+	$(BITS_DIR)/cloud_analytics/cabase-$(_ca_stamp).tar.gz \
+	$(BITS_DIR)/cloud_analytics/cainstsvc-$(_ca_stamp).tar.gz \
 
 ca: $(CA_BITS)
 
@@ -104,23 +104,29 @@ $(CA_BITS): build/ca
 	@echo ""
 
 
-#---- agents shar
-# Bamboo does:
-# 	JOBS=12 COAL_PUBLISH=1
-# 	./build_scripts -l /rpool/data/coal/releases/2011-07-14/deps/
-#
-# TODO:
-# - pass in TIMESTAMP so know expected file
-# - how (if at all) to encode deps on ca, agents and smartlogin?
 
-agentsshar: build/agents-installer
-	@echo "# Build '$(AGENTSSHAR_BRANCH)' agentsshar."
+#---- agents shar
+
+_as_stamp=$(AGENTSSHAR_BRANCH)-$(TIMESTAMP)-g$(AGENTSSHAR_SHA)
+AGENTSSHAR_BITS=$(BITS_DIR)/ur-scripts/agents-$(_as_stamp).sh \
+	$(BITS_DIR)/ur-scripts/agents-$(_as_stamp).md5sum
+
+agentsshar: $(AGENTSSHAR_BITS)
+
+$(AGENTSSHAR_BITS): build/agents-installer
+	@echo "# Build agentsshar: branch $(AGENTSSHAR_BRANCH), sha $(AGENTSSHAR_SHA)"
 	mkdir -p $(BITS_DIR)/ur-scripts
-	(cd build/agents-installer && ./mk-agents-shar -o $(BITS_DIR)/ur-scripts -d $(BITS_DIR) -b $(AGENTSSHAR_BRANCH))
+	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/ur-scripts -d $(BITS_DIR) -b $(AGENTSSHAR_BRANCH))
+	@echo "# Created agentsshar bits:"
+	@ls -1 $(AGENTSSHAR_BITS)
+	@echo ""
 
 
 
 
 #---- misc targets
 
+#TODO: "build", but not yet
+distclean:
+	rm -rf bits
 
