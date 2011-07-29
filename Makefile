@@ -17,15 +17,25 @@ ifeq ($(UNAME), SunOS)
 endif
 
 # Other
-ifeq ($(TIMESTAMP),)
-    TIMESTAMP=$(shell TZ=UTC date "+%Y%m%dT%H%M%SZ")
-endif
 # Is JOBS=16 reasonable here? The old bamboo plans used this (or higher).
 JOB=16
+
+# A TIMESTAMP to use must be defined (and typically is in 'config.mk').
+# 
+# At one point we'd just generate TIMESTAMP at the top of the Makefile, but
+# that seemed to hit a gmake issue when building multiple targets: the 'ca'
+# target would be run three times at (rougly) 4 seconds apart on the time
+# stamp (guessing the 'three times' is because CA_BITS has three elements).
+# Similarly for the 'agents' target.
+ifeq ($(TIMESTAMP),)
+	TIMESTAMP=TimestampNotSet
+endif
 
 
 #---- Primary targets
 
+.PHONY: all
+all: smartlogin ca agents agentsshar
 
 
 #---- smartlogin
@@ -34,6 +44,7 @@ JOB=16
 
 SMARTLOGIN_BITS=$(BITS_DIR)/smartlogin/smartlogin-$(SMARTLOGIN_BRANCH)-$(TIMESTAMP)-g$(SMARTLOGIN_SHA).tgz
 
+.PHONY: smartlogin
 smartlogin: $(SMARTLOGIN_BITS)
 
 $(SMARTLOGIN_BITS): build/smartlogin
@@ -93,6 +104,7 @@ CA_BITS=$(BITS_DIR)/cloud_analytics/ca-pkg-$(_ca_stamp).tar.bz2 \
 	$(BITS_DIR)/cloud_analytics/cabase-$(_ca_stamp).tar.gz \
 	$(BITS_DIR)/cloud_analytics/cainstsvc-$(_ca_stamp).tar.gz \
 
+.PHONY: ca
 ca: $(CA_BITS)
 
 $(CA_BITS): build/ca
@@ -111,6 +123,7 @@ _as_stamp=$(AGENTSSHAR_BRANCH)-$(TIMESTAMP)-g$(AGENTSSHAR_SHA)
 AGENTSSHAR_BITS=$(BITS_DIR)/ur-scripts/agents-$(_as_stamp).sh \
 	$(BITS_DIR)/ur-scripts/agents-$(_as_stamp).md5sum
 
+.PHONY: agentsshar
 agentsshar: $(AGENTSSHAR_BITS)
 
 $(AGENTSSHAR_BITS): build/agents-installer
@@ -123,10 +136,10 @@ $(AGENTSSHAR_BITS): build/agents-installer
 
 
 
-
 #---- misc targets
 
-#TODO: "build", but not yet
+#TODO: also "build", but not yet
+.PHONY: distclean
 distclean:
 	rm -rf bits
 
