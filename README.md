@@ -1,9 +1,134 @@
 # Moutain Gorilla
 
-Trent's stab at a single repo to build SDC.
+Trent's stab at a single repo to build SDC. This is just a *driver* repo,
+all the components are still in their existing separate repos.
 
 
-# Build
+
+# Versioning Packages
+
+    NAME-BRANCH-TIMESTAMP[-GITDESCRIBE].TGZ
+
+where:
+
+- NAME is the package name, e.g. "smartlogin", "ca-pkg".
+- BRANCH is the git branch, e.g. "master", "release-20110714". Use:
+    
+        BRANCH=$(shell git symbolic-ref HEAD | awk -F / '{print $$3}')  # Makefile
+        BRANCH=$(git symbolic-ref HEAD | awk -F / '{print $3}')         # Bash script
+
+- TIMESTAMP is an ISO timestamp like "20110729T063329Z". Use:
+
+        TIMESTAMP=$(shell TZ=UTC date "+%Y%m%dT%H%M%SZ")    # Makefile
+        TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")          # Bash script
+
+  A timestamp is helpful (and in this position in the package name) because:
+  (a) it often helps to know about when a package was built when debugging;
+  and (b) it ensures that simple lexographical sorting of "NAME-BRANCH-*"
+  packages in a directory (as done by agents-installer and usb-headnode)
+  will make choosing "the latest" possible.
+
+- GITDESCRIBE gives the git sha for the repo and whether the repo was dirty
+  (had local changes) when it was built, e.g. "gfa1afe1-dirty", "gbadf0d".
+  Use:
+  
+        GITDESCRIBE=$(shell git describe --all --long --dirty | cut -d- -f3,4)
+        GITDESCRIBE=$(git describe --all --long --dirty | cut -d- -f3,4)
+
+  Notes: "--all" allows this to work on a repo with no tags. "--long"
+  ensures we always get the "sha" part even if on a tag. We strip off the
+  head/tag part because we don't reliably use release tags in all our
+  repos, so the results can be misleading in package names. E.g., this
+  was the smartlogin package for the Lime release:
+  
+        smartlogin-release-20110714-20110714T170222Z-20110414-2-g07e9e4f.tgz
+
+  The "20110414" there is an old old tag because tags aren't being added
+  to smart-login.git anymore.
+
+  "GITDESCRIBE" is *optional*. However, the only reason I currently see to
+  exclude it is if the downstream user of the package cannot handle it in
+  the package name. The "--dirty" flag is *optional* (though strongly
+  suggested) to allow repos to deal with possibly intractable issues (e.g. a
+  git submodule that has local changes as part of the build that can't be
+  resolved, at least not resolved quickly).
+
+- TGZ is a catch-all for whatever the package format is. E.g.: ".tgz",
+  ".sh" (shar), ".md5sum", ".tar.bz2".
+
+
+
+
+## Suggested Versioning Usage
+
+It is suggested that the SDC repos use something like this at the top of
+their Makefile (or main build script) to handle package naming:
+
+    NAME=smartlogin
+    BRANCH=$(shell git symbolic-ref HEAD | awk -F/ '{print $$3}')
+    ifeq ($(TIMESTAMP),)
+        TIMESTAMP=$(shell TZ=UTC date "+%Y%m%dT%H%M%SZ")
+    endif
+    GITDESCRIBE=$(shell git describe --all --long --dirty | cut -d- -f3,4)
+    
+    TARBALL=$(NAME)-$(BRANCH)-$(TIMESTAMP)-$(GITDESCRIBE).tgz
+
+Notes:
+- This gives the option of the TIMESTAMP being passed in. This is important
+  to allow an external driver -- e.g., moutain-gorilla or bamboo -- to
+  predict the expected output files, and hence be able to raise errors if
+  expected files are not generated.
+- Consistency here will help avoid confusion, and surprises in things like
+  subtle differences in `awk` on Mac vs. SmartOS, various options to
+  `git describe`.
+    
+
+
+# 'publish' target
+
+TODO: describe MG's desire for a "gmake publish" in each project
+and the "known subdir" in the BITS_DIR.
+
+
+
+# TODOs
+
+
+- instead of passing in BUILDSTAMP... instead should expect that from
+  the outside and bail if that file isn't generated. Requires passing in
+  the *TIMESTAMP*. Impl. this for smartlogin. Then backout BUILDSTAMP
+  passing in for shar/agents/et al.
+- Get that ca gitignore thing to work. Do the pull requests for the
+  appropriate gitignores for those repos.
+- then usb-headnode: hardcoding a platform and platform-HVM version
+  And how can this fit in with existing usb-headnode/build.spec.
+- add platform
+  https://hub.joyent.com/wiki/display/dev/Building+the+SmartOS+live+image+in+a+SmartOS+zone
+  older: https://hub.joyent.com/wiki/display/dev/Building+the+147+live+image
+- simple git cloning... then "src package" handling for reproducibility
+  and faster cloning.
+- how can platform-HVM fit in? it needs to be built on separate OS
+- usb-headnode: pulling in and caching datasets in "bits" dir
+- npm: run an npm proxy? and set npm_config_... for this. Would that work?
+
+
+
+
+
+# scratch space for notes
+
+- "Agents" repo setup is pros/cons:
+    - Agents pro: release dir is passed in (it shouldn't be hard coded)
+    - Agents con: there isn't a separate "bamboo/build.sh" so it
+      could accidentally be broken.
+    - overall: Agents build.sh iface is better than the hacks for the
+      others. Perhaps a "bamboo-build" script in each repo with a
+      standardized interface.
+    - bits filenames: add the git sha suffix a la the others
+
+
+
+## A Plan (Dream?)
 
 What if a (full) build went like this:
 
@@ -16,28 +141,7 @@ What if a (full) build went like this:
 - 'make upload' to upload bits to the release bits dir ... including logs
 
 
-platform
-hvm-platform:
-    echo "* * *"
-    echo "* Josh handles this build and uploads a release.
-    echo "* * *"
-smartlogin
-ca
-agents
-agents-shar   # or "agents-installer"
-
-usb-headnode: coal usb upgrade boot
-
-DEPS_DIR=https://216.57.203.66:444/coal/releases/2011-07-14/deps/ make usb-headnode
-RELEASE_DIR=...
-
-
-- build to "build/"
-- add a file to "build/versions/$name.versions" for each component
-
-
-
-## set the version to build
+Set the version to build
 
     ./configure master   # gets latest revs from master
     ./configure release-20110714   # add "lime" alias for this
@@ -138,7 +242,7 @@ TODOs:
 - Dirty support (ability to do a build with local changes). Low prio.
 
 
-# bigger picture
+## bigger picture
 
     ./configure BRANCH
     make
@@ -163,135 +267,3 @@ $COAL: src_usbheadnode deps_usbheadnode
     (cd build/usb-headnode && make coal)
 $USB: src_usbheadnode
     (cd build/usb-headnode && make usb)
-
-
-# next steps (START HERE)
-
-- extend 'smartlogin' example to ca, agents and agents-installer
-  to feel it out
-- implement that (should be fast to build)
-- then usb-headnode: hardcoding a platform and platform-HVM version
-  And how can this fit in with existing usb-headnode/build.spec.
-- add platform
-- how can platform-HVM fit in? it needs to be built on separate OS
-- usb-headnode: pulling in and caching datasets in "bits" dir
-- npm: run an npm proxy? and set npm_config_... for this. Would that work?
-
-
-
-# scrapyard
-    
-    # -> build-$CONFIGNAME-$TIMESTAMP.spec from the build/versions state.
-    #    Or perhaps this is already the output of "configure" above? I.e.
-    #    'make smartlogin' should bail if the source tree doesn't look as
-    #    requested in configure's build.spec/config.mak. This is better.
-    buildspec
-    
-
-
-
-# notes from Lime RC builds
-
-- platform build used "master" branch of illumos-extra (on github)
-  for a *release* (Lime) build. That needs to be a tag... or we
-  start doing release branches on illumos-extra.
-
-- bamboo build agents (i.e. build slave boxes):
-    - "illumos": bh1-autobuild
-      https://devhub.joyent.com/bamboo/admin/agent/viewAgent.action?agentId=9076737
-      This is the only one that can build "platform" (i.e. illumos-live.git)
-    - "headnode": bamboo-ubuntu.joyent.us
-      "0 / 0 Successful"
-      TODO: kill it
-    - "bldzone2": bldzone2 (10.99.99.101)
-      https://devhub.joyent.com/bamboo/admin/agent/viewAgent.action?agentId=12779522
-    - Josh: bh1-build shall die (devs move to bh1-build2 and build in a
-      zone on there) and be repurposed as bh1-autobuild2. A zone could be
-      added on here that can be a build slave to use.
-- Lime RC:
-    https://devhub.joyent.com/bamboo/browse/REL-SMARTLOGIN-14
-        bamboo@bh1-autobuild:/rpool/data/coal/live_147/agents/smartlogin/release-20110714/smartlogin-release-20110714-20110721T220018Z-20110414-2-g07e9e4f.tgz
-    https://devhub.joyent.com/bamboo/browse/REL-CA-26
-        scp build/pkg/cabase.tar.gz bamboo@10.2.0.190:/rpool/data/coal/live_147/agents/cloud_analytics/release-20110714//cabase-release-20110714-20110721T220224Z-20110714.tgz
-        scp build/pkg/cainstsvc.tar.gz bamboo@10.2.0.190:/rpool/data/coal/live_147/agents/cloud_analytics/release-20110714//cainstsvc-release-20110714-20110721T220224Z-20110714.tgz
-        manual:
-            - cp these to the "releases/.../deps" dir
-            - as per john's email, run 'gmake release'
-            - cp 'ca-pkg-...' tarball to 'releases/.../deps' dir
-    https://devhub.joyent.com/bamboo/browse/REL-AGENTSREL-28
-        /rpool/data/coal/releases/2011-07-14/deps//zonetracker/release-20110714/zonetracker-release-20110714-20110721T220309Z.tgz
-        /rpool/data/coal/releases/2011-07-14/deps//provisioner/release-20110714/provisioner-release-20110714-20110721T220309Z.tgz
-        /rpool/data/coal/releases/2011-07-14/deps//provisioner-v2/release-20110714/provisioner-v2-release-20110714-20110721T220309Z.tgz
-        /rpool/data/coal/releases/2011-07-14/deps//zonetracker-v2/release-20110714/zonetracker-v2-release-20110714-20110721T220309Z.tgz
-        /rpool/data/coal/releases/2011-07-14/deps//atropos/release-20110714/atropos-release-20110714-20110721T220309Z.tgz
-        /rpool/data/coal/releases/2011-07-14/deps//dataset_manager/release-20110714/dataset_manager-release-20110714-20110721T220309Z.tgz
-        /rpool/data/coal/releases/2011-07-14/deps//heartbeater/release-20110714/heartbeater-release-20110714-20110721T220309Z.tgz
-    https://devhub.joyent.com/bamboo/browse/REL-AGENTS-39
-        - /bin/bash ./build_scripts -l /rpool/data/coal/releases/2011-07-14/deps/
-          env: JOBS=12 COAL_PUBLISH=1
-        - TODO: want 'set -x' in this
-        - using "latest.tgz" symlinks which I don't like, e.g.
-          /rpool/data/coal/releases/2011-07-14/deps/atropos/release-20110714/latest.tgz
-        - agents-installer/build.spec needs to be updated for a release branch
-          TODO: :(
-        - TODO: limitation: the "deps" dir from which to get packages has to be
-          local (just using 'cp')
-        - don't like the versions of the agents aren't in here. Tracking is harder:
-            ./shar: Saving agents/atropos.tgz (binary)
-            ./shar: Saving agents/smartlogin-release-20110714-20110714T170222Z-20110414-2-g07e9e4f.tgz (binary)
-            ./shar: Saving agents/dataset_manager.tgz (binary)
-            ./shar: Saving agents/heartbeater.tgz (binary)
-            ./shar: Saving agents/cabase-release-20110714-20110714T175258Z-20110714.tgz (binary)
-            ./shar: Saving agents/zonetracker-v2.tgz (binary)
-            ./shar: Saving agents/zonetracker.tgz (binary)
-            ./shar: Saving agents/cainstsvc-release-20110714-20110714T175258Z-20110714.tgz (binary)
-            ./shar: Saving agents/provisioner-v2.tgz (binary)
-            ./shar: Saving agents/install.sh (text)
-        /rpool/data/coal/live_147/ur-scripts/agents-release-20110714-20110722T173311Z.md5sum
-        /rpool/data/coal/live_147/ur-scripts/agents-release-20110714-20110722T173311Z.sh
-        - manually cp those to 'releases/.../deps/ur-scripts' dir
-    https://devhub.joyent.com/bamboo/browse/REL-PLATFORM-40
-        - /home/bamboo/bin/bamboo-builders/illumos-release.sh on bh1-autobuild is the build step (TODO: ack!)
-        /rpool/data/coal/releases/2011-07-14/deps/platform-20110721T221614Z.tgz
-    https://devhub.joyent.com/bamboo/browse/REL-APPZONE-41
-        - /home/bamboo/bin/bamboo-builders/build-app.sh (TODO: ack!)
-        bits???  who cares. not used.
-    JOSH: will add HVM platform builds to the deps dir (built on bh1-linux)
-    https://devhub.joyent.com/bamboo/browse/REL-SDC6-119
-        - /home/jill/bin/bamboo-builders/coal.sh (TODO: ack!)
-            env: UPLOAD=true TAR=true VMWARE=false
-            env: UPLOAD=true UPGRADE=true VMWARE=false
-            env: UPLOAD=true USB=true VMWARE=false RELEASE=true
-            env: UPLOAD=true RELEASE=true
-        - manual: copy those four files from /rpool/data/coal/live_147/coal/
-          to the releases dir
-
-- think about how the build could be automated more:
-    - package name: smartlogin-release-20110714-20110714T170222Z-20110414-2-g07e9e4f.tgz
-      The "git describe" part: annoying to have tag in there given that
-      smartlogin repo isn't doing reasonable tags:
-        $ git describe --long | cut -d- -f3
-        g5f29ded
-      Ditto for CA bits.
-    - The smartlogin's package task should perhaps create a reasonable name.
-      I.e. it should get its versioning act together.
-    - smartlogin: why separate build.sh and publish.sh for bamboo? Historic cruft
-      for bamboo "artifacts"? If so, drop the separation. Complexity.
-    - "Agents" repo setup is pros/cons:
-        - Agents pro: release dir is passed in (it shouldn't be hard coded)
-        - Agents con: there isn't a separate "bamboo/build.sh" so it
-          could accidentally be broken.
-        - overall: Agents build.sh iface is better than the hacks for the
-          others. Perhaps a "bamboo-build" script in each repo with a
-          standardized interface.
-        - bits filenames: add the git sha suffix a la the others
-
-
-# old notes from John
-
-- john wants: PUBLISH_LOCATION envvar and/or "-l PATH" arg for the various
-  sdc bits. Has it for agents.git
-- john also mentioned the same is wanted for illumos-live:
-  https://hub.joyent.com/wiki/display/dev/Building+the+147+live+image
-  I've started a build on bh1-build `ssh -A trent@10.2.0.191`
-
