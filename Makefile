@@ -3,8 +3,6 @@
 
 include config.mk
 
-TIMESTAMP=$(shell TZ=UTC date "+%Y%m%dT%H%M%SZ")
-
 # Directories
 TOP=$(shell pwd)
 BITS_DIR=$(TOP)/bits
@@ -19,7 +17,10 @@ ifeq ($(UNAME), SunOS)
 endif
 
 # Other
-#TODO: is JOBS=16 reasonable here?
+ifeq ($(TIMESTAMP),)
+    TIMESTAMP=$(shell TZ=UTC date "+%Y%m%dT%H%M%SZ")
+endif
+# Is JOBS=16 reasonable here? The old bamboo plans used this (or higher).
 JOB=16
 
 
@@ -28,13 +29,19 @@ JOB=16
 
 
 #---- smartlogin
+# TODO:
+# - Re-instate 'gmake lint'?
 
-SMARTLOGIN_BUILDSTAMP=$(SMARTLOGIN_BRANCH)-$(TIMESTAMP)-$(SMARTLOGIN_SHA)
+SMARTLOGIN_BITS=$(BITS_DIR)/smartlogin/smartlogin-$(SMARTLOGIN_BRANCH)-$(TIMESTAMP)-g$(SMARTLOGIN_SHA).tgz
 
-# Notes: Re-instate 'gmake lint'?
-smartlogin: build/smartlogin $(BITS_DIR)
-	@echo "# Build smartlogin $(SMARTLOGIN_BUILDSTAMP)."
-	(cd build/smartlogin && BUILDSTAMP=$(SMARTLOGIN_BUILDSTAMP) BITS_DIR=$(BITS_DIR) gmake clean all publish)
+smartlogin: $(SMARTLOGIN_BITS)
+
+$(SMARTLOGIN_BITS): build/smartlogin $(BITS_DIR)
+	@echo "# Build smartlogin: branch $(SMARTLOGIN_BRANCH), sha $(SMARTLOGIN_SHA)"
+	(cd build/smartlogin && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake clean all publish)
+	@echo "# Created smartlogin bits:"
+	@ls $(SMARTLOGIN_BITS)
+	@echo ""
 
 
 
