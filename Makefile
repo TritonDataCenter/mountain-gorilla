@@ -36,8 +36,9 @@ SMARTLOGIN_BITS=$(BITS_DIR)/smartlogin/smartlogin-$(SMARTLOGIN_BRANCH)-$(TIMESTA
 
 smartlogin: $(SMARTLOGIN_BITS)
 
-$(SMARTLOGIN_BITS): build/smartlogin $(BITS_DIR)
+$(SMARTLOGIN_BITS): build/smartlogin
 	@echo "# Build smartlogin: branch $(SMARTLOGIN_BRANCH), sha $(SMARTLOGIN_SHA)"
+	mkdir -p $(BITS_DIR)
 	(cd build/smartlogin && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake clean all publish)
 	@echo "# Created smartlogin bits:"
 	@ls $(SMARTLOGIN_BITS)
@@ -51,14 +52,25 @@ $(SMARTLOGIN_BITS): build/smartlogin $(BITS_DIR)
 # src_agents:
 # 	git config core.autocrlf false
 
-AGENTS_BUILDSTAMP=$(AGENTS_BRANCH)-$(TIMESTAMP)-$(AGENTS_SHA)
+_stamp=$(AGENTS_BRANCH)-$(TIMESTAMP)-g$(AGENTS_SHA)-dirty
+AGENTS_BITS=$(BITS_DIR)/heartbeater/heartbeater-$(_stamp).tgz \
+	$(BITS_DIR)/atropos/atropos-$(_stamp).tgz \
+	$(BITS_DIR)/metadata/metadata-$(_stamp).tgz \
+	$(BITS_DIR)/dataset_manager/dataset_manager-$(_stamp).tgz \
+	$(BITS_DIR)/zonetracker/zonetracker-$(_stamp).tgz \
+	$(BITS_DIR)/provisioner-v2/provisioner-v2-$(_stamp).tgz \
+	$(BITS_DIR)/zonetracker-v2/zonetracker-v2-$(_stamp).tgz \
+	$(BITS_DIR)/mock_cloud/mock_cloud-$(_stamp).tgz
 
-#TODO:
-# - drop the "$branch" dir in bits for these on publish
-# - support BUILDSTAMP in build.sh
-agents: build/agents $(BITS_DIR)
-	@echo "# Build agents $(AGENTS_BUILDSTAMP)."
-	(cd build/agents && BUILDSTAMP=$(AGENTS_BUILDSTAMP) ./build.sh -p -n -l $(BITS_DIR))
+agents: $(AGENTS_BITS)
+
+$(AGENTS_BITS): build/agents
+	@echo "# Build agents: branch $(AGENTS_BRANCH), sha $(AGENTS_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/agents && TIMESTAMP=$(TIMESTAMP) ./build.sh -p -n -l $(BITS_DIR))
+	@echo "# Created agents bits:"
+	@ls $(AGENTS_BITS)
+	@echo ""
 
 
 
@@ -81,8 +93,9 @@ agents: build/agents $(BITS_DIR)
 
 CA_BUILDSTAMP=$(CA_BRANCH)-$(TIMESTAMP)-$(CA_SHA)
 
-ca: build/ca $(BITS_DIR)
+ca: build/ca
 	@echo "# Build ca $(CA_BUILDSTAMP)."
+	mkdir -p $(BITS_DIR)
 	(cd build/ca && BUILDSTAMP=$(CA_BUILDSTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$PATH" gmake pkg release publish)
 
 
@@ -96,7 +109,7 @@ ca: build/ca $(BITS_DIR)
 # - pass in TIMESTAMP so know expected file
 # - how (if at all) to encode deps on ca, agents and smartlogin?
 
-agentsshar: build/agents-installer $(BITS_DIR)
+agentsshar: build/agents-installer
 	@echo "# Build '$(AGENTSSHAR_BRANCH)' agentsshar."
 	mkdir -p $(BITS_DIR)/ur-scripts
 	(cd build/agents-installer && ./mk-agents-shar -o $(BITS_DIR)/ur-scripts -d $(BITS_DIR) -b $(AGENTSSHAR_BRANCH))
@@ -105,14 +118,5 @@ agentsshar: build/agents-installer $(BITS_DIR)
 
 
 #---- misc targets
-
-info:
-	@echo "TIMESTAMP: $(TIMESTAMP)"
-	@echo "BITS_DIR: $(BITS_DIR)"
-	@echo "SMARTLOGIN_BUILDSTAMP: $(SMARTLOGIN_BUILDSTAMP)"
-
-
-$(BITS_DIR):
-	mkdir -p $(BITS_DIR)
 
 
