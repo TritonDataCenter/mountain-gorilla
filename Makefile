@@ -86,11 +86,12 @@ ca: build/ca $(BITS_DIR)
 # 	./build_scripts -l /rpool/data/coal/releases/2011-07-14/deps/
 #
 # TODO:
-# - pass in TIMESTAMP so know expected file?
+# - pass in TIMESTAMP so know expected file
 # - how (if at all) to encode deps on ca, agents and smartlogin?
 
 agentsshar: build/agents-installer $(BITS_DIR)
 	@echo "# Build '$(AGENTSSHAR_BRANCH)' agentsshar."
+	mkdir -p $(BITS_DIR)/ur-scripts
 	(cd build/agents-installer && ./mk-agents-shar -o $(BITS_DIR)/ur-scripts -d $(BITS_DIR) -b $(AGENTSSHAR_BRANCH))
 
 
