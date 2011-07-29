@@ -75,29 +75,33 @@ $(AGENTS_BITS): build/agents
 
 
 #---- cloud-analytics
-# Bamboo does:
-# 	./bamboo/build.sh
-# 	PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$PATH" JOBS=16
-#
 #TODO:
-# - add BUILDSTAMP support
-# - explain why the PATH order is necessary here
-# - look at https://hub.joyent.com/wiki/display/dev/Setting+up+Cloud+Analytics+development+on+COAL-147
-#   for env setup. Might be demons in there.
 # - add {.lock-wscript,build} to .gititnore for 
 #   node-kstat
 #   node-libGeoIP
 #   node-libdtrace
 #   node-png
 #   node-uname
+# - merge CA_VERSION and CA_PUBLISH_VERSION? what about the version sed'd into
+#   the package.json's?
+# - explain why the PATH order is necessary here
+# - look at https://hub.joyent.com/wiki/display/dev/Setting+up+Cloud+Analytics+development+on+COAL-147
+#   for env setup. Might be demons in there.
 
-CA_BUILDSTAMP=$(CA_BRANCH)-$(TIMESTAMP)-$(CA_SHA)
+_stamp=$(CA_BRANCH)-$(TIMESTAMP)-g$(CA_SHA)-dirty
+CA_BITS=$(BITS_DIR)/cloud_analytics/ca-pkg-$(_stamp).tar.bz2 \
+	$(BITS_DIR)/cloud_analytics/cabase-$(_stamp).tar.gz \
+	$(BITS_DIR)/cloud_analytics/cainstsvc-$(_stamp).tar.gz \
 
-ca: build/ca
-	@echo "# Build ca $(CA_BUILDSTAMP)."
+ca: $(CA_BITS)
+
+$(CA_BITS): build/ca
+	@echo "# Build ca: branch $(CA_BRANCH), sha $(CA_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/ca && BUILDSTAMP=$(CA_BUILDSTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$PATH" gmake pkg release publish)
-
+	(cd build/ca && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$PATH" gmake pkg release publish)
+	@echo "# Created ca bits:"
+	@ls -1 $(CA_BITS)
+	@echo ""
 
 
 #---- agents shar
