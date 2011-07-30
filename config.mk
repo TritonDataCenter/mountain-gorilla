@@ -9,7 +9,18 @@ AGENTS_BRANCH=mg
 AGENTS_SHA=4ed68ae
 
 CA_BRANCH=mg
-CA_SHA=b373ea0
+CA_SHA=749b242
 
 AGENTSSHAR_BRANCH=mg
 AGENTSSHAR_SHA=b75a9ad
+
+PLATFORM_BRANCH=master
+PLATFORM_SHA=badcafe
+BUILD_PLATFORM=0
+# Need some way to pass this in to usb-headnode builds. Or can flukily get
+# there via only have this platform build in the BITS_DIR.
+# When MG builds platform, I presume that PLATFORM_TIMESTAMP === TIMESTAMP.
+PLATFORM_TIMESTAMP=20110729T154436Z
+
+USBHEADNODE_BRANCH=mg
+USBHEADNODE_SHA=664cc8f

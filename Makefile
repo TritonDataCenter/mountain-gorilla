@@ -35,7 +35,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin ca agents agentsshar
+all: smartlogin ca agents agentsshar usb-headnode
 
 
 #---- smartlogin
@@ -58,10 +58,6 @@ $(SMARTLOGIN_BITS): build/smartlogin
 
 
 #---- agents
-# Bamboo does: ./build.sh -p -n -l /rpool/data/coal/releases/2011-07-14/deps/
-#
-# src_agents:
-# 	git config core.autocrlf false
 
 _a_stamp=$(AGENTS_BRANCH)-$(TIMESTAMP)-g$(AGENTS_SHA)
 AGENTS_BITS=$(BITS_DIR)/heartbeater/heartbeater-$(_a_stamp).tgz \
@@ -100,9 +96,9 @@ $(AGENTS_BITS): build/agents
 #   for env setup. Might be demons in there.
 
 _ca_stamp=$(CA_BRANCH)-$(TIMESTAMP)-g$(CA_SHA)-dirty
-CA_BITS=$(BITS_DIR)/cloud_analytics/ca-pkg-$(_ca_stamp).tar.bz2 \
+CA_BITS=$(BITS_DIR)/assets/ca-pkg-$(_ca_stamp).tar.bz2 \
 	$(BITS_DIR)/cloud_analytics/cabase-$(_ca_stamp).tar.gz \
-	$(BITS_DIR)/cloud_analytics/cainstsvc-$(_ca_stamp).tar.gz \
+	$(BITS_DIR)/cloud_analytics/cainstsvc-$(_ca_stamp).tar.gz
 
 .PHONY: ca
 ca: $(CA_BITS)
@@ -134,6 +130,39 @@ $(AGENTSSHAR_BITS): build/agents-installer
 	@ls -1 $(AGENTSSHAR_BITS)
 	@echo ""
 
+
+#---- usb-headnode
+# TODO:
+# - add GITDESCRIBE
+# - usb, boot, upgrade
+# - "assets/" bits area for atropos is dumb (use atropos). more dumb for ca-pkg
+#   (use cloud_analytics)
+#
+# - configure
+# - solution for datasets
+# - source packages (quick hack with "MAPI_DIR" et al?)
+# - punt on having coal timestamp be the platform timestamp and use given or curr timestamp? Ask
+#   Jerry/Josh and others about need for this.
+# - pkgsrc isolation
+
+COAL_BIT=$(BITS_DIR)/release/coal-$(USBHEADNODE_BRANCH)-$(PLATFORM_TIMESTAMP)-2gb.tgz
+
+.PHONY: coal
+coal: $(COAL_BIT)
+
+$(COAL_BIT): build/usb-headnode
+	@echo "# Build coal: usb-headnode branch $(USBHEADNODE_BRANCH), sha $(USBHEADNODE_SHA)"
+	ps -ef | grep 'python -m Simple[H]TTPServer' | awk '{print $$2}' | xargs kill 2>/dev/null || true
+	(cd $(BITS_DIR); python -m SimpleHTTPServer >build/coal-static-server.log)&
+
+	mkdir -p $(BITS_DIR)/release
+	(cd build/usb-headnode && MASTER_PLATFORM_URL=http://localhost:8000 ./bin/build-image -c coal)
+
+	@ps -ef | grep 'python -m Simple[H]TTPServer' | awk '{print $$2}' | xargs kill 2>/dev/null || true
+	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/release
+	@echo "# Created coal bits:"
+	@ls -1 $(COAL_BIT)
+	@echo ""
 
 
 #---- misc targets
