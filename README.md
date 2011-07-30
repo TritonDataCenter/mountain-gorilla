@@ -4,6 +4,22 @@ Trent's stab at a single repo to build SDC. This is just a *driver* repo,
 all the components are still in their existing separate repos.
 
 
+# Build System Dependencies
+
+Notes on build sys requirements that I've hit:
+
+- npm 1.0.x (a recent version require?)
+- node >=0.4.9
+- `tar` has to be a capable GNU tar or you need this in "~/.npmrc":
+
+    tar = gtar
+
+- Cannot have "core.autocrlf=input" in your "~/.gitconfig", else you will
+  get spurious dirty repos (mostly in submodules) about EOL changes.
+
+    
+
+
 
 # Package Versioning
 
@@ -123,14 +139,31 @@ and the "known subdir" in the BITS_DIR.
 # TODOs
 
 
-- instead of passing in BUILDSTAMP... instead should expect that from
-  the outside and bail if that file isn't generated. Requires passing in
-  the *TIMESTAMP*. Impl. this for smartlogin. Then backout BUILDSTAMP
-  passing in for shar/agents/et al.
-- Get that ca gitignore thing to work. Do the pull requests for the
-  appropriate gitignores for those repos.
+- in.bits:
+    in.bits/
+    in.bits/platform-master-20110729T154436Z.tgz
+    in.bits/ur-scripts
+    in.bits/ur-scripts/release-20110714
+    in.bits/ur-scripts/release-20110714/agents-hvm-20110726T001206Z.md5sum
+    in.bits/ur-scripts/release-20110714/agents-hvm-20110726T001206Z.sh
+    in.bits/release-20110714
+    in.bits/release-20110714/platform-HVM-20110726T001212Z.tgz
+    in.bits/datasets
+    in.bits/datasets/ubuntu-10.04.2.4.dsmanifest
+    in.bits/datasets/ubuntu-10.04.2.4.img.gz
+    in.bits/datasets/nodejs-1.1.4.dsmanifest
+    in.bits/datasets/nodejs-1.1.4.zfs.bz2
+    in.bits/datasets/smartos-1.3.15.zfs.bz2
+    in.bits/datasets/smartos-1.3.15.dsmanifest
+    in.bits/assets
+    in.bits/assets/atropos-develop-20110210.tar.bz2
 - then usb-headnode: hardcoding a platform and platform-HVM version
   And how can this fit in with existing usb-headnode/build.spec.
+- make platform hvmplatform hvmagentsshar  # hardcoded download
+- "assets": WTF. ca-pkg easy. Who builds "atropos"? If that is going away
+  (ask Orlando) then just hack it.
+- Get that ca gitignore thing to work. Do the pull requests for the
+  appropriate gitignores for those repos.
 - add platform
   https://hub.joyent.com/wiki/display/dev/Building+the+SmartOS+live+image+in+a+SmartOS+zone
   older: https://hub.joyent.com/wiki/display/dev/Building+the+147+live+image
@@ -138,7 +171,10 @@ and the "known subdir" in the BITS_DIR.
   and faster cloning.
 - how can platform-HVM fit in? it needs to be built on separate OS
 - usb-headnode: pulling in and caching datasets in "bits" dir
+- mg: move bits dir to build/bits (should be clean for each build)
+  can have a 'cache/' dir to save old stuff.
 - npm: run an npm proxy? and set npm_config_... for this. Would that work?
+- some solution for the datasets/ubuntu-*.dsmanifest "url" hack in usb-headnode?
 
 
 
