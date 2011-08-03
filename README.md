@@ -4,11 +4,70 @@ Trent's stab at a single repo to build SDC. This is just a *driver* repo,
 all the components are still in their existing separate repos.
 
 
+# Motivation
+
+It is too hard to build SDC. Single Person of Failure. Everyone should be able
+to build it... and not just a local usb-headnode build (which *is* easy). The
+primary focus is making reliable and reproducible SDC builds for official
+release builds and CI. However, eventually this should help enable any Joyent
+devs to be able to build the entire stack.
+
+
+# Usage
+
+    git clone git@git.joyent.com:mountain-gorilla.git
+    cd mountain-gorilla.git
+    ./configure --help
+    ./configure [OPTIONS...]    # generates config.mk with all build config
+    make                        # builds entire stack from source
+
+The "config.mk" contains all config information necessary to fully reproduce
+the build. There will be configure options to use some prebuilt
+bits (e.g. a prebuilt platform) -- so to fully reproduce in this scenario
+those pre-built bits will need to be available. The "configure" step might
+take a while because it needs to get/update all (most?) of the source
+repositories to get revision information (the git shas to be built are part
+of the created "config.mk" file)
+
+The end result is a "bits" directory (currently at "./bits") with all the
+built components. Primarily this includes the release bits:
+"coal-$VERSION.tgz", "usb-$VERSION.tgz", "boot-$VERSION.tgz" and
+"upgrade-$VERSION.tgz". However, also included are all the constituent
+built bits: agents, platform, ca, etc.
+
+
+
+# Current Status
+
+The above "usage" doesn't work yet.
+
+- The "configure" isn't written yet (currently using a hand-written and
+  commited 'config.mk' file).
+- Getting sources into the "build/FOO" build areas isn't yet implemented. For
+  example to build smartlogin (using "make smartlogin"), you first have to
+  manually get a "smart-login.git" clone to "build/smartlogin".
+- Not all pieces are being built yet. Missing parts are: platform, atropos,
+  hvmagents, hvmplatform
+- Build system requirements aren't fully spec'd yet.
+
+Prebuilt pieces:
+
+- pkgsrc is a notable unversioned and pre-built component of this. For sanity
+  at least there should be a manifest checksuming of used pkgsrc packages.
+- datasets are prebuilt. We rely on the rule that a dataset, once published,
+  never changes. Any dataset change must mean a new version and UUID.
+
+
+
 # Build System Dependencies
+
+MG should be fully buildable on a SmartOS zone (except the HVM platform).
+The build system reqs aren't fully spec'd yet. The best starting point is
+<https://hub.joyent.com/wiki/display/dev/Building+the+SmartOS+live+image+in+a+SmartOS+zone>.
 
 Notes on build sys requirements that I've hit:
 
-- npm 1.0.x (a recent version require?)
+- npm 1.0.x (a recent version required?)
 - node >=0.4.9
 - `tar` has to be a capable GNU tar or you need this in "~/.npmrc":
 
@@ -17,11 +76,11 @@ Notes on build sys requirements that I've hit:
 - Cannot have "core.autocrlf=input" in your "~/.gitconfig", else you will
   get spurious dirty repos (mostly in submodules) about EOL changes.
 
-    
-
 
 
 # Package Versioning
+
+Thou shalt name thy SDC constituent build bits as follows:
 
     NAME-BRANCH-TIMESTAMP[-GITDESCRIBE].TGZ
 
@@ -38,17 +97,17 @@ where:
         TIMESTAMP=$(shell TZ=UTC date "+%Y%m%dT%H%M%SZ")    # Makefile
         TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")          # Bash script
 
-  A timestamp is helpful (and in this position in the package name) because:
-  (a) it often helps to know about when a package was built when debugging;
-  and (b) it ensures that simple lexographical sorting of "NAME-BRANCH-*"
-  packages in a directory (as done by agents-installer and usb-headnode)
-  will make choosing "the latest" possible.
+  Good. A timestamp is helpful (and in this position in the package name)
+  because: (a) it often helps to know approx. when a package was built when
+  debugging; and (b) it ensures that simple lexographical sorting of
+  "NAME-BRANCH-*" packages in a directory (as done by agents-installer and
+  usb-headnode) will make choosing "the latest" possible.
 
-  A timestamp *sucks* because successive builds in a dev tree will get a
+  Bad. A timestamp *sucks* because successive builds in a dev tree will get a
   new timestamp: defeating Makefile dependency attempts to avoid rebuilding.
   Note that the TIMESTAMP is only necessary for released/published packages,
-  so for projects that care (e.g. ca), the TIMESTAMP can just be added
-  for release.
+  so for projects that care (e.g. ca), the TIMESTAMP can just be added for
+  release.
 
 - GITDESCRIBE gives the git sha for the repo and whether the repo was dirty
   (had local changes) when it was built, e.g. "gfa1afe1-dirty", "gbadf0d".
@@ -120,26 +179,25 @@ or like this in a Bash script:
 
 Notes:
 - This gives the option of the TIMESTAMP being passed in. This is important
-  to allow an external driver -- e.g., moutain-gorilla or bamboo -- to
+  to allow an external driver -- e.g., moutain-gorilla, bamboo, CI -- to
   predict the expected output files, and hence be able to raise errors if
   expected files are not generated.
 - Consistency here will help avoid confusion, and surprises in things like
   subtle differences in `awk` on Mac vs. SmartOS, various options to
   `git describe`.
-    
-
-
-# 'publish' target
-
-TODO: describe MG's desire for a "gmake publish" in each project
-and the "known subdir" in the BITS_DIR.
 
 
 
 # TODOs
 
-
-- in.bits:
+- review my "mg" branch work and push those changes to master?
+- "getting the source" step is still a blocker. Implement 'make src_smartlogin'
+  step (as outlined in "A Dream" section) to the point that "make smartlogin"
+  then works. Then start doing the same for the other components (agents,
+  ca, agents-installer, usb-headnode, ...)
+- Here is my current list of stuff that isn't yet built from source, i.e.
+  stuff that I need to preload in my "bits" dir for a full build of release
+  bits. We should chip away at these:
     in.bits/
     in.bits/platform-master-20110729T154436Z.tgz
     in.bits/ur-scripts
@@ -159,41 +217,40 @@ and the "known subdir" in the BITS_DIR.
     in.bits/assets/atropos-develop-20110210.tar.bz2
 - then usb-headnode: hardcoding a platform and platform-HVM version
   And how can this fit in with existing usb-headnode/build.spec.
-- make platform hvmplatform hvmagentsshar  # hardcoded download
-- "assets": WTF. ca-pkg easy. Who builds "atropos"? If that is going away
-  (ask Orlando) then just hack it.
 - Get that ca gitignore thing to work. Do the pull requests for the
   appropriate gitignores for those repos.
 - add platform
   https://hub.joyent.com/wiki/display/dev/Building+the+SmartOS+live+image+in+a+SmartOS+zone
   older: https://hub.joyent.com/wiki/display/dev/Building+the+147+live+image
+- make platform hvmplatform hvmagentsshar
 - simple git cloning... then "src package" handling for reproducibility
   and faster cloning.
-- how can platform-HVM fit in? it needs to be built on separate OS
+- make hvmplatform: how can platform-HVM fit in? it needs to be built on separate OS
+- make hvmagentsshar: currently Josh is building this manually and dropping it in
+  Can this be built on SmartOS? Or does it need to be built on Linux?
 - usb-headnode: pulling in and caching datasets in "bits" dir
 - mg: move bits dir to build/bits (should be clean for each build)
   can have a 'cache/' dir to save old stuff.
 - npm: run an npm proxy? and set npm_config_... for this. Would that work?
+  The idea is to have the build pull *all* component parts from our local
+  "bits" dir.
 - some solution for the datasets/ubuntu-*.dsmanifest "url" hack in usb-headnode?
+  If this is temporary (i.e. the real ubuntu SmartOS-KVM dataset will be
+  published to live DSAPI before a publish release) then perhaps not worth it.
+- "make dumpenv" is done at the start of a full build here to dump environment
+  details for the build log.
+- Log (log all this to a log file or files). High prio.
+- Dirty support (ability to do a build with local changes). Low prio.
+- "make rc"
 
 
 
-
-
-# scratch space for notes
-
-- "Agents" repo setup is pros/cons:
-    - Agents pro: release dir is passed in (it shouldn't be hard coded)
-    - Agents con: there isn't a separate "bamboo/build.sh" so it
-      could accidentally be broken.
-    - overall: Agents build.sh iface is better than the hacks for the
-      others. Perhaps a "bamboo-build" script in each repo with a
-      standardized interface.
-    - bits filenames: add the git sha suffix a la the others
 
 
 
 ## A Plan (Dream?)
+
+(warning: this is getting a little out of date)
 
 What if a (full) build went like this:
 
@@ -203,39 +260,32 @@ What if a (full) build went like this:
     cache/repos/$repo    # pristine clones, for faster clean recloning
 - kick off each of the steps (with appropriate order), publishing
   resultant bits to the same local "bits" dir
-- 'make upload' to upload bits to the release bits dir ... including logs
+- 'make rc' to create a new 'rc' directory in a standard place and
+  upload all bits (release bits, all built deps, build logs, changelog) to it.
 
 
-Set the version to build
+How would this look for smartlogin only?
 
-    ./configure master   # gets latest revs from master
-    ./configure release-20110714   # add "lime" alias for this
-
-How would that work for smartlogin only.
-
-    $ ./configure release-20110714
+    $ ./configure --branch=release-20110714
     Fetching smartlogin repo cache (cache/repos/smart-login).
-        # recursive update of submodules as well
     Latest revision on 'release-20110714' branch is 'cafebabe'.
     Using smartlogin 'release-20110714-cafebabe'.
-    Generated 'config.mak'.
-    $ cat config.mak
-    SMARTLOGIN_VERSION="release-20110714-cafebabe"
-    # or
+    Generated 'config.mk'.
+    $ cat config.mk
     SMARTLOGIN_BRANCH="release-20110714"
     SMARTLOGIN_SHA="cafebabe"
-    # or ... something else, having both is redundant.
 
 
 Offline (i.e. just use what is local already):
 
-    $ ./configure -o|--offline release-20110714
+    $ ./configure -o|--offline --branch=release-20110714
     Not updating smartlogin repo (in cache/repos/smart-login): offline mode.
     Latest revision on 'release-20110714' branch is 'cafebabe'.
     Using smartlogin 'release-20110714-cafebabe'.
-    Generated 'config.mak'.
+    Generated 'config.mk'.
 
-Now all 'make' steps will use "config.mak". Get a clean source tree
+
+Now all 'make' steps will use "config.mk". Get a clean source tree
 (building a source package if necessary):
 
     $ make src_smartlogin
@@ -263,19 +313,6 @@ reason, then don't bother. Reasons:
 )
 
 
-Check that src/smartlogin looks like what we expect (i.e. it hasn't been
-mucked with):
-
-    $ make checksrc_smartlogin
-    TIMESTAMP=$(shell TZ=UTC date "+%Y%m%dT%H%M%SZ")  # this is at top of Makefile
-    SMARTLOGIN_BUILDSTAMP=$SMARTLOGIN_BRANCH-$TIMESTAMP-$SMARTLOGIN_SHA
-    (cd build/smartlogin \
-        && echo "$(git describe --contains --all HEAD | cut -d~ -f1)-$TIMESAMP-$(git describe --long --dirty | cut -d- -f3,4) \
-        > ../smartlogin.buildstamp
-    [[ $(cat build/smartlogin.buildstamp) != "$SMARTLOGIN_BUILDSTAMP" ]] \
-        && fail "unexpected smartlogin sources in 'build/smartlogin': ..."
-
-
 Build:
 
     $ make smartlogin
@@ -289,46 +326,6 @@ Summary:
 
     configure -> decides which version of smartlogin (and its deps)
     src_smartlogin -> gets clean sources (including submodules) for smartlogin at given version
-    checksrc_smartlogin -> ensures this *is* a clean source tree
     builddeps_smartlogin -> logs build dump info and bails early if expected failure
     smartlogin -> builds, using only BITS_DIR for dependencies and puts products in BITS_DIR
     
-
-TODOs:
-- How to specify a particular rev with "./configure". Want to be able to
-  pass in a "build.spec" (see 'make buildspec' below).
-- How to specify that we don't want to rebuild a subcomponent? E.g. just
-  rebuild usb-headnode, but not platform? Or *should* that be allowed...
-  if deps are correct against source tree version. You *can* do it manually
-  via the build targets.
-- "make dumpenv" is done at the start of a full build here to dump environment
-  details for the build log.
-- Log (log all this to a log file or files). High prio.
-- Dirty support (ability to do a build with local changes). Low prio.
-
-
-## bigger picture
-
-    ./configure BRANCH
-    make
-        dumpenv
-        src
-            src_smartlogin
-        checksrc
-            checksrc_smartlogin
-        builddeps
-            builddeps_smartlogin
-        build
-            smartlogin
-    
-If, say, just rebuilding usb-headnode, then the above is wasteful... e.g.
-getting fresh sources for platform. So perhaps more like this:
-
-
-all: $COAL $USB $UPGRADE $BOOT
-
-deps_usbheadnode: XXX
-$COAL: src_usbheadnode deps_usbheadnode
-    (cd build/usb-headnode && make coal)
-$USB: src_usbheadnode
-    (cd build/usb-headnode && make usb)
