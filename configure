@@ -1,0 +1,96 @@
+#!/usr/bin/bash
+
+BRANCH="master"
+REGEN_CONFIG='true'
+
+function print_help() {
+    echo "Usage: configure [ -b branch ] [ -u ]"
+    echo "  -b branch	Branch to checkout"
+    echo "  -u	Update only (do not regen config.mk)"
+    exit 0
+}
+
+while getopts ":b:h" opt; do
+    case $opt in
+        b) BRANCH=$OPTARG;;
+        h) print_help ;;
+        u) REGEN_CONFIG='false' ;;
+        ?) ;;
+    esac
+    shift $((OPTIND-1))
+done
+
+function get_repo() {
+    local_branch=$1
+    SRC=$2
+    DEST=$3
+
+    if [[ ! -d build/$DEST ]]; then
+        (cd build; git clone -b $local_branch git@git.joyent.com:${SRC}.git ${DEST})
+    else
+        (cd build/$DEST ; git checkout $local_branch ; git pull)
+    fi
+}
+
+function get_smartlogin() {
+    get_repo $1 smart-login smartlogin
+    if [[ -n $2 ]]; then
+        (cd build/smartlogin; git checkout $2)
+    fi
+}
+
+function get_ca() {
+    get_repo $1 cloud-analytics ca
+} 
+
+function get_agents() {
+    get_repo $1 agents agents
+}
+
+function get_agentsshar() {
+    get_repo $1 agents-installer agents-installer
+}
+
+function get_usbheadnode() {
+    get_repo $1 usb-headnode usb-headnode
+}
+
+function gen_config() {
+cat <<EOF> config.mk
+TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
+
+SMARTLOGIN_BRANCH=$BRANCH
+SMARTLOGIN_SHA=$(cd build/smartlogin ; git log --pretty=format:'%h' -1 )
+
+AGENTS_BRANCH=$BRANCH
+AGENTS_SHA=$(cd build/agents ; git log --pretty=format:'%h' -1 )
+
+CA_BRANCH=$BRANCH
+CA_SHA=$(cd build/ca ; git log --pretty=format:'%h' -1 )
+
+AGENTSSHAR_BRANCH=$BRANCH
+AGENTSSHAR_SHA=$(cd build/agents-installer ; git log --pretty=format:'%h' -1 )
+
+PLATFORM_BRANCH=master
+PLATFORM_SHA=badcafe
+BUILD_PLATFORM=0
+# Need some way to pass this in to usb-headnode builds. Or can flukily get
+# there via only have this platform build in the BITS_DIR.
+# When MG builds platform, I presume that PLATFORM_TIMESTAMP === TIMESTAMP.
+PLATFORM_TIMESTAMP=$(ls bits/platform-*.tgz | sort | tail -n1 | sed -e "s/platform.*-\([0-9TZ]*\)\.tgz/\1/" | xargs -I timestamp basename timestamp)
+
+USBHEADNODE_BRANCH=$BRANCH
+USBHEADNODE_SHA=$(cd build/usb-headnode ; git log --pretty=format:'%h' -1 )
+EOF
+
+}
+
+get_smartlogin $BRANCH
+get_ca $BRANCH
+get_agents $BRANCH
+get_agentsshar $BRANCH
+get_usbheadnode $BRANCH
+
+if [[ $REGEN_CONFIG != 'false' || ! -f config.mk ]]; then
+  gen_config
+fi
