@@ -219,6 +219,7 @@ Notes:
   And how can this fit in with existing usb-headnode/build.spec.
 - Get that ca gitignore thing to work. Do the pull requests for the
   appropriate gitignores for those repos.
+- don't like the asterisk in "+_ca_stamp=$(CA_BRANCH)-$(TIMESTAMP)-g$(CA_SHA)*" in Makefile
 - add platform
   https://hub.joyent.com/wiki/display/dev/Building+the+SmartOS+live+image+in+a+SmartOS+zone
   older: https://hub.joyent.com/wiki/display/dev/Building+the+147+live+image
