@@ -1,24 +1,49 @@
-#!/usr/bin/bash
+#!/bin/bash
+#
+# Configure the mountain gorilla (aka SDC) build.
+#
+
+if [ "$TRACE" != "" ]; then
+    shift;
+    export PS4='${BASH_SOURCE}:${LINENO}: '
+    set -o xtrace
+fi
+set -o errexit
+set -o pipefail
+
+
+
+#---- config, globals
 
 BRANCH="master"
 REGEN_CONFIG='true'
 
-function print_help() {
-    echo "Usage: configure [ -b branch ] [ -u ]"
-    echo "  -b branch	Branch to checkout"
-    echo "  -u	Update only (do not regen config.mk)"
-    exit 0
+
+
+#---- internal support functions
+
+function fatal {
+    echo "$(basename $0): error: $1"
+    exit 1
 }
 
-while getopts ":b:h" opt; do
-    case $opt in
-        b) BRANCH=$OPTARG;;
-        h) print_help ;;
-        u) REGEN_CONFIG='false' ;;
-        ?) ;;
-    esac
-    shift $((OPTIND-1))
-done
+function errexit {
+    [[ $1 -ne 0 ]] || exit 0
+    fatal "error exit status $1 at line $2"
+}
+
+function print_help() {
+    echo "Configure this SDC build. This involves cloning/pulling the "
+    echo "component source repositories."
+    echo ""
+    echo "Usage:"
+    echo "  ./configure [ -b branch ] [ -u ]"
+    echo ""
+    echo "Options:"
+    echo "  -b branch	 Branch to checkout. Defaults to 'master'."
+    echo "  -u	         Update only (do not regen config.mk)"
+    exit 0
+}
 
 function get_repo() {
     local_branch=$1
@@ -26,7 +51,7 @@ function get_repo() {
     DEST=$3
 
     if [[ ! -d build/$DEST ]]; then
-        (cd build; git clone -b $local_branch git@git.joyent.com:${SRC}.git ${DEST})
+        (mkdir -p build; git clone -b $local_branch git@git.joyent.com:${SRC}.git build/${DEST})
     else
         (cd build/$DEST ; git checkout $local_branch ; git pull)
     fi
@@ -56,7 +81,7 @@ function get_usbheadnode() {
 }
 
 function gen_config() {
-cat <<EOF> config.mk
+    cat <<EOF> config.mk
 TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
 
 SMARTLOGIN_BRANCH=$BRANCH
@@ -82,8 +107,23 @@ PLATFORM_TIMESTAMP=$(ls bits/platform-*.tgz | sort | tail -n1 | sed -e "s/platfo
 USBHEADNODE_BRANCH=$BRANCH
 USBHEADNODE_SHA=$(cd build/usb-headnode ; git log --pretty=format:'%h' -1 )
 EOF
-
 }
+
+
+
+#---- mainline
+
+trap 'errexit $? $LINENO' EXIT
+
+while getopts ":b:h" opt; do
+    case $opt in
+        b) BRANCH=$OPTARG;;
+        h) print_help ;;
+        u) REGEN_CONFIG='false' ;;
+        ?) ;;
+    esac
+    shift $((OPTIND-1))
+done
 
 get_smartlogin $BRANCH
 get_ca $BRANCH

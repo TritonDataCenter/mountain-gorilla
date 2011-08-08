@@ -1,5 +1,6 @@
 /tmp
 
+/config.mk
 /bits
 /build
 /in.bits
