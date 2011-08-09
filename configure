@@ -17,7 +17,7 @@ set -o pipefail
 
 BRANCH="master"
 REGEN_CONFIG='true'
-
+BUILD_PLATFORM='true'
 
 
 #---- internal support functions
@@ -37,11 +37,12 @@ function print_help() {
     echo "component source repositories."
     echo ""
     echo "Usage:"
-    echo "  ./configure [ -b branch ] [ -u ]"
+    echo "  ./configure [ -b branch ] [ -u ] [ -n ]"
     echo ""
     echo "Options:"
     echo "  -b branch	 Branch to checkout. Defaults to 'master'."
     echo "  -u	         Update only (do not regen config.mk)"
+    echo "  -n	         Do not build platform (only applicable on SmartOS)"
     exit 0
 }
 
@@ -80,6 +81,23 @@ function get_usbheadnode() {
     get_repo $1 usb-headnode usb-headnode
 }
 
+function get_illumoslive() {
+    if [[ `uname -s` == "SunOS" && $BUILD_PLATFORM == 'true' ]]; then
+        get_repo $1 illumos-live illumos-live
+        PLATFORM_BRANCH=$BRANCH
+        PLATFORM_SHA=$(cd build/illumos-live ; git log --pretty=format:'%h' -1 )
+        BUILD_PLATFORM=1
+    else
+        PLATFORM_TIMESTAMP=$(ls bits/platform-*.tgz | sort | tail -n1 | \
+            sed -e "s/platform.*-\([0-9TZ]*\)\.tgz/\1/" | \
+            xargs -I timestamp basename timestamp)
+        if [[ -z $PLATFORM_TIMESTAMP ]]; then
+            echo "Error: not building platform file, and no platform file found. Exiting"
+            exit 1
+        fi
+    fi
+}
+
 function gen_config() {
     cat <<EOF> config.mk
 TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
@@ -96,16 +114,17 @@ CA_SHA=$(cd build/ca ; git log --pretty=format:'%h' -1 )
 AGENTSSHAR_BRANCH=$BRANCH
 AGENTSSHAR_SHA=$(cd build/agents-installer ; git log --pretty=format:'%h' -1 )
 
-PLATFORM_BRANCH=master
-PLATFORM_SHA=badcafe
-BUILD_PLATFORM=0
+PLATFORM_BRANCH=$PLATFORM_BRANCH
+PLATFORM_SHA=$PLATFORM_SHA
+BUILD_PLATFORM=$BUILD_PLATFORM
+
 # Need some way to pass this in to usb-headnode builds. Or can flukily get
 # there via only have this platform build in the BITS_DIR.
 # When MG builds platform, I presume that PLATFORM_TIMESTAMP === TIMESTAMP.
-PLATFORM_TIMESTAMP=$(ls bits/platform-*.tgz | sort | tail -n1 | sed -e "s/platform.*-\([0-9TZ]*\)\.tgz/\1/" | xargs -I timestamp basename timestamp)
 
 USBHEADNODE_BRANCH=$BRANCH
 USBHEADNODE_SHA=$(cd build/usb-headnode ; git log --pretty=format:'%h' -1 )
+
 EOF
 }
 
@@ -115,11 +134,12 @@ EOF
 
 trap 'errexit $? $LINENO' EXIT
 
-while getopts ":b:h" opt; do
+while getopts ":b:hun" opt; do
     case $opt in
         b) BRANCH=$OPTARG;;
         h) print_help ;;
         u) REGEN_CONFIG='false' ;;
+        n) BUILD_PLATFORM='false' ;;
         ?) ;;
     esac
     shift $((OPTIND-1))
@@ -130,6 +150,7 @@ get_ca $BRANCH
 get_agents $BRANCH
 get_agentsshar $BRANCH
 get_usbheadnode $BRANCH
+get_illumoslive $BRANCH
 
 if [[ $REGEN_CONFIG != 'false' || ! -f config.mk ]]; then
   gen_config
