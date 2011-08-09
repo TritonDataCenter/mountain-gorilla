@@ -86,9 +86,10 @@ function get_illumoslive() {
         get_repo $1 illumos-live illumos-live
         PLATFORM_BRANCH=$BRANCH
         PLATFORM_SHA=$(cd build/illumos-live ; git log --pretty=format:'%h' -1 )
-        BUILD_PLATFORM=1
     else
-        PLATFORM_TIMESTAMP=$(ls bits/platform-*.tgz | sort | tail -n1 | \
+        BUILD_PLATFORM='false'
+        platforms=$(ls bits/platform-*.tgz || /usr/bin/true)
+        PLATFORM_TIMESTAMP=$(echo $platforms | sort | tail -n1 | \
             sed -e "s/platform.*-\([0-9TZ]*\)\.tgz/\1/" | \
             xargs -I timestamp basename timestamp)
         if [[ -z $PLATFORM_TIMESTAMP ]]; then
@@ -114,9 +115,6 @@ CA_SHA=$(cd build/ca ; git log --pretty=format:'%h' -1 )
 AGENTSSHAR_BRANCH=$BRANCH
 AGENTSSHAR_SHA=$(cd build/agents-installer ; git log --pretty=format:'%h' -1 )
 
-PLATFORM_BRANCH=$PLATFORM_BRANCH
-PLATFORM_SHA=$PLATFORM_SHA
-BUILD_PLATFORM=$BUILD_PLATFORM
 
 # Need some way to pass this in to usb-headnode builds. Or can flukily get
 # there via only have this platform build in the BITS_DIR.
@@ -125,7 +123,23 @@ BUILD_PLATFORM=$BUILD_PLATFORM
 USBHEADNODE_BRANCH=$BRANCH
 USBHEADNODE_SHA=$(cd build/usb-headnode ; git log --pretty=format:'%h' -1 )
 
+BUILD_PLATFORM=$BUILD_PLATFORM
+
 EOF
+
+if [[ `uname -s` == "SunOS" && $BUILD_PLATFORM == 'true' ]]; then
+
+cat <<EOF>> config.mk
+
+PLATFORM_BRANCH=$PLATFORM_BRANCH
+PLATFORM_SHA=$PLATFORM_SHA
+EOF
+
+else
+cat <<EOF>> config.mk
+PLATFORM_TIMESTAMP=$PLATFORM_TIMESTAMP
+EOF
+fi
 }
 
 
