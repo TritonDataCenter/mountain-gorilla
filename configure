@@ -20,6 +20,7 @@ REGEN_CONFIG='true'
 BUILD_PLATFORM='true'
 
 
+
 #---- internal support functions
 
 function fatal {
@@ -101,8 +102,9 @@ function get_illumoslive() {
     fi
 }
 
+
 function gen_config() {
-    cat <<EOF> config.mk
+    cat <<EOF >config.mk
 TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
 
 SMARTLOGIN_BRANCH=$BRANCH
@@ -117,28 +119,19 @@ CA_SHA=$(cd build/ca ; git log --pretty=format:'%h' -1 )
 AGENTSSHAR_BRANCH=$BRANCH
 AGENTSSHAR_SHA=$(cd build/agents-installer ; git log --pretty=format:'%h' -1 )
 
-
-# Need some way to pass this in to usb-headnode builds. Or can flukily get
-# there via only have this platform build in the BITS_DIR.
-# When MG builds platform, I presume that PLATFORM_TIMESTAMP === TIMESTAMP.
-
 USBHEADNODE_BRANCH=$BRANCH
 USBHEADNODE_SHA=$(cd build/usb-headnode ; git log --pretty=format:'%h' -1 )
 
 BUILD_PLATFORM=$BUILD_PLATFORM
-
 EOF
 
 if [[ `uname -s` == "SunOS" && $BUILD_PLATFORM == 'true' ]]; then
-
-cat <<EOF>> config.mk
-
+    cat <<EOF >>config.mk
 PLATFORM_BRANCH=$PLATFORM_BRANCH
 PLATFORM_SHA=$PLATFORM_SHA
 EOF
-
 else
-cat <<EOF>> config.mk
+    cat <<EOF >>config.mk
 PLATFORM_TIMESTAMP=$PLATFORM_TIMESTAMP
 EOF
 fi
