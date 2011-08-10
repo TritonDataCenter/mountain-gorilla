@@ -86,6 +86,7 @@ function get_illumoslive() {
         get_repo $1 illumos-live illumos-live
         PLATFORM_BRANCH=$BRANCH
         PLATFORM_SHA=$(cd build/illumos-live ; git log --pretty=format:'%h' -1 )
+        sed s/BRANCH/$BRANCH/ <illumos-configure.tmpl> build/illumos-live/configure.mg
     else
         BUILD_PLATFORM='false'
         platforms=$(ls bits/platform-*.tgz || /usr/bin/true)

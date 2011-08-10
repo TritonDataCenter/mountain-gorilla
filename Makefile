@@ -167,6 +167,15 @@ $(COAL_BIT): build/usb-headnode
 .PHONY: usb-headnode
 usb-headnode: coal
 
+#---- platform
+
+platform:
+ifeq ($(BUILD_PLATFORM),true)
+	@echo "Building platform"
+	(cd build/illumos-live && ./configure && gmake world && gmake live)
+	(rm $(BITS_DIR)/platform*.tgz ; cp `ls build/illumos-live/output/platform*.tgz | sort | tail -n1` $(BITS_DIR)/)
+endif
+
 #---- misc targets
 
 #TODO: also "build", but not yet
