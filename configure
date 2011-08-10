@@ -155,7 +155,7 @@ while getopts ":b:hun" opt; do
         h) print_help ;;
         u) REGEN_CONFIG='false' ;;
         n) BUILD_PLATFORM='false' ;;
-        ?) ;;
+        ?) fatal "unknown option: $opt" ;;
     esac
     shift $((OPTIND-1))
 done
