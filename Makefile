@@ -167,14 +167,16 @@ $(COAL_BIT): build/usb-headnode
 .PHONY: usb-headnode
 usb-headnode: coal
 
+
 #---- platform
 
 platform:
 ifeq ($(BUILD_PLATFORM),true)
-	@echo "Building platform"
+	@echo "# Build platform: illumos-live branch $(PLATFORM_BRANCH), sha $(PLATFORM_SHA)"
 	(cd build/illumos-live && ./configure && gmake world && gmake live)
 	(rm $(BITS_DIR)/platform*.tgz ; cp `ls build/illumos-live/output/platform*.tgz | sort | tail -n1` $(BITS_DIR)/)
 endif
+
 
 #---- misc targets
 

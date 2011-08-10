@@ -190,12 +190,14 @@ Notes:
 
 # TODOs
 
-- review my "mg" branch work and push those changes to master?
-- "getting the source" step is still a blocker. Implement 'make src_smartlogin'
-  step (as outlined in "A Dream" section) to the point that "make smartlogin"
-  then works. Then start doing the same for the other components (agents,
-  ca, agents-installer, usb-headnode, ...)
-- Here is my current list of stuff that isn't yet built from source, i.e.
+- PLATFORM_TIMESTAMP: *want* (if possible) to have this in config.mk and pass
+  it into the illumos-live build. Then MG's Makefile can be explicit about
+  expected build outputs and do meaningful deps.
+- "./configure -n" (i.e. using prebuilt platform): Should not presume a platform
+  is already in "bits/". First it should look at our platform releases area
+  on stuff.joyent.us. Then shuold download that to "cache/" dir, then should copy
+  the selected one to "bits/" dir. Then the normal build should use that.
+- Here is my (Trent's) current list of stuff that isn't yet built from source, i.e.
   stuff that I need to preload in my "bits" dir for a full build of release
   bits. We should chip away at these:
     in.bits/
@@ -219,13 +221,8 @@ Notes:
   And how can this fit in with existing usb-headnode/build.spec.
 - Get that ca gitignore thing to work. Do the pull requests for the
   appropriate gitignores for those repos.
-- don't like the asterisk in "+_ca_stamp=$(CA_BRANCH)-$(TIMESTAMP)-g$(CA_SHA)*" in Makefile
-- add platform
-  https://hub.joyent.com/wiki/display/dev/Building+the+SmartOS+live+image+in+a+SmartOS+zone
-  older: https://hub.joyent.com/wiki/display/dev/Building+the+147+live+image
+    - don't like the asterisk in "+_ca_stamp=$(CA_BRANCH)-$(TIMESTAMP)-g$(CA_SHA)*" in Makefile
 - make platform hvmplatform hvmagentsshar
-- simple git cloning... then "src package" handling for reproducibility
-  and faster cloning.
 - make hvmplatform: how can platform-HVM fit in? it needs to be built on separate OS
 - make hvmagentsshar: currently Josh is building this manually and dropping it in
   Can this be built on SmartOS? Or does it need to be built on Linux?
