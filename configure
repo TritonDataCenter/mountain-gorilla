@@ -40,9 +40,10 @@ function print_help() {
     echo "  ./configure [ -b branch ] [ -u ] [ -n ]"
     echo ""
     echo "Options:"
-    echo "  -b branch	 Branch to checkout. Defaults to 'master'."
-    echo "  -u	         Update only (do not regen config.mk)"
-    echo "  -n	         Do not build platform (only applicable on SmartOS)"
+    echo "  -h           Print this help and exit."
+    echo "  -b branch    Branch to checkout. Defaults to 'master'."
+    echo "  -u           Update only (do not regen config.mk)"
+    echo "  -n           Do not build platform (only applicable on SmartOS)"
     exit 0
 }
 
