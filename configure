@@ -53,6 +53,7 @@ function get_repo() {
     SRC=$2
     DEST=$3
 
+    echo "# build/$DEST"
     if [[ ! -d build/$DEST ]]; then
         (mkdir -p build; git clone -b $local_branch git@git.joyent.com:${SRC}.git build/${DEST})
     else
@@ -135,6 +136,7 @@ else
 PLATFORM_TIMESTAMP=$PLATFORM_TIMESTAMP
 EOF
 fi
+    echo "'config.mk' created."
 }
 
 
