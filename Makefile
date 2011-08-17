@@ -35,7 +35,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin ca agents agentsshar usb-headnode
+all: smartlogin ca agents agentsshar platform usb-headnode
 
 
 #---- smartlogin
@@ -145,18 +145,18 @@ $(AGENTSSHAR_BITS): build/agents-installer
 #   Jerry/Josh and others about need for this.
 # - pkgsrc isolation
 
-COAL_BIT=$(BITS_DIR)/release/coal-$(USBHEADNODE_BRANCH)-$(PLATFORM_TIMESTAMP)-2gb.tgz
+COAL_BIT=$(BITS_DIR)/release/coal-$(USBHEADNODE_BRANCH)-$(TIMESTAMP)-4gb.tgz
 
 .PHONY: coal
 coal: $(COAL_BIT)
 
-$(COAL_BIT): build/usb-headnode
+$(COAL_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 	@echo "# Build coal: usb-headnode branch $(USBHEADNODE_BRANCH), sha $(USBHEADNODE_SHA)"
 	ps -ef | grep 'python -m Simple[H]TTPServer' | awk '{print $$2}' | xargs kill 2>/dev/null || true
-	(cd $(BITS_DIR); python -m SimpleHTTPServer >build/coal-static-server.log)&
+	(cd $(BITS_DIR); python -m SimpleHTTPServer)&
 
 	mkdir -p $(BITS_DIR)/release
-	(cd build/usb-headnode && MASTER_PLATFORM_URL=http://localhost:8000 ./bin/build-image -c coal)
+	(cd build/usb-headnode && MASTER_PLATFORM_URL=http://localhost:8000 PLATFORM_FILE=$(BITS_DIR)/platform-$(TIMESTAMP).tgz ./bin/build-image -c coal)
 
 	@ps -ef | grep 'python -m Simple[H]TTPServer' | awk '{print $$2}' | xargs kill 2>/dev/null || true
 	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/release
@@ -167,16 +167,13 @@ $(COAL_BIT): build/usb-headnode
 .PHONY: usb-headnode
 usb-headnode: coal
 
-
 #---- platform
-
-platform:
+$(BITS_DIR)/platform-$(TIMESTAMP).tgz:
 ifeq ($(BUILD_PLATFORM),true)
-	@echo "# Build platform: illumos-live branch $(PLATFORM_BRANCH), sha $(PLATFORM_SHA)"
-	(cd build/illumos-live && ./configure && gmake world && gmake live)
-	(rm $(BITS_DIR)/platform*.tgz ; cp `ls build/illumos-live/output/platform*.tgz | sort | tail -n1` $(BITS_DIR)/)
+	@echo "Building platform"
+	(cd build/illumos-live && ./configure && BUILDSTAMP=$(TIMESTAMP) gmake world && BUILDSTAMP=$(TIMESTAMP) gmake live)
+	(cp build/illumos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/)
 endif
-
 
 #---- misc targets
 
