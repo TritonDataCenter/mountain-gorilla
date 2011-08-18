@@ -168,6 +168,9 @@ $(COAL_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 usb-headnode: coal
 
 #---- platform
+.PHONY: platform
+platform: $(BITS_DIR)/platform-$(TIMESTAMP).tgz
+
 $(BITS_DIR)/platform-$(TIMESTAMP).tgz:
 ifeq ($(BUILD_PLATFORM),true)
 	@echo "Building platform"
