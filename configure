@@ -11,15 +11,13 @@ fi
 set -o errexit
 set -o pipefail
 
-
-
 #---- config, globals
 
 BRANCH="master"
 REGEN_CONFIG='true'
 BUILD_PLATFORM='true'
 
-
+ZONES="mcp_api_admin customers_api booter mcp_api_gateway public-web-client public_api cloud-api"
 
 #---- internal support functions
 
@@ -103,6 +101,34 @@ function get_illumoslive() {
     fi
 }
 
+function get_zones() {
+
+  # There's got to be a better way to enumerate this stuff
+  for zone in $ZONES; do
+    get_repo $1 $zone $zone
+  done
+
+  # cloudapi is special, it uses 3 repos
+  ( cd build/cloud-api &&\
+    mkdir -p ssl  && \
+    mkdir -p node_modules)
+  get_repo $1 node-sdc-clients cloud-api/node_modules/sdc-clients
+  get_repo $1 node-http-signing cloud-api/node_modules/http-signature
+
+cat <<EOF >> build/usb-headnode/build.spec.local
+  {
+    "agents-shar": "$BRANCH"
+  , "adminui-checkout": "origin/master"
+  , "ca-tarball": "^ca-pkg-$BRANCH-.*.tar.bz2$"
+  , "capi-checkout": "origin/$BRANCH"
+  , "dhcpd-checkout": "origin/$BRANCH"
+  , "mapi-checkout": "origin/$BRANCH"
+  , "portal-checkout": "origin/$BRANCH"
+  , "cloudapi-checkout": "origin/$BRANCH"
+  , "rabbitmq-checkout": "origin/$BRANCH"
+}
+EOF
+}
 
 function gen_config() {
     cat <<EOF >config.mk
@@ -130,7 +156,17 @@ if [[ `uname -s` == "SunOS" && $BUILD_PLATFORM == 'true' ]]; then
     cat <<EOF >>config.mk
 PLATFORM_BRANCH=$PLATFORM_BRANCH
 PLATFORM_SHA=$PLATFORM_SHA
+
 EOF
+
+for zone in $ZONES; do
+    capzone=$(echo $zone | tr [:lower:] [:upper:] | tr - _)
+    cat <<EOF >>config.mk
+${capzone}_BRANCH=$BRANCH
+${capzone}_SHA=$(cd build/$zone ; git log --pretty=format:'%h' -1 )
+EOF
+
+done
 else
     cat <<EOF >>config.mk
 PLATFORM_TIMESTAMP=$PLATFORM_TIMESTAMP
@@ -162,6 +198,7 @@ get_agents $BRANCH
 get_agentsshar $BRANCH
 get_usbheadnode $BRANCH
 get_illumoslive $BRANCH
+get_zones $BRANCH
 
 if [[ $REGEN_CONFIG != 'false' || ! -f config.mk ]]; then
   gen_config
