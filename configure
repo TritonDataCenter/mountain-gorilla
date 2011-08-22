@@ -115,7 +115,7 @@ function get_zones() {
   get_repo $1 node-sdc-clients cloud-api/node_modules/sdc-clients
   get_repo $1 node-http-signing cloud-api/node_modules/http-signature
 
-cat <<EOF >> build/usb-headnode/build.spec.local
+cat <<EOF > build/usb-headnode/build.spec.local
   {
     "agents-shar": "$BRANCH"
   , "adminui-checkout": "origin/master"
