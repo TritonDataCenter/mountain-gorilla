@@ -1,0 +1,31 @@
+#!/bin/bash
+
+PREFIX=$1
+
+REPOS=(cloud-api/master smart-login/master customers_api/master node-sdc-clients/master)
+
+DATE=`date +%Y%m%d`
+WORKSPACE=/var/tmp/${USER}
+mkdir -p ${WORKSPACE}
+cd ${WORKSPACE}
+
+for r in "${REPOS[@]}"
+do
+    arr=(${r//\// })
+    echo ${arr[0]} ${arr[1]}
+    git clone git@git.joyent.com:${arr[0]}.git
+    cd ${arr[0]}
+    if [[ "${arr[1]}" -ne "master" ]]
+    then
+        git checkout ${arr[1]}
+    fi
+
+    git pull
+    git checkout -b ${PREFIX}-${DATE}
+    git push origin ${PREFIX}-${DATE}
+    git branch --set-upstream ${PREFIX}-${DATE} origin/${PREFIX}-${DATE}
+
+    cd ../
+done
+
+rm -fr ${WORKSPACE}

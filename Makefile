@@ -35,7 +35,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin ca agents agentsshar platform usb-headnode
+all: smartlogin ca agents agentsshar platform usb-headnode usb upgrade
 
 
 #---- smartlogin
@@ -52,7 +52,6 @@ $(SMARTLOGIN_BITS): build/smartlogin
 	mkdir -p $(BITS_DIR)
 	(cd build/smartlogin && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake clean all publish)
 	@echo "# Created smartlogin bits:"
-	@ls -1 $(SMARTLOGIN_BITS)
 	@echo ""
 
 
@@ -61,7 +60,6 @@ $(SMARTLOGIN_BITS): build/smartlogin
 
 _a_stamp=$(AGENTS_BRANCH)-$(TIMESTAMP)-g$(AGENTS_SHA)
 AGENTS_BITS=$(BITS_DIR)/heartbeater/heartbeater-$(_a_stamp).tgz \
-	$(BITS_DIR)/atropos/atropos-$(_a_stamp).tgz \
 	$(BITS_DIR)/metadata/metadata-$(_a_stamp).tgz \
 	$(BITS_DIR)/dataset_manager/dataset_manager-$(_a_stamp).tgz \
 	$(BITS_DIR)/zonetracker/zonetracker-$(_a_stamp).tgz \
@@ -127,7 +125,6 @@ $(AGENTSSHAR_BITS): build/agents-installer
 	mkdir -p $(BITS_DIR)/ur-scripts
 	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/ur-scripts -d $(BITS_DIR) -b $(AGENTSSHAR_BRANCH))
 	@echo "# Created agentsshar bits:"
-	@ls -1 $(AGENTSSHAR_BITS)
 	@echo ""
 
 
@@ -162,6 +159,42 @@ $(COAL_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/release
 	@echo "# Created coal bits:"
 	@ls -1 $(COAL_BIT)
+	@echo ""
+
+USB_BIT=$(BITS_DIR)/release/usb-$(USBHEADNODE_BRANCH)-$(TIMESTAMP).tgz
+
+.PHONY: usb
+usb: $(USB_BIT)
+
+$(USB_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
+	@echo "# Build usb: usb-headnode branch $(USBHEADNODE_BRANCH), sha $(USBHEADNODE_SHA)"
+	ps -ef | grep 'python -m Simple[H]TTPServer' | awk '{print $$2}' | xargs kill 2>/dev/null || true
+	(cd $(BITS_DIR); python -m SimpleHTTPServer)&
+
+	mkdir -p $(BITS_DIR)/release
+	(cd build/usb-headnode && MASTER_PLATFORM_URL=http://localhost:8000 PLATFORM_FILE=$(BITS_DIR)/platform-$(TIMESTAMP).tgz ZONE_DIR=$(TOP)/build ./bin/build-image -c usb)
+	@ps -ef | grep 'python -m Simple[H]TTPServer' | awk '{print $$2}' | xargs kill 2>/dev/null || true
+	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/release
+	@echo "# Created usb bits:"
+	@ls -1 $(USB_BIT)
+	@echo ""
+
+UPGRADE_BIT=$(BITS_DIR)/release/upgrade-$(USBHEADNODE_BRANCH)-$(TIMESTAMP).tgz
+
+.PHONY: upgrade
+upgrade: $(UPGRADE_BIT)
+
+$(UPGRADE_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
+	@echo "# Build upgrade: usb-headnode branch $(USBHEADNODE_BRANCH), sha $(USBHEADNODE_SHA)"
+	ps -ef | grep 'python -m Simple[H]TTPServer' | awk '{print $$2}' | xargs kill 2>/dev/null || true
+	(cd $(BITS_DIR); python -m SimpleHTTPServer)&
+
+	mkdir -p $(BITS_DIR)/release
+	(cd build/usb-headnode && MASTER_PLATFORM_URL=http://localhost:8000 PLATFORM_FILE=$(BITS_DIR)/platform-$(TIMESTAMP).tgz ZONE_DIR=$(TOP)/build ./bin/build-image -c upgrade)
+	@ps -ef | grep 'python -m Simple[H]TTPServer' | awk '{print $$2}' | xargs kill 2>/dev/null || true
+	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/release
+	@echo "# Created upgrade bits:"
+	@ls -1 $(UPGRADE_BIT)
 	@echo ""
 
 .PHONY: usb-headnode

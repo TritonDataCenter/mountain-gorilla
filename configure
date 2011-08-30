@@ -57,6 +57,7 @@ function get_repo() {
     else
         (cd build/$DEST ; git checkout $local_branch ; git pull)
     fi
+    (cd build/$DEST; git submodule update --init --recursive )
 }
 
 function get_smartlogin() {
@@ -113,7 +114,6 @@ function get_zones() {
     mkdir -p ssl  && \
     mkdir -p node_modules)
   get_repo $1 node-sdc-clients cloud-api/node_modules/sdc-clients
-  get_repo $1 node-http-signing cloud-api/node_modules/http-signature
 
 cat <<EOF > build/usb-headnode/build.spec.local
   {
