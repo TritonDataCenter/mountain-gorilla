@@ -1,0 +1,33 @@
+#!/bin/bash
+
+RELEASE=$1
+CREDS=$2
+
+
+REPOS="smart-login \
+    agents \
+    cloud-analytics \
+    agents-installer \
+    operator-toolkit \
+    illumos-live \
+    ur-agent \
+    usb-headnode \
+    mcp_api_gateway \
+    mcp_api_admin \
+    public-web-client \
+    cloud-api \
+    public_api \
+    booter \
+    kvm \
+    kvm-cmd \
+    customers_api \
+    node-sdc-clients"
+
+for repo in $REPOS; do
+  curl https://mo.joyent.com/api/repos/$repo/refs -u $CREDS 2> /dev/null | grep $RELEASE 2>&1 >/dev/null
+  if [[ $? == 0 ]]; then
+    echo "$repo: OK"
+  else
+    echo "$repo: FAIL"
+  fi
+done

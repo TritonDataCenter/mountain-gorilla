@@ -2,7 +2,7 @@
 
 PREFIX=$1
 
-REPOS=(cloud-api/master smart-login/master customers_api/master node-sdc-clients/master)
+REPOS=(smart-login/master agents/master cloud-analytics/master agents-installer/master operator-toolkit/master illumos-live/master ur-agent/master usb-headnode/master mcp_api_gateway/master mcp_api_admin/master public-web-client/master cloud-api/master public_api/master booter/master kvm/master kvm-cmd/master customers_api/master node-sdc-clients/master) 
 
 DATE=`date +%Y%m%d`
 WORKSPACE=/var/tmp/${USER}
