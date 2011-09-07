@@ -39,16 +39,9 @@ built bits: agents, platform, ca, etc.
 
 # Current Status
 
-The above "usage" doesn't work yet.
+Basically working. Still not quite the replacement for Bamboo for SDC release builds.
+See [RELENG](https://devhub.joyent.com/jira/browse/RELENG) for current issues.
 
-- The "configure" isn't written yet (currently using a hand-written and
-  commited 'config.mk' file).
-- Getting sources into the "build/FOO" build areas isn't yet implemented. For
-  example to build smartlogin (using "make smartlogin"), you first have to
-  manually get a "smart-login.git" clone to "build/smartlogin".
-- Not all pieces are being built yet. Missing parts are: platform, atropos,
-  hvmagents, hvmplatform
-- Build system requirements aren't fully spec'd yet.
 
 Prebuilt pieces:
 
