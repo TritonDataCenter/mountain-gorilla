@@ -1,4 +1,8 @@
 
+#
+# Mountain Gorilla Makefile. See "README.md".
+#
+
 #---- Config
 
 include config.mk
@@ -59,7 +63,8 @@ $(SMARTLOGIN_BITS): build/smartlogin
 #---- agents
 
 _a_stamp=$(AGENTS_BRANCH)-$(TIMESTAMP)-g$(AGENTS_SHA)
-AGENTS_BITS=$(BITS_DIR)/heartbeater/heartbeater-$(_a_stamp).tgz \
+AGENTS_BITS=$(BITS_DIR)/agents_core/agents_core-$(_a_stamp).tgz \
+	$(BITS_DIR)/heartbeater/heartbeater-$(_a_stamp).tgz \
 	$(BITS_DIR)/metadata/metadata-$(_a_stamp).tgz \
 	$(BITS_DIR)/dataset_manager/dataset_manager-$(_a_stamp).tgz \
 	$(BITS_DIR)/zonetracker/zonetracker-$(_a_stamp).tgz \
@@ -116,15 +121,17 @@ $(CA_BITS): build/ca
 _as_stamp=$(AGENTSSHAR_BRANCH)-$(TIMESTAMP)-g$(AGENTSSHAR_SHA)
 AGENTSSHAR_BITS=$(BITS_DIR)/ur-scripts/agents-$(_as_stamp).sh \
 	$(BITS_DIR)/ur-scripts/agents-$(_as_stamp).md5sum
+AGENTSSHAR_BITS_0=$(shell echo $(AGENTSSHAR_BITS) | awk '{print $$1}')
 
 .PHONY: agentsshar
-agentsshar: $(AGENTSSHAR_BITS)
+agentsshar: $(AGENTSSHAR_BITS_0)
 
-$(AGENTSSHAR_BITS): build/agents-installer
+$(AGENTSSHAR_BITS): build/agents-installer/Makefile
 	@echo "# Build agentsshar: branch $(AGENTSSHAR_BRANCH), sha $(AGENTSSHAR_SHA)"
 	mkdir -p $(BITS_DIR)/ur-scripts
-	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./build_scripts -o $(BITS_DIR)/ur-scripts -l $(BITS_DIR))
+	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/ur-scripts -d $(BITS_DIR) -b $(AGENTSSHAR_BRANCH))
 	@echo "# Created agentsshar bits:"
+	@ls -1 $(AGENTSSHAR_BITS)
 	@echo ""
 
 
