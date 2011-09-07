@@ -123,7 +123,7 @@ agentsshar: $(AGENTSSHAR_BITS)
 $(AGENTSSHAR_BITS): build/agents-installer
 	@echo "# Build agentsshar: branch $(AGENTSSHAR_BRANCH), sha $(AGENTSSHAR_SHA)"
 	mkdir -p $(BITS_DIR)/ur-scripts
-	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/ur-scripts -d $(BITS_DIR) -b $(AGENTSSHAR_BRANCH))
+	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./build_scripts -o $(BITS_DIR)/ur-scripts -l $(BITS_DIR))
 	@echo "# Created agentsshar bits:"
 	@echo ""
 
