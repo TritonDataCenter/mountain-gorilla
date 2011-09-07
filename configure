@@ -17,7 +17,7 @@ BRANCH="master"
 REGEN_CONFIG='true'
 BUILD_PLATFORM='true'
 
-ZONES="mcp_api_admin customers_api booter mcp_api_gateway public-web-client public_api cloud-api"
+ZONES="mcp_api_admin customers_api booter mcp_api_gateway public-web-client public_api cloud-api billing_api"
 
 #---- internal support functions
 
