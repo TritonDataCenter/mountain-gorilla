@@ -103,11 +103,11 @@ where:
   release.
 
 - GITDESCRIBE gives the git sha for the repo and whether the repo was dirty
-  (had local changes) when it was built, e.g. "gfa1afe1-dirty", "gbadf0d".
+  (had local changes) when it was built, e.g. "gfa1afe1-dirty", "gbadf00d".
   Use:
   
-        GITDESCRIBE=$(shell git describe --all --long --dirty | cut -d- -f3,4)
-        GITDESCRIBE=$(git describe --all --long --dirty | cut -d- -f3,4)
+        GITDESCRIBE=g$(shell git describe --all --long --dirty | awk -F'-g' '{print $$NF}')
+        GITDESCRIBE=g$(git describe --all --long --dirty | awk -F'-g' '{print $NF}')
 
   Notes: "--all" allows this to work on a repo with no tags. "--long"
   ensures we always get the "sha" part even if on a tag. We strip off the
@@ -152,9 +152,9 @@ their Makefile to handle package naming:
     NAME=smartlogin
     BRANCH=$(shell git symbolic-ref HEAD | awk -F/ '{print $$3}')
     ifeq ($(TIMESTAMP),)
-        TIMESTAMP=$(shell TZ=UTC date "+%Y%m%dT%H%M%SZ")
+        TIMESTAMP=$(shell date -u "+%Y%m%dT%H%M%SZ")
     endif
-    GITDESCRIBE=$(shell git describe --all --long --dirty | cut -d- -f3,4)
+    GITDESCRIBE=g$(shell git describe --all --long --dirty | awk -F'-g' '{print $$NF}')
     ...
     TARBALL=$(NAME)-$(BRANCH)-$(TIMESTAMP)-$(GITDESCRIBE).tgz
 
@@ -162,9 +162,9 @@ or like this in a Bash script:
 
     BRANCH=$(git symbolic-ref HEAD | awk -F/ '{print $3}')
     if [[ -z "$TIMESTAMP" ]]; then
-        TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
+        TIMESTAMP=$(date -u "+%Y%m%dT%H%M%SZ")
     fi
-    GITDESCRIBE=$(git describe --all --long --dirty | cut -d- -f3,4)
+    GITDESCRIBE=g$(git describe --all --long --dirty | awk -F'-g' '{print $NF}')
     ...
     TARBALL=${NAME}-${BRANCH}-${TIMESTAMP}-${GITDESCRIBE}.tgz
 
