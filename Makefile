@@ -146,7 +146,12 @@ $(AGENTSSHAR_BITS): build/agents-installer/Makefile
 #   curr timestamp? Ask Jerry/Josh and others about need for this.
 # - pkgsrc isolation
 
-COAL_BIT=$(BITS_DIR)/release/coal-$(USBHEADNODE_BRANCH)-$(TIMESTAMP)-4gb.tgz
+USBHEADNODE_BUILDSTAMP=$(USBHEADNODE_BRANCH)-$(TIMESTAMP)
+ifeq ($(USBHEADNODE_BRANCH),master)
+	USBHEADNODE_BUILDSTAMP=$(TIMESTAMP)
+endif
+
+COAL_BIT=$(BITS_DIR)/release/coal-$(USBHEADNODE_BUILDSTAMP)-4gb.tgz
 
 .PHONY: coal
 coal: $(COAL_BIT)
@@ -165,7 +170,7 @@ $(COAL_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 	@ls -1 $(COAL_BIT)
 	@echo ""
 
-USB_BIT=$(BITS_DIR)/release/usb-$(USBHEADNODE_BRANCH)-$(TIMESTAMP).tgz
+USB_BIT=$(BITS_DIR)/release/usb-$(USBHEADNODE_BUILDSTAMP).tgz
 
 .PHONY: usb
 usb: $(USB_BIT)
@@ -183,7 +188,7 @@ $(USB_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 	@ls -1 $(USB_BIT)
 	@echo ""
 
-UPGRADE_BIT=$(BITS_DIR)/release/upgrade-$(USBHEADNODE_BRANCH)-$(TIMESTAMP).tgz
+UPGRADE_BIT=$(BITS_DIR)/release/upgrade-$(USBHEADNODE_BUILDSTAMP).tgz
 
 .PHONY: upgrade
 upgrade: $(UPGRADE_BIT)
