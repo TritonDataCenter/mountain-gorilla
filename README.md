@@ -106,8 +106,12 @@ where:
   (had local changes) when it was built, e.g. "gfa1afe1-dirty", "gbadf00d".
   Use:
   
-        GITDESCRIBE=g$(shell git describe --all --long --dirty | awk -F'-g' '{print $$NF}')
-        GITDESCRIBE=g$(git describe --all --long --dirty | awk -F'-g' '{print $NF}')
+        # Need GNU awk for multi-char arg to "-F".
+        AWK=$((which gawk 2>/dev/null | grep -v "^no ") || which awk)
+        # In Bash:
+        GITDESCRIBE=g$(git describe --all --long --dirty | $AWK -F'-g' '{print $NF}')
+        # In a Makefile:
+        GITDESCRIBE=g$(shell git describe --all --long --dirty | $AWK -F'-g' '{print $$NF}')
 
   Notes: "--all" allows this to work on a repo with no tags. "--long"
   ensures we always get the "sha" part even if on a tag. We strip off the
@@ -150,21 +154,25 @@ It is suggested that the SDC repos use something like this at the top of
 their Makefile to handle package naming:
 
     NAME=smartlogin
-    BRANCH=$(shell git symbolic-ref HEAD | awk -F/ '{print $$3}')
+    # Need GNU awk for multi-char arg to "-F".
+    AWK=$(shell (which gawk 2>/dev/null | grep -v "^no ") || which awk)
+    BRANCH=$(shell git symbolic-ref HEAD | $AWK -F/ '{print $$3}')
     ifeq ($(TIMESTAMP),)
         TIMESTAMP=$(shell date -u "+%Y%m%dT%H%M%SZ")
     endif
-    GITDESCRIBE=g$(shell git describe --all --long --dirty | awk -F'-g' '{print $$NF}')
+    GITDESCRIBE=g$(shell git describe --all --long --dirty | $AWK -F'-g' '{print $$NF}')
     ...
     TARBALL=$(NAME)-$(BRANCH)-$(TIMESTAMP)-$(GITDESCRIBE).tgz
 
 or like this in a Bash script:
 
-    BRANCH=$(git symbolic-ref HEAD | awk -F/ '{print $3}')
+    # Need GNU awk for multi-char arg to "-F".
+    AWK=$((which gawk 2>/dev/null | grep -v "^no ") || which awk)
+    BRANCH=$(git symbolic-ref HEAD | $AWK -F/ '{print $3}')
     if [[ -z "$TIMESTAMP" ]]; then
         TIMESTAMP=$(date -u "+%Y%m%dT%H%M%SZ")
     fi
-    GITDESCRIBE=g$(git describe --all --long --dirty | awk -F'-g' '{print $NF}')
+    GITDESCRIBE=g$(git describe --all --long --dirty | $AWK -F'-g' '{print $NF}')
     ...
     TARBALL=${NAME}-${BRANCH}-${TIMESTAMP}-${GITDESCRIBE}.tgz
 

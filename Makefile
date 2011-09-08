@@ -39,7 +39,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin ca agents agentsshar platform usb-headnode usb upgrade
+all: smartlogin ca agents agentsshar platform coal usb upgrade boot
 
 
 #---- smartlogin
@@ -137,24 +137,22 @@ $(AGENTSSHAR_BITS): build/agents-installer/Makefile
 
 #---- usb-headnode
 # TODO:
-# - add GITDESCRIBE
-# - "assets/" bits area for atropos is dumb (use atropos). more dumb for ca-pkg
-#   (use cloud_analytics)
+# - "assets/" bits area for ca-pkg package is dumb: use cloud_analytics
 # - solution for datasets
 # - source packages (quick hack with "MAPI_DIR" et al?)
 # - punt on having coal timestamp be the platform timestamp and use given or
 #   curr timestamp? Ask Jerry/Josh and others about need for this.
 # - pkgsrc isolation
 
-USBHEADNODE_BUILDSTAMP=$(USBHEADNODE_BRANCH)-$(TIMESTAMP)
-ifeq ($(USBHEADNODE_BRANCH),master)
-	USBHEADNODE_BUILDSTAMP=$(TIMESTAMP)
-endif
-
-COAL_BIT=$(BITS_DIR)/release/coal-$(USBHEADNODE_BUILDSTAMP)-4gb.tgz
+_usbheadnode_stamp=$(USBHEADNODE_BRANCH)-$(TIMESTAMP)-g$(USBHEADNODE_SHA)
+COAL_BIT=$(BITS_DIR)/release/coal-$(_usbheadnode_stamp)-4gb.tgz
 
 .PHONY: coal
 coal: $(COAL_BIT)
+
+# Alias for "coal"
+.PHONY: usb-headnode
+usb-headnode: coal
 
 $(COAL_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 	@echo "# Build coal: usb-headnode branch $(USBHEADNODE_BRANCH), sha $(USBHEADNODE_SHA)"
@@ -162,7 +160,7 @@ $(COAL_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 	(cd $(BITS_DIR); python -m SimpleHTTPServer)&
 
 	mkdir -p $(BITS_DIR)/release
-	(cd build/usb-headnode && MASTER_PLATFORM_URL=http://localhost:8000 PLATFORM_FILE=$(BITS_DIR)/platform-$(TIMESTAMP).tgz ZONE_DIR=$(TOP)/build ./bin/build-image -c coal)
+	(cd build/usb-headnode && MASTER_PLATFORM_URL=http://localhost:8000 TIMESTAMP=$(TIMESTAMP) PLATFORM_FILE=$(BITS_DIR)/platform-$(TIMESTAMP).tgz ZONE_DIR=$(TOP)/build ./bin/build-image -c coal)
 
 	@ps -ef | grep 'python -m Simple[H]TTPServer' | awk '{print $$2}' | xargs kill 2>/dev/null || true
 	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/release
@@ -170,7 +168,7 @@ $(COAL_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 	@ls -1 $(COAL_BIT)
 	@echo ""
 
-USB_BIT=$(BITS_DIR)/release/usb-$(USBHEADNODE_BUILDSTAMP).tgz
+USB_BIT=$(BITS_DIR)/release/usb-$(_usbheadnode_stamp).tgz
 
 .PHONY: usb
 usb: $(USB_BIT)
@@ -181,14 +179,14 @@ $(USB_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 	(cd $(BITS_DIR); python -m SimpleHTTPServer)&
 
 	mkdir -p $(BITS_DIR)/release
-	(cd build/usb-headnode && MASTER_PLATFORM_URL=http://localhost:8000 PLATFORM_FILE=$(BITS_DIR)/platform-$(TIMESTAMP).tgz ZONE_DIR=$(TOP)/build ./bin/build-image -c usb)
+	(cd build/usb-headnode && MASTER_PLATFORM_URL=http://localhost:8000 TIMESTAMP=$(TIMESTAMP) PLATFORM_FILE=$(BITS_DIR)/platform-$(TIMESTAMP).tgz ZONE_DIR=$(TOP)/build ./bin/build-image -c usb)
 	@ps -ef | grep 'python -m Simple[H]TTPServer' | awk '{print $$2}' | xargs kill 2>/dev/null || true
 	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/release
 	@echo "# Created usb bits:"
 	@ls -1 $(USB_BIT)
 	@echo ""
 
-UPGRADE_BIT=$(BITS_DIR)/release/upgrade-$(USBHEADNODE_BUILDSTAMP).tgz
+UPGRADE_BIT=$(BITS_DIR)/release/upgrade-$(_usbheadnode_stamp).tgz
 
 .PHONY: upgrade
 upgrade: $(UPGRADE_BIT)
@@ -199,15 +197,31 @@ $(UPGRADE_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 	(cd $(BITS_DIR); python -m SimpleHTTPServer)&
 
 	mkdir -p $(BITS_DIR)/release
-	(cd build/usb-headnode && MASTER_PLATFORM_URL=http://localhost:8000 PLATFORM_FILE=$(BITS_DIR)/platform-$(TIMESTAMP).tgz ZONE_DIR=$(TOP)/build ./bin/build-image upgrade)
+	(cd build/usb-headnode && MASTER_PLATFORM_URL=http://localhost:8000 TIMESTAMP=$(TIMESTAMP) PLATFORM_FILE=$(BITS_DIR)/platform-$(TIMESTAMP).tgz ZONE_DIR=$(TOP)/build ./bin/build-image upgrade)
 	@ps -ef | grep 'python -m Simple[H]TTPServer' | awk '{print $$2}' | xargs kill 2>/dev/null || true
-	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/release
+	mv build/usb-headnode/$(shell basename $(UPGRADE_BIT)) $(BITS_DIR)/release
 	@echo "# Created upgrade bits:"
 	@ls -1 $(UPGRADE_BIT)
 	@echo ""
 
-.PHONY: usb-headnode
-usb-headnode: coal
+BOOT_BIT=$(BITS_DIR)/release/boot-$(_usbheadnode_stamp).tgz
+
+.PHONY: boot
+boot: $(BOOT_BIT)
+
+$(BOOT_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
+	@echo "# Build boot: usb-headnode branch $(USBHEADNODE_BRANCH), sha $(USBHEADNODE_SHA)"
+	ps -ef | grep 'python -m Simple[H]TTPServer' | awk '{print $$2}' | xargs kill 2>/dev/null || true
+	(cd $(BITS_DIR); python -m SimpleHTTPServer)&
+
+	mkdir -p $(BITS_DIR)/release
+	(cd build/usb-headnode && MASTER_PLATFORM_URL=http://localhost:8000 TIMESTAMP=$(TIMESTAMP) PLATFORM_FILE=$(BITS_DIR)/platform-$(TIMESTAMP).tgz ZONE_DIR=$(TOP)/build ./bin/build-image tar)
+	@ps -ef | grep 'python -m Simple[H]TTPServer' | awk '{print $$2}' | xargs kill 2>/dev/null || true
+	mv build/usb-headnode/$(shell basename $(BOOT_BIT)) $(BITS_DIR)/release
+	@echo "# Created boot bits:"
+	@ls -1 $(BOOT_BIT)
+	@echo ""
+
 
 
 
