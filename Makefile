@@ -138,15 +138,12 @@ $(AGENTSSHAR_BITS): build/agents-installer/Makefile
 #---- usb-headnode
 # TODO:
 # - add GITDESCRIBE
-# - usb, boot, upgrade
 # - "assets/" bits area for atropos is dumb (use atropos). more dumb for ca-pkg
 #   (use cloud_analytics)
-#
-# - configure
 # - solution for datasets
 # - source packages (quick hack with "MAPI_DIR" et al?)
-# - punt on having coal timestamp be the platform timestamp and use given or curr timestamp? Ask
-#   Jerry/Josh and others about need for this.
+# - punt on having coal timestamp be the platform timestamp and use given or
+#   curr timestamp? Ask Jerry/Josh and others about need for this.
 # - pkgsrc isolation
 
 COAL_BIT=$(BITS_DIR)/release/coal-$(USBHEADNODE_BRANCH)-$(TIMESTAMP)-4gb.tgz
@@ -206,6 +203,8 @@ $(UPGRADE_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 
 .PHONY: usb-headnode
 usb-headnode: coal
+
+
 
 #---- platform
 .PHONY: platform
