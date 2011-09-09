@@ -56,6 +56,7 @@ $(SMARTLOGIN_BITS): build/smartlogin
 	mkdir -p $(BITS_DIR)
 	(cd build/smartlogin && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake clean all publish)
 	@echo "# Created smartlogin bits:"
+	@ls -1 $(SMARTLOGIN_BITS)
 	@echo ""
 
 
