@@ -99,7 +99,7 @@ $(AGENTS_BITS): build/agents
 # - look at https://hub.joyent.com/wiki/display/dev/Setting+up+Cloud+Analytics+development+on+COAL-147
 #   for env setup. Might be demons in there.
 
-_ca_stamp=$(CA_BRANCH)-$(TIMESTAMP)-g$(CA_SHA)*
+_ca_stamp=$(CA_BRANCH)-$(TIMESTAMP)-g$(CA_SHA)-dirty
 CA_BITS=$(BITS_DIR)/assets/ca-pkg-$(_ca_stamp).tar.bz2 \
 	$(BITS_DIR)/cloud_analytics/cabase-$(_ca_stamp).tar.gz \
 	$(BITS_DIR)/cloud_analytics/cainstsvc-$(_ca_stamp).tar.gz
