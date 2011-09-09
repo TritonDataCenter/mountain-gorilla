@@ -215,7 +215,7 @@ $(BOOT_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 	(cd $(BITS_DIR); python -m SimpleHTTPServer)&
 
 	mkdir -p $(BITS_DIR)/release
-	(cd build/usb-headnode && MASTER_PLATFORM_URL=http://localhost:8000 TIMESTAMP=$(TIMESTAMP) PLATFORM_FILE=$(BITS_DIR)/platform-$(TIMESTAMP).tgz ZONE_DIR=$(TOP)/build ./bin/build-image tar)
+	(cd build/usb-headnode && MASTER_PLATFORM_URL=http://localhost:8000 TIMESTAMP=$(TIMESTAMP) PLATFORM_FILE=$(BITS_DIR)/platform-$(TIMESTAMP).tgz ZONE_DIR=$(TOP)/build ./bin/build-image -c tar)
 	@ps -ef | grep 'python -m Simple[H]TTPServer' | awk '{print $$2}' | xargs kill 2>/dev/null || true
 	mv build/usb-headnode/$(shell basename $(BOOT_BIT)) $(BITS_DIR)/release
 	@echo "# Created boot bits:"
