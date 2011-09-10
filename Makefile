@@ -94,7 +94,7 @@ $(AGENTS_BITS): build/agents
 # - look at https://hub.joyent.com/wiki/display/dev/Setting+up+Cloud+Analytics+development+on+COAL-147
 #   for env setup. Might be demons in there. (RELENG-192)
 
-_ca_stamp=$(CA_BRANCH)-$(TIMESTAMP)-g$(CA_SHA)-dirty
+_ca_stamp=$(CA_BRANCH)-$(TIMESTAMP)-g$(CA_SHA)
 CA_BITS=$(BITS_DIR)/assets/ca-pkg-$(_ca_stamp).tar.bz2 \
 	$(BITS_DIR)/cloud_analytics/cabase-$(_ca_stamp).tar.gz \
 	$(BITS_DIR)/cloud_analytics/cainstsvc-$(_ca_stamp).tar.gz
@@ -106,7 +106,7 @@ ca: $(CA_BITS_0)
 $(CA_BITS): build/ca
 	@echo "# Build ca: branch $(CA_BRANCH), sha $(CA_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/ca && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$PATH" gmake pkg release publish)
+	(cd build/ca && IGNORE_DIRTY=1 TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$PATH" gmake pkg release publish)
 	@echo "# Created ca bits:"
 	@ls -1 $(CA_BITS)
 	@echo ""
