@@ -72,8 +72,9 @@ AGENTS_BITS=$(BITS_DIR)/agents_core/agents_core-$(_a_stamp).tgz \
 	$(BITS_DIR)/provisioner-v2/provisioner-v2-$(_a_stamp).tgz \
 	$(BITS_DIR)/zonetracker-v2/zonetracker-v2-$(_a_stamp).tgz \
 	$(BITS_DIR)/mock_cloud/mock_cloud-$(_a_stamp).tgz
+AGENTS_BITS_0=$(shell echo $(AGENTS_BITS) | awk '{print $$1}')
 
-agents: $(AGENTS_BITS)
+agents: $(AGENTS_BITS_0)
 
 $(AGENTS_BITS): build/agents
 	@echo "# Build agents: branch $(AGENTS_BRANCH), sha $(AGENTS_SHA)"
@@ -87,25 +88,20 @@ $(AGENTS_BITS): build/agents
 
 #---- cloud-analytics
 #TODO:
-# - add {.lock-wscript,build} to .gititnore for 
-#   node-kstat
-#   node-libGeoIP
-#   node-libdtrace
-#   node-png
-#   node-uname
 # - merge CA_VERSION and CA_PUBLISH_VERSION? what about the version sed'd into
 #   the package.json's?
 # - explain why the PATH order is necessary here
 # - look at https://hub.joyent.com/wiki/display/dev/Setting+up+Cloud+Analytics+development+on+COAL-147
-#   for env setup. Might be demons in there.
+#   for env setup. Might be demons in there. (RELENG-192)
 
 _ca_stamp=$(CA_BRANCH)-$(TIMESTAMP)-g$(CA_SHA)-dirty
 CA_BITS=$(BITS_DIR)/assets/ca-pkg-$(_ca_stamp).tar.bz2 \
 	$(BITS_DIR)/cloud_analytics/cabase-$(_ca_stamp).tar.gz \
 	$(BITS_DIR)/cloud_analytics/cainstsvc-$(_ca_stamp).tar.gz
+CA_BITS_0=$(shell echo $(CA_BITS) | awk '{print $$1}')
 
 .PHONY: ca
-ca: $(CA_BITS)
+ca: $(CA_BITS_0)
 
 $(CA_BITS): build/ca
 	@echo "# Build ca: branch $(CA_BRANCH), sha $(CA_SHA)"
@@ -225,8 +221,8 @@ $(BOOT_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 
 
 
-
 #---- platform
+
 .PHONY: platform
 platform: $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 
@@ -236,6 +232,8 @@ ifeq ($(BUILD_PLATFORM),true)
 	(cd build/illumos-live && ./configure && BUILDSTAMP=$(TIMESTAMP) gmake world && BUILDSTAMP=$(TIMESTAMP) gmake live)
 	(cp build/illumos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/)
 endif
+
+
 
 #---- misc targets
 
