@@ -223,14 +223,19 @@ $(BOOT_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 
 #---- platform
 
-.PHONY: platform
-platform: $(BITS_DIR)/platform-$(TIMESTAMP).tgz
+PLATFORM_BIT=$(BITS_DIR)/platform-$(TIMESTAMP).tgz
 
-$(BITS_DIR)/platform-$(TIMESTAMP).tgz:
+.PHONY: platform
+platform: $(PLATFORM_BIT)
+
+$(PLATFORM_BIT):
 ifeq ($(BUILD_PLATFORM),true)
-	@echo "Building platform"
+	@echo "# Build platform: branch $(PLATFORM_BRANCH), sha $(PLATFORM_SHA)"
 	(cd build/illumos-live && ./configure && BUILDSTAMP=$(TIMESTAMP) gmake world && BUILDSTAMP=$(TIMESTAMP) gmake live)
 	(cp build/illumos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/)
+	@echo "# Created platform bits:"
+	@ls -1 $(PLATFORM_BIT)
+	@echo ""
 endif
 
 
