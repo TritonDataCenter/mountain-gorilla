@@ -92,13 +92,13 @@ cat -- improvements are welcome.
     
     # You need nodejs >= 0.4.9 (for usb-headnode) and npm 0.2.x (for agent
     # builds).
-    pkgin update
     pkgin -y in nodejs-0.4.9 npm-0.2.18
     
     # We also need npm 1.x for the usb-headnode build. To not conflict with
     # npm 0.2 in /opt/local we choose to install to "$HOME/opt/npm" and
     # *not* put is on our default PATH. "./tools/build-usb-headnode" will
     # ensure it is used from there.
+    mkdir -p $HOME/opt/npm
     curl http://npmjs.org/install.sh | npm_config_prefix=$HOME/opt/npm clean=no sh
     
     # To build CA you need some more stuff (the authority here on needed
