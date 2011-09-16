@@ -62,7 +62,8 @@ $(SMARTLOGIN_BITS): build/smartlogin
 	@ls -1 $(SMARTLOGIN_BITS)
 	@echo ""
 
-
+clean_smartlogin:
+	(rm -rf $(SMARTLOGIN_BITS) || /usr/bin/true)
 
 #---- agents
 
@@ -90,6 +91,8 @@ $(AGENTS_BITS): build/agents
 	@echo ""
 
 
+clean_agents:
+	rm -rf $(AGENTS_BITS)
 
 #---- cloud-analytics
 #TODO:
@@ -124,8 +127,6 @@ clean_ca:
 	rm -rf $(BITS_DIR)/cloud_analytics
 	(cd build/ca && gmake clean)
 
-
-
 #---- agents shar
 
 _as_stamp=$(AGENTSSHAR_BRANCH)-$(TIMESTAMP)-g$(AGENTSSHAR_SHA)
@@ -144,6 +145,9 @@ $(AGENTSSHAR_BITS): build/agents-installer/Makefile
 	@ls -1 $(AGENTSSHAR_BITS)
 	@echo ""
 
+clean_agentsshar:
+	(rm -rf $(AGENTSSHAR_BITS) || /usr/bin/true)
+	(if [[ -d build/agents-installer ]]; then cd build/agents-installer && gmake clean; fi )
 
 #---- usb-headnode
 # TODO:
@@ -212,7 +216,8 @@ $(BOOT_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 	@ls -1 $(BOOT_BIT)
 	@echo ""
 
-
+clean_usb-headnode:
+	rm -rf $(BOOT_BIT) $(UPGRADE_BIT) $(USB_BIT) $(COAL_BIT)
 
 #---- platform
 
@@ -236,12 +241,12 @@ clean_platform:
 	rm -f $(BITS_DIR)/platform-*
 	(cd build/illumos-live && gmake clean)
 
-
-
 #---- misc targets
+
+clean_null:
 
 #TODO: also "build", but not yet
 .PHONY: distclean
 distclean:
-	rm -rf bits
+	pfexec rm -rf bits build
 

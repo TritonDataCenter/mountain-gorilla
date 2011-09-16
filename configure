@@ -13,11 +13,12 @@ set -o pipefail
 #---- config, globals
 
 BRANCH="master"
-REGEN_CONFIG='true'
 BUILD_PLATFORM='true'
 
 ZONES="mcp_api_admin customers_api booter mcp_api_gateway public-web-client public_api cloud-api billing_api"
+PLAT_COMPONENTS="illumos-joyent ur-agent kvm kvm-cmd"
 
+ROOT=$(pwd)
 #---- internal support functions
 
 function fatal {
@@ -35,14 +36,25 @@ function print_help() {
     echo "component source repositories."
     echo ""
     echo "Usage:"
-    echo "  ./configure [ -b branch ] [ -u ] [ -n ]"
+    echo "  ./configure [ -b branch ] [ -u ] [ -n ] [ -r target ]"
     echo ""
     echo "Options:"
     echo "  -h           Print this help and exit."
     echo "  -b branch    Branch to checkout. Defaults to 'master'."
-    echo "  -u           Update only (do not regen config.mk)"
     echo "  -n           Do not build platform (only applicable on SmartOS)"
+    echo "  -r           Reconfigure build. Remove build artifacts, checkout to SHA in config.mk or HEAD"
     exit 0
+}
+
+function config_clean() {
+  repo=$1
+	# TODO: parse a repo:target mapping and clean targets better
+	targ=$(cat repos.json | json $repo | json target)
+  parent=$(cat repos.json | json $repo | json parents | json 0)
+	gmake clean_$targ
+	if [[ -n $parent ]]; then
+		config_clean $parent
+	fi
 }
 
 function get_repo() {
@@ -54,11 +66,31 @@ function get_repo() {
     if [[ ! -d build/$DEST ]]; then
         (mkdir -p build; git clone -b $local_branch git@git.joyent.com:${SRC}.git build/${DEST})
     else
-        (cd build/$DEST ; git checkout $local_branch ; git pull)
+        out=$(cd build/$DEST ; git checkout $local_branch ; git pull)
     fi
     (cd build/$DEST; git submodule update --init --recursive )
-}
 
+    if [[ $out != "Already up-to-date." ]]; then
+		 	config_clean $SRC
+    fi 
+}
+function get_github_repo() {
+    SRC=$1
+    DEST=$2
+    GITHUBUSER=$3
+
+    echo "# build/$DEST"
+    if [[ ! -d build/$DEST ]]; then
+        (mkdir -p build; git clone git://github.com/${GITHUBUSER}/${SRC}.git build/${DEST})
+    else
+        out=$(cd build/$DEST ; git pull)
+    fi
+    (cd build/$DEST; git submodule update --init --recursive )
+
+    if [[ $out != "Already up-to-date." ]]; then
+		 	config_clean $SRC
+    fi 
+}
 function get_smartlogin() {
     get_repo $1 smart-login smartlogin
     if [[ -n $2 ]]; then
@@ -85,9 +117,13 @@ function get_usbheadnode() {
 function get_illumoslive() {
     if [[ `uname -s` == "SunOS" && $BUILD_PLATFORM == 'true' ]]; then
         get_repo $1 illumos-live illumos-live
+        get_github_repo illumos-extra illumos-extra joyent
+        for bit in $PLAT_COMPONENTS; do
+            get_repo $1 $bit $bit
+        done
         PLATFORM_BRANCH=$BRANCH
         PLATFORM_SHA=$(cd build/illumos-live ; git log --pretty=format:'%h' -1 )
-        sed s/BRANCH/$BRANCH/ <illumos-configure.tmpl> build/illumos-live/configure.mg
+        sed -e 's/BRANCH/$BRANCH/' -e 's:GITCLONESOURCE:$ROOT/build/:' <illumos-configure.tmpl> build/illumos-live/configure.mg
     else
         BUILD_PLATFORM='false'
         platforms=$(ls bits/platform-*.tgz || /usr/bin/true)
@@ -99,6 +135,21 @@ function get_illumoslive() {
             exit 1
         fi
     fi
+}
+
+function get_zone_repo() {
+  $zone = $1
+	$branch = $2
+
+	get_repo $branch $zone $zone
+
+	if [[ $zone == "cloud-api" ]]; then
+    ( cd build/cloud-api &&\
+		  mkdir -p ssl  && \
+			mkdir -p node_modules)
+			get_repo $1 node-sdc-clients cloud-api/node_modules/sdc-clients 
+  fi
+
 }
 
 function get_zones() {
@@ -117,7 +168,7 @@ function get_zones() {
 cat <<EOF > build/usb-headnode/build.spec.local
   {
     "agents-shar": "$BRANCH"
-  , "adminui-checkout": "origin/master"
+  , "adminui-checkout": "origin/$BRANCH"
   , "ca-tarball": "^ca-pkg-$BRANCH-.*.tar.bz2$"
   , "capi-checkout": "origin/$BRANCH"
   , "dhcpd-checkout": "origin/$BRANCH"
@@ -180,25 +231,31 @@ fi
 
 trap 'errexit $? $LINENO' EXIT
 
-while getopts ":b:hun" opt; do
+while getopts ":b:hunrR" opt; do
     case $opt in
         b) BRANCH=$OPTARG;;
         h) print_help ;;
-        u) REGEN_CONFIG='false' ;;
         n) BUILD_PLATFORM='false' ;;
+        r) RECONFIG='true' ; RECONF_REPO=${OPTARG} ;;
         ?) fatal "unknown option: $opt" ;;
     esac
     shift $((OPTIND-1))
 done
 
-get_smartlogin $BRANCH
-get_ca $BRANCH
-get_agents $BRANCH
-get_agentsshar $BRANCH
-get_usbheadnode $BRANCH
-get_illumoslive $BRANCH
-get_zones $BRANCH
-
-if [[ $REGEN_CONFIG != 'false' || ! -f config.mk ]]; then
-  gen_config
+if [[ -n $RECONF_REPO ]]; then
+  if [[ $(echo $ZONES | grep $RECONF_REPO) ]]; then
+    get_zone_repo $RECONF_REPO $BRANCH
+  else
+    get_$RECONF_REPO $BRANCH
+  fi
+else
+  get_smartlogin $BRANCH
+  get_ca $BRANCH
+  get_agents $BRANCH
+  get_agentsshar $BRANCH
+  get_usbheadnode $BRANCH
+  get_illumoslive $BRANCH
+  get_zones $BRANCH
 fi
+
+gen_config
