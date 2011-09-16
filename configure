@@ -16,7 +16,7 @@ BRANCH="master"
 BUILD_PLATFORM='true'
 
 ZONES="mcp_api_admin customers_api booter mcp_api_gateway public-web-client public_api cloud-api billing_api"
-PLAT_COMPONENTS="illumos-joyent ur-agent kvm kvm-cmd"
+PLAT_COMPONENTS="illumos-joyent ur-agent kvm kvm-cmd-14 operator-toolkit"
 
 ROOT=$(pwd)
 #---- internal support functions
@@ -123,7 +123,7 @@ function get_illumoslive() {
         done
         PLATFORM_BRANCH=$BRANCH
         PLATFORM_SHA=$(cd build/illumos-live ; git log --pretty=format:'%h' -1 )
-        sed -e 's/BRANCH/$BRANCH/' -e 's:GITCLONESOURCE:$ROOT/build/:' <illumos-configure.tmpl> build/illumos-live/configure.mg
+        sed -e 's/BRANCH/$BRANCH/' -e "s:GITCLONESOURCE:$ROOT/build/:" -e "s:GITSUFFIX:/.git:" <illumos-configure.tmpl> build/illumos-live/configure.mg
     else
         BUILD_PLATFORM='false'
         platforms=$(ls bits/platform-*.tgz || /usr/bin/true)

@@ -1,28 +1,12 @@
 mkdir -p projects/local
 (cd projects/local && [[ -d ur-agent ]] \
-    || git clone GITCLONESOURCEur-agent.git)
+    || git clone GITCLONESOURCEur-agentGITSUFFIX)
 (cd projects/local && [[ -d operator-toolkit ]] \
-    || git clone GITCLONESOURCEoperator-toolkit.git)
+    || git clone GITCLONESOURCEoperator-toolkitGITSUFFIX)
 (cd projects/local && [[ -d kvm ]] \
-    || git clone GITCLONESOURCEkvm.git)
+    || git clone GITCLONESOURCEkvmGITSUFFIX)
 (cd projects/local && [[ -d kvm-cmd ]] \
-    || git clone GITCLONESOURCEkvm-cmd-14.git kvm-cmd)
-(cd projects/local && [[ -d vmadm ]] \
-    || git clone GITCLONESOURCEvmadm.git)
-
-# default branch list if there isn't one
-if [[ ! -f configure-branches ]]; then
-    cat >configure-branches <<EOF
-# after editing, rerun configure
-illumos-live: BRANCH
-illumos-extra: BRANCH
-illumos-joyent: BRANCH
-ur-agent: BRANCH
-kvm: BRANCH
-kvm-cmd: BRANCH
-vmadm: BRANCH
-EOF
-fi
+    || git clone GITCLONESOURCEkvm-cmd-14GITSUFFIX kvm-cmd)
 
 PUBLISHER="joyent"
 RELEASE_VER="joyent_147"
@@ -30,5 +14,5 @@ SUNW_SPRO12_URL="https://joydev:leichiB8eeQu@216.57.203.66/illumos/sunstudio12-p
 SUNW_SPRO12u1_URL="https://joydev:leichiB8eeQu@216.57.203.66/illumos/sunstudio12u1-patched-ii-2010Feb-sol-x86.tar.gz"
 ON_CLOSED_BINS_URL="https://joydev:leichiB8eeQu@216.57.203.66/illumos/on-closed-bins.i386.tar.bz2"
 ON_CLOSED_BINS_ND_URL="https://joydev:leichiB8eeQu@216.57.203.66/illumos/on-closed-bins-nd.i386.tar.bz2"
-GET_ILLUMOS="(git clone GITCLONESOURCEillumos-joyent.git illumos)"
-GET_ILLUMOS_EXTRA="git clone https://github.com/joyent/illumos-extra.git illumos-extra"
+GET_ILLUMOS="(git clone GITCLONESOURCEillumos-joyentGITSUFFIX illumos)"
+GET_ILLUMOS_EXTRA="git clone GITCLONESOURCEillumos-extraGITSUFFIX illumos-extra"
