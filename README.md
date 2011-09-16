@@ -1,7 +1,7 @@
 # Moutain Gorilla
 
-Trent's stab at a single repo to build SDC. This is just a *driver* repo,
-all the components are still in their existing separate repos.
+A single repo to build SDC. This is just a *driver* repo, all the components
+are still in their existing separate repos.
 
 
 # Motivation
@@ -14,6 +14,8 @@ devs to be able to build the entire stack.
 
 
 # Usage
+
+If you'll actually be building, see "Prerequisites" section below first.
 
     git clone git@git.joyent.com:mountain-gorilla.git
     cd mountain-gorilla.git
@@ -36,39 +38,79 @@ built components. Primarily this includes the release bits:
 built bits: agents, platform, ca, etc.
 
 
-
 # Current Status
 
-Basically working. Still not quite the replacement for Bamboo for SDC release builds.
-See [RELENG](https://devhub.joyent.com/jira/browse/RELENG) for current issues.
+Basically working. Isn't yet being used as the replacement for Bamboo for SDC
+release builds. See [RELENG](https://devhub.joyent.com/jira/browse/RELENG)
+for current issues.
 
 
-Prebuilt pieces:
+# Prerequisites
 
-- pkgsrc is a notable unversioned and pre-built component of this. For sanity
-  at least there should be a manifest checksuming of used pkgsrc packages.
-- datasets are prebuilt. We rely on the rule that a dataset, once published,
-  never changes. Any dataset change must mean a new version and UUID.
+MG should be fully buildable on a SmartOS zone. Here are notes on how
+to create one and set it up for building MG. Some issues include having
+multiple gcc's and multiple npm versions. Specific paths are chosen for
+these and presumed by MG's Makefile. There are multiple ways to skin this
+cat -- improvements are welcome.
 
-
-
-# Build System Dependencies
-
-MG should be fully buildable on a SmartOS zone (except the HVM platform).
-The build system reqs aren't fully spec'd yet. The best starting point is
-<https://hub.joyent.com/wiki/display/dev/Building+the+SmartOS+live+image+in+a+SmartOS+zone>.
-
-Notes on build sys requirements that I've hit:
-
-- npm 1.0.x (a recent version required?)
-- node >=0.4.9
-- `tar` has to be a capable GNU tar or you need this in "~/.npmrc":
-
-    tar = gtar
-
-- Cannot have "core.autocrlf=input" in your "~/.gitconfig", else you will
-  get spurious dirty repos (mostly in submodules) about EOL changes.
-
+    # Let's create a zone on bh1-build0 (dev machine in the Bellingham
+    # lab, <https://hub.joyent.com/wiki/display/dev/Development+Lab>).
+    ssh bh1-build0
+    /opt/custom/create-zone.sh trent   # Pick a different name for yourself :)
+    # wait 30s or so it to setup.
+    
+    zlogin trent
+    echo "Your IP is $(ifconfig -a | grep 'inet 10\.' | cut -d' ' -f 2)"
+    # --> "Your IP is 10.2.0.145"
+    
+    vi /root/.ssh/authorized_keys   # Add your key
+    chmod 600 /root/.ssh/authorized_keys
+    chmod 700 /root/.ssh
+    
+    # Re-login and setup environment:
+    ssh -A root@10.2.0.145
+    curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/templates/bss-prime/setup-build-zone
+    curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/templates/bss-prime/fake-subset.tbz2
+    chmod 755 setup-build-zone
+    ./setup-build-zone
+    
+    # Note: After any reboot you'll need to run:
+    #   ./setup-build-zone -e
+    
+    # Having git "core.autocrlf=input" will cause spurious dirty files in
+    # some of our repos. Don't go there.
+    [[ `git config core.autocrlf` == "input" ]] \
+        && echo "* * * Warning: remove 'autocrlf=input' from your ~/.gitconfig"
+    
+    # Note: This "./configure" step is necessary to setup your system.
+    # TODO: Pull out the requisite system setup steps. Shouldn't really
+    #       be tucked away in illumos-live.git and configure.joyent.
+    git clone git@git.joyent.com:illumos-live.git
+    cd illumos-live
+    curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/illumos/configure.joyent
+    GIT_SSL_NO_VERIFY=true ./configure
+    
+    # You need nodejs >= 0.4.9 (for usb-headnode) and npm 0.2.x (for agent
+    # builds).
+    pkgin update
+    pkgin -y in nodejs-0.4.9 npm-0.2.18
+    
+    # We also need npm 1.x for the usb-headnode build. To not conflict with
+    # npm 0.2 in /opt/local we choose to install to "$HOME/opt/npm" and
+    # *not* put is on our default PATH. "./tools/build-usb-headnode" will
+    # ensure it is used from there.
+    curl http://npmjs.org/install.sh | npm_config_prefix=$HOME/opt/npm clean=no sh
+    
+    # To build CA you need some more stuff (the authority here on needed
+    # packages is <https://mo.joyent.com/cloud-analytics/blob/master/tools/ca-headnode-setup#L274>
+    pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope pkg-config gmake \
+        scmgit python24 python26 png npm GeoIP GeoLiteCity ghostscript
+    
+    # You should now be able to build mountain-gorilla (MG): i.e. all of SDC.
+    # Let's try that:
+    git clone git@git.joyent.com:mountain-gorilla.git
+    cd mountain-gorilla
+    time (./configure && gmake) 2>&1 | tee build.log
 
 
 # Package Versioning
@@ -191,6 +233,10 @@ Notes:
 
 # TODOs
 
+- pkgsrc is a notable unversioned and pre-built component of this. For sanity
+  at least there should be a manifest checksuming of used pkgsrc packages.
+- datasets are prebuilt. We rely on the rule that a dataset, once published,
+  never changes. Any dataset change must mean a new version and UUID.
 - PLATFORM_TIMESTAMP: *want* (if possible) to have this in config.mk and pass
   it into the illumos-live build. Then MG's Makefile can be explicit about
   expected build outputs and do meaningful deps.
