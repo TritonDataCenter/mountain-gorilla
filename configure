@@ -4,7 +4,6 @@
 #
 
 if [ "$TRACE" != "" ]; then
-    shift;
     export PS4='${BASH_SOURCE}:${LINENO}: '
     set -o xtrace
 fi
