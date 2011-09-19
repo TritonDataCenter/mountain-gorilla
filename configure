@@ -244,6 +244,11 @@ while getopts ":b:hunr:" opt; do
     shift $((OPTIND-1))
 done
 
+# The configure process wants to run "clean_*" targets in the Makefile.
+# The Makefile needs a config.mk to exist. An empty one will suffice for
+# the clean targets.
+touch config.mk
+
 # TODO: not sure about allow no arg to '-r'. Doesn't that screw up './configure -r -n'?
 if [[ -n $RECONF_REPO ]]; then
   if [[ $(echo $ZONES | grep $RECONF_REPO) ]]; then
