@@ -31,21 +31,6 @@ function errexit {
     fatal "error exit status $1 at line $2"
 }
 
-function print_help() {
-    echo "Configure this SDC build. This involves cloning/pulling the "
-    echo "component source repositories."
-    echo ""
-    echo "Usage:"
-    echo "  ./configure [ -b branch ] [ -u ] [ -n ] [ -r target ]"
-    echo ""
-    echo "Options:"
-    echo "  -h           Print this help and exit."
-    echo "  -b branch    Branch to checkout. Defaults to 'master'."
-    echo "  -n           Do not build platform (only applicable on SmartOS)"
-    echo "  -r           Reconfigure build. Remove build artifacts, checkout to SHA in config.mk or HEAD"
-    exit 0
-}
-
 function config_clean() {
   repo=$1
 	# TODO: parse a repo:target mapping and clean targets better
@@ -226,12 +211,29 @@ fi
 }
 
 
+function print_help() {
+    echo "Configure this SDC build. This involves cloning/pulling the "
+    echo "component source repositories."
+    echo ""
+    echo "Usage:"
+    echo "  ./configure [ -b BRANCH ] [ -n ] [ -r TARGET ]"
+    echo ""
+    echo "Options:"
+    echo "  -h           Print this help and exit."
+    echo "  -b BRANCH    Branch to checkout. Defaults to 'master'."
+    echo "               Note that this is for *all* core repositories."
+    echo "  -n           Do not build platform (only applicable on SmartOS)"
+    echo "  -r TARGET    Reconfigure build. Remove build artifacts, checkout to SHA in config.mk or HEAD"
+    exit 0
+}
+
+
 
 #---- mainline
 
 trap 'errexit $? $LINENO' EXIT
 
-while getopts ":b:hunrR" opt; do
+while getopts ":b:hunr:" opt; do
     case $opt in
         b) BRANCH=$OPTARG;;
         h) print_help ;;
@@ -242,6 +244,7 @@ while getopts ":b:hunrR" opt; do
     shift $((OPTIND-1))
 done
 
+# TODO: not sure about allow no arg to '-r'. Doesn't that screw up './configure -r -n'?
 if [[ -n $RECONF_REPO ]]; then
   if [[ $(echo $ZONES | grep $RECONF_REPO) ]]; then
     get_zone_repo $RECONF_REPO $BRANCH
