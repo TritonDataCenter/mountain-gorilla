@@ -1,12 +1,12 @@
 mkdir -p projects/local
 (cd projects/local && [[ -d ur-agent ]] \
-    || git clone GITCLONESOURCEur-agentGITSUFFIX)
+    || git clone GITCLONESOURCEur-agent)
 (cd projects/local && [[ -d operator-toolkit ]] \
-    || git clone GITCLONESOURCEoperator-toolkitGITSUFFIX)
+    || git clone GITCLONESOURCEoperator-toolkit)
 (cd projects/local && [[ -d kvm ]] \
-    || git clone GITCLONESOURCEkvmGITSUFFIX)
+    || git clone GITCLONESOURCEkvm)
 (cd projects/local && [[ -d kvm-cmd ]] \
-    || git clone GITCLONESOURCEkvm-cmd-14GITSUFFIX kvm-cmd)
+    || git clone GITCLONESOURCEkvm-cmd-14 kvm-cmd)
 
 PUBLISHER="joyent"
 RELEASE_VER="joyent_147"
@@ -14,5 +14,5 @@ SUNW_SPRO12_URL="https://joydev:leichiB8eeQu@216.57.203.66/illumos/sunstudio12-p
 SUNW_SPRO12u1_URL="https://joydev:leichiB8eeQu@216.57.203.66/illumos/sunstudio12u1-patched-ii-2010Feb-sol-x86.tar.gz"
 ON_CLOSED_BINS_URL="https://joydev:leichiB8eeQu@216.57.203.66/illumos/on-closed-bins.i386.tar.bz2"
 ON_CLOSED_BINS_ND_URL="https://joydev:leichiB8eeQu@216.57.203.66/illumos/on-closed-bins-nd.i386.tar.bz2"
-GET_ILLUMOS="(git clone GITCLONESOURCEillumos-joyentGITSUFFIX illumos)"
-GET_ILLUMOS_EXTRA="git clone GITCLONESOURCEillumos-extraGITSUFFIX illumos-extra"
+GET_ILLUMOS="(git clone GITCLONESOURCEillumos-joyent illumos)"
+GET_ILLUMOS_EXTRA="git clone GITCLONESOURCEillumos-extra illumos-extra"

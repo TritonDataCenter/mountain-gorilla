@@ -108,7 +108,8 @@ function get_illumoslive() {
         done
         PLATFORM_BRANCH=$BRANCH
         PLATFORM_SHA=$(cd build/illumos-live ; git log --pretty=format:'%h' -1 )
-        sed -e 's/BRANCH/$BRANCH/' -e "s:GITCLONESOURCE:$ROOT/build/:" -e "s:GITSUFFIX:/.git:" <illumos-configure.tmpl> build/illumos-live/configure.mg
+        sed -e "s/BRANCH/$BRANCH/" -e "s:GITCLONESOURCE:$ROOT/build/:" <illumos-configure.tmpl> build/illumos-live/configure.mg
+        sed -e "s/BRANCH/$BRANCH/" <illumos-configure-branches.tmpl> build/illumos-live/configure-branches
     else
         BUILD_PLATFORM='false'
         platforms=$(ls bits/platform-*.tgz || /usr/bin/true)

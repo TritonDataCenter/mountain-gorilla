@@ -18,6 +18,6 @@
     "public_api" : { "target" : "null" , "parents": ["usb-headnode"] } ,
     "ur-agent" : { "target" : "null" , "parents": ["illumos-live"] } ,
     "kvm" : { "target" : "null" , "parents": ["illumos-live"] } ,
-    "kvm-cmd" : { "target" : "null" , "parents": ["illumos-live"] } ,
+    "kvm-cmd-14" : { "target" : "null" , "parents": ["illumos-live"] } ,
     "operator-toolkit" : { "target" : "null" , "parents": ["illumos-live"] }
 }
