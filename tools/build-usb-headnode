@@ -64,19 +64,19 @@ function staticserver_stop() {
 
 
 function check_npm() {
-    if [[ ! -d $HOME/opt/npm ]]; then
+    if [[ ! -d /opt/npm ]]; then
         echo "* * *"
         echo "The usb-headnode build needs npm 1.x. For the MG build we *don't*"
         echo "put that on the default path, because the agent builds currently"
         echo "need npm 0.2.x. Therefore we choose to require an npm 1.x install"
-        echo "in '$HOME/opt/npm'. You can install that as follows:"
+        echo "in '/opt/npm'. You can install that as follows:"
         echo ""
         echo "    # ensure have node >= 0.4.9"
         echo "    pkgin -y in nodejs-0.4.9"
         echo "    # install npm is custom location (to not collide with npm 0.2)"
-        echo "    curl http://npmjs.org/install.sh | npm_config_prefix=$HOME/opt/npm clean=no sh"
+        echo "    curl http://npmjs.org/install.sh | npm_config_prefix=/opt/npm clean=no sh"
         echo "* * *"
-        fatal "no npm 1.x installed at '$HOME/opt/npm'"
+        fatal "no npm 1.x installed at '/opt/npm'"
     fi
 }
 
@@ -110,7 +110,7 @@ check_npm
 
 staticserver_start
 (cd ${TOP}/build/usb-headnode && \
-    PATH=$HOME/opt/npm/bin:${PATH} \
+    PATH=/opt/npm/bin:${PATH} \
     MASTER_PLATFORM_URL=http://localhost:8000 \
     TIMESTAMP=${TIMESTAMP} \
     PLATFORM_FILE=${BITS_DIR}/platform-${TIMESTAMP}.tgz  \
