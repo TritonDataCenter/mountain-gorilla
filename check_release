@@ -21,6 +21,7 @@ REPOS="smart-login \
     kvm-cmd-14 \
     customers_api \
     billing_api \
+    sdc-webinfo \
     node-sdc-clients"
 
 for repo in $REPOS; do
