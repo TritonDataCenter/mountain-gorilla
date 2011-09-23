@@ -16,7 +16,6 @@ REPOS="smart-login \
     mcp_api_admin \
     public-web-client \
     cloud-api \
-    public_api \
     booter \
     kvm \
     kvm-cmd-14 \
