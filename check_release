@@ -19,8 +19,9 @@ REPOS="smart-login \
     public_api \
     booter \
     kvm \
-    kvm-cmd \
+    kvm-cmd-14 \
     customers_api \
+    billing_api \
     node-sdc-clients"
 
 for repo in $REPOS; do
