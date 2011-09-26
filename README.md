@@ -103,7 +103,7 @@ cat -- improvements are welcome.
     
     # To build CA you need some more stuff (the authority here on needed
     # packages is <https://mo.joyent.com/cloud-analytics/blob/master/tools/ca-headnode-setup#L274>
-    pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope pkg-config gmake \
+    pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
         scmgit python24 python26 png npm GeoIP GeoLiteCity ghostscript
     
     # You should now be able to build mountain-gorilla (MG): i.e. all of SDC.
