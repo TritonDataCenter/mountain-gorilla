@@ -1,0 +1,107 @@
+#!/bin/bash
+#
+# Upload (possibly parts of) the bits dir.
+
+if [ "$TRACE" != "" ]; then
+    export PS4='${BASH_SOURCE}:${LINENO}: '
+    set -o xtrace
+fi
+set -o errexit
+
+
+
+#---- config, globals
+
+TOP=$(cd $(dirname $0)/../; pwd)
+BITS_DIR=bits
+
+
+
+#---- internal support functions
+
+function fatal {
+    echo "$(basename $0): error: $1"
+    exit 1
+}
+
+
+function errexit {
+    [[ $1 -ne 0 ]] || exit 0
+    fatal "error exit status $1 at line $2"
+}
+
+
+function print_help() {
+    echo "Usage:"
+    echo "  ./tools/upload-bits [-r] BRANCH TIMESTAMP UPLOAD-BASE-DIR"
+    echo ""
+    echo "Upload bits. The UPLOAD-BASE-DIR is presumed to be a remote dir."
+    echo ""
+    echo "Options:"
+    echo "  -r           Only upload the 'release/' dir."
+    echo "  -h           Print this help and exit."
+    echo ""
+    echo "Examples:"
+    echo "  ./tool/upload-bits release-20110922 20110927T143319Z stuff@stuff.joyent.us:builds/nightly"
+    exit 0
+}
+
+
+
+
+#---- mainline
+
+trap 'errexit $? $LINENO' EXIT
+
+RELEASE_ONLY=0
+while getopts "hr" opt; do
+    case $opt in
+        h) print_help ;;
+        r) RELEASE_ONLY=1 ;;
+        ?) fatal "unknown option: $opt" ;;
+    esac
+    shift $((OPTIND-1))
+done
+
+BRANCH=$1
+TIMESTAMP=$2
+UPLOAD_BASE_DIR=$3
+UPLOAD_SERVER=$(echo "$UPLOAD_BASE_DIR" | awk -F: '{print $1}')
+UPLOAD_BASE_LOCALDIR=$(echo "$UPLOAD_BASE_DIR" | awk -F: '{print $2}')
+
+# Determine the upload dir. If there is already a "$BRANCH-$TIMESTAMP"
+# dir, then we append a "-N" serial number.
+existing_upload_dirs=$(ssh $UPLOAD_SERVER ls -d $UPLOAD_BASE_LOCALDIR/$BRANCH-$TIMESTAMP* || true)
+last_upload_dir=$(echo $existing_upload_dirs | tail -1)
+if [[ -z "$last_upload_dir" ]]; then
+    upload_subdir=$BRANCH-$TIMESTAMP
+else
+    serial=$(echo $last_upload_dir | awk -F- '{print $NF}')
+    if [[ "${serial:(-1)}" == "Z" ]]; then
+        next_serial=2
+    else
+        next_serial=$(( $serial + 1 ))
+    fi
+    upload_subdir=$BRANCH-$TIMESTAMP-$next_serial
+fi
+
+# Upload to '.'-prefixed dir to hide it until fully uploaded.
+echo "Uploading bits to <$UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/$upload_subdir/>."
+if [[ "$RELEASE_ONLY" == "1" ]]; then
+    ssh $UPLOAD_SERVER mkdir $UPLOAD_BASE_LOCALDIR/.$upload_subdir
+    rsync -av $BITS_DIR/release/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/release/
+else
+    rsync -av $BITS_DIR/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/
+fi
+
+# Unhide and add a "$BRANCH-$latest" symlink.
+ssh $UPLOAD_SERVER mv $UPLOAD_BASE_LOCALDIR/.$upload_subdir/ $UPLOAD_BASE_LOCALDIR/$upload_subdir/
+ssh $UPLOAD_SERVER "(cd $UPLOAD_BASE_LOCALDIR && ln -s $upload_subdir $BRANCH-latest)"
+
+# Special note for stuff.joyent.us.
+if [[ "$UPLOAD_SERVER" == "stuff@stuff.joyent.us" ]]; then
+    echo "Uploaded to <https://stuff.joyent.us/stuff/$UPLOAD_BASE_LOCALDIR/$upload_subdir/>."
+fi
+
+
+

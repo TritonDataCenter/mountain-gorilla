@@ -250,3 +250,9 @@ clean_null:
 distclean:
 	pfexec rm -rf bits build
 
+
+# Upload bits we want to keep for a nightly build.
+# Note: hardcoding to "$USBHEADNODE_BRANCH" here isn't ideal.
+upload_nightly:
+	./tools/upload-bits -r $USBHEADNODE_BRANCH $TIMESTAMP stuff@stuff.joyent.com:builds/nightly
+
