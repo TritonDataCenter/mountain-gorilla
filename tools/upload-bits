@@ -15,6 +15,8 @@ set -o errexit
 TOP=$(cd $(dirname $0)/../; pwd)
 BITS_DIR=bits
 
+SSH="ssh -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+
 
 
 #---- internal support functions
@@ -71,7 +73,7 @@ UPLOAD_BASE_LOCALDIR=$(echo "$UPLOAD_BASE_DIR" | awk -F: '{print $2}')
 
 # Determine the upload dir. If there is already a "$BRANCH-$TIMESTAMP"
 # dir, then we append a "-N" serial number.
-existing_upload_dirs=$(ssh $UPLOAD_SERVER ls -d $UPLOAD_BASE_LOCALDIR/$BRANCH-$TIMESTAMP* || true)
+existing_upload_dirs=$($SSH $UPLOAD_SERVER ls -d $UPLOAD_BASE_LOCALDIR/$BRANCH-$TIMESTAMP* $UPLOAD_BASE_LOCALDIR/.$BRANCH-$TIMESTAMP* 2>/dev/null || true)
 last_upload_dir=$(echo $existing_upload_dirs | tail -1)
 if [[ -z "$last_upload_dir" ]]; then
     upload_subdir=$BRANCH-$TIMESTAMP
@@ -88,20 +90,18 @@ fi
 # Upload to '.'-prefixed dir to hide it until fully uploaded.
 echo "Uploading bits to <$UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/$upload_subdir/>."
 if [[ "$RELEASE_ONLY" == "1" ]]; then
-    ssh $UPLOAD_SERVER mkdir $UPLOAD_BASE_LOCALDIR/.$upload_subdir
-    rsync -av $BITS_DIR/release/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/release/
+    $SSH $UPLOAD_SERVER mkdir $UPLOAD_BASE_LOCALDIR/.$upload_subdir
+    rsync -e "$SSH" -av $BITS_DIR/release/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/release/
 else
     rsync -av $BITS_DIR/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/
 fi
 
 # Unhide and add a "$BRANCH-$latest" symlink.
-ssh $UPLOAD_SERVER mv $UPLOAD_BASE_LOCALDIR/.$upload_subdir/ $UPLOAD_BASE_LOCALDIR/$upload_subdir/
-ssh $UPLOAD_SERVER "(cd $UPLOAD_BASE_LOCALDIR && ln -s $upload_subdir $BRANCH-latest)"
+$SSH $UPLOAD_SERVER mv $UPLOAD_BASE_LOCALDIR/.$upload_subdir/ $UPLOAD_BASE_LOCALDIR/$upload_subdir/
+$SSH $UPLOAD_SERVER "(cd $UPLOAD_BASE_LOCALDIR && ln -s $upload_subdir $BRANCH-latest)"
 
 # Special note for stuff.joyent.us.
 if [[ "$UPLOAD_SERVER" == "stuff@stuff.joyent.us" ]]; then
     echo "Uploaded to <https://stuff.joyent.us/stuff/$UPLOAD_BASE_LOCALDIR/$upload_subdir/>."
 fi
-
-
 

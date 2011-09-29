@@ -112,6 +112,11 @@ cat -- improvements are welcome.
     cd mountain-gorilla
     time (./configure && gmake) 2>&1 | tee build.log
 
+If your build zone in inside BH1, then you must add the following to "/etc/inet/hosts"
+for the "make upload\_nightly" task to work:
+
+    10.2.0.190      stuff.joyent.us
+
 
 # Package Versioning
 
