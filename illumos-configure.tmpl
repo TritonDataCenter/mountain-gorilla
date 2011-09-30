@@ -7,6 +7,8 @@ mkdir -p projects/local
     || git clone GITCLONESOURCEkvm)
 (cd projects/local && [[ -d kvm-cmd ]] \
     || git clone GITCLONESOURCEkvm-cmd-14 kvm-cmd)
+(cd overlay && [[ -d sdc ]] \
+    || git clone GITCLONESOURCEsdc-overlay sdc)
 
 PUBLISHER="joyent"
 RELEASE_VER="joyent_147"
@@ -16,3 +18,4 @@ ON_CLOSED_BINS_URL="https://joydev:leichiB8eeQu@216.57.203.66/illumos/on-closed-
 ON_CLOSED_BINS_ND_URL="https://joydev:leichiB8eeQu@216.57.203.66/illumos/on-closed-bins-nd.i386.tar.bz2"
 GET_ILLUMOS="(git clone GITCLONESOURCEillumos-joyent illumos)"
 GET_ILLUMOS_EXTRA="git clone GITCLONESOURCEillumos-extra illumos-extra"
+OVERLAYS="sdc generic"
