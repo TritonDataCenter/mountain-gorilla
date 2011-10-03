@@ -7,8 +7,10 @@ mkdir -p projects/local
     || git clone GITCLONESOURCEkvm)
 (cd projects/local && [[ -d kvm-cmd ]] \
     || git clone GITCLONESOURCEkvm-cmd-14 kvm-cmd)
-(cd overlay && [[ -d sdc ]] \
-    || git clone GITCLONESOURCEsdc-overlay sdc)
+(cd projects/local && [[ -d sdc-platform ]] \
+    || git clone GITCLONESOURCEsdc-platform)
+(cd overlay && [[ -d sdc ]] || \
+    ln -s ../projects/local/sdc-platform/overlay sdc)
 
 PUBLISHER="joyent"
 RELEASE_VER="joyent_147"
