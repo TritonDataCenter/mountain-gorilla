@@ -254,5 +254,5 @@ distclean:
 # Upload bits we want to keep for a nightly build.
 # Note: hardcoding to "$USBHEADNODE_BRANCH" here isn't ideal.
 upload_nightly:
-	./tools/upload-bits -r $(USBHEADNODE_BRANCH) $(TIMESTAMP) stuff@stuff.joyent.us:builds/nightly
+	./tools/upload-bits $(USBHEADNODE_BRANCH) $(TIMESTAMP) stuff@stuff.joyent.us:builds/nightly
 
