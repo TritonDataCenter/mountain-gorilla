@@ -35,7 +35,9 @@ ifeq ($(TIMESTAMP),)
 	TIMESTAMP=TimestampNotSet
 endif
 
-
+ifeq ($(UPLOAD_LOCATION),)
+	UPLOAD_LOCATION="stuff@stuff.joyent.us:builds"
+endif
 
 #---- Primary targets
 
@@ -65,6 +67,9 @@ $(SMARTLOGIN_BITS): build/smartlogin
 clean_smartlogin:
 	(rm -rf $(SMARTLOGIN_BITS) || /usr/bin/true)
 
+upload_smartlogin:
+	./tools/upload-bits -f "$(SMARTLOGIN_BITS)" $(SMARTLOGIN_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/smartlogin/
+
 #---- agents
 
 _a_stamp=$(AGENTS_BRANCH)-$(TIMESTAMP)-g$(AGENTS_SHA)
@@ -93,6 +98,9 @@ $(AGENTS_BITS): build/agents
 
 clean_agents:
 	rm -rf $(AGENTS_BITS)
+
+upload_agents:
+	./tools/upload-bits -f "$(AGENTS_BITS)" $(AGENTS_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/agents/
 
 #---- cloud-analytics
 #TODO:
@@ -127,6 +135,8 @@ clean_ca:
 	rm -rf $(BITS_DIR)/cloud_analytics
 	(cd build/ca && gmake clean)
 
+upload_ca:
+	./tools/upload-bits -f "$(CA_BITS)" $(CA_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/ca/
 #---- agents shar
 
 _as_stamp=$(AGENTSSHAR_BRANCH)-$(TIMESTAMP)-g$(AGENTSSHAR_SHA)
@@ -149,6 +159,8 @@ clean_agentsshar:
 	(rm -rf $(AGENTSSHAR_BITS) || /usr/bin/true)
 	(if [[ -d build/agents-installer ]]; then cd build/agents-installer && gmake clean; fi )
 
+upload_agentsshar:
+	./tools/upload-bits -f "$(AGENTSSHAR_BITS)" $(AGENTSSHAR_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/agentsshar/
 #---- usb-headnode
 # TODO:
 # - "assets/" bits area for ca-pkg package is dumb: use cloud_analytics
@@ -259,6 +271,9 @@ clean_platform:
 	rm -f $(BITS_DIR)/platform-*
 	(cd build/illumos-live && gmake clean)
 
+upload_platform:
+	./tools/upload-bits -f "$(PLATFORM_BIT)" $(PLATFORM_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/platform
+
 #---- misc targets
 
 clean_null:
@@ -272,5 +287,5 @@ distclean:
 # Upload bits we want to keep for a nightly build.
 # Note: hardcoding to "$USBHEADNODE_BRANCH" here isn't ideal.
 upload_nightly:
-	./tools/upload-bits $(USBHEADNODE_BRANCH) $(TIMESTAMP) stuff@stuff.joyent.us:builds/nightly
+	./tools/upload-bits $(USBHEADNODE_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/nightly
 
