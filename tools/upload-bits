@@ -98,7 +98,7 @@ fi
 
 # Unhide and add a "$BRANCH-$latest" symlink.
 $SSH $UPLOAD_SERVER mv $UPLOAD_BASE_LOCALDIR/.$upload_subdir/ $UPLOAD_BASE_LOCALDIR/$upload_subdir/
-$SSH $UPLOAD_SERVER "(cd $UPLOAD_BASE_LOCALDIR && ln -s $upload_subdir $BRANCH-latest)"
+$SSH $UPLOAD_SERVER "(cd $UPLOAD_BASE_LOCALDIR && rm -f $BRANCH-latest && ln -s $upload_subdir $BRANCH-latest)"
 
 # Special note for stuff.joyent.us.
 if [[ "$UPLOAD_SERVER" == "stuff@stuff.joyent.us" ]]; then
