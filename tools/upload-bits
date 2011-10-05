@@ -93,7 +93,7 @@ if [[ "$RELEASE_ONLY" == "1" ]]; then
     $SSH $UPLOAD_SERVER mkdir $UPLOAD_BASE_LOCALDIR/.$upload_subdir
     rsync -e "$SSH" -av $BITS_DIR/release/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/release/
 else
-    rsync -av $BITS_DIR/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/
+    rsync -e "$SSH" -av $BITS_DIR/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/
 fi
 
 # Unhide and add a "$BRANCH-$latest" symlink.
