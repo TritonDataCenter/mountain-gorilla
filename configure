@@ -19,6 +19,8 @@ ZONES="mcp_api_admin customers_api booter mcp_api_gateway public-web-client publ
 PLAT_COMPONENTS="illumos-joyent ur-agent kvm kvm-cmd-14 operator-toolkit sdc-platform"
 
 ROOT=$(pwd)
+
+FORCE_RECONFIG='false'
 #---- internal support functions
 
 function fatal {
@@ -55,7 +57,7 @@ function get_repo() {
     fi
     (cd build/$DEST; git submodule update --init --recursive )
 
-    if [[ $out != "Already up-to-date." ]]; then
+    if [[ $out != "Already up-to-date." || $FORCE_RECONFIG == 'true' ]]; then
 		 	config_clean $SRC
     fi 
 }
@@ -124,8 +126,8 @@ function get_illumoslive() {
 }
 
 function get_zone_repo() {
-  $zone = $1
-	$branch = $2
+  zone=$1
+	branch=$2
 
 	get_repo $branch $zone $zone
 
@@ -217,7 +219,7 @@ function print_help() {
     echo "component source repositories."
     echo ""
     echo "Usage:"
-    echo "  ./configure [ -b BRANCH ] [ -n ] [ -r TARGET ]"
+    echo "  ./configure [ -b BRANCH ] [ -n ] [ -r TARGET [-f] ]"
     echo ""
     echo "Options:"
     echo "  -h           Print this help and exit."
@@ -225,6 +227,7 @@ function print_help() {
     echo "               Note that this is for *all* core repositories."
     echo "  -n           Do not build platform (only applicable on SmartOS)"
     echo "  -r TARGET    Reconfigure build. Remove build artifacts, checkout to SHA in config.mk or HEAD"
+    echo "  -f           Force reconfig (clean and rebuild)"
     exit 0
 }
 
@@ -234,16 +237,22 @@ function print_help() {
 
 trap 'errexit $? $LINENO' EXIT
 
-while getopts ":b:hunr:" opt; do
+while getopts ":b:hunr:f" opt; do
     case $opt in
         b) BRANCH=$OPTARG;;
         h) print_help ;;
         n) BUILD_PLATFORM='false' ;;
         r) RECONFIG='true' ; RECONF_REPO=${OPTARG} ;;
+        f) FORCE_RECONFIG='true' ;;
         ?) fatal "unknown option: $opt" ;;
     esac
     shift $((OPTIND-1))
 done
+
+if [[ $RECONFIG == 'true' && -z $RECONF_REPO ]]; then
+  print_help
+  exit 1
+fi
 
 # The configure process wants to run "clean_*" targets in the Makefile.
 # The Makefile needs a config.mk to exist. An empty one will suffice for
@@ -255,6 +264,10 @@ if [[ -n $RECONF_REPO ]]; then
   if [[ $(echo $ZONES | grep $RECONF_REPO) ]]; then
     get_zone_repo $RECONF_REPO $BRANCH
   else
+    targ=$(cat repos.json | json $RECONF_REPO | json target)
+    if [[ -n $targ ]]; then
+      RECONF_REPO=$targ
+    fi
     get_$RECONF_REPO $BRANCH
   fi
 else
