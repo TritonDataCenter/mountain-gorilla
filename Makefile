@@ -40,7 +40,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin ca agents agentsshar platform coal usb upgrade boot
+all: smartlogin ca agents agentsshar platform coal usb upgrade boot releasejson
 
 
 #---- smartlogin
@@ -216,8 +216,26 @@ $(BOOT_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
 	@ls -1 $(BOOT_BIT)
 	@echo ""
 
+
+RELEASEJSON_BIT=$(BITS_DIR)/release/release.json
+
+.PHONY: boot
+releasejson:
+	mkdir -p $(BITS_DIR)/release
+	echo "{ \
+	\"date\": \"$(TIMESTAMP)\", \
+	\"branch\": \"$(USBHEADNODE_BRANCH)\", \
+	\"coal\": \"$(shell basename $(COAL_BIT))\", \
+	\"boot\": \"$(shell basename $(BOOT_BIT))\", \
+	\"usb\": \"$(shell basename $(USB_BIT))\", \
+	\"upgrade\": \"$(shell basename $(UPGRADE_BIT))\" \
+}" | json >$(RELEASEJSON_BIT)
+
+
 clean_usb-headnode:
 	rm -rf $(BOOT_BIT) $(UPGRADE_BIT) $(USB_BIT) $(COAL_BIT)
+
+
 
 #---- platform
 
