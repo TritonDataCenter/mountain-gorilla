@@ -52,7 +52,7 @@ all: smartlogin ca agents agentsshar platform coal usb upgrade boot releasejson
 SMARTLOGIN_BITS=$(BITS_DIR)/smartlogin/smartlogin-$(SMARTLOGIN_BRANCH)-$(TIMESTAMP)-g$(SMARTLOGIN_SHA).tgz
 
 .PHONY: smartlogin
-smartlogin: $(SMARTLOGIN_BITS)
+	smartlogin: $(SMARTLOGIN_BITS)
 
 # PATH: ensure using GCC from SFW. Not sure this is necessary, but has been
 # the case for release builds pre-MG.
