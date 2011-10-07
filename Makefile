@@ -147,7 +147,7 @@ AGENTSSHAR_BITS_0=$(shell echo $(AGENTSSHAR_BITS) | awk '{print $$1}')
 .PHONY: agentsshar
 agentsshar: $(AGENTSSHAR_BITS_0)
 
-$(AGENTSSHAR_BITS): build/agents-installer/Makefile
+$(AGENTSSHAR_BITS): build/agents-installer/Makefile $(AGENTS_BITS) $(CA_BITS) $(SMARTLOGIN_BITS)
 	@echo "# Build agentsshar: branch $(AGENTSSHAR_BRANCH), sha $(AGENTSSHAR_SHA)"
 	mkdir -p $(BITS_DIR)/ur-scripts
 	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/ur-scripts -d $(BITS_DIR) -b $(AGENTSSHAR_BRANCH))
