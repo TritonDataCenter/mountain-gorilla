@@ -1,4 +1,5 @@
 #!/bin/bash
+# vi: tabstop=4 expandtab shiftwidth=4
 #
 # Configure the mountain gorilla (aka SDC) build.
 #
@@ -9,6 +10,8 @@ if [ "$TRACE" != "" ]; then
 fi
 set -o errexit
 set -o pipefail
+
+
 
 #---- config, globals
 
@@ -21,6 +24,9 @@ PLAT_COMPONENTS="illumos-joyent ur-agent kvm kvm-cmd-14 operator-toolkit sdc-pla
 ROOT=$(pwd)
 
 FORCE_RECONFIG='false'
+
+
+
 #---- internal support functions
 
 function fatal {
@@ -34,15 +40,16 @@ function errexit {
 }
 
 function config_clean() {
-  repo=$1
-	# TODO: parse a repo:target mapping and clean targets better
-	targ=$(cat repos.json | json $repo | json target)
-  parent=$(cat repos.json | json $repo | json parents | json 0)
-	gmake clean_$targ
-	if [[ -n $parent ]]; then
-		config_clean $parent
-	fi
+    repo=$1
+    # TODO: parse a repo:target mapping and clean targets better
+    targ=$(cat repos.json | json $repo | json target)
+    parent=$(cat repos.json | json $repo | json parents | json 0)
+    gmake clean_$targ
+    if [[ -n $parent ]]; then
+          config_clean $parent
+    fi
 }
+
 
 function get_repo() {
     local_branch=$1
@@ -58,9 +65,10 @@ function get_repo() {
     (cd build/$DEST; git submodule update --init --recursive )
 
     if [[ $out != "Already up-to-date." || $FORCE_RECONFIG == 'true' ]]; then
-		 	config_clean $SRC
+        config_clean $SRC
     fi 
 }
+
 function get_github_repo() {
     SRC=$1
     DEST=$2
@@ -75,7 +83,7 @@ function get_github_repo() {
     (cd build/$DEST; git submodule update --init --recursive )
 
     if [[ $out != "Already up-to-date." ]]; then
-		 	config_clean $SRC
+        config_clean $SRC
     fi 
 }
 function get_smartlogin() {
@@ -126,34 +134,33 @@ function get_illumoslive() {
 }
 
 function get_zone_repo() {
-  zone=$1
-	branch=$2
+    zone=$1
+    branch=$2
 
-	get_repo $branch $zone $zone
+    get_repo $branch $zone $zone
 
-	if [[ $zone == "cloud-api" ]]; then
-    ( cd build/cloud-api &&\
-		  mkdir -p ssl  && \
-			mkdir -p node_modules)
-			get_repo $1 node-sdc-clients cloud-api/node_modules/sdc-clients 
-  fi
-
+    if [[ $zone == "cloud-api" ]]; then
+        (cd build/cloud-api &&\
+            mkdir -p ssl  && \
+            mkdir -p node_modules)
+        get_repo $1 node-sdc-clients cloud-api/node_modules/sdc-clients 
+    fi
 }
 
 function get_zones() {
 
-  # There's got to be a better way to enumerate this stuff
-  for zone in $ZONES; do
-    get_repo $1 $zone $zone
-  done
+    # There's got to be a better way to enumerate this stuff
+    for zone in $ZONES; do
+        get_repo $1 $zone $zone
+    done
 
-  # cloudapi is special, it uses 3 repos
-  ( cd build/cloud-api &&\
-    mkdir -p ssl  && \
-    mkdir -p node_modules)
-  get_repo $1 node-sdc-clients cloud-api/node_modules/sdc-clients
+    # cloudapi is special, it uses 3 repos
+    (cd build/cloud-api &&\
+        mkdir -p ssl  && \
+        mkdir -p node_modules)
+    get_repo $1 node-sdc-clients cloud-api/node_modules/sdc-clients
 
-cat <<EOF > build/usb-headnode/build.spec.local
+    cat <<EOF > build/usb-headnode/build.spec.local
   {
     "agents-shar": "$BRANCH"
   , "adminui-checkout": "origin/$BRANCH"
@@ -190,26 +197,27 @@ USBHEADNODE_SHA=$((cd build/usb-headnode 2>&1 > /dev/null && git log --pretty=fo
 BUILD_PLATFORM=$BUILD_PLATFORM
 EOF
 
-if [[ `uname -s` == "SunOS" && $BUILD_PLATFORM == 'true' ]]; then
-    cat <<EOF >>config.mk
+    if [[ `uname -s` == "SunOS" && $BUILD_PLATFORM == 'true' ]]; then
+        cat <<EOF >>config.mk
 PLATFORM_BRANCH=$PLATFORM_BRANCH
 PLATFORM_SHA=$PLATFORM_SHA
 
 EOF
 
-for zone in $ZONES; do
-    capzone=$(echo $zone | tr [:lower:] [:upper:] | tr - _)
-    cat <<EOF >>config.mk
+        for zone in $ZONES; do
+            capzone=$(echo $zone | tr [:lower:] [:upper:] | tr - _)
+            cat <<EOF >>config.mk
 ${capzone}_BRANCH=$BRANCH
 ${capzone}_SHA=$((cd build/$zone 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 EOF
 
-done
-else
-    cat <<EOF >>config.mk
+        done
+    else
+        cat <<EOF >>config.mk
 PLATFORM_TIMESTAMP=$PLATFORM_TIMESTAMP
 EOF
-fi
+    fi
+
     echo "'config.mk' created."
 }
 
@@ -252,8 +260,8 @@ while getopts ":b:hunr:fs:" opt; do
 done
 
 if [[ $RECONFIG == 'true' && -z $RECONF_REPO || $SOLE == 'true' && -z $SOLE_REPO ]]; then
-  print_help
-  exit 1
+    print_help
+    exit 1
 fi
 
 # The configure process wants to run "clean_*" targets in the Makefile.
@@ -262,45 +270,45 @@ fi
 touch config.mk
 
 if [[ $SOLE != 'true' ]]; then
-  # TODO: not sure about allow no arg to '-r'. Doesn't that screw up './configure -r -n'?
-  if [[ -n $RECONF_REPO ]]; then
-    if [[ $(echo $ZONES | grep $RECONF_REPO) ]]; then
-      get_zone_repo $RECONF_REPO $BRANCH
+    # TODO: not sure about allow no arg to '-r'. Doesn't that screw up './configure -r -n'?
+    if [[ -n $RECONF_REPO ]]; then
+        if [[ $(echo $ZONES | grep $RECONF_REPO) ]]; then
+            get_zone_repo $RECONF_REPO $BRANCH
+        else
+            targ=$(cat repos.json | json $RECONF_REPO | json target)
+            if [[ -n $targ ]]; then
+                RECONF_REPO=$targ
+            fi
+            get_$RECONF_REPO $BRANCH
+        fi
     else
-      targ=$(cat repos.json | json $RECONF_REPO | json target)
-      if [[ -n $targ ]]; then
-        RECONF_REPO=$targ
-      fi
-      get_$RECONF_REPO $BRANCH
+        get_smartlogin $BRANCH
+        get_ca $BRANCH
+        get_agents $BRANCH
+        get_agentsshar $BRANCH
+        get_usbheadnode $BRANCH
+        get_illumoslive $BRANCH
+        get_zones $BRANCH
     fi
-  else
-    get_smartlogin $BRANCH
-    get_ca $BRANCH
-    get_agents $BRANCH
-    get_agentsshar $BRANCH
-    get_usbheadnode $BRANCH
-    get_illumoslive $BRANCH
-    get_zones $BRANCH
-  fi
 else
-  if [[ $SOLE_REPO == 'usb-headnode' ]]; then
-    get_smartlogin $BRANCH
-    get_ca $BRANCH
-    get_agents $BRANCH
-    get_agentsshar $BRANCH
-    get_usbheadnode $BRANCH
-    get_illumoslive $BRANCH
-    get_zones $BRANCH
-  elif [[ $SOLE_REPO == 'agents-installer' ]]; then
-    get_agentsshar $BRANCH
-    get_agents $BRANCH
-    get_smartlogin $BRANCH
-    get_ca $BRANCH
-  elif [[ $SOLE_REPO == 'illumos-live' ]]; then
-    get_illumoslive $BRANCH
-  else
-    get_repo $BRANCH $SOLE_REPO $SOLE_REPO
-  fi
+    if [[ $SOLE_REPO == 'usb-headnode' ]]; then
+        get_smartlogin $BRANCH
+        get_ca $BRANCH
+        get_agents $BRANCH
+        get_agentsshar $BRANCH
+        get_usbheadnode $BRANCH
+        get_illumoslive $BRANCH
+        get_zones $BRANCH
+    elif [[ $SOLE_REPO == 'agents-installer' ]]; then
+        get_agentsshar $BRANCH
+        get_agents $BRANCH
+        get_smartlogin $BRANCH
+        get_ca $BRANCH
+    elif [[ $SOLE_REPO == 'illumos-live' ]]; then
+        get_illumoslive $BRANCH
+    else
+        get_repo $BRANCH $SOLE_REPO $SOLE_REPO
+    fi
 fi
 
 gen_config
