@@ -55,6 +55,8 @@ function get_repo() {
     local_branch=$1
     SRC=$2
     DEST=$3
+    # Should be 'true' to request usage of '--recursive' on 'git submodule update ...' call.
+    SUBMODULE_RECURSIVE=$4
 
     echo "# build/$DEST"
     if [[ ! -d build/$DEST ]]; then
@@ -62,7 +64,11 @@ function get_repo() {
     else
         out=$(cd build/$DEST ; git checkout $local_branch ; git pull)
     fi
-    (cd build/$DEST; git submodule update --init --recursive )
+    if [[ "$SUBMODULE_RECURSIVE" == "true" ]]; then
+        (cd build/$DEST; git submodule update --init --recursive)
+    else
+        (cd build/$DEST; git submodule update --init)
+    fi
 
     if [[ $out != "Already up-to-date." || $FORCE_RECONFIG == 'true' ]]; then
         config_clean $SRC
@@ -87,34 +93,36 @@ function get_github_repo() {
     fi 
 }
 function get_smartlogin() {
-    get_repo $1 smart-login smartlogin
+    get_repo $1 smart-login smartlogin true
     if [[ -n $2 ]]; then
         (cd build/smartlogin; git checkout $2)
     fi
 }
 
 function get_ca() {
-    get_repo $1 cloud-analytics ca
+    # RELENG-222, INTRO-543: cannot do recursive git submodule update for CA
+    # while it is using the old Connect.
+    get_repo $1 cloud-analytics ca false
 } 
 
 function get_agents() {
-    get_repo $1 agents agents
+    get_repo $1 agents agents true
 }
 
 function get_agentsshar() {
-    get_repo $1 agents-installer agents-installer
+    get_repo $1 agents-installer agents-installer true
 }
 
 function get_usbheadnode() {
-    get_repo $1 usb-headnode usb-headnode
+    get_repo $1 usb-headnode usb-headnode true
 }
 
 function get_illumoslive() {
     if [[ `uname -s` == "SunOS" && $BUILD_PLATFORM == 'true' ]]; then
-        get_repo $1 illumos-live illumos-live
+        get_repo $1 illumos-live illumos-live true
         get_github_repo illumos-extra illumos-extra joyent
         for bit in $PLAT_COMPONENTS; do
-            get_repo $1 $bit $bit
+            get_repo $1 $bit $bit true
         done
         PLATFORM_BRANCH=$BRANCH
         PLATFORM_SHA=$(cd build/illumos-live ; git log --pretty=format:'%h' -1 )
@@ -137,28 +145,27 @@ function get_zone_repo() {
     zone=$1
     branch=$2
 
-    get_repo $branch $zone $zone
+    get_repo $branch $zone $zone true
 
     if [[ $zone == "cloud-api" ]]; then
         (cd build/cloud-api &&\
             mkdir -p ssl  && \
             mkdir -p node_modules)
-        get_repo $1 node-sdc-clients cloud-api/node_modules/sdc-clients 
+        get_repo $1 node-sdc-clients cloud-api/node_modules/sdc-clients true
     fi
 }
 
 function get_zones() {
-
     # There's got to be a better way to enumerate this stuff
     for zone in $ZONES; do
-        get_repo $1 $zone $zone
+        get_repo $1 $zone $zone true
     done
 
     # cloudapi is special, it uses 3 repos
     (cd build/cloud-api &&\
         mkdir -p ssl  && \
         mkdir -p node_modules)
-    get_repo $1 node-sdc-clients cloud-api/node_modules/sdc-clients
+    get_repo $1 node-sdc-clients cloud-api/node_modules/sdc-clients true
 
     cat <<EOF > build/usb-headnode/build.spec.local
   {
@@ -307,7 +314,7 @@ else
     elif [[ $SOLE_REPO == 'illumos-live' ]]; then
         get_illumoslive $BRANCH
     else
-        get_repo $BRANCH $SOLE_REPO $SOLE_REPO
+        get_repo $BRANCH $SOLE_REPO $SOLE_REPO true
     fi
 fi
 
