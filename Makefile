@@ -151,7 +151,7 @@ ufds: $(UFDS_BITS)
 $(UFDS_BITS): build/ufds
 	@echo "# Build ufds: branch $(UFDS_BRANCH), sha $(UFDS_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/ufds && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/ufds && PATH=/opt/npm/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created ufds bits:"
 	@ls -1 $(UFDS_BITS)
 	@echo ""
