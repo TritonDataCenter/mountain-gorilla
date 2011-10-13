@@ -1,5 +1,6 @@
 {
     "cloud-analytics" : { "target" : "ca", "parents": ["agents-installer"]},
+    "ufds" : { "target" : "ufds", "parents": ["agents-installer"]},
     "smart-login" : { "target" : "smartlogin" , "parents": ["agents-installer"] }, 
     "agents" : { "target" : "agents" , "parents": ["agents-installer"] } ,
     "illumos-live" : { "target" : "platform" , "parents": ["usb-headnode"] } ,

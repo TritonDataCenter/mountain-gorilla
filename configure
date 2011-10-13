@@ -105,6 +105,9 @@ function get_ca() {
     get_repo $1 cloud-analytics ca false
 } 
 
+function get_ufds() {
+    get_repo $1 ufds ufds
+} 
 function get_agents() {
     get_repo $1 agents agents true
 }
@@ -194,6 +197,9 @@ AGENTS_SHA=$((cd build/agents 2>&1 > /dev/null && git log --pretty=format:'%h' -
 
 CA_BRANCH=$BRANCH
 CA_SHA=$((cd build/ca 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
+
+UFDS_BRANCH=$BRANCH
+UFDS_SHA=$((cd build/ufds 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
 AGENTSSHAR_BRANCH=$BRANCH
 AGENTSSHAR_SHA=$((cd build/agents-installer 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
@@ -291,6 +297,7 @@ if [[ $SOLE != 'true' ]]; then
     else
         get_smartlogin $BRANCH
         get_ca $BRANCH
+        get_ufds $BRANCH
         get_agents $BRANCH
         get_agentsshar $BRANCH
         get_usbheadnode $BRANCH
@@ -301,6 +308,7 @@ else
     if [[ $SOLE_REPO == 'usb-headnode' ]]; then
         get_smartlogin $BRANCH
         get_ca $BRANCH
+        get_ufds $BRANCH
         get_agents $BRANCH
         get_agentsshar $BRANCH
         get_usbheadnode $BRANCH
@@ -311,6 +319,7 @@ else
         get_agents $BRANCH
         get_smartlogin $BRANCH
         get_ca $BRANCH
+        get_ufds $BRANCH
     elif [[ $SOLE_REPO == 'illumos-live' ]]; then
         get_illumoslive $BRANCH
     else

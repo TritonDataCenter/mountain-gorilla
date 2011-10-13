@@ -42,7 +42,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin ca agents agentsshar platform coal usb upgrade boot releasejson
+all: smartlogin ca agents agentsshar platform ufds coal usb upgrade boot releasejson
 
 
 #---- smartlogin
@@ -137,6 +137,35 @@ clean_ca:
 
 upload_ca:
 	./tools/upload-bits -f "$(CA_BITS)" $(CA_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/ca/
+
+#---- UFDS
+
+_ufds_stamp=$(UFDS_BRANCH)-$(TIMESTAMP)-g$(UFDS_SHA)
+UFDS_BITS=$(BITS_DIR)/assets/ufds-pkg-$(_ufds_stamp).tar.bz2
+
+.PHONY: ufds
+ufds: $(UFDS_BITS)
+
+# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(UFDS_BITS): build/ufds
+	@echo "# Build ufds: branch $(UFDS_BRANCH), sha $(UFDS_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/ufds && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	@echo "# Created ufds bits:"
+	@ls -1 $(UFDS_BITS)
+	@echo ""
+
+# Warning: if UFDS's submodule deps change, this 'clean_ufds' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_ufds:
+	rm -rf $(BITS_DIR)/assets
+	rm -rf $(BITS_DIR)/ufds
+	(cd build/ufds && gmake clean)
+
+upload_ufds:
+	./tools/upload-bits -f "$(UFDS_BITS)" $(UFDS_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/ufds/
+
 #---- agents shar
 
 _as_stamp=$(AGENTSSHAR_BRANCH)-$(TIMESTAMP)-g$(AGENTSSHAR_SHA)
