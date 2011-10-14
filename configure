@@ -4,6 +4,7 @@
 # Configure the mountain gorilla (aka SDC) build.
 #
 
+
 if [ "$TRACE" != "" ]; then
     export PS4='${BASH_SOURCE}:${LINENO}: '
     set -o xtrace
@@ -25,8 +26,8 @@ ROOT=$(pwd)
 
 FORCE_RECONFIG='false'
 
-
-
+URL="https://stuff.joyent.us/stuff/builds/nightly/master-latest/"
+CREDS="guest:GrojhykMid"
 #---- internal support functions
 
 function fatal {
@@ -253,13 +254,33 @@ function print_help() {
     exit 0
 }
 
+function download_bits() {
+  platform=$(curl -k -L -u $CREDS $URL | grep platform | cut -d '>' -f 2 | cut -d '<' -f1)
+  agentsshar=$(curl -k -L -u $CREDS $URL/ur-scripts | grep agents | grep \.sh | cut -d '>' -f 2 | cut -d '<' -f1 | cut -d "." -f1)
+  ca_pkg=$(curl -k -L -u $CREDS $URL/assets | grep ca-pkg | cut -d '>' -f 2 | cut -d '<' -f1 )
 
+  mkdir -p bits/assets || /bin/true
+  mkdir -p bits/ur-scripts || /bin/true
+
+  (cd bits; curl -k -L -u $CREDS -O $URL/$platform)
+  (cd bits/assets; curl -k -L -u $CREDS -O $URL/assets/$ca_pkg)
+  (cd bits/ur-scripts; curl -k -L -u $CREDS -O $URL/ur-scripts/${agentsshar}.sh; \
+      curl -k -L -u $CREDS -O $URL/ur-scripts/${agentsshar}.md5sum; )
+  get_usbheadnode $BRANCH
+  get_zones $BRANCH
+  get_ufds $BRANCH
+
+  timestamp=$(echo $platform | cut -d '-' -f2 | cut -d '.' -f 1)
+  echo "TIMESTAMP=$timestamp" > config.mk
+  echo "USBHEADNODE_BRANCH=$BRANCH" >> config.mk
+  echo "USBHEADNODE_SHA=$((cd build/usb-headnode 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")" >> config.mk
+}
 
 #---- mainline
 
 trap 'errexit $? $LINENO' EXIT
 
-while getopts ":b:hunr:fs:" opt; do
+while getopts ":b:hunr:fs:o" opt; do
     case $opt in
         b) BRANCH=$OPTARG;;
         h) print_help ;;
@@ -267,6 +288,7 @@ while getopts ":b:hunr:fs:" opt; do
         r) RECONFIG='true' ; RECONF_REPO=${OPTARG} ;;
         s) SOLE='true' ; SOLE_REPO=${OPTARG} ;;
         f) FORCE_RECONFIG='true' ;;
+        o) ONLINE=1 ;;
         ?) fatal "unknown option: $opt" ;;
     esac
     shift $((OPTIND-1))
@@ -281,6 +303,12 @@ fi
 # The Makefile needs a config.mk to exist. An empty one will suffice for
 # the clean targets.
 touch config.mk
+
+
+if [[ $ONLINE == 1 ]]; then
+    download_bits
+    exit 0
+fi
 
 if [[ $SOLE != 'true' ]]; then
     # TODO: not sure about allow no arg to '-r'. Doesn't that screw up './configure -r -n'?
