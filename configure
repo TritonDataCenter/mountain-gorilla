@@ -350,6 +350,8 @@ else
         get_ufds $BRANCH
     elif [[ $SOLE_REPO == 'illumos-live' ]]; then
         get_illumoslive $BRANCH
+    elif [[ $SOLE_REPO == 'cloud-analytics' ]]; then
+        get_ca $BRANCH
     else
         get_repo $BRANCH $SOLE_REPO $SOLE_REPO true
     fi
