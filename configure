@@ -191,22 +191,22 @@ function gen_config() {
 TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
 
 SMARTLOGIN_BRANCH=$BRANCH
-SMARTLOGIN_SHA=$((cd build/smartlogin 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
+SMARTLOGIN_SHA=$((cd build/smartlogin 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
 AGENTS_BRANCH=$BRANCH
-AGENTS_SHA=$((cd build/agents 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
+AGENTS_SHA=$((cd build/agents 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
 CA_BRANCH=$BRANCH
-CA_SHA=$((cd build/ca 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
+CA_SHA=$((cd build/ca 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
 UFDS_BRANCH=$BRANCH
-UFDS_SHA=$((cd build/ufds 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
+UFDS_SHA=$((cd build/ufds 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
 AGENTSSHAR_BRANCH=$BRANCH
-AGENTSSHAR_SHA=$((cd build/agents-installer 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
+AGENTSSHAR_SHA=$((cd build/agents-installer 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
 USBHEADNODE_BRANCH=$BRANCH
-USBHEADNODE_SHA=$((cd build/usb-headnode 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
+USBHEADNODE_SHA=$((cd build/usb-headnode 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
 BUILD_PLATFORM=$BUILD_PLATFORM
 EOF
@@ -222,7 +222,7 @@ EOF
             capzone=$(echo $zone | tr [:lower:] [:upper:] | tr - _)
             cat <<EOF >>config.mk
 ${capzone}_BRANCH=$BRANCH
-${capzone}_SHA=$((cd build/$zone 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
+${capzone}_SHA=$((cd build/$zone  1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 EOF
 
         done
