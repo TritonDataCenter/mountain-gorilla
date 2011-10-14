@@ -290,6 +290,7 @@ $(PLATFORM_BIT):
 ifeq ($(BUILD_PLATFORM),true)
 	@echo "# Build platform: branch $(PLATFORM_BRANCH), sha $(PLATFORM_SHA)"
 	(cd build/illumos-live && PATH=/usr/sfw/bin:$(PATH) ./configure && PATH=/usr/sfw/bin:$(PATH) BUILDSTAMP=$(TIMESTAMP) gmake world && PATH=/usr/sfw/bin:$(PATH) BUILDSTAMP=$(TIMESTAMP) gmake live)
+	(mkdir -p $(BITS_DIR)/)
 	(cp build/illumos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/)
 	@echo "# Created platform bits:"
 	@ls -1 $(PLATFORM_BIT)
