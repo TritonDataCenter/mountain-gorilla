@@ -1,7 +1,8 @@
 {
     "amon" : { "target" : "amon", "parents": ["usb-headnode"]},
     "cloud-analytics" : { "target" : "ca", "parents": ["agents-installer"]},
-    "ufds" : { "target" : "ufds", "parents": ["agents-installer"]},
+    "ufds" : { "target" : "ufds", "parents": ["usb-headnode"]},
+    "sdc-webinfo" : { "target" : "null", "parents": ["usb-headnode"]},
     "smart-login" : { "target" : "smartlogin" , "parents": ["agents-installer"] }, 
     "agents" : { "target" : "agents" , "parents": ["agents-installer"] } ,
     "illumos-live" : { "target" : "platform" , "parents": ["usb-headnode"] } ,

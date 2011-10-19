@@ -178,12 +178,14 @@ function get_zones() {
     "agents-shar": "$BRANCH"
   , "adminui-checkout": "origin/$BRANCH"
   , "ca-tarball": "^ca-pkg-$BRANCH-.*.tar.bz2$"
-  , "capi-checkout": "origin/$BRANCH"
   , "dhcpd-checkout": "origin/$BRANCH"
   , "mapi-checkout": "origin/$BRANCH"
   , "portal-checkout": "origin/$BRANCH"
   , "cloudapi-checkout": "origin/$BRANCH"
+  , "billapi-checkout": "origin/$BRANCH"
   , "rabbitmq-checkout": "origin/$BRANCH"
+  , "ufds-checkout": "origin/$BRANCH"
+  , "sdc-webinfo-checkout": "origin/$BRANCH"
 }
 EOF
 }
