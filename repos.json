@@ -1,4 +1,5 @@
 {
+    "amon" : { "target" : "amon", "parents": ["usb-headnode"]},
     "cloud-analytics" : { "target" : "ca", "parents": ["agents-installer"]},
     "ufds" : { "target" : "ufds", "parents": ["agents-installer"]},
     "smart-login" : { "target" : "smartlogin" , "parents": ["agents-installer"] }, 

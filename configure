@@ -93,11 +93,13 @@ function get_github_repo() {
         config_clean $SRC
     fi 
 }
+
 function get_smartlogin() {
     get_repo $1 smart-login smartlogin true
-    if [[ -n $2 ]]; then
-        (cd build/smartlogin; git checkout $2)
-    fi
+}
+
+function get_amon() {
+    get_repo $1 amon amon true
 }
 
 function get_ca() {
@@ -192,6 +194,9 @@ TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
 
 SMARTLOGIN_BRANCH=$BRANCH
 SMARTLOGIN_SHA=$((cd build/smartlogin 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
+
+AMON_BRANCH=$BRANCH
+AMON_SHA=$((cd build/amon 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
 AGENTS_BRANCH=$BRANCH
 AGENTS_SHA=$((cd build/agents 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
@@ -324,6 +329,7 @@ if [[ $SOLE != 'true' ]]; then
         fi
     else
         get_smartlogin $BRANCH
+        get_amon $BRANCH
         get_ca $BRANCH
         get_ufds $BRANCH
         get_agents $BRANCH
@@ -335,6 +341,7 @@ if [[ $SOLE != 'true' ]]; then
 else
     if [[ $SOLE_REPO == 'usb-headnode' ]]; then
         get_smartlogin $BRANCH
+        get_amon $BRANCH
         get_ca $BRANCH
         get_ufds $BRANCH
         get_agents $BRANCH
@@ -352,6 +359,8 @@ else
         get_illumoslive $BRANCH
     elif [[ $SOLE_REPO == 'cloud-analytics' ]]; then
         get_ca $BRANCH
+    elif [[ $SOLE_REPO == 'amon' ]]; then
+        get_amon $BRANCH
     else
         get_repo $BRANCH $SOLE_REPO $SOLE_REPO true
     fi

@@ -42,7 +42,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin ca agents agentsshar platform ufds coal usb upgrade boot releasejson
+all: smartlogin amon ca agents agentsshar platform ufds coal usb upgrade boot releasejson
 
 
 #---- smartlogin
@@ -69,6 +69,7 @@ clean_smartlogin:
 
 upload_smartlogin:
 	./tools/upload-bits -f "$(SMARTLOGIN_BITS)" $(SMARTLOGIN_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/smartlogin/
+
 
 #---- agents
 
@@ -101,6 +102,34 @@ clean_agents:
 
 upload_agents:
 	./tools/upload-bits -f "$(AGENTS_BITS)" $(AGENTS_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/agents/
+
+
+#---- amon
+
+_amon_stamp=$(AMON_BRANCH)-$(TIMESTAMP)-g$(AMON_SHA)
+AMON_BITS=$(BITS_DIR)/amon/amon-master-$(_amon_stamp).tgz \
+	$(BITS_DIR)/amon/amon-relay-$(_amon_stamp).tgz \
+	$(BITS_DIR)/amon/amon-agent-$(_amon_stamp).tgz
+AMON_BITS_0=$(shell echo $(AMON_BITS) | awk '{print $$1}')
+
+.PHONY: amon
+amon: $(AMON_BITS_0)
+
+$(AMON_BITS): build/amon
+	@echo "# Build amon: branch $(AMON_BRANCH), sha $(AMON_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/amon && IGNORE_DIRTY=1 TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake clean all pkg publish)
+	@echo "# Created amon bits:"
+	@ls -1 $(AMON_BITS)
+	@echo ""
+
+clean_amon:
+	rm -rf $(BITS_DIR)/amon
+	(cd build/amon && gmake clean)
+
+upload_amon:
+	./tools/upload-bits -f "$(AMON_BITS)" $(AMON_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/amon/
+
 
 #---- cloud-analytics
 #TODO:
@@ -137,6 +166,7 @@ clean_ca:
 
 upload_ca:
 	./tools/upload-bits -f "$(CA_BITS)" $(CA_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/ca/
+
 
 #---- UFDS
 
@@ -308,7 +338,6 @@ upload_platform:
 
 clean_null:
 
-#TODO: also "build", but not yet
 .PHONY: distclean
 distclean:
 	pfexec rm -rf bits build
