@@ -1,34 +1,63 @@
 #!/bin/bash
+#
+# Check if the SDC repos (those listed in repos.json) are prepared (branched
+# or tagged as appropriate) for an SDC release build.
+#
+# Usage:
+#   check_release RELEASE [<mo.joyent.com credentials>]
+#
+# Example:
+#   check_release 20111020 molybdenum:PASSWORD
+#
+# This uses the mo.joyent.com API. It will use the mo.joyent.com credentials
+# given as the second argument or, if not given, from the
+# MOLYBDENUM_CREDENTIALS envvar.
+#
+
+#set -x
+set -e
+
 
 RELEASE=$1
+if [[ -z "$RELEASE" ]]; then
+    echo "error: no RELEASE given"
+    echo "usage: check_release RELEASE [<mo.joyent.com credentials>]"
+    exit 1
+fi
+is_date=$(echo $RELEASE | grep '^[0-9]\{8\}$' || true)
+if [[ -z "$is_date" ]]; then
+    echo "error: given RELEASE, '$RELEASE', is not an 8-digit date"
+    exit 1
+fi
+BRANCH=release-$RELEASE
+TAG=$RELEASE
+
 CREDS=$2
+if [[ -z "$CREDS" ]]; then
+    CREDS=$MOLYBDENUM_CREDENTIALS
+fi
+if [[ -z "$CREDS" ]]; then
+    echo "error: no mo.joyent.com crendentials: use second arg or set MOLYBDENUM_CREDENTIALS"
+    exit 1
+fi
 
-
-REPOS="smart-login \
-    agents \
-    cloud-analytics \
-    agents-installer \
-    operator-toolkit \
-    illumos-live \
-    ur-agent \
-    usb-headnode \
-    mcp_api_gateway \
-    mcp_api_admin \
-    public-web-client \
-    cloud-api \
-    booter \
-    kvm \
-    kvm-cmd-14 \
-    customers_api \
-    billing_api \
-    sdc-webinfo \
-    node-sdc-clients"
+# Note: The trailing '' is to get `node -e` to shut up about that retval.
+REPOS=$(node -e "var fs = require('fs'); repos = JSON.parse(fs.readFileSync('repos.json')); console.log(Object.keys(repos).join('\n')); '';");
 
 for repo in $REPOS; do
-  curl https://mo.joyent.com/api/repos/$repo/refs -u $CREDS 2> /dev/null | grep $RELEASE 2>&1 >/dev/null
-  if [[ $? == 0 ]]; then
-    echo "$repo: OK"
+  if [[ "$repo" == "illumos-extra" ]]; then
+    # illumos-extra is special, it is on GitHub and only gets tagged, not
+    # branched.
+    hit=$(curl -sS https://mo.joyent.com/api/repos/$repo/refs -u $CREDS | ./tools/json tags | grep "\"$TAG\"" || true)
+    errmsg="no '$TAG' tag"
   else
-    echo "$repo: FAIL"
+    hit=$(curl -sS https://mo.joyent.com/api/repos/$repo/refs -u $CREDS | ./tools/json branches | grep "\"$BRANCH\"" || true)
+    errmsg="no '$BRANCH' branch"
+  fi
+  
+  if [[ -z "$hit" ]]; then
+    echo "$repo: FAIL ($errmsg)"
+  else
+    echo "$repo: OK"
   fi
 done
