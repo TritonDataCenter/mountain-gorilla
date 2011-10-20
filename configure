@@ -26,7 +26,7 @@ ROOT=$(pwd)
 
 FORCE_RECONFIG='false'
 
-URL="https://stuff.joyent.us/stuff/builds/nightly/master-latest/"
+URL="https://stuff.joyent.us/stuff/builds/sdc/master-latest/"
 CREDS="guest:GrojhykMid"
 
 

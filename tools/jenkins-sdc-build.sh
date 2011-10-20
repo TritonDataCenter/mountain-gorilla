@@ -1,9 +1,11 @@
-# This script lives at
-# <mountain-gorilla.git/tools/jenkins-nightly-build.sh>.
+#!/bin/bash
 #
-# A suggested jenkins build step for an MG nightly build.
+# This script lives at
+# <mountain-gorilla.git/tools/jenkins-sdc-build.sh>.
+#
+# A suggested jenkins build step for an MG full SDC build.
 # See the jenkins project for the *actual* current build steps:
-#   https://jenkins.joyent.us/job/mg/configure
+#   https://jenkins.joyent.us/job/sdc/configure
 #
 
 # Poorman's backup of last build run.
@@ -30,4 +32,4 @@ gmake 2>&1 | tee -a $LOG
 
 echo "" | tee -a $LOG
 echo "#----------------------" | tee -a $LOG
-gmake upload_nightly 2>&1 | tee -a $LOG
+gmake upload_jenkins 2>&1 | tee -a $LOG

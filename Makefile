@@ -345,8 +345,11 @@ distclean:
 	pfexec rm -rf bits build
 
 
-# Upload bits we want to keep for a nightly build.
+# Upload bits we want to keep for a Jenkins build.
 # Note: hardcoding to "$USBHEADNODE_BRANCH" here isn't ideal.
-upload_nightly:
-	./tools/upload-bits $(USBHEADNODE_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/nightly
+upload_jenkins:
+	[[ -z "$(JOB_NAME)" ]] \
+		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
+		&& false
+	./tools/upload-bits $(USBHEADNODE_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/$(JOB_NAME)
 
