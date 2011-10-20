@@ -27,7 +27,7 @@ function usage() {
         echo ""
     fi
     echo "Usage:"
-    echo "  check-repos-for-release [-a] [-c CREDS] RELEASE-DATE"
+    echo "  check-repos-for-release [OPTIONS] RELEASE-DATE"
     echo ""
     echo "Options:"
     echo "  -c CREDS        Provide creds for mo.joyent.com. If not given"
@@ -35,9 +35,13 @@ function usage() {
     echo "  -a              *Apply* missing branch and/or tag (as appropriate)"
     echo "                  The 'illumos-extra' repo is just tagged, all"
     echo "                  others are just branched."
+    echo "  -r REPO         Just run for the given repository. If not given"
+    echo "                  then all repos in 'repos.json' are used. Can be"
+    echo "                  specified multiple times."
     echo ""
     echo "Examples:"
     echo "  check-repos-for-release 20111020"
+    echo "  check-repos-for-release -r usb-headnode 20111020"
     echo "  check-repos-for-release -a 20111020"
     exit 1
 }
@@ -56,22 +60,6 @@ function repo_url_from_name () {
         echo "git@git.joyent.com:$name.git"
     fi
 }
-
-#function apply_missing_branch {
-#    local repo_name=$1
-#    local branch=$2
-#    local repo_url=$(repo_url_from_name $repo_name)
-#    echo "Apply missing branch $branch to $repo ($repo_url)."
-#    mkdir -p $WORKDIR
-#    (cd $WORKDIR;
-#        git clone $repo_url $repo_name;
-#        cd $repo_name;
-#        git checkout master;
-#        # Consider '-B' to force reset of branch if already exists.
-#        git checkout -b $branch
-#        git push origin $branch)
-#}
-#XXX
 
 function apply_missing {
     local repo_name=$1
@@ -105,7 +93,8 @@ trap cleanup EXIT
 
 APPLY=0   # whether to apply a branch/tag to repo
 CREDS=
-while getopts "hac:" c; do
+REPOS=
+while getopts "hac:r:" c; do
     case "$c" in
     h)
         usage
@@ -115,6 +104,9 @@ while getopts "hac:" c; do
         ;;
     c)
         CREDS=$OPTARG
+        ;;
+    r)
+        REPOS="$REPOS $OPTARG"
         ;;
     *)
         usage "illegal option -- $OPTARG"
@@ -143,8 +135,10 @@ if [[ -z "$CREDS" ]]; then
 fi
 
 
-# Note: The trailing '' is to get `node -e` to shut up about that retval.
-REPOS=$(cd $TOP; node -e "var fs = require('fs'); repos = JSON.parse(fs.readFileSync('repos.json')); console.log(Object.keys(repos).join('\n')); '';");
+if [[ -z "$REPOS" ]]; then
+    # Note: The trailing '' is to get `node -e` to shut up about that retval.
+    REPOS=$(cd $TOP; node -e "var fs = require('fs'); repos = JSON.parse(fs.readFileSync('repos.json')); console.log(Object.keys(repos).join('\n')); '';");
+fi
 
 for repo in $REPOS; do
   if [[ "$repo" == "illumos-extra" ]]; then
@@ -152,7 +146,7 @@ for repo in $REPOS; do
     # branched.
     hit=$(curl -sS https://mo.joyent.com/api/repos/$repo/refs -u $CREDS | $TOP/tools/json tags | grep "\"$TAG\"" || true)
     if [[ -z "$hit" ]]; then
-      if [[ $APPLY ]]; then
+      if [[ $APPLY -eq 1 ]]; then
         echo "$repo: missing '$TAG' tag"
         apply_missing $repo "$TAG" ""
       else
@@ -164,7 +158,7 @@ for repo in $REPOS; do
   else
     hit=$(curl -sS https://mo.joyent.com/api/repos/$repo/refs -u $CREDS | $TOP/tools/json branches | grep "\"$BRANCH\"" || true)
     if [[ -z "$hit" ]]; then
-      if [[ $APPLY ]]; then
+      if [[ $APPLY -eq 1 ]]; then
         echo "$repo: missing '$BRANCH' branch"
         apply_missing $repo "$TAG" "$BRANCH" 
       else
