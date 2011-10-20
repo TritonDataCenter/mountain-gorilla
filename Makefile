@@ -5,7 +5,7 @@
 
 #---- Config
 
-include config.mk
+include bits/config.mk
 
 # Directories
 TOP=$(shell pwd)
@@ -24,7 +24,7 @@ endif
 # Is JOBS=16 reasonable here? The old bamboo plans used this (or higher).
 JOB=16
 
-# A TIMESTAMP to use must be defined (and typically is in 'config.mk').
+# A TIMESTAMP to use must be defined (and typically is in 'bits/config.mk').
 # 
 # At one point we'd just generate TIMESTAMP at the top of the Makefile, but
 # that seemed to hit a gmake issue when building multiple targets: the 'ca'

@@ -191,7 +191,7 @@ EOF
 }
 
 function gen_config() {
-    cat <<EOF >config.mk
+    cat <<EOF >bits/config.mk
 TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
 
 SMARTLOGIN_BRANCH=$BRANCH
@@ -219,7 +219,7 @@ BUILD_PLATFORM=$BUILD_PLATFORM
 EOF
 
     if [[ `uname -s` == "SunOS" && $BUILD_PLATFORM == 'true' ]]; then
-        cat <<EOF >>config.mk
+        cat <<EOF >>bits/config.mk
 PLATFORM_BRANCH=$PLATFORM_BRANCH
 PLATFORM_SHA=$PLATFORM_SHA
 
@@ -227,19 +227,19 @@ EOF
 
         for zone in $ZONES; do
             capzone=$(echo $zone | tr [:lower:] [:upper:] | tr - _)
-            cat <<EOF >>config.mk
+            cat <<EOF >>bits/config.mk
 ${capzone}_BRANCH=$BRANCH
 ${capzone}_SHA=$((cd build/$zone  1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 EOF
 
         done
     else
-        cat <<EOF >>config.mk
+        cat <<EOF >>bits/config.mk
 PLATFORM_TIMESTAMP=$PLATFORM_TIMESTAMP
 EOF
     fi
 
-    echo "'config.mk' created."
+    echo "'bits/config.mk' created."
 }
 
 
@@ -255,7 +255,7 @@ function print_help() {
     echo "  -b BRANCH    Branch to checkout. Defaults to 'master'."
     echo "               Note that this is for *all* core repositories."
     echo "  -n           Do not build platform (only applicable on SmartOS)"
-    echo "  -r REPO      Reconfigure build. Remove build artifacts, checkout to SHA in config.mk or HEAD"
+    echo "  -r REPO      Reconfigure build. Remove build artifacts, checkout to SHA in bits/config.mk or HEAD"
     echo "  -f           Force reconfig (clean and rebuild)"
     echo "  -s TARGET    Only checkout repos required to build TARGET" 
     exit 0
@@ -278,9 +278,9 @@ function download_bits() {
   get_ufds $BRANCH
 
   timestamp=$(echo $platform | cut -d '-' -f2 | cut -d '.' -f 1)
-  echo "TIMESTAMP=$timestamp" > config.mk
-  echo "USBHEADNODE_BRANCH=$BRANCH" >> config.mk
-  echo "USBHEADNODE_SHA=$((cd build/usb-headnode 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")" >> config.mk
+  echo "TIMESTAMP=$timestamp" > bits/config.mk
+  echo "USBHEADNODE_BRANCH=$BRANCH" >> bits/config.mk
+  echo "USBHEADNODE_SHA=$((cd build/usb-headnode 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")" >> bits/config.mk
 }
 
 #---- mainline
@@ -307,9 +307,10 @@ if [[ $RECONFIG == 'true' && -z $RECONF_REPO || $SOLE == 'true' && -z $SOLE_REPO
 fi
 
 # The configure process wants to run "clean_*" targets in the Makefile.
-# The Makefile needs a config.mk to exist. An empty one will suffice for
+# The Makefile needs a bits/config.mk to exist. An empty one will suffice for
 # the clean targets.
-touch config.mk
+mkdir -p bits
+touch bits/config.mk
 
 
 if [[ $ONLINE == 1 ]]; then
