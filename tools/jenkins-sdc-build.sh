@@ -24,7 +24,8 @@ env | tee -a $LOG
 
 echo "" | tee -a $LOG
 echo "#----------------------" | tee -a $LOG
-./configure 2>&1 | tee -a $LOG
+[[ -z "$BRANCH" ]] && BRANCH=master
+./configure -b $BRANCH 2>&1 | tee -a $LOG
 
 echo "" | tee -a $LOG
 echo "#----------------------" | tee -a $LOG
