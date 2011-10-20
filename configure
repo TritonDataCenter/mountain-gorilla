@@ -19,7 +19,7 @@ set -o pipefail
 BRANCH="master"
 BUILD_PLATFORM='true'
 
-ZONES="mcp_api_admin customers_api booter mcp_api_gateway public-web-client public_api cloud-api billing_api"
+ZONES="mcp_api_admin booter mcp_api_gateway public-web-client cloud-api billing_api"
 PLAT_COMPONENTS="illumos-joyent ur-agent kvm kvm-cmd-14 operator-toolkit sdc-platform"
 
 ROOT=$(pwd)
@@ -28,6 +28,9 @@ FORCE_RECONFIG='false'
 
 URL="https://stuff.joyent.us/stuff/builds/nightly/master-latest/"
 CREDS="guest:GrojhykMid"
+
+
+
 #---- internal support functions
 
 function fatal {
@@ -282,6 +285,7 @@ function download_bits() {
   echo "USBHEADNODE_BRANCH=$BRANCH" >> bits/config.mk
   echo "USBHEADNODE_SHA=$((cd build/usb-headnode 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")" >> bits/config.mk
 }
+
 
 #---- mainline
 
