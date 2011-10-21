@@ -8,6 +8,8 @@
 #   https://jenkins.joyent.us/job/sdc/configure
 #
 
+set -o errexit
+
 # Poorman's backup of last build run.
 rm -rf mountain-gorilla.last
 mv mountain-gorilla mountain-gorilla.last
