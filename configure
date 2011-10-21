@@ -361,7 +361,6 @@ else
         get_agents $BRANCH
         get_smartlogin $BRANCH
         get_ca $BRANCH
-        get_ufds $BRANCH
     elif [[ $SOLE_REPO == 'illumos-live' ]]; then
         get_illumoslive $BRANCH
     elif [[ $SOLE_REPO == 'cloud-analytics' ]]; then
