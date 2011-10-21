@@ -348,8 +348,8 @@ distclean:
 # Upload bits we want to keep for a Jenkins build.
 # Note: hardcoding to "$USBHEADNODE_BRANCH" here isn't ideal.
 upload_jenkins:
-	[[ -z "$(JOB_NAME)" ]] \
+	@[[ -z "$(JOB_NAME)" ]] \
 		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
-		&& false
+		&& exit 1 || true
 	./tools/upload-bits $(USBHEADNODE_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/$(JOB_NAME)
 
