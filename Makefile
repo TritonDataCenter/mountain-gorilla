@@ -152,7 +152,7 @@ ca: $(CA_BITS_0)
 $(CA_BITS): build/ca
 	@echo "# Build ca: branch $(CA_BRANCH), sha $(CA_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/ca && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake pkg release publish)
+	(cd build/ca && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
 	@echo "# Created ca bits:"
 	@ls -1 $(CA_BITS)
 	@echo ""
