@@ -36,7 +36,7 @@ ifeq ($(TIMESTAMP),)
 endif
 
 ifeq ($(UPLOAD_LOCATION),)
-	UPLOAD_LOCATION="stuff@stuff.joyent.us:builds"
+	UPLOAD_LOCATION=stuff@stuff.joyent.us:builds
 endif
 
 #---- Primary targets
@@ -56,19 +56,19 @@ smartlogin: $(SMARTLOGIN_BITS)
 
 # PATH: ensure using GCC from SFW. Not sure this is necessary, but has been
 # the case for release builds pre-MG.
-$(SMARTLOGIN_BITS): build/smartlogin
+$(SMARTLOGIN_BITS): build/smart-login
 	@echo "# Build smartlogin: branch $(SMARTLOGIN_BRANCH), sha $(SMARTLOGIN_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/smartlogin && TIMESTAMP=$(TIMESTAMP) PATH=/usr/sfw/bin:$(PATH) BITS_DIR=$(BITS_DIR) gmake clean all publish)
+	(cd build/smart-login && TIMESTAMP=$(TIMESTAMP) PATH=/usr/sfw/bin:$(PATH) BITS_DIR=$(BITS_DIR) gmake clean all publish)
 	@echo "# Created smartlogin bits:"
 	@ls -1 $(SMARTLOGIN_BITS)
 	@echo ""
 
 clean_smartlogin:
-	(rm -rf $(SMARTLOGIN_BITS) || /usr/bin/true)
+	rm -rf $(BITS_DIR)/smartlogin
 
 upload_smartlogin:
-	./tools/upload-bits -f "$(SMARTLOGIN_BITS)" $(SMARTLOGIN_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/smartlogin/
+	./tools/upload-bits $(SMARTLOGIN_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/smartlogin
 
 
 #---- agents
@@ -149,10 +149,10 @@ ca: $(CA_BITS_0)
 
 # PATH for ca build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(CA_BITS): build/ca
+$(CA_BITS): build/cloud-analytics
 	@echo "# Build ca: branch $(CA_BRANCH), sha $(CA_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/ca && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
+	(cd build/cloud-analytics && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
 	@echo "# Created ca bits:"
 	@ls -1 $(CA_BITS)
 	@echo ""
@@ -162,10 +162,10 @@ $(CA_BITS): build/ca
 clean_ca:
 	rm -rf $(BITS_DIR)/assets
 	rm -rf $(BITS_DIR)/cloud_analytics
-	(cd build/ca && gmake clean)
+	(cd build/cloud-analytics && gmake clean)
 
 upload_ca:
-	./tools/upload-bits -f "$(CA_BITS)" $(CA_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/ca/
+	./tools/upload-bits $(CA_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/ca
 
 
 #---- UFDS
@@ -346,10 +346,9 @@ distclean:
 
 
 # Upload bits we want to keep for a Jenkins build.
-# Note: hardcoding to "$USBHEADNODE_BRANCH" here isn't ideal.
 upload_jenkins:
 	@[[ -z "$(JOB_NAME)" ]] \
 		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
 		&& exit 1 || true
-	./tools/upload-bits $(USBHEADNODE_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/$(JOB_NAME)
+	./tools/upload-bits $(BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/$(JOB_NAME)
 

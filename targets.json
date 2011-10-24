@@ -1,0 +1,14 @@
+{
+  "smartlogin": {
+    "repos": [
+        {"url": "git@git.joyent.com:smart-login.git", "submodule-recursive": true}
+    ],
+    "deps": []
+  },
+  "ca": {
+    "repos": [
+        {"url": "git@git.joyent.com:cloud-analytics.git", "submodule-recursive": false}
+    ],
+    "deps": []
+  }
+}

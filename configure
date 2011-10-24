@@ -23,6 +23,7 @@ ZONES="mcp_api_admin booter mcp_api_gateway public-web-client cloud-api billing_
 PLAT_COMPONENTS="illumos-joyent ur-agent kvm kvm-cmd-14 operator-toolkit sdc-platform"
 
 ROOT=$(pwd)
+JSON=$ROOT/tools/json
 
 FORCE_RECONFIG='false'
 
@@ -51,6 +52,38 @@ function config_clean() {
     gmake clean_$targ
     if [[ -n $parent ]]; then
           config_clean $parent
+    fi
+}
+
+
+# Get the requested repo.
+# Usage:
+#   get_repo2 REPO-URL BRANCH SUBMODULE-RECURSIVE
+#
+# If "SUBMODULE-RECURSIVE" is "true", then "--recursive" is used on
+# on the "git submodule update ..." call.
+#
+function get_repo2() {
+    local repo_url=$1
+    local branch=$2
+    local submodule_recursive=$3
+
+    local repo_name=${repo_url##*/}    # strip to last '/'
+    repo_name=${repo_name##*:}    # strip to last ':'
+    repo_name=${repo_name%*.git}    # strip '.git' at tail
+
+    echo "# get '$repo_url' to 'build/$repo_name'"
+    local out
+    if [[ ! -d build/$repo_name ]]; then
+        mkdir -p build/$repo_name
+        git clone -b $branch $repo_url build/$repo_name
+    else
+        out=$(cd build/$repo_name ; git checkout $branch ; git pull)
+    fi
+    if [[ "$submodule_recursive" == "true" ]]; then
+        (cd build/$repo_name; git submodule update --init --recursive)
+    else
+        (cd build/$repo_name; git submodule update --init)
     fi
 }
 
@@ -194,11 +227,13 @@ EOF
 }
 
 function gen_config() {
+    mkdir -p bits
     cat <<EOF >bits/config.mk
 TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
+BRANCH=$BRANCH
 
 SMARTLOGIN_BRANCH=$BRANCH
-SMARTLOGIN_SHA=$((cd build/smartlogin 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
+SMARTLOGIN_SHA=$((cd build/smart-login 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
 AMON_BRANCH=$BRANCH
 AMON_SHA=$((cd build/amon 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
@@ -207,7 +242,7 @@ AGENTS_BRANCH=$BRANCH
 AGENTS_SHA=$((cd build/agents 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
 CA_BRANCH=$BRANCH
-CA_SHA=$((cd build/ca 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
+CA_SHA=$((cd build/cloud-analytics 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
 UFDS_BRANCH=$BRANCH
 UFDS_SHA=$((cd build/ufds 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
@@ -291,7 +326,12 @@ function download_bits() {
 
 trap 'errexit $? $LINENO' EXIT
 
-while getopts ":b:hunr:fs:o" opt; do
+# Can be a target name to tell 'configure' to (a) limit prep to just that
+# target and (b) pre-load "bits/" with pre-built dependent target bits.
+# If empty it means that we are configuring for a full build.
+TARGET=
+
+while getopts ":b:hunr:fs:ot:" opt; do
     case $opt in
         b) BRANCH=$OPTARG;;
         h) print_help ;;
@@ -299,6 +339,7 @@ while getopts ":b:hunr:fs:o" opt; do
         r) RECONFIG='true' ; RECONF_REPO=${OPTARG} ;;
         s) SOLE='true' ; SOLE_REPO=${OPTARG} ;;
         f) FORCE_RECONFIG='true' ;;
+        t) TARGET=${OPTARG} ;;
         o) ONLINE=1 ;;
         ?) fatal "unknown option: $opt" ;;
     esac
@@ -310,18 +351,38 @@ if [[ $RECONFIG == 'true' && -z $RECONF_REPO || $SOLE == 'true' && -z $SOLE_REPO
     exit 1
 fi
 
+
 # The configure process wants to run "clean_*" targets in the Makefile.
 # The Makefile needs a bits/config.mk to exist. An empty one will suffice for
 # the clean targets.
 mkdir -p bits
 touch bits/config.mk
 
-
-if [[ $ONLINE == 1 ]]; then
-    download_bits
-    exit 0
+if [[ "$RECONFIG" == 'true' ]]; then
+    #XXX TODO: reconfigure support:
+    # - if a target is given ("./configure -r ca"), then just "clean_ca"
+    #   - TODO: consider also blowing away all the associated build/$repo dirs for clean pull
+    XXX
+else
+    make distclean
 fi
 
+if [[ ! -z "$TARGET" ]]; then
+    for info in `cat targets.json | $JSON $TARGET.repos | $JSON -a -d, url submodule-recursive`; do
+        repo_url=${info%,*}
+        submodule_recursive=${info#*,}
+        get_repo2 $repo_url $BRANCH $submodule_recursive
+    done
+
+    #XXX: TODO: preloading dep bits
+    #XXX
+    #if [[ $ONLINE == 1 ]]; then
+    #    download_bits
+    #    exit 0
+    #fi
+
+else
+    XXX
 if [[ $SOLE != 'true' ]]; then
     # TODO: not sure about allow no arg to '-r'. Doesn't that screw up './configure -r -n'?
     if [[ -n $RECONF_REPO ]]; then
@@ -370,6 +431,7 @@ else
     else
         get_repo $BRANCH $SOLE_REPO $SOLE_REPO true
     fi
+fi
 fi
 
 gen_config
