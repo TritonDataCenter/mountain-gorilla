@@ -19,7 +19,6 @@ set -o pipefail
 BRANCH="master"
 
 ZONES="mcp_api_admin booter mcp_api_gateway public-web-client cloud-api billing_api"
-PLAT_COMPONENTS="illumos-joyent ur-agent kvm kvm-cmd-14 operator-toolkit sdc-platform"
 
 ROOT=$(pwd)
 JSON=$ROOT/tools/json
@@ -41,6 +40,7 @@ function errexit {
     fatal "error exit status $1 at line $2"
 }
 
+#XXX unused currently
 function config_clean() {
     repo=$1
     # TODO: parse a repo:target mapping and clean targets better
@@ -107,119 +107,6 @@ function get_repo2() {
 }
 
 
-function get_repo() {
-    local_branch=$1
-    SRC=$2
-    DEST=$3
-    # Should be 'true' to request usage of '--recursive' on 'git submodule update ...' call.
-    SUBMODULE_RECURSIVE=$4
-
-    echo "# build/$DEST"
-    if [[ ! -d build/$DEST ]]; then
-        (mkdir -p build; git clone -b $local_branch git@git.joyent.com:${SRC}.git build/${DEST})
-    else
-        out=$(cd build/$DEST ; git checkout $local_branch ; git pull)
-    fi
-    if [[ "$SUBMODULE_RECURSIVE" == "true" ]]; then
-        (cd build/$DEST; git submodule update --init --recursive)
-    else
-        (cd build/$DEST; git submodule update --init)
-    fi
-
-    #XXX
-    #if [[ $out != "Already up-to-date." || $FORCE_RECONFIG == 'true' ]]; then
-    #    config_clean $SRC
-    #fi 
-}
-
-function get_github_repo() {
-    SRC=$1
-    DEST=$2
-    GITHUBUSER=$3
-
-    echo "# build/$DEST"
-    if [[ ! -d build/$DEST ]]; then
-        (mkdir -p build; git clone git://github.com/${GITHUBUSER}/${SRC}.git build/${DEST})
-    else
-        out=$(cd build/$DEST ; git pull)
-    fi
-    (cd build/$DEST; git submodule update --init --recursive )
-
-    #XXX
-    #if [[ $out != "Already up-to-date." ]]; then
-    #    config_clean $SRC
-    #fi 
-}
-
-function get_illumoslive() {
-    local branch=$1
-    if [[ `uname -s` == "SunOS" && $BUILD_PLATFORM == 'true' ]]; then
-        get_repo2 git@git.joyent.com:illumos-live.git $branch true
-        get_github_repo illumos-extra illumos-extra joyent
-        for bit in $PLAT_COMPONENTS; do
-            get_repo $branch $bit $bit true
-        done
-        PLATFORM_BRANCH=$BRANCH
-        PLATFORM_SHA=$(cd build/illumos-live ; git log --pretty=format:'%h' -1 )
-        sed -e "s/BRANCH/$BRANCH/" -e "s:GITCLONESOURCE:$ROOT/build/:" <illumos-configure.tmpl> build/illumos-live/configure.mg
-        sed -e "s/BRANCH/$BRANCH/" <illumos-configure-branches.tmpl> build/illumos-live/configure-branches
-    else
-        BUILD_PLATFORM='false'
-        platforms=$(ls bits/platform-*.tgz || /usr/bin/true)
-        PLATFORM_TIMESTAMP=$(echo $platforms | sort | tail -n1 | \
-            sed -e "s/platform.*-\([0-9TZ]*\)\.tgz/\1/" | \
-            xargs -I timestamp basename timestamp)
-        if [[ -z $PLATFORM_TIMESTAMP ]]; then
-            echo "Error: not building platform file, and no platform file found. Exiting"
-            exit 1
-        fi
-    fi
-}
-
-function get_zone_repo() {
-    zone=$1
-    branch=$2
-
-    get_repo $branch $zone $zone true
-
-    if [[ $zone == "cloud-api" ]]; then
-        (cd build/cloud-api &&\
-            mkdir -p ssl  && \
-            mkdir -p node_modules)
-        get_repo $1 node-sdc-clients cloud-api/node_modules/sdc-clients true
-    fi
-}
-
-function get_zones() {
-    # There's got to be a better way to enumerate this stuff
-    for zone in $ZONES; do
-        get_repo $1 $zone $zone true
-    done
-
-    # cloudapi is special, it uses 3 repos
-    (cd build/cloud-api &&\
-        mkdir -p ssl  && \
-        mkdir -p node_modules)
-    get_repo $1 node-sdc-clients cloud-api/node_modules/sdc-clients true
-
-    cat <<EOF > build/usb-headnode/build.spec.local
-  {
-    "agents-shar": "$BRANCH"
-  , "adminui-checkout": "origin/$BRANCH"
-  , "ca-tarball": "^ca-pkg-$BRANCH-.*.tar.bz2$"
-  , "amon-tarball": "^amon-master-$BRANCH-.*.tar.bz2$"
-  , "dhcpd-checkout": "origin/$BRANCH"
-  , "mapi-checkout": "origin/$BRANCH"
-  , "portal-checkout": "origin/$BRANCH"
-  , "cloudapi-checkout": "origin/$BRANCH"
-  , "billapi-checkout": "origin/$BRANCH"
-  , "rabbitmq-checkout": "origin/$BRANCH"
-  , "ufds-checkout": "origin/$BRANCH"
-  , "sdc-webinfo-checkout": "origin/$BRANCH"
-}
-EOF
-}
-
 function gen_config() {
     mkdir -p bits
     cat <<EOF >bits/config.mk
@@ -252,11 +139,12 @@ PLATFORM_SHA=$((cd build/illumos-live 1>&2 2> /dev/null && git log --pretty=form
 
 EOF
 
-    for zone in $ZONES; do
-        capzone=$(echo $zone | tr [:lower:] [:upper:] | tr - _)
+    local repo_name
+    for repo_name in `ls -1 build`; do
+        upper_repo_name=$(echo $repo_name | tr [:lower:] [:upper:] | tr - _)
         cat <<EOF >>bits/config.mk
-${capzone}_BRANCH=$BRANCH
-${capzone}_SHA=$((cd build/$zone  1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
+${upper_repo_name}_BRANCH=$(CDPATH= cd build/$repo_name && git symbolic-ref HEAD | awk -F/ '{print $3}')
+${upper_repo_name}_SHA=$(CDPATH= cd build/$repo_name && git log --pretty=format:'%h' -1)
 EOF
     done
 
@@ -318,6 +206,7 @@ fi
 mkdir -p bits
 touch bits/config.mk
 
+
 if [[ "$RECONFIG" == 'true' ]]; then
     #XXX TODO: reconfigure support:
     # - if a target is given ("./configure -r ca"), then just "clean_ca" (and clean_$dep for deps)
@@ -350,15 +239,7 @@ if [[ ! -z "$TARGET" ]]; then
 else
     # TODO: not sure about allow no arg to '-r'. Doesn't that screw up './configure -r -n'?
     if [[ -n $RECONF_REPO ]]; then
-        if [[ $(echo $ZONES | grep $RECONF_REPO) ]]; then
-            get_zone_repo $RECONF_REPO $BRANCH
-        else
-            targ=$(cat repos.json | json $RECONF_REPO | json target)
-            if [[ -n $targ ]]; then
-                RECONF_REPO=$targ
-            fi
-            get_$RECONF_REPO $BRANCH
-        fi
+        XXX
     else
         #XXX: TODO: remove this touch requirement by switching to get_repo2
         mkdir -p bits
@@ -371,8 +252,8 @@ else
         get_repo2 git@git.joyent.com:agents.git $BRANCH true
         get_repo2 git@git.joyent.com:agents-installer.git $BRANCH true
         get_repo2 git@git.joyent.com:usb-headnode.git $BRANCH true
-        get_illumoslive $BRANCH
-        get_zones $BRANCH
+        XXX # illumos-live et al
+        XXX # usb-headnode zones for ZONES_DIR
     fi
 fi
 

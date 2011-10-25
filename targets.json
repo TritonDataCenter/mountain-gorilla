@@ -47,5 +47,20 @@
         {"url": "git@git.joyent.com:sdc-platform.git"}
     ],
     "deps": []
+  },
+  "usbheadnode": {
+    "repos": [
+        {"url": "git@git.joyent.com:usb-headnode.git"},
+        {"url": "git@git.joyent.com:mcp_api_admin.git"},
+        {"url": "git@git.joyent.com:booter.git"},
+        {"url": "git@git.joyent.com:mcp_api_gateway.git"},
+        {"url": "git@git.joyent.com:public-web-client.git"},
+        {"url": "git@git.joyent.com:cloud-api.git"},
+        {"url": "git@git.joyent.com:billing_api.git"},
+        {"url": "git@git.joyent.com:ufds.git"},
+        {"url": "git@git.joyent.com:sdc-webinfo.git"},
+        {"url": "git@git.joyent.com:node-sdc-clients.git"}
+    ],
+    "deps": ["platform", "agentsshar", "ca", "ufds"]
   }
 }

@@ -42,7 +42,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar platform ufds coal usb upgrade boot releasejson
+all: smartlogin amon ca agents agentsshar platform ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -227,73 +227,77 @@ upload_agentsshar:
 # - solution for datasets
 # - pkgsrc isolation
 
-_usbheadnode_stamp=$(USBHEADNODE_BRANCH)-$(TIMESTAMP)-g$(USBHEADNODE_SHA)
-COAL_BIT=$(BITS_DIR)/release/coal-$(_usbheadnode_stamp)-4gb.tgz
+.PHONY: usbheadnode
+usbheadnode: coal usb upgrade boot
 
-# Alias for "coal". Drop it?
-.PHONY: usb-headnode
-usb-headnode: coal
+_usbheadnode_stamp=$(USBHEADNODE_BRANCH)-$(TIMESTAMP)-g$(USBHEADNODE_SHA)
+COAL_BIT=$(BITS_DIR)/usbheadnode/coal-$(_usbheadnode_stamp)-4gb.tgz
+
+bits/usbheadnode/build.spec.local:
+	mkdir -p bits/usbheadnode
+	sed -e "s/{{BRANCH}}/$USBHEADNODE_BRANCH/" <build.spec.in >bits/usbheadnode/build.spec.local
+	(cd build/usb-headnode; rm -f build.spec.local; ln -s ../../bits/usbheadnode/build.spec.local)
 
 .PHONY: coal
 coal: $(COAL_BIT)
 
-$(COAL_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
+$(COAL_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 	@echo "# Build coal: usb-headnode branch $(USBHEADNODE_BRANCH), sha $(USBHEADNODE_SHA)"
-	mkdir -p $(BITS_DIR)/release
+	mkdir -p $(BITS_DIR)/usbheadnode
 	./tools/build-usb-headnode $(TIMESTAMP) $(BITS_DIR) -c coal
-	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/release
+	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created coal bits:"
 	@ls -1 $(COAL_BIT)
 	@echo ""
 
-USB_BIT=$(BITS_DIR)/release/usb-$(_usbheadnode_stamp).tgz
+USB_BIT=$(BITS_DIR)/usbheadnode/usb-$(_usbheadnode_stamp).tgz
 
 .PHONY: usb
 usb: $(USB_BIT)
 
-$(USB_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
+$(USB_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 	@echo "# Build usb: usb-headnode branch $(USBHEADNODE_BRANCH), sha $(USBHEADNODE_SHA)"
-	mkdir -p $(BITS_DIR)/release
+	mkdir -p $(BITS_DIR)/usbheadnode
 	./tools/build-usb-headnode $(TIMESTAMP) $(BITS_DIR) -c usb
-	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/release
+	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created usb bits:"
 	@ls -1 $(USB_BIT)
 	@echo ""
 
-UPGRADE_BIT=$(BITS_DIR)/release/upgrade-$(_usbheadnode_stamp).tgz
+UPGRADE_BIT=$(BITS_DIR)/usbheadnode/upgrade-$(_usbheadnode_stamp).tgz
 
 .PHONY: upgrade
 upgrade: $(UPGRADE_BIT)
 
-$(UPGRADE_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
+$(UPGRADE_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 	@echo "# Build upgrade: usb-headnode branch $(USBHEADNODE_BRANCH), sha $(USBHEADNODE_SHA)"
-	mkdir -p $(BITS_DIR)/release
+	mkdir -p $(BITS_DIR)/usbheadnode
 	./tools/build-usb-headnode $(TIMESTAMP) $(BITS_DIR) upgrade
-	mv build/usb-headnode/$(shell basename $(UPGRADE_BIT)) $(BITS_DIR)/release
+	mv build/usb-headnode/$(shell basename $(UPGRADE_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created upgrade bits:"
 	@ls -1 $(UPGRADE_BIT)
 	@echo ""
 
-BOOT_BIT=$(BITS_DIR)/release/boot-$(_usbheadnode_stamp).tgz
+BOOT_BIT=$(BITS_DIR)/usbheadnode/boot-$(_usbheadnode_stamp).tgz
 
 .PHONY: boot
 boot: $(BOOT_BIT)
 
-$(BOOT_BIT): $(BITS_DIR)/platform-$(TIMESTAMP).tgz
+$(BOOT_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 	@echo "# Build boot: usb-headnode branch $(USBHEADNODE_BRANCH), sha $(USBHEADNODE_SHA)"
-	mkdir -p $(BITS_DIR)/release
+	mkdir -p $(BITS_DIR)/usbheadnode
 	./tools/build-usb-headnode $(TIMESTAMP) $(BITS_DIR) -c tar
-	mv build/usb-headnode/$(shell basename $(BOOT_BIT)) $(BITS_DIR)/release
+	mv build/usb-headnode/$(shell basename $(BOOT_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created boot bits:"
 	@ls -1 $(BOOT_BIT)
 	@echo ""
 
 
-RELEASEJSON_BIT=$(BITS_DIR)/release/release.json
+RELEASEJSON_BIT=$(BITS_DIR)/usbheadnode/release.json
 
 .PHONY: boot
 releasejson:
-	mkdir -p $(BITS_DIR)/release
+	mkdir -p $(BITS_DIR)/usbheadnode
 	echo "{ \
 	\"date\": \"$(TIMESTAMP)\", \
 	\"branch\": \"$(USBHEADNODE_BRANCH)\", \
