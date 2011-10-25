@@ -1,7 +1,7 @@
 {
   "smartlogin": {
     "repos": [
-        {"url": "git@git.joyent.com:smart-login.git", "submodule-recursive": true}
+        {"url": "git@git.joyent.com:smart-login.git"}
     ],
     "deps": []
   },
@@ -13,26 +13,39 @@
   },
   "amon": {
     "repos": [
-        {"url": "git@git.joyent.com:amon.git", "submodule-recursive": true}
+        {"url": "git@git.joyent.com:amon.git"}
     ],
     "deps": []
   },
   "agents": {
     "repos": [
-        {"url": "git@git.joyent.com:agents.git", "submodule-recursive": true}
+        {"url": "git@git.joyent.com:agents.git"}
     ],
     "deps": []
   },
   "ufds": {
     "repos": [
-        {"url": "git@git.joyent.com:ufds.git", "submodule-recursive": true}
+        {"url": "git@git.joyent.com:ufds.git"}
     ],
     "deps": []
   },
   "agentsshar": {
     "repos": [
-        {"url": "git@git.joyent.com:agents-installer.git", "submodule-recursive": true}
+        {"url": "git@git.joyent.com:agents-installer.git"}
     ],
     "deps": ["agents", "amon", "ca", "smartlogin"]
+  },
+  "platform": {
+    "repos": [
+        {"url": "git@git.joyent.com:illumos-live.git"},
+        {"url": "git@git.joyent.com:illumos-joyent.git"},
+        {"url": "git://github.com/joyent/illumos-extra.git"},
+        {"url": "git@git.joyent.com:ur-agent.git"},
+        {"url": "git@git.joyent.com:operator-toolkit.git"},
+        {"url": "git@git.joyent.com:kvm.git"},
+        {"url": "git@git.joyent.com:kvm-cmd-14.git"},
+        {"url": "git@git.joyent.com:sdc-platform.git"}
+    ],
+    "deps": []
   }
 }

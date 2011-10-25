@@ -252,14 +252,6 @@ Notes:
 - Here is my (Trent's) current list of stuff that isn't yet built from source, i.e.
   stuff that I need to preload in my "bits" dir for a full build of release
   bits. We should chip away at these:
-    in.bits/
-    in.bits/platform-master-20110729T154436Z.tgz
-    in.bits/ur-scripts
-    in.bits/ur-scripts/release-20110714
-    in.bits/ur-scripts/release-20110714/agents-hvm-20110726T001206Z.md5sum
-    in.bits/ur-scripts/release-20110714/agents-hvm-20110726T001206Z.sh
-    in.bits/release-20110714
-    in.bits/release-20110714/platform-HVM-20110726T001212Z.tgz
     in.bits/datasets
     in.bits/datasets/ubuntu-10.04.2.4.dsmanifest
     in.bits/datasets/ubuntu-10.04.2.4.img.gz
@@ -267,20 +259,6 @@ Notes:
     in.bits/datasets/nodejs-1.1.4.zfs.bz2
     in.bits/datasets/smartos-1.3.15.zfs.bz2
     in.bits/datasets/smartos-1.3.15.dsmanifest
-    in.bits/assets
-    in.bits/assets/atropos-develop-20110210.tar.bz2
-- then usb-headnode: hardcoding a platform and platform-HVM version
-  And how can this fit in with existing usb-headnode/build.spec.
-- Get that ca gitignore thing to work. Do the pull requests for the
-  appropriate gitignores for those repos.
-    - don't like the asterisk in "+_ca_stamp=$(CA_BRANCH)-$(TIMESTAMP)-g$(CA_SHA)*" in Makefile
-- make platform hvmplatform hvmagentsshar
-- make hvmplatform: how can platform-HVM fit in? it needs to be built on separate OS
-- make hvmagentsshar: currently Josh is building this manually and dropping it in
-  Can this be built on SmartOS? Or does it need to be built on Linux?
-- usb-headnode: pulling in and caching datasets in "bits" dir
-- mg: move bits dir to build/bits (should be clean for each build)
-  can have a 'cache/' dir to save old stuff.
 - npm: run an npm proxy? and set npm_config_... for this. Would that work?
   The idea is to have the build pull *all* component parts from our local
   "bits" dir.

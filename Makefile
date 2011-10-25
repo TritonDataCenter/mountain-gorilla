@@ -316,9 +316,14 @@ PLATFORM_BIT=$(BITS_DIR)/platform-$(TIMESTAMP).tgz
 .PHONY: platform
 platform: $(PLATFORM_BIT)
 
+build/illumos-live/configure.mg:
+	sed -e "s/BRANCH/$(PLATFORM_BRANCH)/" -e "s:GITCLONESOURCE:$(shell pwd)/build/:" <illumos-configure.tmpl >build/illumos-live/configure.mg
+
+build/illumos-live/configure-branches:
+	sed -e "s/BRANCH/$(PLATFORM_BRANCH)/" <illumos-configure-branches.tmpl >build/illumos-live/configure-branches
+
 # PATH: Ensure using GCC from SFW as require for platform build.
-$(PLATFORM_BIT):
-ifeq ($(BUILD_PLATFORM),true)
+$(PLATFORM_BIT): build/illumos-live/configure.mg build/illumos-live/configure-branches
 	@echo "# Build platform: branch $(PLATFORM_BRANCH), sha $(PLATFORM_SHA)"
 	(cd build/illumos-live && PATH=/usr/sfw/bin:$(PATH) ./configure && PATH=/usr/sfw/bin:$(PATH) BUILDSTAMP=$(TIMESTAMP) gmake world && PATH=/usr/sfw/bin:$(PATH) BUILDSTAMP=$(TIMESTAMP) gmake live)
 	(mkdir -p $(BITS_DIR)/)
@@ -326,14 +331,15 @@ ifeq ($(BUILD_PLATFORM),true)
 	@echo "# Created platform bits:"
 	@ls -1 $(PLATFORM_BIT)
 	@echo ""
-endif
 
 clean_platform:
 	rm -f $(BITS_DIR)/platform-*
 	(cd build/illumos-live && gmake clean)
 
 upload_platform:
-	./tools/upload-bits -f "$(PLATFORM_BIT)" $(PLATFORM_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/platform
+	./tools/upload-bits $(PLATFORM_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/platform
+
+
 
 #---- misc targets
 

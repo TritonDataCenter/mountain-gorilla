@@ -17,7 +17,6 @@ set -o pipefail
 #---- config, globals
 
 BRANCH="master"
-BUILD_PLATFORM='true'
 
 ZONES="mcp_api_admin booter mcp_api_gateway public-web-client cloud-api billing_api"
 PLAT_COMPONENTS="illumos-joyent ur-agent kvm kvm-cmd-14 operator-toolkit sdc-platform"
@@ -72,32 +71,38 @@ function preload_bits() {
 
 # Get the requested repo.
 # Usage:
-#   get_repo2 REPO-URL BRANCH SUBMODULE-RECURSIVE
+#   get_repo2 REPO-URL BRANCH SUBMODULE-RECURSIVE [NAME]
 #
 # If "SUBMODULE-RECURSIVE" is "true", then "--recursive" is used on
 # on the "git submodule update ..." call.
+#
+# If "NAME" is given, that subdir under "build/" will be used as the
+# clone dir. Else it is inferred from the REPO-URL.
 #
 function get_repo2() {
     local repo_url=$1
     local branch=$2
     local submodule_recursive=$3
+    local repo_dir=$4
 
-    local repo_name=${repo_url##*/}    # strip to last '/'
-    repo_name=${repo_name##*:}    # strip to last ':'
-    repo_name=${repo_name%*.git}    # strip '.git' at tail
+    if [[ -z "$repo_dir" ]]; then
+        repo_dir=${repo_url##*/}    # strip to last '/'
+        repo_dir=${repo_dir##*:}    # strip to last ':'
+        repo_dir=${repo_dir%*.git}    # strip '.git' at tail
+    fi
 
-    echo "# get '$repo_url' to 'build/$repo_name'"
+    echo "# get '$repo_url' to 'build/$repo_dir'"
     local out
-    if [[ ! -d build/$repo_name ]]; then
-        mkdir -p build/$repo_name
-        git clone -b $branch $repo_url build/$repo_name
+    if [[ ! -d build/$repo_dir ]]; then
+        mkdir -p build/$repo_dir
+        git clone -b $branch $repo_url build/$repo_dir
     else
-        out=$(cd build/$repo_name ; git checkout $branch ; git pull)
+        out=$(cd build/$repo_dir ; git checkout $branch ; git pull)
     fi
     if [[ "$submodule_recursive" == "true" ]]; then
-        (cd build/$repo_name; git submodule update --init --recursive)
+        (cd build/$repo_dir; git submodule update --init --recursive)
     else
-        (cd build/$repo_name; git submodule update --init)
+        (cd build/$repo_dir; git submodule update --init)
     fi
 }
 
@@ -242,29 +247,18 @@ AGENTSSHAR_SHA=$((cd build/agents-installer 1>&2 2> /dev/null && git log --prett
 USBHEADNODE_BRANCH=$BRANCH
 USBHEADNODE_SHA=$((cd build/usb-headnode 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
-BUILD_PLATFORM=$BUILD_PLATFORM
+PLATFORM_BRANCH=$BRANCH
+PLATFORM_SHA=$((cd build/illumos-live 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
+
 EOF
 
-    if [[ `uname -s` == "SunOS" && $BUILD_PLATFORM == 'true' ]]; then
+    for zone in $ZONES; do
+        capzone=$(echo $zone | tr [:lower:] [:upper:] | tr - _)
         cat <<EOF >>bits/config.mk
-PLATFORM_BRANCH=$PLATFORM_BRANCH
-PLATFORM_SHA=$PLATFORM_SHA
-
-EOF
-
-        for zone in $ZONES; do
-            capzone=$(echo $zone | tr [:lower:] [:upper:] | tr - _)
-            cat <<EOF >>bits/config.mk
 ${capzone}_BRANCH=$BRANCH
 ${capzone}_SHA=$((cd build/$zone  1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 EOF
-
-        done
-    else
-        cat <<EOF >>bits/config.mk
-PLATFORM_TIMESTAMP=$PLATFORM_TIMESTAMP
-EOF
-    fi
+    done
 
     echo "'bits/config.mk' created."
 }
@@ -326,7 +320,7 @@ touch bits/config.mk
 
 if [[ "$RECONFIG" == 'true' ]]; then
     #XXX TODO: reconfigure support:
-    # - if a target is given ("./configure -r ca"), then just "clean_ca"
+    # - if a target is given ("./configure -r ca"), then just "clean_ca" (and clean_$dep for deps)
     #   - TODO: consider also blowing away all the associated build/$repo dirs for clean pull
     XXX
 else
@@ -334,10 +328,20 @@ else
 fi
 
 if [[ ! -z "$TARGET" ]]; then
-    for info in `cat targets.json | $JSON $TARGET.repos | $JSON -a -d, url submodule-recursive`; do
-        repo_url=${info%,*}
-        submodule_recursive=${info#*,}
-        get_repo2 $repo_url $BRANCH $submodule_recursive
+    # "targets.json" is a mapping of Makefile target to info about that target:
+    # - repos: A list of repos to clone to the "build/" directory for building it.
+    #   Each repo entry is an object like this:
+    #       {"url": "git@git.joyent.com:cloud-analytics.git",
+    #        "submodule-recursive": false,      # optional
+    #        "dir": "good-ole-ca"}              # optional
+    # - deps: A list of dependent targets.
+
+    for info in `cat targets.json | $JSON $TARGET.repos | $JSON -a -d, url dir submodule-recursive`; do
+        repo_url=$(echo "$info" | cut -d, -f 1)
+        repo_dir=$(echo "$info" | cut -d, -f 2)
+        submodule_recursive=$(echo "$info" | cut -d, -f 3)
+        [[ -z "$submodule_recursive" ]] && submodule_recursive=true
+        get_repo2 $repo_url $BRANCH "$submodule_recursive" "$repo_dir"
     done
 
     for targ in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
