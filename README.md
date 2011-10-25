@@ -113,7 +113,9 @@ cat -- improvements are welcome.
     time (./configure && gmake) 2>&1 | tee build.log
 
 If your build zone in inside BH1, then you must add the following to "/etc/inet/hosts"
-for the "tools/upload-bits" script to work.
+for the "tools/upload-bits" script (used by all of the 'upload_' targets) to work:
+
+    10.2.0.190      stuff.joyent.us
 
 
 # Package Versioning
