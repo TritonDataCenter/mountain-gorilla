@@ -97,7 +97,7 @@ $(AGENTS_BITS): build/agents
 	@echo ""
 
 clean_agents:
-	rm -rf $(AGENTS_BITS)
+	rm -rf $(BITS_DIR)/agents
 
 upload_agents:
 	./tools/upload-bits $(AGENTS_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/agents
@@ -160,8 +160,7 @@ $(CA_BITS): build/cloud-analytics
 # Warning: if CA's submodule deps change, this 'clean_ca' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_ca:
-	rm -rf $(BITS_DIR)/assets
-	rm -rf $(BITS_DIR)/cloud_analytics
+	rm -rf $(BITS_DIR)/ca
 	(cd build/cloud-analytics && gmake clean)
 
 upload_ca:
@@ -189,42 +188,42 @@ $(UFDS_BITS): build/ufds
 # Warning: if UFDS's submodule deps change, this 'clean_ufds' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_ufds:
-	rm -rf $(BITS_DIR)/assets
 	rm -rf $(BITS_DIR)/ufds
 	(cd build/ufds && gmake clean)
 
 upload_ufds:
-	./tools/upload-bits -f "$(UFDS_BITS)" $(UFDS_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/ufds/
+	./tools/upload-bits $(UFDS_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/ufds
+
+
 
 #---- agents shar
 
 _as_stamp=$(AGENTSSHAR_BRANCH)-$(TIMESTAMP)-g$(AGENTSSHAR_SHA)
-AGENTSSHAR_BITS=$(BITS_DIR)/ur-scripts/agents-$(_as_stamp).sh \
-	$(BITS_DIR)/ur-scripts/agents-$(_as_stamp).md5sum
+AGENTSSHAR_BITS=$(BITS_DIR)/agentsshar/agents-$(_as_stamp).sh \
+	$(BITS_DIR)/agentsshar/agents-$(_as_stamp).md5sum
 AGENTSSHAR_BITS_0=$(shell echo $(AGENTSSHAR_BITS) | awk '{print $$1}')
 
 .PHONY: agentsshar
 agentsshar: $(AGENTSSHAR_BITS_0)
 
-$(AGENTSSHAR_BITS): build/agents-installer/Makefile $(AGENTS_BITS) $(CA_BITS) $(SMARTLOGIN_BITS)
+$(AGENTSSHAR_BITS): build/agents-installer/Makefile
 	@echo "# Build agentsshar: branch $(AGENTSSHAR_BRANCH), sha $(AGENTSSHAR_SHA)"
-	mkdir -p $(BITS_DIR)/ur-scripts
-	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/ur-scripts -d $(BITS_DIR) -b $(AGENTSSHAR_BRANCH))
+	mkdir -p $(BITS_DIR)/agentsshar
+	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/agentsshar/ -d $(BITS_DIR) -b $(AGENTSSHAR_BRANCH))
 	@echo "# Created agentsshar bits:"
 	@ls -1 $(AGENTSSHAR_BITS)
 	@echo ""
 
 clean_agentsshar:
-	(rm -rf $(AGENTSSHAR_BITS) || /usr/bin/true)
+	rm -rf $(BITS_DIR)/agentsshar
 	(if [[ -d build/agents-installer ]]; then cd build/agents-installer && gmake clean; fi )
 
 upload_agentsshar:
-	./tools/upload-bits -f "$(AGENTSSHAR_BITS)" $(AGENTSSHAR_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/agentsshar/
+	./tools/upload-bits $(AGENTSSHAR_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/agentsshar
 
 
 #---- usb-headnode
 # TODO:
-# - "assets/" bits area for ca-pkg package is dumb: use cloud_analytics
 # - solution for datasets
 # - pkgsrc isolation
 

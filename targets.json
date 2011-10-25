@@ -22,5 +22,11 @@
         {"url": "git@git.joyent.com:agents.git", "submodule-recursive": true}
     ],
     "deps": []
+  },
+  "agentsshar": {
+    "repos": [
+        {"url": "git@git.joyent.com:agents-installer.git", "submodule-recursive": true}
+    ],
+    "deps": ["agents", "amon", "ca", "smartlogin"]
   }
 }

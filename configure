@@ -27,8 +27,6 @@ JSON=$ROOT/tools/json
 
 FORCE_RECONFIG='false'
 
-URL="https://stuff.joyent.us/stuff/builds/sdc/master-latest/"
-CREDS="guest:GrojhykMid"
 
 
 
@@ -55,6 +53,21 @@ function config_clean() {
     fi
 }
 
+# Preload bits/ with the latest built and uploaded bits for
+# the given target and branch.
+# Usage:
+#   preload_bits TARGET BRANCH
+#
+function preload_bits() {
+    local target=$1
+    local branch=$2
+
+    echo "# preload bits/$target from stuff.joyent.us/builds/$target/$branch-latest/$target"
+    local ssh="ssh -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+    rsync -e "$ssh" -av \
+        stuff@stuff.joyent.us:builds/$target/$branch-latest/$target/ \
+        bits/$target/
+}
 
 # Get the requested repo.
 # Usage:
@@ -299,27 +312,6 @@ function print_help() {
     exit 0
 }
 
-function download_bits() {
-  platform=$(curl -k -L -u $CREDS $URL | grep platform | cut -d '>' -f 2 | cut -d '<' -f1)
-  agentsshar=$(curl -k -L -u $CREDS $URL/ur-scripts | grep agents | grep \.sh | cut -d '>' -f 2 | cut -d '<' -f1 | cut -d "." -f1)
-  ca_pkg=$(curl -k -L -u $CREDS $URL/assets | grep ca-pkg | cut -d '>' -f 2 | cut -d '<' -f1 )
-
-  mkdir -p bits/assets || /bin/true
-  mkdir -p bits/ur-scripts || /bin/true
-
-  (cd bits; curl -k -L -u $CREDS -O $URL/$platform)
-  (cd bits/assets; curl -k -L -u $CREDS -O $URL/assets/$ca_pkg)
-  (cd bits/ur-scripts; curl -k -L -u $CREDS -O $URL/ur-scripts/${agentsshar}.sh; \
-      curl -k -L -u $CREDS -O $URL/ur-scripts/${agentsshar}.md5sum; )
-  get_usbheadnode $BRANCH
-  get_zones $BRANCH
-  get_ufds $BRANCH
-
-  timestamp=$(echo $platform | cut -d '-' -f2 | cut -d '.' -f 1)
-  echo "TIMESTAMP=$timestamp" > bits/config.mk
-  echo "USBHEADNODE_BRANCH=$BRANCH" >> bits/config.mk
-  echo "USBHEADNODE_SHA=$((cd build/usb-headnode 2>&1 > /dev/null && git log --pretty=format:'%h' -1 ) || echo "")" >> bits/config.mk
-}
 
 
 #---- mainline
@@ -331,7 +323,7 @@ trap 'errexit $? $LINENO' EXIT
 # If empty it means that we are configuring for a full build.
 TARGET=
 
-while getopts ":b:hunr:fs:ot:" opt; do
+while getopts ":b:hunr:fs:t:" opt; do
     case $opt in
         b) BRANCH=$OPTARG;;
         h) print_help ;;
@@ -340,7 +332,6 @@ while getopts ":b:hunr:fs:ot:" opt; do
         s) SOLE='true' ; SOLE_REPO=${OPTARG} ;;
         f) FORCE_RECONFIG='true' ;;
         t) TARGET=${OPTARG} ;;
-        o) ONLINE=1 ;;
         ?) fatal "unknown option: $opt" ;;
     esac
     shift $((OPTIND-1))
@@ -374,13 +365,9 @@ if [[ ! -z "$TARGET" ]]; then
         get_repo2 $repo_url $BRANCH $submodule_recursive
     done
 
-    #XXX: TODO: preloading dep bits
-    #XXX
-    #if [[ $ONLINE == 1 ]]; then
-    #    download_bits
-    #    exit 0
-    #fi
-
+    for targ in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
+        preload_bits $targ $BRANCH
+    done
 else
     XXX
 if [[ $SOLE != 'true' ]]; then
