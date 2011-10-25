@@ -74,13 +74,13 @@ upload_smartlogin:
 #---- agents
 
 _a_stamp=$(AGENTS_BRANCH)-$(TIMESTAMP)-g$(AGENTS_SHA)
-AGENTS_BITS=$(BITS_DIR)/agents_core/$(AGENTS_BRANCH)/agents_core-$(_a_stamp).tgz \
-	$(BITS_DIR)/heartbeater/$(AGENTS_BRANCH)/heartbeater-$(_a_stamp).tgz \
-	$(BITS_DIR)/metadata/$(AGENTS_BRANCH)/metadata-$(_a_stamp).tgz \
-	$(BITS_DIR)/dataset_manager/$(AGENTS_BRANCH)/dataset_manager-$(_a_stamp).tgz \
-	$(BITS_DIR)/zonetracker/$(AGENTS_BRANCH)/zonetracker-$(_a_stamp).tgz \
-	$(BITS_DIR)/provisioner-v2/$(AGENTS_BRANCH)/provisioner-v2-$(_a_stamp).tgz \
-	$(BITS_DIR)/zonetracker-v2/$(AGENTS_BRANCH)/zonetracker-v2-$(_a_stamp).tgz \
+AGENTS_BITS=$(BITS_DIR)/agents/agents_core/agents_core-$(_a_stamp).tgz \
+	$(BITS_DIR)/agents/heartbeater/heartbeater-$(_a_stamp).tgz \
+	$(BITS_DIR)/agents/metadata/metadata-$(_a_stamp).tgz \
+	$(BITS_DIR)/agents/dataset_manager/dataset_manager-$(_a_stamp).tgz \
+	$(BITS_DIR)/agents/zonetracker/zonetracker-$(_a_stamp).tgz \
+	$(BITS_DIR)/agents/provisioner-v2/provisioner-v2-$(_a_stamp).tgz \
+	$(BITS_DIR)/agents/zonetracker-v2/zonetracker-v2-$(_a_stamp).tgz \
 	$(BITS_DIR)/mock_cloud/$(AGENTS_BRANCH)/mock_cloud-$(_a_stamp).tgz
 AGENTS_BITS_0=$(shell echo $(AGENTS_BITS) | awk '{print $$1}')
 
@@ -91,17 +91,17 @@ agents: $(AGENTS_BITS_0)
 $(AGENTS_BITS): build/agents
 	@echo "# Build agents: branch $(AGENTS_BRANCH), sha $(AGENTS_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/agents && TIMESTAMP=$(TIMESTAMP) PATH=/usr/sfw/bin:$(PATH) ./build.sh -p -n -l $(BITS_DIR))
+	(cd build/agents && TIMESTAMP=$(TIMESTAMP) PATH=/usr/sfw/bin:$(PATH) ./build.sh -p -n -l $(BITS_DIR)/agents -L)
 	@echo "# Created agents bits:"
 	@ls -1 $(AGENTS_BITS)
 	@echo ""
-
 
 clean_agents:
 	rm -rf $(AGENTS_BITS)
 
 upload_agents:
-	./tools/upload-bits -f "$(AGENTS_BITS)" $(AGENTS_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/agents/
+	./tools/upload-bits $(AGENTS_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/agents
+
 
 
 #---- amon
