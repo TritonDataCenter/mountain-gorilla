@@ -300,7 +300,7 @@ function print_help() {
     echo "component source repositories."
     echo ""
     echo "Usage:"
-    echo "  ./configure [ -b BRANCH ] [ -n ] [ -r REPO [-f] ] [ -s TARGET ]"
+    echo "  ./configure [ -b BRANCH ] [ -n ] [ -r REPO [-f] ] [ -t TARGET ]"
     echo ""
     echo "Options:"
     echo "  -h           Print this help and exit."
@@ -309,7 +309,7 @@ function print_help() {
     echo "  -n           Do not build platform (only applicable on SmartOS)"
     echo "  -r REPO      Reconfigure build. Remove build artifacts, checkout to SHA in bits/config.mk or HEAD"
     echo "  -f           Force reconfig (clean and rebuild)"
-    echo "  -s TARGET    Only checkout repos required to build TARGET" 
+    echo "  -t TARGET    Prepare to build only this target."
     exit 0
 }
 
@@ -324,13 +324,12 @@ trap 'errexit $? $LINENO' EXIT
 # If empty it means that we are configuring for a full build.
 TARGET=
 
-while getopts ":b:hunr:fs:t:" opt; do
+while getopts ":b:hunr:ft:" opt; do
     case $opt in
         b) BRANCH=$OPTARG;;
         h) print_help ;;
         n) BUILD_PLATFORM='false' ;;
         r) RECONFIG='true' ; RECONF_REPO=${OPTARG} ;;
-        s) SOLE='true' ; SOLE_REPO=${OPTARG} ;;
         f) FORCE_RECONFIG='true' ;;
         t) TARGET=${OPTARG} ;;
         ?) fatal "unknown option: $opt" ;;
@@ -338,7 +337,7 @@ while getopts ":b:hunr:fs:t:" opt; do
     shift $((OPTIND-1))
 done
 
-if [[ $RECONFIG == 'true' && -z $RECONF_REPO || $SOLE == 'true' && -z $SOLE_REPO ]]; then
+if [[ $RECONFIG == 'true' && -z $RECONF_REPO ]]; then
     print_help
     exit 1
 fi
@@ -370,8 +369,6 @@ if [[ ! -z "$TARGET" ]]; then
         preload_bits $targ $BRANCH
     done
 else
-    XXX
-if [[ $SOLE != 'true' ]]; then
     # TODO: not sure about allow no arg to '-r'. Doesn't that screw up './configure -r -n'?
     if [[ -n $RECONF_REPO ]]; then
         if [[ $(echo $ZONES | grep $RECONF_REPO) ]]; then
@@ -384,6 +381,10 @@ if [[ $SOLE != 'true' ]]; then
             get_$RECONF_REPO $BRANCH
         fi
     else
+        #XXX: TODO: remove this touch requirement by switching to get_repo2
+        mkdir -p bits
+        touch bits/config.mk
+
         get_smartlogin $BRANCH
         get_amon $BRANCH
         get_ca $BRANCH
@@ -394,32 +395,6 @@ if [[ $SOLE != 'true' ]]; then
         get_illumoslive $BRANCH
         get_zones $BRANCH
     fi
-else
-    if [[ $SOLE_REPO == 'usb-headnode' ]]; then
-        get_smartlogin $BRANCH
-        get_amon $BRANCH
-        get_ca $BRANCH
-        get_ufds $BRANCH
-        get_agents $BRANCH
-        get_agentsshar $BRANCH
-        get_usbheadnode $BRANCH
-        get_illumoslive $BRANCH
-        get_zones $BRANCH
-    elif [[ $SOLE_REPO == 'agents-installer' ]]; then
-        get_agentsshar $BRANCH
-        get_agents $BRANCH
-        get_smartlogin $BRANCH
-        get_ca $BRANCH
-    elif [[ $SOLE_REPO == 'illumos-live' ]]; then
-        get_illumoslive $BRANCH
-    elif [[ $SOLE_REPO == 'cloud-analytics' ]]; then
-        get_ca $BRANCH
-    elif [[ $SOLE_REPO == 'amon' ]]; then
-        get_amon $BRANCH
-    else
-        get_repo $BRANCH $SOLE_REPO $SOLE_REPO true
-    fi
-fi
 fi
 
 gen_config
