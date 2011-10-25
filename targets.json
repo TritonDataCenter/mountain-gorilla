@@ -10,5 +10,11 @@
         {"url": "git@git.joyent.com:cloud-analytics.git", "submodule-recursive": false}
     ],
     "deps": []
+  },
+  "amon": {
+    "repos": [
+        {"url": "git@git.joyent.com:amon.git", "submodule-recursive": true}
+    ],
+    "deps": []
   }
 }
