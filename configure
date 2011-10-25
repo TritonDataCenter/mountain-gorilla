@@ -121,9 +121,10 @@ function get_repo() {
         (cd build/$DEST; git submodule update --init)
     fi
 
-    if [[ $out != "Already up-to-date." || $FORCE_RECONFIG == 'true' ]]; then
-        config_clean $SRC
-    fi 
+    #XXX
+    #if [[ $out != "Already up-to-date." || $FORCE_RECONFIG == 'true' ]]; then
+    #    config_clean $SRC
+    #fi 
 }
 
 function get_github_repo() {
@@ -139,46 +140,19 @@ function get_github_repo() {
     fi
     (cd build/$DEST; git submodule update --init --recursive )
 
-    if [[ $out != "Already up-to-date." ]]; then
-        config_clean $SRC
-    fi 
-}
-
-function get_smartlogin() {
-    get_repo $1 smart-login smartlogin true
-}
-
-function get_amon() {
-    get_repo $1 amon amon true
-}
-
-function get_ca() {
-    # RELENG-222, INTRO-543: cannot do recursive git submodule update for CA
-    # while it is using the old Connect.
-    get_repo $1 cloud-analytics ca false
-} 
-
-function get_ufds() {
-    get_repo $1 ufds ufds
-} 
-function get_agents() {
-    get_repo $1 agents agents true
-}
-
-function get_agentsshar() {
-    get_repo $1 agents-installer agents-installer true
-}
-
-function get_usbheadnode() {
-    get_repo $1 usb-headnode usb-headnode true
+    #XXX
+    #if [[ $out != "Already up-to-date." ]]; then
+    #    config_clean $SRC
+    #fi 
 }
 
 function get_illumoslive() {
+    local branch=$1
     if [[ `uname -s` == "SunOS" && $BUILD_PLATFORM == 'true' ]]; then
-        get_repo $1 illumos-live illumos-live true
+        get_repo2 git@git.joyent.com:illumos-live.git $branch true
         get_github_repo illumos-extra illumos-extra joyent
         for bit in $PLAT_COMPONENTS; do
-            get_repo $1 $bit $bit true
+            get_repo $branch $bit $bit true
         done
         PLATFORM_BRANCH=$BRANCH
         PLATFORM_SHA=$(cd build/illumos-live ; git log --pretty=format:'%h' -1 )
@@ -228,6 +202,7 @@ function get_zones() {
     "agents-shar": "$BRANCH"
   , "adminui-checkout": "origin/$BRANCH"
   , "ca-tarball": "^ca-pkg-$BRANCH-.*.tar.bz2$"
+  , "amon-tarball": "^amon-master-$BRANCH-.*.tar.bz2$"
   , "dhcpd-checkout": "origin/$BRANCH"
   , "mapi-checkout": "origin/$BRANCH"
   , "portal-checkout": "origin/$BRANCH"
@@ -385,13 +360,13 @@ else
         mkdir -p bits
         touch bits/config.mk
 
-        get_smartlogin $BRANCH
-        get_amon $BRANCH
-        get_ca $BRANCH
-        get_ufds $BRANCH
-        get_agents $BRANCH
-        get_agentsshar $BRANCH
-        get_usbheadnode $BRANCH
+        get_repo2 git@git.joyent.com:smart-login.git $BRANCH true
+        get_repo2 git@git.joyent.com:amon.git $BRANCH true
+        get_repo2 git@git.joyent.com:cloud-analytics.git $BRANCH false
+        get_repo2 git@git.joyent.com:ufds.git $BRANCH true
+        get_repo2 git@git.joyent.com:agents.git $BRANCH true
+        get_repo2 git@git.joyent.com:agents-installer.git $BRANCH true
+        get_repo2 git@git.joyent.com:usb-headnode.git $BRANCH true
         get_illumoslive $BRANCH
         get_zones $BRANCH
     fi
