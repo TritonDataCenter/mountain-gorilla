@@ -128,7 +128,7 @@ clean_amon:
 	(cd build/amon && gmake clean)
 
 upload_amon:
-	./tools/upload-bits -f "$(AMON_BITS)" $(AMON_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/amon/
+	./tools/upload-bits $(AMON_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/amon
 
 
 #---- cloud-analytics
@@ -139,9 +139,9 @@ upload_amon:
 #   for env setup. Might be demons in there. (RELENG-192)
 
 _ca_stamp=$(CA_BRANCH)-$(TIMESTAMP)-g$(CA_SHA)
-CA_BITS=$(BITS_DIR)/assets/ca-pkg-$(_ca_stamp).tar.bz2 \
-	$(BITS_DIR)/cloud_analytics/cabase-$(_ca_stamp).tar.gz \
-	$(BITS_DIR)/cloud_analytics/cainstsvc-$(_ca_stamp).tar.gz
+CA_BITS=$(BITS_DIR)/ca/ca-pkg-$(_ca_stamp).tar.bz2 \
+	$(BITS_DIR)/ca/cabase-$(_ca_stamp).tar.gz \
+	$(BITS_DIR)/ca/cainstsvc-$(_ca_stamp).tar.gz
 CA_BITS_0=$(shell echo $(CA_BITS) | awk '{print $$1}')
 
 .PHONY: ca
