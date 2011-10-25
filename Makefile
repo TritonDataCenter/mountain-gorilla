@@ -326,8 +326,8 @@ build/illumos-live/configure-branches:
 $(PLATFORM_BIT): build/illumos-live/configure.mg build/illumos-live/configure-branches
 	@echo "# Build platform: branch $(PLATFORM_BRANCH), sha $(PLATFORM_SHA)"
 	(cd build/illumos-live && PATH=/usr/sfw/bin:$(PATH) ./configure && PATH=/usr/sfw/bin:$(PATH) BUILDSTAMP=$(TIMESTAMP) gmake world && PATH=/usr/sfw/bin:$(PATH) BUILDSTAMP=$(TIMESTAMP) gmake live)
-	(mkdir -p $(BITS_DIR)/)
-	(cp build/illumos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/)
+	(mkdir -p $(BITS_DIR)/platform)
+	(cp build/illumos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/platform/)
 	@echo "# Created platform bits:"
 	@ls -1 $(PLATFORM_BIT)
 	@echo ""
