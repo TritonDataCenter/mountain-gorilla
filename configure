@@ -64,6 +64,7 @@ function preload_bits() {
 
     echo "# preload bits/$target from stuff.joyent.us/builds/$target/$branch-latest/$target"
     local ssh="ssh -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
+    mkdir -p bits/$target
     rsync -e "$ssh" -av \
         stuff@stuff.joyent.us:builds/$target/$branch-latest/$target/ \
         bits/$target/

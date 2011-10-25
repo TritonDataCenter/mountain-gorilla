@@ -1,10 +1,6 @@
 /tmp
+*.swp
 
-/config.mk
 /bits
 /build
-/in.bits
 
-/master
-/lime
-/mango
