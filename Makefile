@@ -81,7 +81,7 @@ AGENTS_BITS=$(BITS_DIR)/agents/agents_core/agents_core-$(_a_stamp).tgz \
 	$(BITS_DIR)/agents/zonetracker/zonetracker-$(_a_stamp).tgz \
 	$(BITS_DIR)/agents/provisioner-v2/provisioner-v2-$(_a_stamp).tgz \
 	$(BITS_DIR)/agents/zonetracker-v2/zonetracker-v2-$(_a_stamp).tgz \
-	$(BITS_DIR)/mock_cloud/$(AGENTS_BRANCH)/mock_cloud-$(_a_stamp).tgz
+	$(BITS_DIR)/agents/mock_cloud/mock_cloud-$(_a_stamp).tgz
 AGENTS_BITS_0=$(shell echo $(AGENTS_BITS) | awk '{print $$1}')
 
 agents: $(AGENTS_BITS_0)
