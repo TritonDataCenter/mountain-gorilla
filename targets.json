@@ -23,6 +23,12 @@
     ],
     "deps": []
   },
+  "ufds": {
+    "repos": [
+        {"url": "git@git.joyent.com:ufds.git", "submodule-recursive": true}
+    ],
+    "deps": []
+  },
   "agentsshar": {
     "repos": [
         {"url": "git@git.joyent.com:agents-installer.git", "submodule-recursive": true}

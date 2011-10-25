@@ -170,7 +170,7 @@ upload_ca:
 #---- UFDS
 
 _ufds_stamp=$(UFDS_BRANCH)-$(TIMESTAMP)-g$(UFDS_SHA)
-UFDS_BITS=$(BITS_DIR)/assets/ufds-pkg-$(_ufds_stamp).tar.bz2
+UFDS_BITS=$(BITS_DIR)/ufds/ufds-pkg-$(_ufds_stamp).tar.bz2
 
 .PHONY: ufds
 ufds: $(UFDS_BITS)
