@@ -315,7 +315,7 @@ clean_usb-headnode:
 
 #---- platform
 
-PLATFORM_BIT=$(BITS_DIR)/platform-$(TIMESTAMP).tgz
+PLATFORM_BIT=$(BITS_DIR)/platform/platform-$(TIMESTAMP).tgz
 
 .PHONY: platform
 platform: $(PLATFORM_BIT)
