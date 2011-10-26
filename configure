@@ -157,13 +157,12 @@ function print_help() {
     echo "component source repositories."
     echo ""
     echo "Usage:"
-    echo "  ./configure [ -b BRANCH ] [ -n ] [ -r REPO [-f] ] [ -t TARGET ]"
+    echo "  ./configure [ -b BRANCH ] [ -r REPO [-f] ] [ -t TARGET ]"
     echo ""
     echo "Options:"
     echo "  -h           Print this help and exit."
     echo "  -b BRANCH    Branch to checkout. Defaults to 'master'."
     echo "               Note that this is for *all* core repositories."
-    echo "  -n           Do not build platform (only applicable on SmartOS)"
     echo "  -r REPO      Reconfigure build. Remove build artifacts, checkout to SHA in bits/config.mk or HEAD"
     echo "  -f           Force reconfig (clean and rebuild)"
     echo "  -t TARGET    Prepare to build only this target."
@@ -181,11 +180,10 @@ trap 'errexit $? $LINENO' EXIT
 # If empty it means that we are configuring for a full build.
 TARGET=
 
-while getopts ":b:hunr:ft:" opt; do
+while getopts ":b:hur:ft:" opt; do
     case $opt in
         b) BRANCH=$OPTARG;;
         h) print_help ;;
-        n) BUILD_PLATFORM='false' ;;
         r) RECONFIG='true' ; RECONF_REPO=${OPTARG} ;;
         f) FORCE_RECONFIG='true' ;;
         t) TARGET=${OPTARG} ;;
