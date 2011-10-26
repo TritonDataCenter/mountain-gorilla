@@ -315,7 +315,7 @@ clean_usb-headnode:
 
 #---- platform
 
-PLATFORM_BIT=$(BITS_DIR)/platform/platform-$(TIMESTAMP).tgz
+PLATFORM_BIT=$(BITS_DIR)/platform/platform-$(PLATFORM_BRANCH)-$(TIMESTAMP).tgz
 
 .PHONY: platform
 platform: $(PLATFORM_BIT)
@@ -331,7 +331,7 @@ $(PLATFORM_BIT): build/illumos-live/configure.mg build/illumos-live/configure-br
 	@echo "# Build platform: branch $(PLATFORM_BRANCH), sha $(PLATFORM_SHA)"
 	(cd build/illumos-live && PATH=/usr/sfw/bin:$(PATH) ./configure && PATH=/usr/sfw/bin:$(PATH) BUILDSTAMP=$(TIMESTAMP) gmake world && PATH=/usr/sfw/bin:$(PATH) BUILDSTAMP=$(TIMESTAMP) gmake live)
 	(mkdir -p $(BITS_DIR)/platform)
-	(cp build/illumos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/platform/)
+	(cp build/illumos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/platform/platform-$(PLATFORM_BRANCH)-$(TIMESTAMP).tgz)
 	@echo "# Created platform bits:"
 	@ls -1 $(PLATFORM_BIT)
 	@echo ""
