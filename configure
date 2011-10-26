@@ -184,17 +184,17 @@ trap 'errexit $? $LINENO' EXIT
 # If empty it means that we are configuring for a full build.
 TARGET=
 
-while getopts ":b:hur:ft:" opt; do
-    case $opt in
-        b) BRANCH=$OPTARG;;
+while getopts "b:hur:ft:" opt; do
+    case "$opt" in
+        b) BRANCH=$OPTARG ;;
         h) print_help ;;
         r) RECONFIG='true' ; RECONF_REPO=${OPTARG} ;;
         f) FORCE_RECONFIG='true' ;;
         t) TARGET=${OPTARG} ;;
         ?) fatal "unknown option: $opt" ;;
     esac
-    shift $((OPTIND-1))
 done
+shift $((OPTIND-1))
 
 if [[ $RECONFIG == 'true' && -z $RECONF_REPO ]]; then
     print_help
