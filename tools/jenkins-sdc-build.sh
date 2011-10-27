@@ -17,22 +17,23 @@ mv mountain-gorilla mountain-gorilla.last
 git clone git@git.joyent.com:mountain-gorilla.git
 cd mountain-gorilla
 
-LOG=bits/build.log
-mkdir -p bits
-date | tee $LOG
-pwd | tee -a $LOG
-whoami | tee -a $LOG
-env | tee -a $LOG
+LOG=build.log
+touch $LOG
+exec > >(tee ${LOG}) 2>&1
 
-echo "" | tee -a $LOG
-echo "#----------------------" | tee -a $LOG
+date
+pwd
+whoami
+env
+
+echo ""
+echo "#----------------------"
 [[ -z "$BRANCH" ]] && BRANCH=master
-./configure -b $BRANCH 2>&1 | tee -a $LOG
+./configure -b $BRANCH
 
-echo "" | tee -a $LOG
-echo "#----------------------" | tee -a $LOG
-gmake 2>&1 | tee -a $LOG
+echo ""
+echo "#----------------------"
+gmake
 
-echo "" | tee -a $LOG
-echo "#----------------------" | tee -a $LOG
-gmake upload_jenkins 2>&1 | tee -a $LOG
+cp $LOG bits/
+gmake upload_jenkins
