@@ -3,7 +3,13 @@
 #
 # Configure the mountain gorilla (aka SDC) build.
 #
-
+# "targets.json" is a mapping of Makefile target to info about that target:
+# - repos: A list of repos to clone to the "build/" directory for building it.
+#   Each repo entry is an object like this:
+#       {"url": "git@git.joyent.com:cloud-analytics.git",
+#        "submodule-recursive": false,      # optional
+#        "dir": "good-ole-ca"}              # optional
+# - deps: A list of dependent targets.
 
 if [ "$TRACE" != "" ]; then
     export PS4='${BASH_SOURCE}:${LINENO}: '
@@ -18,13 +24,8 @@ set -o pipefail
 
 BRANCH="master"
 
-ZONES="mcp_api_admin booter mcp_api_gateway public-web-client cloud-api billing_api"
-
 ROOT=$(pwd)
 JSON=$ROOT/tools/json
-
-FORCE_RECONFIG='false'
-
 
 
 
@@ -38,18 +39,6 @@ function fatal {
 function errexit {
     [[ $1 -ne 0 ]] || exit 0
     fatal "error exit status $1 at line $2"
-}
-
-#XXX unused currently
-function config_clean() {
-    repo=$1
-    # TODO: parse a repo:target mapping and clean targets better
-    targ=$(cat repos.json | json $repo | json target)
-    parent=$(cat repos.json | json $repo | json parents | json 0)
-    gmake clean_$targ
-    if [[ -n $parent ]]; then
-          config_clean $parent
-    fi
 }
 
 # Preload bits/ with the latest built and uploaded bits for
@@ -99,7 +88,7 @@ function get_repo2() {
         # Note: Use separate `git checkout $branch` instead of `-b $branch`
         # with git clone command because the latter doesn't return non-zero
         # if the branch doesn't exist.
-        git checkout $branch
+        (cd build/$repo_dir ; git checkout $branch)
     else
         out=$(cd build/$repo_dir ; git checkout $branch ; git pull)
     fi
@@ -167,10 +156,23 @@ function print_help() {
     echo "  -h           Print this help and exit."
     echo "  -b BRANCH    Branch to checkout. Defaults to 'master'."
     echo "               Note that this is for *all* core repositories."
-    echo "  -r REPO      Reconfigure build. Remove build artifacts, checkout to SHA in bits/config.mk or HEAD"
-    echo "  -f           Force reconfig (clean and rebuild)"
     echo "  -t TARGET    Prepare to build only this target."
+    echo "  -r           Regenerate config.mk. This doesn't touch repos in"
+    echo "               'build/' or preload in 'bits/'."
     exit 0
+}
+
+
+function get_target_repos() {
+    local target=$1
+    local info
+    for info in `cat targets.json | $JSON $target.repos | $JSON -a -d, url dir submodule-recursive`; do
+        local repo_url=$(echo "$info" | cut -d, -f 1)
+        local repo_dir=$(echo "$info" | cut -d, -f 2)
+        local submodule_recursive=$(echo "$info" | cut -d, -f 3)
+        [[ -z "$submodule_recursive" ]] && submodule_recursive=true
+        get_repo2 $repo_url $BRANCH "$submodule_recursive" "$repo_dir"
+    done
 }
 
 
@@ -183,80 +185,44 @@ trap 'errexit $? $LINENO' EXIT
 # target and (b) pre-load "bits/" with pre-built dependent target bits.
 # If empty it means that we are configuring for a full build.
 TARGET=
+REGENERATE='false'
 
-while getopts "b:hur:ft:" opt; do
+while getopts "b:hurft:" opt; do
     case "$opt" in
         b) BRANCH=$OPTARG ;;
         h) print_help ;;
-        r) RECONFIG='true' ; RECONF_REPO=${OPTARG} ;;
-        f) FORCE_RECONFIG='true' ;;
+        r)
+            REGENERATE='true'
+            ;;
         t) TARGET=${OPTARG} ;;
         ?) fatal "unknown option: $opt" ;;
     esac
 done
 shift $((OPTIND-1))
 
-if [[ $RECONFIG == 'true' && -z $RECONF_REPO ]]; then
-    print_help
-    exit 1
+
+if [[ "$REGENERATE" == 'true' ]]; then
+    gen_config
+    exit 0
 fi
 
 
-# The configure process wants to run "clean_*" targets in the Makefile.
-# The Makefile needs a bits/config.mk to exist. An empty one will suffice for
-# the clean targets.
+# Else we are doing a full configure for a fresh build. Start fresh:
 mkdir -p bits
 touch bits/config.mk
+make distclean
 
-
-if [[ "$RECONFIG" == 'true' ]]; then
-    #XXX TODO: reconfigure support:
-    # - if a target is given ("./configure -r ca"), then just "clean_ca" (and clean_$dep for deps)
-    #   - TODO: consider also blowing away all the associated build/$repo dirs for clean pull
-    XXX
-else
-    make distclean
-fi
 
 if [[ ! -z "$TARGET" ]]; then
-    # "targets.json" is a mapping of Makefile target to info about that target:
-    # - repos: A list of repos to clone to the "build/" directory for building it.
-    #   Each repo entry is an object like this:
-    #       {"url": "git@git.joyent.com:cloud-analytics.git",
-    #        "submodule-recursive": false,      # optional
-    #        "dir": "good-ole-ca"}              # optional
-    # - deps: A list of dependent targets.
-
-    for info in `cat targets.json | $JSON $TARGET.repos | $JSON -a -d, url dir submodule-recursive`; do
-        repo_url=$(echo "$info" | cut -d, -f 1)
-        repo_dir=$(echo "$info" | cut -d, -f 2)
-        submodule_recursive=$(echo "$info" | cut -d, -f 3)
-        [[ -z "$submodule_recursive" ]] && submodule_recursive=true
-        get_repo2 $repo_url $BRANCH "$submodule_recursive" "$repo_dir"
-    done
-
+    get_target_repos $TARGET
     for targ in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
         preload_bits $targ $BRANCH
     done
 else
-    # TODO: not sure about allow no arg to '-r'. Doesn't that screw up './configure -r -n'?
-    if [[ -n $RECONF_REPO ]]; then
-        XXX
-    else
-        #XXX: TODO: remove this touch requirement by switching to get_repo2
-        mkdir -p bits
-        touch bits/config.mk
-
-        get_repo2 git@git.joyent.com:smart-login.git $BRANCH true
-        get_repo2 git@git.joyent.com:amon.git $BRANCH true
-        get_repo2 git@git.joyent.com:cloud-analytics.git $BRANCH false
-        get_repo2 git@git.joyent.com:ufds.git $BRANCH true
-        get_repo2 git@git.joyent.com:agents.git $BRANCH true
-        get_repo2 git@git.joyent.com:agents-installer.git $BRANCH true
-        get_repo2 git@git.joyent.com:usb-headnode.git $BRANCH true
-        XXX # illumos-live et al
-        XXX # usb-headnode zones for ZONES_DIR
-    fi
+    targets=$(node -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); Object.keys(JSON.parse(c)).join("\n")')
+    for targ in $targets; do
+        get_target_repos $targ
+    done
 fi
 
 gen_config
