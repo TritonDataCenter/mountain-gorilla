@@ -1,8 +1,11 @@
 {
+  "no-internet": "false",
+  "use-proxy": "false",
+
   "agents-shar": "{{BRANCH}}",
   "adminui-checkout": "origin/{{BRANCH}}",
-  "ca-tarball": "^ca-pkg-{{BRANCH}}-.*.tar.bz2$",
-  "amon-tarball": "^amon-master-{{BRANCH}}-.*.tar.bz2$",
+  "ca-tarball": "ca/ca-pkg-{{BRANCH}}-.*.tar.bz2",
+  "amon-tarball": "amon/amon-master-{{BRANCH}}-.*.tar.bz2",
   "dhcpd-checkout": "origin/{{BRANCH}}",
   "mapi-checkout": "origin/{{BRANCH}}",
   "portal-checkout": "origin/{{BRANCH}}",

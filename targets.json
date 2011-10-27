@@ -61,6 +61,6 @@
         {"url": "git@git.joyent.com:sdc-webinfo.git"},
         {"url": "git@git.joyent.com:node-sdc-clients.git"}
     ],
-    "deps": ["platform", "agentsshar", "ca", "ufds"]
+    "deps": ["platform", "agentsshar", "ca", "ufds", "amon"]
   }
 }
