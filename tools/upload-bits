@@ -1,6 +1,8 @@
 #!/bin/bash
+# vi: expandtab sw=4 ts=4
 #
 # Upload (possibly parts of) the bits dir.
+#
 
 if [ "$TRACE" != "" ]; then
     export PS4='${BASH_SOURCE}:${LINENO}: '
@@ -37,9 +39,14 @@ function errexit {
 
 function print_help() {
     echo "Usage:"
-    echo "  ./tools/upload-bits [-r] [-f FILE] BRANCH TIMESTAMP UPLOAD-BASE-DIR"
+    echo "  ./tools/upload-bits [-r] [-f FILE] BRANCH TRY-BRANCH TIMESTAMP UPLOAD-BASE-DIR"
     echo ""
-    echo "Upload bits. The UPLOAD-BASE-DIR is presumed to be a remote dir."
+    echo "Upload bits. The UPLOAD-BASE-DIR is presumed to be a remote dir "
+    echo "(i.e. user@host:path). 'TRY-BRANCH' is often empty. An MG build"
+    echo "can be configured with '-B TRY-BRANCH' to use a feature branch"
+    echo "for those constituent repos that have that branch. If there is"
+    echo "'TRY-BRANCH', this will be used as the upload dir in favour of"
+    echo "'BRANCH'."
     echo ""
     echo "Options:"
     echo "  -r           Only upload the 'release/' dir."
@@ -47,7 +54,7 @@ function print_help() {
     echo "  -f FILE      Upload only file FILE"
     echo ""
     echo "Examples:"
-    echo "  ./tool/upload-bits release-20110922 20110927T143319Z stuff@stuff.joyent.us:builds/nightly"
+    echo "  ./tool/upload-bits release-20110922 \"\" 20110927T143319Z stuff@stuff.joyent.us:builds/nightly"
     exit 0
 }
 
@@ -70,17 +77,23 @@ while getopts "hrf:" opt; do
 done
 
 BRANCH=$1
-TIMESTAMP=$2
-UPLOAD_BASE_DIR=$3
+TRY_BRANCH=$2
+TIMESTAMP=$3
+UPLOAD_BASE_DIR=$4
+
 UPLOAD_SERVER=$(echo "$UPLOAD_BASE_DIR" | awk -F: '{print $1}')
 UPLOAD_BASE_LOCALDIR=$(echo "$UPLOAD_BASE_DIR" | awk -F: '{print $2}')
+UPLOAD_BRANCH=$TRY_BRANCH
+if [[ -z "$UPLOAD_BRANCH" ]]; then
+    UPLOAD_BRANCH=$BRANCH
+fi
 
-# Determine the upload dir. If there is already a "$BRANCH-$TIMESTAMP"
+# Determine the upload dir. If there is already a "$UPLOAD_BRANCH-$TIMESTAMP"
 # dir, then we append a "-N" serial number.
-existing_upload_dirs=$($SSH $UPLOAD_SERVER ls -d $UPLOAD_BASE_LOCALDIR/$BRANCH-$TIMESTAMP* $UPLOAD_BASE_LOCALDIR/.$BRANCH-$TIMESTAMP* 2>/dev/null || true)
+existing_upload_dirs=$($SSH $UPLOAD_SERVER ls -d $UPLOAD_BASE_LOCALDIR/$UPLOAD_BRANCH-$TIMESTAMP* $UPLOAD_BASE_LOCALDIR/.$UPLOAD_BRANCH-$TIMESTAMP* 2>/dev/null || true)
 last_upload_dir=$(echo $existing_upload_dirs | tail -1)
 if [[ -z "$last_upload_dir" ]]; then
-    upload_subdir=$BRANCH-$TIMESTAMP
+    upload_subdir=$UPLOAD_BRANCH-$TIMESTAMP
 else
     serial=$(echo $last_upload_dir | awk -F- '{print $NF}')
     if [[ "${serial:(-1)}" == "Z" ]]; then
@@ -88,7 +101,7 @@ else
     else
         next_serial=$(( $serial + 1 ))
     fi
-    upload_subdir=$BRANCH-$TIMESTAMP-$next_serial
+    upload_subdir=$UPLOAD_BRANCH-$TIMESTAMP-$next_serial
 fi
 
 # Upload to '.'-prefixed dir to hide it until fully uploaded.
@@ -104,9 +117,9 @@ else
     rsync -e "$SSH" -av $BITS_DIR/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/
 fi
 
-# Unhide and add a "$BRANCH-$latest" symlink.
+# Unhide and add a "$UPLOAD_BRANCH-$latest" symlink.
 $SSH $UPLOAD_SERVER mv $UPLOAD_BASE_LOCALDIR/.$upload_subdir/ $UPLOAD_BASE_LOCALDIR/$upload_subdir/
-$SSH $UPLOAD_SERVER "(cd $UPLOAD_BASE_LOCALDIR && rm -f $BRANCH-latest && ln -s $upload_subdir $BRANCH-latest)"
+$SSH $UPLOAD_SERVER "(cd $UPLOAD_BASE_LOCALDIR && rm -f $UPLOAD_BRANCH-latest && ln -s $upload_subdir $UPLOAD_BRANCH-latest)"
 
 # Special note for stuff.joyent.us.
 if [[ "$UPLOAD_SERVER" == "stuff@stuff.joyent.us" ]]; then

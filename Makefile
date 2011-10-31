@@ -67,8 +67,6 @@ $(SMARTLOGIN_BITS): build/smart-login
 clean_smartlogin:
 	rm -rf $(BITS_DIR)/smartlogin
 
-upload_smartlogin:
-	./tools/upload-bits $(SMARTLOGIN_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/smartlogin
 
 
 #---- agents
@@ -99,9 +97,6 @@ $(AGENTS_BITS): build/agents
 clean_agents:
 	rm -rf $(BITS_DIR)/agents
 
-upload_agents:
-	./tools/upload-bits $(AGENTS_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/agents
-
 
 
 #---- amon
@@ -127,8 +122,6 @@ clean_amon:
 	rm -rf $(BITS_DIR)/amon
 	(cd build/amon && gmake clean)
 
-upload_amon:
-	./tools/upload-bits $(AMON_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/amon
 
 
 #---- cloud-analytics
@@ -163,8 +156,6 @@ clean_ca:
 	rm -rf $(BITS_DIR)/ca
 	(cd build/cloud-analytics && gmake clean)
 
-upload_ca:
-	./tools/upload-bits $(CA_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/ca
 
 
 #---- UFDS
@@ -191,9 +182,6 @@ clean_ufds:
 	rm -rf $(BITS_DIR)/ufds
 	(cd build/ufds && gmake clean)
 
-upload_ufds:
-	./tools/upload-bits $(UFDS_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/ufds
-
 
 
 #---- agents shar
@@ -218,8 +206,6 @@ clean_agentsshar:
 	rm -rf $(BITS_DIR)/agentsshar
 	(if [[ -d build/agents-installer ]]; then cd build/agents-installer && gmake clean; fi )
 
-upload_agentsshar:
-	./tools/upload-bits $(AGENTSSHAR_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/agentsshar
 
 
 #---- usb-headnode
@@ -230,19 +216,19 @@ upload_agentsshar:
 .PHONY: usbheadnode
 usbheadnode: coal usb upgrade boot
 
-_usbheadnode_stamp=$(USBHEADNODE_BRANCH)-$(TIMESTAMP)-g$(USBHEADNODE_SHA)
+_usbheadnode_stamp=$(USB_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(USB_HEADNODE_SHA)
 COAL_BIT=$(BITS_DIR)/usbheadnode/coal-$(_usbheadnode_stamp)-4gb.tgz
 
 bits/usbheadnode/build.spec.local:
 	mkdir -p bits/usbheadnode
-	sed -e "s/{{BRANCH}}/$(USBHEADNODE_BRANCH)/" <build.spec.in >bits/usbheadnode/build.spec.local
+	sed -e "s/{{BRANCH}}/$(USB_HEADNODE_BRANCH)/" <build.spec.in >bits/usbheadnode/build.spec.local
 	(cd build/usb-headnode; rm -f build.spec.local; ln -s ../../bits/usbheadnode/build.spec.local)
 
 .PHONY: coal
 coal: $(COAL_BIT)
 
 $(COAL_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
-	@echo "# Build coal: usb-headnode branch $(USBHEADNODE_BRANCH), sha $(USBHEADNODE_SHA)"
+	@echo "# Build coal: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
@@ -258,7 +244,7 @@ USB_BIT=$(BITS_DIR)/usbheadnode/usb-$(_usbheadnode_stamp).tgz
 usb: $(USB_BIT)
 
 $(USB_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
-	@echo "# Build usb: usb-headnode branch $(USBHEADNODE_BRANCH), sha $(USBHEADNODE_SHA)"
+	@echo "# Build usb: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
@@ -274,7 +260,7 @@ UPGRADE_BIT=$(BITS_DIR)/usbheadnode/upgrade-$(_usbheadnode_stamp).tgz
 upgrade: $(UPGRADE_BIT)
 
 $(UPGRADE_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
-	@echo "# Build upgrade: usb-headnode branch $(USBHEADNODE_BRANCH), sha $(USBHEADNODE_SHA)"
+	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
@@ -290,7 +276,7 @@ BOOT_BIT=$(BITS_DIR)/usbheadnode/boot-$(_usbheadnode_stamp).tgz
 boot: $(BOOT_BIT)
 
 $(BOOT_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
-	@echo "# Build boot: usb-headnode branch $(USBHEADNODE_BRANCH), sha $(USBHEADNODE_SHA)"
+	@echo "# Build boot: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
@@ -308,7 +294,8 @@ releasejson:
 	mkdir -p $(BITS_DIR)/usbheadnode
 	echo "{ \
 	\"date\": \"$(TIMESTAMP)\", \
-	\"branch\": \"$(USBHEADNODE_BRANCH)\", \
+	\"branch\": \"$(BRANCH)\", \
+	\"try-branch\": \"$(TRY-BRANCH)\", \
 	\"coal\": \"$(shell basename $(COAL_BIT))\", \
 	\"boot\": \"$(shell basename $(BOOT_BIT))\", \
 	\"usb\": \"$(shell basename $(USB_BIT))\", \
@@ -348,9 +335,6 @@ clean_platform:
 	rm -f $(BITS_DIR)/platform-*
 	(cd build/illumos-live && gmake clean)
 
-upload_platform:
-	./tools/upload-bits $(PLATFORM_BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/platform
-
 
 
 #---- misc targets
@@ -367,5 +351,5 @@ upload_jenkins:
 	@[[ -z "$(JOB_NAME)" ]] \
 		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
 		&& exit 1 || true
-	./tools/upload-bits $(BRANCH) $(TIMESTAMP) $(UPLOAD_LOCATION)/$(JOB_NAME)
+	./tools/upload-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(UPLOAD_LOCATION)/$(JOB_NAME)
 

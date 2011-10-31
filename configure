@@ -22,7 +22,8 @@ set -o pipefail
 
 #---- config, globals
 
-BRANCH="master"
+BRANCH=master
+TRY_BRANCH=
 
 ROOT=$(pwd)
 JSON=$ROOT/tools/json
@@ -44,15 +45,25 @@ function errexit {
 # Preload bits/ with the latest built and uploaded bits for
 # the given target and branch.
 # Usage:
-#   preload_bits TARGET BRANCH
+#   preload_bits TARGET BRANCH TRY_BRANCH
 #
 function preload_bits() {
     local target=$1
     local branch=$2
+    local try_branch=$3
 
     echo "# preload bits/$target from stuff.joyent.us/builds/$target/$branch-latest/$target"
     local ssh="ssh -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
     mkdir -p bits/$target
+    if [[ ! -z "$try_branch" ]]; then
+        local out=$(ssh stuff@stuff.joyent.us ls -d builds/$target/$try_branch-latest/$target 2>&1 || true)
+        if [[ "${out##*: }" != "No such file or directory" ]]; then
+            rsync -e "$ssh" -av \
+                stuff@stuff.joyent.us:builds/$target/$try_branch-latest/$target/ \
+                bits/$target/
+            return
+        fi
+    fi
     rsync -e "$ssh" -av \
         stuff@stuff.joyent.us:builds/$target/$branch-latest/$target/ \
         bits/$target/
@@ -60,7 +71,7 @@ function preload_bits() {
 
 # Get the requested repo.
 # Usage:
-#   get_repo2 REPO-URL BRANCH SUBMODULE-RECURSIVE [NAME]
+#   get_repo2 REPO-URL BRANCH SUBMODULE-RECURSIVE [NAME] [TRY-BRANCH]
 #
 # If "SUBMODULE-RECURSIVE" is "true", then "--recursive" is used on
 # on the "git submodule update ..." call.
@@ -73,6 +84,7 @@ function get_repo2() {
     local branch=$2
     local submodule_recursive=$3
     local repo_dir=$4
+    local try_branch=$5
 
     if [[ -z "$repo_dir" ]]; then
         repo_dir=${repo_url##*/}    # strip to last '/'
@@ -81,7 +93,6 @@ function get_repo2() {
     fi
 
     echo "# get '$repo_url' to 'build/$repo_dir'"
-    local out
     if [[ ! -d build/$repo_dir ]]; then
         mkdir -p build/$repo_dir
         git clone $repo_url build/$repo_dir
@@ -90,7 +101,10 @@ function get_repo2() {
         # if the branch doesn't exist.
         (cd build/$repo_dir ; git checkout $branch)
     else
-        out=$(cd build/$repo_dir ; git checkout $branch ; git pull)
+        (cd build/$repo_dir ; git checkout $branch ; git pull)
+    fi
+    if [[ ! -z "$try_branch" ]]; then
+        (cd build/$repo_dir ; git checkout $try_branch && git pull || true)
     fi
     if [[ "$submodule_recursive" == "true" ]]; then
         (cd build/$repo_dir; git submodule update --init --recursive)
@@ -105,6 +119,7 @@ function gen_config() {
     cat <<EOF >bits/config.mk
 TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
 BRANCH=$BRANCH
+TRY_BRANCH=$TRY_BRANCH
 
 SMARTLOGIN_BRANCH=$BRANCH
 SMARTLOGIN_SHA=$((cd build/smart-login 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
@@ -123,9 +138,6 @@ UFDS_SHA=$((cd build/ufds 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 )
 
 AGENTSSHAR_BRANCH=$BRANCH
 AGENTSSHAR_SHA=$((cd build/agents-installer 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
-
-USBHEADNODE_BRANCH=$BRANCH
-USBHEADNODE_SHA=$((cd build/usb-headnode 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
 PLATFORM_BRANCH=$BRANCH
 PLATFORM_SHA=$((cd build/illumos-live 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
@@ -156,6 +168,11 @@ function print_help() {
     echo "  -h           Print this help and exit."
     echo "  -b BRANCH    Branch to checkout. Defaults to 'master'."
     echo "               Note that this is for *all* core repositories."
+    echo "  -B TRY-BRANCH"
+    echo "               Branch to try to checkout (if it exists). '-b' value"
+    echo "               is used as the default. This is useful for building"
+    echo "               a feature branch on one of the many repos used for"
+    echo "               a target."
     echo "  -t TARGET    Prepare to build only this target."
     echo "  -r           Regenerate config.mk. This doesn't touch repos in"
     echo "               'build/' or preload in 'bits/'."
@@ -171,7 +188,7 @@ function get_target_repos() {
         local repo_dir=$(echo "$info" | cut -d, -f 2)
         local submodule_recursive=$(echo "$info" | cut -d, -f 3)
         [[ -z "$submodule_recursive" ]] && submodule_recursive=true
-        get_repo2 $repo_url $BRANCH "$submodule_recursive" "$repo_dir"
+        get_repo2 $repo_url $BRANCH "$submodule_recursive" "$repo_dir" "$TRY_BRANCH"
     done
 }
 
@@ -187,9 +204,10 @@ trap 'errexit $? $LINENO' EXIT
 TARGET=
 REGENERATE='false'
 
-while getopts "b:hurft:" opt; do
+while getopts "b:B:hurft:" opt; do
     case "$opt" in
         b) BRANCH=$OPTARG ;;
+        B) TRY_BRANCH=$OPTARG ;;
         h) print_help ;;
         r)
             REGENERATE='true'
@@ -216,7 +234,7 @@ make distclean
 if [[ ! -z "$TARGET" ]]; then
     get_target_repos $TARGET
     for targ in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
-        preload_bits $targ $BRANCH
+        preload_bits $targ "$BRANCH" "$TRY_BRANCH"
     done
 else
     targets=$(node -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); Object.keys(JSON.parse(c)).join("\n")')
