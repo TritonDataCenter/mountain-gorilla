@@ -278,7 +278,7 @@ $(UPGRADE_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build ./bin/build-image upgrade 
+		ZONE_DIR=$(TOP)/build ./bin/build-image upgrade
 	mv build/usb-headnode/$(shell basename $(UPGRADE_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created upgrade bits:"
 	@ls -1 $(UPGRADE_BIT)
@@ -294,7 +294,7 @@ $(BOOT_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build ./bin/build-image tar 
+		ZONE_DIR=$(TOP)/build ./bin/build-image -c tar
 	mv build/usb-headnode/$(shell basename $(BOOT_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created boot bits:"
 	@ls -1 $(BOOT_BIT)
@@ -303,7 +303,7 @@ $(BOOT_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 
 RELEASEJSON_BIT=$(BITS_DIR)/usbheadnode/release.json
 
-.PHONY: boot
+.PHONY: releasejson
 releasejson:
 	mkdir -p $(BITS_DIR)/usbheadnode
 	echo "{ \
