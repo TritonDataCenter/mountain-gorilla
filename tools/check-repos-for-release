@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Check if the SDC repos (those listed in repos.json) are prepared (branched
+# Check if the SDC repos (those listed in targets.json) are prepared (branched
 # or tagged as appropriate) for an SDC release build. Will also apply
 # missing branch/tag with the '-a' flag.
 #
@@ -36,7 +36,7 @@ function usage() {
     echo "                  The 'illumos-extra' repo is just tagged, all"
     echo "                  others are just branched."
     echo "  -r REPO         Just run for the given repository. If not given"
-    echo "                  then all repos in 'repos.json' are used. Can be"
+    echo "                  then all repos in 'targets.json' are used. Can be"
     echo "                  specified multiple times."
     echo ""
     echo "Examples:"
@@ -51,7 +51,7 @@ function fatal {
     exit 1
 }
 
-#TODO: This is HACK, the repo URL should be in repos.json.
+#TODO: This is HACK, the repo URL should be in targets.json.
 function repo_url_from_name () {
     local name=$1
     if [[ "$name" == "illumos-extra" ]]; then
@@ -137,7 +137,17 @@ fi
 
 if [[ -z "$REPOS" ]]; then
     # Note: The trailing '' is to get `node -e` to shut up about that retval.
-    REPOS=$(cd $TOP; node -e "var fs = require('fs'); repos = JSON.parse(fs.readFileSync('repos.json')); console.log(Object.keys(repos).join('\n')); '';");
+  REPOS=$(cd $TOP; node -e "var fs = require('fs');
+    var targets = JSON.parse(fs.readFileSync('targets.json'));
+    var repourls = [];
+    for (targ in targets) {
+      if (targets[targ].repos != undefined ) {
+        var repos = targets[targ].repos;
+        repos.forEach( function(repo) {
+          if (repo.url && repourls.indexOf(repo.url) == -1 ) console.log(repo.url)
+        });
+      };
+    };"| grep -v undefined | cut -d ':' -f2 | xargs -I {} basename {} .git)
 fi
 
 for repo in $REPOS; do
