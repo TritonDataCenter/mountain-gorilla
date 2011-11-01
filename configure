@@ -56,7 +56,7 @@ function preload_bits() {
     local ssh="ssh -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
     mkdir -p bits/$target
     if [[ ! -z "$try_branch" ]]; then
-        local out=$(ssh stuff@stuff.joyent.us ls -d builds/$target/$try_branch-latest/$target 2>&1 || true)
+        local out=$($ssh stuff@stuff.joyent.us ls -d builds/$target/$try_branch-latest/$target 2>&1 || true)
         if [[ "${out##*: }" != "No such file or directory" ]]; then
             rsync -e "$ssh" -av \
                 stuff@stuff.joyent.us:builds/$target/$try_branch-latest/$target/ \
