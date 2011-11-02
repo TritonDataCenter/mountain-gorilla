@@ -225,14 +225,14 @@ bits/usbheadnode/build.spec.local:
 	(cd build/usb-headnode; rm -f build.spec.local; ln -s ../../bits/usbheadnode/build.spec.local)
 
 .PHONY: coal
-coal: $(COAL_BIT)
+coal: boot $(COAL_BIT)
 
 $(COAL_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 	@echo "# Build coal: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build ./bin/build-image -c coal
+		ZONE_DIR=$(TOP)/build ./bin/build-image -c ./cache/stage coal
 	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created coal bits:"
 	@ls -1 $(COAL_BIT)
@@ -241,14 +241,14 @@ $(COAL_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 USB_BIT=$(BITS_DIR)/usbheadnode/usb-$(_usbheadnode_stamp).tgz
 
 .PHONY: usb
-usb: $(USB_BIT)
+usb: boot $(USB_BIT)
 
 $(USB_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 	@echo "# Build usb: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build ./bin/build-image -c usb
+		ZONE_DIR=$(TOP)/build ./bin/build-image -c -s ./cache/stage usb
 	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created usb bits:"
 	@ls -1 $(USB_BIT)
@@ -257,14 +257,14 @@ $(USB_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 UPGRADE_BIT=$(BITS_DIR)/usbheadnode/upgrade-$(_usbheadnode_stamp).tgz
 
 .PHONY: upgrade
-upgrade: $(UPGRADE_BIT)
+upgrade: boot $(UPGRADE_BIT)
 
 $(UPGRADE_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build ./bin/build-image upgrade
+		ZONE_DIR=$(TOP)/build ./bin/build-image -s ./cache/stage upgrade
 	mv build/usb-headnode/$(shell basename $(UPGRADE_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created upgrade bits:"
 	@ls -1 $(UPGRADE_BIT)
