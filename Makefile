@@ -232,7 +232,7 @@ $(COAL_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build ./bin/build-image -c ./cache/stage coal
+		ZONE_DIR=$(TOP)/build ./bin/build-image -c -s ./cache/stage coal
 	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created coal bits:"
 	@ls -1 $(COAL_BIT)
