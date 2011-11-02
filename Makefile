@@ -209,66 +209,19 @@ clean_agentsshar:
 
 
 #---- usb-headnode
+# We are using the '-s STAGE-DIR' option to the usb-headnode build to
+# avoid rebuilding it. We use the "boot" target to build the stage dir
+# and have the other usb-headnode targets depend on that.
+#
 # TODO:
 # - solution for datasets
 # - pkgsrc isolation
 
 .PHONY: usbheadnode
-usbheadnode: coal usb upgrade boot
+usbheadnode: boot coal usb upgrade
 
 _usbheadnode_stamp=$(USB_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(USB_HEADNODE_SHA)
-COAL_BIT=$(BITS_DIR)/usbheadnode/coal-$(_usbheadnode_stamp)-4gb.tgz
 
-bits/usbheadnode/build.spec.local:
-	mkdir -p bits/usbheadnode
-	sed -e "s/{{BRANCH}}/$(USB_HEADNODE_BRANCH)/" <build.spec.in >bits/usbheadnode/build.spec.local
-	(cd build/usb-headnode; rm -f build.spec.local; ln -s ../../bits/usbheadnode/build.spec.local)
-
-.PHONY: coal
-coal: boot $(COAL_BIT)
-
-$(COAL_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
-	@echo "# Build coal: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
-	mkdir -p $(BITS_DIR)/usbheadnode
-	cd build/usb-headnode \
-		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build ./bin/build-image -c -s ./cache/stage coal
-	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/usbheadnode
-	@echo "# Created coal bits:"
-	@ls -1 $(COAL_BIT)
-	@echo ""
-
-USB_BIT=$(BITS_DIR)/usbheadnode/usb-$(_usbheadnode_stamp).tgz
-
-.PHONY: usb
-usb: boot $(USB_BIT)
-
-$(USB_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
-	@echo "# Build usb: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
-	mkdir -p $(BITS_DIR)/usbheadnode
-	cd build/usb-headnode \
-		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build ./bin/build-image -c -s ./cache/stage usb
-	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/usbheadnode
-	@echo "# Created usb bits:"
-	@ls -1 $(USB_BIT)
-	@echo ""
-
-UPGRADE_BIT=$(BITS_DIR)/usbheadnode/upgrade-$(_usbheadnode_stamp).tgz
-
-.PHONY: upgrade
-upgrade: boot $(UPGRADE_BIT)
-
-$(UPGRADE_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
-	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
-	mkdir -p $(BITS_DIR)/usbheadnode
-	cd build/usb-headnode \
-		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build ./bin/build-image -s ./cache/stage upgrade
-	mv build/usb-headnode/$(shell basename $(UPGRADE_BIT)) $(BITS_DIR)/usbheadnode
-	@echo "# Created upgrade bits:"
-	@ls -1 $(UPGRADE_BIT)
-	@echo ""
 
 BOOT_BIT=$(BITS_DIR)/usbheadnode/boot-$(_usbheadnode_stamp).tgz
 
@@ -284,6 +237,60 @@ $(BOOT_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 	mv build/usb-headnode/$(shell basename $(BOOT_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created boot bits:"
 	@ls -1 $(BOOT_BIT)
+	@echo ""
+
+
+COAL_BIT=$(BITS_DIR)/usbheadnode/coal-$(_usbheadnode_stamp)-4gb.tgz
+
+bits/usbheadnode/build.spec.local:
+	mkdir -p bits/usbheadnode
+	sed -e "s/{{BRANCH}}/$(USB_HEADNODE_BRANCH)/" <build.spec.in >bits/usbheadnode/build.spec.local
+	(cd build/usb-headnode; rm -f build.spec.local; ln -s ../../bits/usbheadnode/build.spec.local)
+
+.PHONY: coal
+coal: $(COAL_BIT)
+
+$(COAL_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local $(BOOT_BIT)
+	@echo "# Build coal: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
+	mkdir -p $(BITS_DIR)/usbheadnode
+	cd build/usb-headnode \
+		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		ZONE_DIR=$(TOP)/build ./bin/build-image -c -s ./cache/stage coal
+	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/usbheadnode
+	@echo "# Created coal bits:"
+	@ls -1 $(COAL_BIT)
+	@echo ""
+
+USB_BIT=$(BITS_DIR)/usbheadnode/usb-$(_usbheadnode_stamp).tgz
+
+.PHONY: usb
+usb: $(USB_BIT)
+
+$(USB_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local $(BOOT_BIT)
+	@echo "# Build usb: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
+	mkdir -p $(BITS_DIR)/usbheadnode
+	cd build/usb-headnode \
+		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		ZONE_DIR=$(TOP)/build ./bin/build-image -c -s ./cache/stage usb
+	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/usbheadnode
+	@echo "# Created usb bits:"
+	@ls -1 $(USB_BIT)
+	@echo ""
+
+UPGRADE_BIT=$(BITS_DIR)/usbheadnode/upgrade-$(_usbheadnode_stamp).tgz
+
+.PHONY: upgrade
+upgrade: $(UPGRADE_BIT)
+
+$(UPGRADE_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local $(BOOT_BIT)
+	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
+	mkdir -p $(BITS_DIR)/usbheadnode
+	cd build/usb-headnode \
+		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		ZONE_DIR=$(TOP)/build ./bin/build-image -s ./cache/stage upgrade
+	mv build/usb-headnode/$(shell basename $(UPGRADE_BIT)) $(BITS_DIR)/usbheadnode
+	@echo "# Created upgrade bits:"
+	@ls -1 $(UPGRADE_BIT)
 	@echo ""
 
 
