@@ -13,5 +13,7 @@
   "billapi-checkout": "origin/{{BRANCH}}",
   "rabbitmq-checkout": "origin/{{BRANCH}}",
   "ufds-checkout": "origin/{{BRANCH}}",
-  "sdc-webinfo-checkout": "origin/{{BRANCH}}"
+  "sdc-webinfo-checkout": "origin/{{BRANCH}}",
+  "platform-release": "{{BRANCH}}"
+
 }
