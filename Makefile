@@ -49,7 +49,7 @@ all: smartlogin amon ca agents agentsshar platform ufds usbheadnode releasejson
 # TODO:
 # - Re-instate 'gmake lint'?
 
-SMARTLOGIN_BITS=$(BITS_DIR)/smartlogin/smartlogin-$(SMARTLOGIN_BRANCH)-$(TIMESTAMP)-g$(SMARTLOGIN_SHA).tgz
+SMARTLOGIN_BITS=$(BITS_DIR)/smartlogin/smartlogin-$(SMART_LOGIN_BRANCH)-$(TIMESTAMP)-g$(SMART_LOGIN_SHA).tgz
 
 .PHONY: smartlogin
 smartlogin: $(SMARTLOGIN_BITS)
@@ -57,7 +57,7 @@ smartlogin: $(SMARTLOGIN_BITS)
 # PATH: ensure using GCC from SFW. Not sure this is necessary, but has been
 # the case for release builds pre-MG.
 $(SMARTLOGIN_BITS): build/smart-login
-	@echo "# Build smartlogin: branch $(SMARTLOGIN_BRANCH), sha $(SMARTLOGIN_SHA)"
+	@echo "# Build smartlogin: branch $(SMART_LOGIN_BRANCH), sha $(SMART_LOGIN_SHA)"
 	mkdir -p $(BITS_DIR)
 	(cd build/smart-login && TIMESTAMP=$(TIMESTAMP) PATH=/usr/sfw/bin:$(PATH) BITS_DIR=$(BITS_DIR) gmake clean all publish)
 	@echo "# Created smartlogin bits:"

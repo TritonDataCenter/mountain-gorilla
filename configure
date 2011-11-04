@@ -121,9 +121,6 @@ TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
 BRANCH=$BRANCH
 TRY_BRANCH=$TRY_BRANCH
 
-SMARTLOGIN_BRANCH=$BRANCH
-SMARTLOGIN_SHA=$((cd build/smart-login 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
-
 AMON_BRANCH=$BRANCH
 AMON_SHA=$((cd build/amon 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
