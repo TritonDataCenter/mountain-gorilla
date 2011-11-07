@@ -15,7 +15,7 @@ if [ "$TRACE" != "" ]; then
     export PS4='${BASH_SOURCE}:${LINENO}: '
     set -o xtrace
 fi
-set -o errexit
+#set -o errexit
 set -o pipefail
 
 
@@ -189,6 +189,37 @@ function get_target_repos() {
     done
 }
 
+function get_pkgsrc() {
+  if [[ -d ${ROOT}/build/usb-headnode ]]; then
+
+    mkdir -p build/pkgsrc/
+
+    for sourcefile in $(find ${ROOT}/build/usb-headnode/zones | grep "pkgsrc"); do
+      pkgsrc_ver=$(basename ${sourcefile} | cut -d "_" -f2)
+      pkgsrc_64bit=$(basename ${sourcefile} | grep "_64")
+                 
+      if [[ -n ${pkgsrc_64bit} ]]; then
+        gccver="gcc45-64"
+      else
+        gccver="gcc45"
+      fi
+
+      mkdir -p build/pkgsrc/${pkgsrc_ver}/${gccver}/All
+
+      if [[ ! -f build/pkgsrc/${pkgsrc_ver}/${gccver}/All/md5sums.txt ]]; then
+        curl -o build/pkgsrc/${pkgsrc_ver}/${gccver}/All/md5sums.txt \
+        http://pkgsrc.joyent.com/sdc6/${pkgsrc_ver}/${gccver}/All/md5sums.txt
+      fi
+                                                                                            
+      for file in $(cat ${sourcefile}); do
+        (cd build/pkgsrc/${pkgsrc_ver}/${gccver}/All && \
+          curl -O http://pkgsrc.joyent.com/sdc6/${pkgsrc_ver}/${gccver}/All/${file}.tgz)
+      done
+    done
+  fi
+}
+
+
 
 
 #---- mainline
@@ -239,5 +270,7 @@ else
         get_target_repos $targ
     done
 fi
+
+get_pkgsrc
 
 gen_config
