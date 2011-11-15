@@ -342,6 +342,29 @@ clean_platform:
 	rm -f $(BITS_DIR)/platform-*
 	(cd build/illumos-live && gmake clean)
 
+#---- extras
+
+ILLUMOSEXTRA_TARBALL=illumos-extra-$(PLATFORM_BRANCH)-$(TIMESTAMP)-g$(ILLUMOSEXTRA_SHA).tgz
+ILLUMOSEXTRA_BIT=$(BITS_DIR)/illumos-extra/$(ILLUMOSEXTRA_TARBALL)
+
+.PHONY: illumosextra
+
+illumosextra: $(ILLUMOSEXTRA_BIT)
+
+# PATH: Ensure using GCC from SFW as require for platform build.
+$(ILLUMOSEXTRA_BIT): 
+	@echo "# Build illumosextra: branch $(ILLUMOSEXTRA_BRANCH), sha $(ILLUMOSEXTRA_SHA)"
+	(cd build/illumos-extra && PATH=/usr/sfw/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) gmake install && PATH=/usr/sfw/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) gmake tarball )
+	(mkdir -p $(BITS_DIR)/illumos-extra;  cp build/illumos-extra/$(ILLUMOSEXTRA_TARBALL) $(BITS_DIR)/illumos-extra)
+	@echo "# Created illumos-extra bits:"
+	@ls -1 $(ILLUMOSEXTRA_BIT)
+	@echo ""
+
+clean_illumosextra:
+	rm -f $(BITS_DIR)/illumos-extra-*
+	(cd build/illumos-extra && gmake clean)
+
+
 
 
 #---- misc targets

@@ -139,6 +139,8 @@ AGENTSSHAR_SHA=$((cd build/agents-installer 1>&2 2> /dev/null && git log --prett
 PLATFORM_BRANCH=$BRANCH
 PLATFORM_SHA=$((cd build/illumos-live 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 
+ILLUMOSEXTRA_BRANCH="master"
+ILLUMOSEXTRA_SHA=$((cd build/illumos-extra 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 EOF
 
     local repo_name
