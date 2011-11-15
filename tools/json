@@ -5,16 +5,11 @@
 // See <https://github.com/trentm/json>.
 //
 
-var VERSION = "2.0.1";
+var VERSION = "2.0.3";
 
-var sys = require('sys');
+var util = require('util');
 var pathlib = require('path');
-var runInNewContext;
-try {
-  runInNewContext = require('vm').runInNewContext;
-} catch (e) {
-  runInNewContext = process.binding('evals').Script.runInNewContext;  // node v0.2
-}
+var runInNewContext = require('vm').runInNewContext;
 var warn = console.warn;
 
 
@@ -60,35 +55,62 @@ function isArray(ar) {
 }
 
 function printHelp() {
-  sys.puts("Usage: <something generating JSON on stdout> | json [options] [lookups...]");
-  sys.puts("");
-  sys.puts("Pipe in your JSON for nicer output or supply one or more `lookups`");
-  sys.puts("to extract a subset of the JSON. HTTP header blocks (as from `curl -i`)");
-  sys.puts("are skipped by default.");
-  sys.puts("");
-  sys.puts("Options:");  
-  sys.puts("  -h, --help    print this help info and exit");
-  sys.puts("  --version     print version of this command and exit");
-  sys.puts("  -q, --quiet   don't warn if input isn't valid JSON");
-  sys.puts("");
-  sys.puts("  -H            drop any HTTP header block (as from `curl -i ...`)");
-  sys.puts("  -a, --array   process input as an array of separate inputs");
-  sys.puts("                and output in tabular form");
-  sys.puts("  -d DELIM      delimiter string for tabular output (default is ' ')");
-  sys.puts("");
-  sys.puts("  -o, --output MODE   Specify an output mode. One of");
-  sys.puts("                  jsony (default): JSON with string quotes elided");
-  sys.puts("                  json: JSON output, 2-space indent");
-  sys.puts("                  json-N: JSON output, N-space indent, e.g. 'json-4'");
-  sys.puts("                  inspect: node.js `util.inspect` output");
-  sys.puts("  -i            shortcut for `-o inspect`");
-  sys.puts("  -j            shortcut for `-o json`");
-  sys.puts("");
-  sys.puts("Examples:");
-  sys.puts("  curl -s http://search.twitter.com/search.json?q=node.js | json");
-  sys.puts("  curl -s http://search.twitter.com/search.json?q=node.js | json results");
-  sys.puts("");
-  sys.puts("See <https://github.com/trentm/json> for more complete docs.");
+  util.puts("Usage:");
+  util.puts("  <something generating JSON on stdout> | json [OPTIONS] [LOOKUPS...]");
+  util.puts("");
+  util.puts("Pipe in your JSON for nicer output or supply one or more `LOOKUPS`");
+  util.puts("to extract a subset of the JSON. HTTP header blocks (as from `curl -i`)");
+  util.puts("are skipped by default.");
+  util.puts("");
+  util.puts("Auto-arrayification:");
+  util.puts("  Adjacent objects or arrays are 'arrayified'. To attempt to avoid");
+  util.puts("  false positives inside JSON strings, *adjacent* elements must");
+  util.puts("  have either no whitespace separation or at least a newline");
+  util.puts("  separation.");
+  util.puts("");
+  util.puts("Examples:");
+  util.puts("  # pretty printing");
+  util.puts("  $ curl -s http://search.twitter.com/search.json?q=node.js | json");
+  util.puts("");
+  util.puts("  # lookup fields");
+  util.puts("  $ curl -s http://search.twitter.com/search.json?q=node.js | json results[0]");
+  util.puts("  {");
+  util.puts("    \"created_at\": \"Tue, 08 Nov 2011 19:07:25 +0000\",");
+  util.puts("    \"from_user\": \"im2b\",");
+  util.puts("  ...");
+  util.puts("");
+  util.puts("  # array processing");
+  util.puts("  $ curl -s http://search.twitter.com/search.json?q=node.js | json results \\");
+  util.puts("      json -a from_user");
+  util.puts("  im2b");
+  util.puts("  myalltop_paul");
+  util.puts("  ...");
+  util.puts("");
+  util.puts("  # auto-arrayification")
+  util.puts("  $ echo '{\"a\":1}{\"b\":2}' | json -o json-0");
+  util.puts("  [{\"a\":1},{\"b\":2}]");
+  util.puts("  $ echo '[1,2][3,4]' | json -o json-0");
+  util.puts("  [{\"a\":1},{\"b\":2}]");
+  util.puts("");
+  util.puts("Options:");
+  util.puts("  -h, --help    print this help info and exit");
+  util.puts("  --version     print version of this command and exit");
+  util.puts("  -q, --quiet   don't warn if input isn't valid JSON");
+  util.puts("");
+  util.puts("  -H            drop any HTTP header block (as from `curl -i ...`)");
+  util.puts("  -a, --array   process input as an array of separate inputs");
+  util.puts("                and output in tabular form");
+  util.puts("  -d DELIM      delimiter string for tabular output (default is ' ')");
+  util.puts("");
+  util.puts("  -o, --output MODE   Specify an output mode. One of");
+  util.puts("                  jsony (default): JSON with string quotes elided");
+  util.puts("                  json: JSON output, 2-space indent");
+  util.puts("                  json-N: JSON output, N-space indent, e.g. 'json-4'");
+  util.puts("                  inspect: node.js `util.inspect` output");
+  util.puts("  -i            shortcut for `-o inspect`");
+  util.puts("  -j            shortcut for `-o json`");
+  util.puts("");
+  util.puts("See <https://github.com/trentm/json> for more complete docs.");
 }
 
 
@@ -175,7 +197,7 @@ function parseArgv(argv) {
           throw new Error("unknown output mode: '"+name+"'");
         }
         break;
-      case "-i": // output with sys.inspect
+      case "-i": // output with util.inspect
         parsed.outputMode = OM_INSPECT;
         break;
       case "-j": // output with JSON.stringify
@@ -331,32 +353,41 @@ function parseInput(buffer) {
   try {
     return {datum: JSON.parse(buffer)};
   } catch(e) {
-    // Special case: allow a flat array of objects/arrays
-    // ("flat-array-input" test case). This can be nice to process a
-    // stream of JSON objects generated from multiple calls to another
-    // tool or `cat *.json | json`.
+    // Special case: Auto-arrayification of unjoined list of objects:
+    //    {"one": 1}{"two": 2}
+    // and auto-concatenation of unjoined list of arrays:
+    //    ["a", "b"]["c", "d"]
+    // 
+    // This can be nice to process a stream of JSON objects generated from
+    // multiple calls to another tool or `cat *.json | json`.
+    //
     // Rules:
     // - Only JS objects and arrays. Don't see strong need for basic
     //   JS types right now and this limitation simplifies.
-    // - The break between JS objects has to include a newline. I.e. good:
+    // - The break between JS objects has to include a newline:
     //      {"one": 1}
     //      {"two": 2}
-    //   bad:
+    //   or no spaces at all:
     //      {"one": 1}{"two": 2}
+    //   I.e., not this:
+    //      {"one": 1}  {"two": 2}
     //   This condition should be fine for typical use cases and ensures
     //   no false matches inside JS strings.
-    var pats = [
-      /(})\s*\n\s*({)/g,
-      /(\])\s*\n\s*(\[)/g,
-      /(\])\s*\n\s*({)/g,
-      /(})\s*\n\s*(\[)/g
-    ];
     var newBuffer = buffer;
-    pats.forEach(function (pat) {
-      newBuffer = newBuffer.replace(pat, "$1,\n$2")
-    })
+    [/(})\s*\n\s*({)/g, /(})({")/g].forEach(function (pat) {
+      newBuffer = newBuffer.replace(pat, "$1,\n$2");
+    });
+    [/(\])\s*\n\s*(\[)/g, /(\])(\[)/g].forEach(function (pat) {
+      newBuffer = newBuffer.replace(pat, ",\n");
+    });
     if (buffer !== newBuffer) {
-      newBuffer = '[\n' + newBuffer + ']';
+      newBuffer = newBuffer.trim();
+      if (newBuffer[0] !== '[') {
+        newBuffer = '[\n' + newBuffer;
+      }
+      if (newBuffer.slice(-1) !== ']') {
+        newBuffer = newBuffer + '\n]\n';
+      }
       try {
         return {datum: JSON.parse(newBuffer)};
       } catch (e2) {
@@ -403,7 +434,7 @@ function printDatum(datum, opts, sep, alwaysPrintSep) {
   var output = null;
   switch (opts.outputMode) {
   case OM_INSPECT:
-    output = sys.inspect(datum, false, Infinity, true);
+    output = util.inspect(datum, false, Infinity, true);
     break;
   case OM_JSON:
     if (typeof datum !== 'undefined') {
@@ -411,6 +442,9 @@ function printDatum(datum, opts, sep, alwaysPrintSep) {
     }
     break;
   case OM_COMPACT:
+    // Dev Note: A still relatively experimental attempt at a more
+    // compact ouput somewhat a la Python's repr of a dict. I.e. try to
+    // fit elements on one line as much as reasonable.
     if (datum === undefined) {
       // pass
     } else if (isArray(datum)) {
@@ -446,11 +480,12 @@ function printDatum(datum, opts, sep, alwaysPrintSep) {
 }
 
 
+var stdoutFlushed = true;
 function emit(s) {
   // TODO:PERF If this is try/catch is too slow (too granular): move up to
   //    mainline and be sure to only catch this particular error.
   try {
-    process.stdout.write(s);
+    stdoutFlushed = process.stdout.write(s);
   } catch (e) {
     // Handle any exceptions in stdout writing in the "error" event above.
   }
@@ -461,9 +496,29 @@ process.stdout.on("error", function (err) {
     // Pass. See <https://github.com/trentm/json/issues/9>.
   } else {
     warn(err)
-    process.exit(1);
+    drainStdoutAndExit(1);
   }
 });
+
+
+/**
+ * A hacked up version of "process.exit" that will first drain stdout
+ * before exiting. *WARNING: This doesn't stop event processing.* IOW,
+ * callers have to be careful that code following this call isn't
+ * accidentally executed.
+ *
+ * In node v0.6 "process.stdout and process.stderr are blocking when they
+ * refer to regular files or TTY file descriptors." However, this hack might
+ * still be necessary in a shell pipeline.
+ */
+function drainStdoutAndExit(code) {
+  process.stdout.on('drain', function () {
+    process.exit(code);
+  });
+  if (stdoutFlushed) {
+    process.exit(code);
+  }
+}
 
 
 
@@ -475,7 +530,7 @@ function main(argv) {
     opts = parseArgv(argv);
   } catch (e) {
     warn("json: error: %s", e.message)
-    process.exit(1);
+    return drainStdoutAndExit(1);
   }
   //warn(opts);
   if (opts.help) {
@@ -483,7 +538,7 @@ function main(argv) {
     return;
   }
   if (opts.version) {
-    sys.puts("json " + getVersion());
+    util.puts("json " + getVersion());
     return;
   }
   var lookupStrs = opts.args;
@@ -539,8 +594,7 @@ function main(argv) {
       if (buffer.length && buffer[buffer.length-1] !== "\n") {
         emit('\n');
       }
-      process.stdout.flush();
-      process.exit(1);
+      return drainStdoutAndExit(1);
     }
 
     // Process and output the input JSON.
@@ -578,11 +632,6 @@ function main(argv) {
         printDatum(r, opts, '\n', false);
       });
     }
-  });
-
-  // TODO: this isn't sufficient to ensure all output is flushed.
-  process.on('exit', function () {
-    process.stdout.flush();
   });
 }
 
