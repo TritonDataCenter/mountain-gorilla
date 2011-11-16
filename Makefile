@@ -345,7 +345,7 @@ clean_platform:
 #---- extras
 
 ILLUMOSEXTRA_TARBALL=illumos-extra-$(PLATFORM_BRANCH)-$(TIMESTAMP)-g$(ILLUMOSEXTRA_SHA).tgz
-ILLUMOSEXTRA_BIT=$(BITS_DIR)/illumos-extra/$(ILLUMOSEXTRA_TARBALL)
+ILLUMOSEXTRA_BIT=$(BITS_DIR)/illumosextra/$(ILLUMOSEXTRA_TARBALL)
 
 .PHONY: illumosextra
 
