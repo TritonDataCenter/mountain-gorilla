@@ -6,13 +6,13 @@
   "adminui-checkout": "origin/{{BRANCH}}",
   "ca-tarball": "ca/ca-pkg-{{BRANCH}}-.*.tar.bz2",
   "amon-tarball": "amon/amon-master-{{BRANCH}}-.*.tar.bz2",
+  "ufds-tarball": "ufds/ufds-pkg-{{BRANCH}}-.*.tar.bz2",
   "dhcpd-checkout": "origin/{{BRANCH}}",
   "mapi-checkout": "origin/{{BRANCH}}",
   "portal-checkout": "origin/{{BRANCH}}",
   "cloudapi-checkout": "origin/{{BRANCH}}",
   "billapi-checkout": "origin/{{BRANCH}}",
   "rabbitmq-checkout": "origin/{{BRANCH}}",
-  "ufds-checkout": "origin/{{BRANCH}}",
   "sdc-webinfo-checkout": "origin/{{BRANCH}}",
   "platform-release": "{{BRANCH}}"
 
