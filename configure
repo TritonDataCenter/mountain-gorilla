@@ -113,46 +113,27 @@ function get_repo2() {
     fi
 }
 
-
 function gen_config() {
     mkdir -p bits
     cat <<EOF >bits/config.mk
 TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
 BRANCH=$BRANCH
 TRY_BRANCH=$TRY_BRANCH
-
-AMON_BRANCH=$BRANCH
-AMON_SHA=$((cd build/amon 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
-
-AGENTS_BRANCH=$BRANCH
-AGENTS_SHA=$((cd build/agents 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
-
-CA_BRANCH=$BRANCH
-CA_SHA=$((cd build/cloud-analytics 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
-
-UFDS_BRANCH=$BRANCH
-UFDS_SHA=$((cd build/ufds 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
-
-AGENTSSHAR_BRANCH=$BRANCH
-AGENTSSHAR_SHA=$((cd build/agents-installer 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
-
-PLATFORM_BRANCH=$BRANCH
-PLATFORM_SHA=$((cd build/illumos-live 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
-
-ILLUMOSEXTRA_BRANCH="master"
-ILLUMOSEXTRA_SHA=$((cd build/illumos-extra 1>&2 2> /dev/null && git log --pretty=format:'%h' -1 ) || echo "")
 EOF
 
-    local repo_name
-    for repo_name in `ls -1 build`; do
-        upper_repo_name=$(echo $repo_name | tr [:lower:] [:upper:] | tr - _)
-        cat <<EOF >>bits/config.mk
-${upper_repo_name}_BRANCH=$(CDPATH= cd build/$repo_name && git symbolic-ref HEAD | awk -F/ '{print $3}')
-${upper_repo_name}_SHA=$(CDPATH= cd build/$repo_name && git log --pretty=format:'%h' -1)
-EOF
-    done
-
-    echo "'bits/config.mk' created."
+  targets=$(node -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); Object.keys(JSON.parse(c)).join(" ")')
+  for target in $targets; do
+      repo_url=$(cat targets.json | json ${target}.repos.0.url)
+      repo_dir=${repo_url##*/}    # strip to last '/'
+      repo_dir=${repo_dir##*:}    # strip to last ':'
+      repo_dir=${repo_dir%*.git}    # strip '.git' at tail
+      if [[ -d build/${repo_dir} ]]; then
+        upper_targ_name=$(echo $target | tr [:lower:] [:upper:] | tr - _)
+        branch_name=$((cd build/${repo_dir} && git symbolic-ref HEAD 2> /dev/null ) || echo "")
+        echo ${upper_targ_name}_BRANCH=$(echo ${branch_name##refs/heads/} || echo "") >> bits/config.mk
+        echo ${upper_targ_name}_SHA=$((cd build/${repo_dir} && git log --pretty=format:'%h' -1 ) || echo "") >> bits/config.mk
+      fi
+  done
 }
 
 
