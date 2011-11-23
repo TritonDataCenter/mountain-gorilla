@@ -187,19 +187,19 @@ clean_ufds:
 #---- agents shar
 
 _as_stamp=$(AGENTS_INSTALLER_BRANCH)-$(TIMESTAMP)-g$(AGENTS_INSTALLER_SHA)
-AGENTS_INSTALLER_BITS=$(BITS_DIR)/agentsshar/agents-$(_as_stamp).sh \
+AGENTSSHAR_BITS=$(BITS_DIR)/agentsshar/agents-$(_as_stamp).sh \
 	$(BITS_DIR)/agentsshar/agents-$(_as_stamp).md5sum
-AGENTS_INSTALLER_BITS_0=$(shell echo $(AGENTS_INSTALLER_BITS) | awk '{print $$1}')
+AGENTSSHAR_BITS_0=$(shell echo $(AGENTSSHAR_BITS) | awk '{print $$1}')
 
 .PHONY: agentsshar
-agentsshar: $(AGENTS_INSTALLER_BITS_0)
+agentsshar: $(AGENTSSHAR_BITS_0)
 
-$(AGENTS_INSTALLER_BITS): build/agents-installer/Makefile
+$(AGENTSSHAR_BITS): build/agents-installer/Makefile
 	@echo "# Build agentsshar: branch $(AGENTS_INSTALLER_BRANCH), sha $(AGENTS_INSTALLER_SHA)"
 	mkdir -p $(BITS_DIR)/agentsshar
 	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/agentsshar/ -d $(BITS_DIR) -b $(AGENTS_INSTALLER_BRANCH))
 	@echo "# Created agentsshar bits:"
-	@ls -1 $(AGENTS_INSTALLER_BITS)
+	@ls -1 $(AGENTSSHAR_BITS)
 	@echo ""
 
 clean_agentsshar:
