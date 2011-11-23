@@ -339,7 +339,7 @@ $(PLATFORM_BIT): build/illumos-live/configure.mg build/illumos-live/configure-br
 	@echo ""
 
 clean_platform:
-	rm -f $(BITS_DIR)/platform-*
+	rm -rf $(BITS_DIR)/platform
 	(cd build/illumos-live && gmake clean)
 
 #---- extras
@@ -356,12 +356,12 @@ $(ILLUMOSEXTRA_BIT):
 	@echo "# Build illumosextra: branch $(ILLUMOS_EXTRA_BRANCH), sha $(ILLUMOS_EXTRA_SHA)"
 	(cd build/illumos-extra && PATH=/usr/sfw/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) gmake install && PATH=/usr/sfw/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) gmake tarball )
 	(mkdir -p $(BITS_DIR)/illumosextra;  cp build/illumos-extra/$(ILLUMOSEXTRA_TARBALL) $(BITS_DIR)/illumosextra)
-	@echo "# Created illumos-extra bits:"
+	@echo "# Created illumosextra bits:"
 	@ls -1 $(ILLUMOSEXTRA_BIT)
 	@echo ""
 
 clean_illumosextra:
-	rm -f $(BITS_DIR)/illumos-extra-*
+	rm -rf $(BITS_DIR)/illumosextra
 	(cd build/illumos-extra && gmake clean)
 
 
