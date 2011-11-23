@@ -42,7 +42,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar platform ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar billapi platform ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -181,6 +181,30 @@ $(UFDS_BITS): build/ufds
 clean_ufds:
 	rm -rf $(BITS_DIR)/ufds
 	(cd build/ufds && gmake clean)
+
+#---- BILLAPI
+
+_billapi_stamp=$(BILLING_API_BRANCH)-$(TIMESTAMP)-g$(BILLING_API_SHA)
+BILLAPI_BITS=$(BITS_DIR)/billapi/billapi-pkg-$(_billapi_stamp).tar.bz2
+
+.PHONY: billapi
+billapi: $(BILLAPI_BITS)
+
+# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(BILLAPI_BITS): build/billing_api
+	@echo "# Build billapi: branch $(BILLING_API_BRANCH), sha $(BILLING_API_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/billing_api && PATH=/opt/npm/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	@echo "# Created billapi bits:"
+	@ls -1 $(BILLAPI_BITS)
+	@echo ""
+
+# Warning: if UFDS's submodule deps change, this 'clean_ufds' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_billapi:
+	rm -rf $(BITS_DIR)/billapi
+	(cd build/billapi && gmake clean)
 
 
 
