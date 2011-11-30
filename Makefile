@@ -200,11 +200,36 @@ $(BILLAPI_BITS): build/billing_api
 	@ls -1 $(BILLAPI_BITS)
 	@echo ""
 
-# Warning: if UFDS's submodule deps change, this 'clean_ufds' is insufficient. It would
+# Warning: if billapi's submodule deps change, this 'clean_ufds' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_billapi:
 	rm -rf $(BITS_DIR)/billapi
 	(cd build/billapi && gmake clean)
+
+#---- CLOUDAPI
+
+_cloudapi_stamp=$(CLOUD_API_BRANCH)-$(TIMESTAMP)-g$(CLOUD_API_SHA)
+CLOUDAPI_BITS=$(BITS_DIR)/cloudapi/cloudapi-pkg-$(_cloudapi_stamp).tar.bz2
+
+.PHONY: cloudapi
+cloudapi: $(CLOUDAPI_BITS)
+
+# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(CLOUDAPI_BITS): build/cloud-api
+	@echo "# Build cloudapi: branch $(CLOUD_API_BRANCH), sha $(CLOUD_API_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/cloud-api && PATH=/opt/npm/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created cloudapi bits:"
+	@ls -1 $(CLOUDAPI_BITS)
+	@echo ""
+
+# Warning: if cloudapi's submodule deps change, this 'clean_ufds' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_cloudapi:
+	rm -rf $(BITS_DIR)/cloudapi
+	(cd build/cloudapi && gmake clean)
+
 
 
 

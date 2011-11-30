@@ -23,6 +23,12 @@
     ],
     "deps": []
   },
+  "cloudapi": {
+    "repos": [
+        {"url": "git@git.joyent.com:cloud-api.git"}
+    ],
+    "deps": []
+  },
   "billapi": {
     "repos": [
         {"url": "git@git.joyent.com:billing_api.git"}
@@ -72,6 +78,6 @@
         {"url": "git@git.joyent.com:sdc-webinfo.git"},
         {"url": "git@git.joyent.com:node-sdc-clients.git"}
     ],
-    "deps": ["platform", "agentsshar", "ca", "ufds", "amon", "billapi"]
+    "deps": ["platform", "agentsshar", "ca", "ufds", "amon", "billapi", "cloudapi"]
   }
 }
