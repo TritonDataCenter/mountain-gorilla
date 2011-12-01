@@ -75,7 +75,11 @@ function apply_missing {
     if [[ ! -z "$tag" ]]; then
         # Consider '-B' to force reset of branch if already exists.
         git tag -a "$tag" -m "$tag release"
-        git push -q --tags
+        if [[ $repo_name  == "illumos-extra" ]]; then 
+            git push -q --tags git@github.com:joyent/illumos-extra.git
+        else
+            git push -q --tags
+        fi
     fi
     if [[ ! -z "$branch" ]]; then
         # Consider '-B' to force reset of branch if already exists.
