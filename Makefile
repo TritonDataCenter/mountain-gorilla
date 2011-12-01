@@ -42,7 +42,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar billapi platform ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar billapi cloudapi platform ufds usbheadnode releasejson
 
 
 #---- smartlogin
