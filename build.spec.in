@@ -8,6 +8,7 @@
   "amon-tarball": "amon/amon-master-{{BRANCH}}-.*.tar.bz2",
   "ufds-tarball": "ufds/ufds-pkg-{{BRANCH}}-.*.tar.bz2",
   "billapi-tarball": "billapi/billapi-pkg-{{BRANCH}}-.*.tar.bz2",
+  "cloudapi-tarball": "billapi/billapi-pkg-{{BRANCH}}-.*.tar.bz2",
   "dhcpd-checkout": "origin/{{BRANCH}}",
   "mapi-checkout": "origin/{{BRANCH}}",
   "portal-checkout": "origin/{{BRANCH}}",
