@@ -380,7 +380,18 @@ build/illumos-live/configure-branches:
 # PATH: Ensure using GCC from SFW as require for platform build.
 $(PLATFORM_BIT): build/illumos-live/configure.mg build/illumos-live/configure-branches
 	@echo "# Build platform: branch $(ILLUMOS_LIVE_BRANCH), sha $(ILLUMOS_LIVE_SHA)"
-	(cd build/illumos-live && PATH=/usr/sfw/bin:$(PATH) EXTRA_TARBALL=$(shell ls -1 $(BITS_DIR)/illumosextra/illumos-extra-* | tail -1) ./configure && PATH=/usr/sfw/bin:$(PATH) EXTRA_TARBALL=$(shell ls -1 $(BITS_DIR)/illumosextra/illumos-extra-* | tail -1) BUILDSTAMP=$(TIMESTAMP) gmake world && PATH=/usr/sfw/bin:$(PATH) BUILDSTAMP=$(TIMESTAMP) EXTRA_TARBALL=$(shell ls -1 $(BITS_DIR)/illumosextra/illumos-extra-* | tail -1) gmake live)
+	(cd build/illumos-live \
+		&& PATH=/usr/sfw/bin:$(PATH) \
+			EXTRA_TARBALL=$(shell ls -1 $(BITS_DIR)/illumosextra/illumos-extra-* | tail -1) \
+			./configure \
+		&& PATH=/usr/sfw/bin:$(PATH) \
+			EXTRA_TARBALL=$(shell ls -1 $(BITS_DIR)/illumosextra/illumos-extra-* | tail -1) \
+			BUILDSTAMP=$(TIMESTAMP) \
+			gmake world \
+		&& PATH=/usr/sfw/bin:$(PATH) \
+			BUILDSTAMP=$(TIMESTAMP) \
+			EXTRA_TARBALL=$(shell ls -1 $(BITS_DIR)/illumosextra/illumos-extra-* | tail -1) \
+			gmake live)
 	(mkdir -p $(BITS_DIR)/platform)
 	(cp build/illumos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/platform/platform-$(ILLUMOS_LIVE_BRANCH)-$(TIMESTAMP).tgz)
 	@echo "# Created platform bits:"
