@@ -282,7 +282,7 @@ $(BOOT_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-image -c tar
+		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-image -c
 	mv build/usb-headnode/$(shell basename $(BOOT_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created boot bits:"
 	@ls -1 $(BOOT_BIT)
@@ -297,14 +297,14 @@ bits/usbheadnode/build.spec.local:
 	(cd build/usb-headnode; rm -f build.spec.local; ln -s ../../bits/usbheadnode/build.spec.local)
 
 .PHONY: coal
-coal: $(COAL_BIT)
+coal: usb $(COAL_BIT)
 
-$(COAL_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local $(BOOT_BIT)
+$(COAL_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local $(USB_BIT)
 	@echo "# Build coal: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-image -c -s ./cache/stage coal
+		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-coal-image -c $(USB_BIT)
 	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created coal bits:"
 	@ls -1 $(COAL_BIT)
@@ -320,7 +320,7 @@ $(USB_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local $(BOOT
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-image -c -s ./cache/stage usb
+		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-usb-image -c $(BOOT_BIT)
 	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created usb bits:"
 	@ls -1 $(USB_BIT)
@@ -336,7 +336,7 @@ $(UPGRADE_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local $(
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-image -s ./cache/stage upgrade
+		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-upgrade-image $(BOOT_BIT)
 	mv build/usb-headnode/$(shell basename $(UPGRADE_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created upgrade bits:"
 	@ls -1 $(UPGRADE_BIT)
