@@ -277,7 +277,7 @@ BOOT_BIT=$(BITS_DIR)/usbheadnode/boot-$(_usbheadnode_stamp).tgz
 .PHONY: boot
 boot: $(BOOT_BIT)
 
-$(BOOT_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local
+$(BOOT_BIT): bits/usbheadnode/build.spec.local
 	@echo "# Build boot: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
@@ -299,7 +299,7 @@ bits/usbheadnode/build.spec.local:
 .PHONY: coal
 coal: usb $(COAL_BIT)
 
-$(COAL_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local $(USB_BIT)
+$(COAL_BIT): bits/usbheadnode/build.spec.local $(USB_BIT)
 	@echo "# Build coal: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
@@ -315,7 +315,7 @@ USB_BIT=$(BITS_DIR)/usbheadnode/usb-$(_usbheadnode_stamp).tgz
 .PHONY: usb
 usb: $(USB_BIT)
 
-$(USB_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local $(BOOT_BIT)
+$(USB_BIT): bits/usbheadnode/build.spec.local $(BOOT_BIT)
 	@echo "# Build usb: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
@@ -331,7 +331,7 @@ UPGRADE_BIT=$(BITS_DIR)/usbheadnode/upgrade-$(_usbheadnode_stamp).tgz
 .PHONY: upgrade
 upgrade: $(UPGRADE_BIT)
 
-$(UPGRADE_BIT): build/usb-headnode/Makefile bits/usbheadnode/build.spec.local $(BOOT_BIT)
+$(UPGRADE_BIT): bits/usbheadnode/build.spec.local $(BOOT_BIT)
 	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
