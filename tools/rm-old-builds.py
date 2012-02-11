@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #
 # Remove old builds under here. This presumes the MG-uploaded
-# structure (see: 
+# structure (see:
 # <https://mo.joyent.com/mountain-gorilla/blob/master/tools/upload-bits>)
 #
 # This script lives here: <https://mo.joyent.com/mountain-gorilla/tree/master/tools>
@@ -12,7 +12,7 @@
 # For each given DIR, remove all old MG-style build dirs. If DIRS is not given, then
 # all subdirs in the cwd are checked.
 #
-# "Old" is anything a 30 days.
+# "Old" is anything older than 30 days.
 #
 
 import sys
@@ -27,7 +27,7 @@ from pprint import pprint
 
 
 DRYRUN = False
-VERBOSE = False
+VERBOSE = True
 OLD = datetime.timedelta(days=30)
 BUILD_DIR_PATH = re.compile(r"^(?P<branch>.*?)-(?P<time>\d{8}T\d{6}Z)$")
 
@@ -94,4 +94,3 @@ def main(argv):
         rm_old_builds(d)
 
 main(sys.argv)
-
