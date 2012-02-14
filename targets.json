@@ -29,6 +29,12 @@
     ],
     "deps": []
   },
+  "rabbitmq": {
+    "repos": [
+        {"url": "git@git.joyent.com:rabbitmq.git"}
+    ],
+    "deps": []
+  },
   "riak": {
     "repos": [
         {"url": "git@git.joyent.com:riak.git"}

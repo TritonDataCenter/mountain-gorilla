@@ -42,7 +42,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets redis riak webinfo billapi cloudapi platform ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets redis riak rabbitmq webinfo billapi cloudapi platform ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -271,6 +271,28 @@ $(REDIS_BITS): build/redis
 clean_redis:
 	rm -rf $(BITS_DIR)/redis
 	(cd build/redis && gmake clean)
+
+#---- RABBITMQ
+
+_rabbitmq_stamp=$(RABBITMQ_BRANCH)-$(TIMESTAMP)-g$(RABBITMQ_SHA)
+RABBITMQ_BITS=$(BITS_DIR)/rabbitmq/rabbitmq-pkg-$(_rabbitmq_stamp).tar.bz2
+
+.PHONY: rabbitmq
+rabbitmq: $(RABBITMQ_BITS)
+
+# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(RABBITMQ_BITS): build/rabbitmq
+	@echo "# Build rabbitmq: branch $(RABBITMQ_BRANCH), sha $(RABBITMQ_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/rabbitmq && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	@echo "# Created rabbitmq bits:"
+	@ls -1 $(RABBITMQ_BITS)
+	@echo ""
+
+clean_rabbitmq:
+	rm -rf $(BITS_DIR)/rabbitmq
+	(cd build/rabbitmq && gmake clean)
 
 #---- WEBINFO
 
