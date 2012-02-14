@@ -144,7 +144,7 @@ ca: $(CA_BITS_0)
 $(CA_BITS): build/cloud-analytics
 	@echo "# Build ca: branch $(CLOUD_ANALYTICS_BRANCH), sha $(CLOUD_ANALYTICS_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/cloud-analytics && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/opt/npm/1.1/bin:/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
+	(cd build/cloud-analytics && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/opt/npm/1.0/bin:/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
 	@echo "# Created ca bits:"
 	@ls -1 $(CA_BITS)
 	@echo ""
@@ -170,7 +170,7 @@ ufds: $(UFDS_BITS)
 $(UFDS_BITS): build/ufds
 	@echo "# Build ufds: branch $(UFDS_BRANCH), sha $(UFDS_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/ufds && PATH=/opt/npm/1.1/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/ufds && PATH=/opt/npm/1.0/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created ufds bits:"
 	@ls -1 $(UFDS_BITS)
 	@echo ""
@@ -194,7 +194,7 @@ billapi: $(BILLAPI_BITS)
 $(BILLAPI_BITS): build/billing_api
 	@echo "# Build billapi: branch $(BILLING_API_BRANCH), sha $(BILLING_API_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/billing_api && PATH=/opt/npm/1.1/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/billing_api && PATH=/opt/npm/1.0/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created billapi bits:"
 	@ls -1 $(BILLAPI_BITS)
 	@echo ""
@@ -398,7 +398,7 @@ cloudapi: $(CLOUDAPI_BITS)
 $(CLOUDAPI_BITS): build/cloud-api
 	@echo "# Build cloudapi: branch $(CLOUD_API_BRANCH), sha $(CLOUD_API_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/cloud-api && PATH=/opt/npm/1.1/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/cloud-api && PATH=/opt/npm/1.0/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created cloudapi bits:"
 	@ls -1 $(CLOUDAPI_BITS)
 	@echo ""
