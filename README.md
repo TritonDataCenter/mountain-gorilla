@@ -19,7 +19,7 @@ If you'll actually be building, see "Prerequisites" section below first.
 
     git clone git@git.joyent.com:mountain-gorilla.git
     cd mountain-gorilla.git
-    ./configure --help
+    ./configure -h
     ./configure [OPTIONS...]    # generates config.mk with all build config
     make                        # builds entire stack from source
 
