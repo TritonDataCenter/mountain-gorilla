@@ -6,6 +6,7 @@
   "adminui-checkout": "origin/{{BRANCH}}",
   "ca-tarball": "ca/ca-pkg-{{BRANCH}}-.*.tar.bz2",
   "assets-tarball": "assets/assets-pkg-{{BRANCH}}-.*.tar.bz2",
+  "webinfo-tarball": "webinfo/webinfo-pkg-{{BRANCH}}-.*.tar.bz2",
   "amon-tarball": "amon/amon-master-{{BRANCH}}-.*.tar.bz2",
   "ufds-tarball": "ufds/ufds-pkg-{{BRANCH}}-.*.tar.bz2",
   "billapi-tarball": "billapi/billapi-pkg-{{BRANCH}}-.*.tar.bz2",

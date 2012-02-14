@@ -23,6 +23,13 @@
     ],
     "deps": []
   },
+  "webinfo": {
+    "repos": [
+        {"url": "git@git.joyent.com:sdc-webinfo.git",
+         "dir": "webinfo"}
+    ],
+    "deps": []
+  },
   "agents": {
     "repos": [
         {"url": "git@git.joyent.com:agents.git"}

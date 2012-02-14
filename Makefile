@@ -42,7 +42,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets billapi cloudapi platform ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets webinfo billapi cloudapi platform ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -227,6 +227,28 @@ $(ASSETS_BITS): build/assets
 clean_assets:
 	rm -rf $(BITS_DIR)/assets
 	(cd build/assets && gmake clean)
+
+#---- WEBINFO
+
+_webinfo_stamp=$(WEBINFO_BRANCH)-$(TIMESTAMP)-g$(WEBINFO_SHA)
+WEBINFO_BITS=$(BITS_DIR)/webinfo/webinfo-pkg-$(_webinfo_stamp).tar.bz2
+
+.PHONY: webinfo
+webinfo: $(WEBINFO_BITS)
+
+# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(WEBINFO_BITS): build/webinfo
+	@echo "# Build webinfo: branch $(WEBINFO_BRANCH), sha $(WEBINFO_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/webinfo && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	@echo "# Created webinfo bits:"
+	@ls -1 $(WEBINFO_BITS)
+	@echo ""
+
+clean_webinfo:
+	rm -rf $(BITS_DIR)/webinfo
+	(cd build/webinfo && gmake clean)
 
 #---- CLOUDAPI
 
