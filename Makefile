@@ -25,7 +25,7 @@ endif
 JOB=16
 
 # A TIMESTAMP to use must be defined (and typically is in 'bits/config.mk').
-# 
+#
 # At one point we'd just generate TIMESTAMP at the top of the Makefile, but
 # that seemed to hit a gmake issue when building multiple targets: the 'ca'
 # target would be run three times at (rougly) 4 seconds apart on the time
@@ -42,7 +42,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets webinfo billapi cloudapi platform ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets redis webinfo billapi cloudapi platform ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -227,6 +227,28 @@ $(ASSETS_BITS): build/assets
 clean_assets:
 	rm -rf $(BITS_DIR)/assets
 	(cd build/assets && gmake clean)
+
+#---- REDIS
+
+_redis_stamp=$(REDIS_BRANCH)-$(TIMESTAMP)-g$(REDIS_SHA)
+REDIS_BITS=$(BITS_DIR)/redis/redis-pkg-$(_redis_stamp).tar.bz2
+
+.PHONY: redis
+redis: $(REDIS_BITS)
+
+# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(REDIS_BITS): build/redis
+	@echo "# Build redis: branch $(REDIS_BRANCH), sha $(REDIS_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/redis && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	@echo "# Created redis bits:"
+	@ls -1 $(REDIS_BITS)
+	@echo ""
+
+clean_redis:
+	rm -rf $(BITS_DIR)/redis
+	(cd build/redis && gmake clean)
 
 #---- WEBINFO
 
