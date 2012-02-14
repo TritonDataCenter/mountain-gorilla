@@ -227,6 +227,60 @@ clean_assets:
 	rm -rf $(BITS_DIR)/assets
 	(cd build/assets && gmake clean)
 
+#---- ADMINUI
+
+_adminui_stamp=$(ADMINUI_BRANCH)-$(TIMESTAMP)-g$(ADMINUI_SHA)
+ADMINUI_BITS=$(BITS_DIR)/adminui/adminui-pkg-$(_adminui_stamp).tar.bz2
+
+.PHONY: adminui
+adminui: $(ADMINUI_BITS)
+
+$(ADMINUI_BITS): build/adminui
+	@echo "# Build adminui: branch $(ADMINUI_BRANCH), sha $(ADMINUI_SHA)"
+	mkdir -p $(BITS_DIR)
+	# XXX HACK, just until this actually builds
+	scp ${UPLOAD_LOCATION}/adminui/master-19700101T000000Z/adminui/adminui-pkg-master-19700101T000000Z-g78acf11.tar.bz2 ${ADMINUI_BITS}
+
+clean_adminui:
+	rm -rf $(BITS_DIR)/adminui
+	#(cd build/adminui && gmake clean)
+
+#---- MAPI
+
+_mapi_stamp=$(MAPI_BRANCH)-$(TIMESTAMP)-g$(MAPI_SHA)
+MAPI_BITS=$(BITS_DIR)/mapi/mapi-pkg-$(_mapi_stamp).tar.bz2
+
+.PHONY: mapi
+mapi: $(MAPI_BITS)
+
+$(MAPI_BITS): build/mapi
+	@echo "# Build mapi: branch $(MAPI_BRANCH), sha $(MAPI_SHA)"
+	mkdir -p $(BITS_DIR)
+	# XXX HACK, just until this actually builds
+	scp ${UPLOAD_LOCATION}/mapi/master-19700101T000000Z/mapi/mapi-pkg-master-19700101T000000Z-g5dc5c9b.tar.bz2 ${MAPI_BITS}
+
+clean_mapi:
+	rm -rf $(BITS_DIR)/mapi
+	#(cd build/mapi && gmake clean)
+
+#---- PORTAL
+
+_portal_stamp=$(PORTAL_BRANCH)-$(TIMESTAMP)-g$(PORTAL_SHA)
+PORTAL_BITS=$(BITS_DIR)/portal/portal-pkg-$(_portal_stamp).tar.bz2
+
+.PHONY: portal
+portal: $(PORTAL_BITS)
+
+$(PORTAL_BITS): build/portal
+	@echo "# Build portal: branch $(PORTAL_BRANCH), sha $(PORTAL_SHA)"
+	mkdir -p $(BITS_DIR)
+	# XXX HACK, just until this actually builds
+	scp ${UPLOAD_LOCATION}/portal/master-19700101T000000Z/portal/portal-pkg-master-19700101T000000Z-g32edf79.tar.bz2 ${PORTAL_BITS}
+
+clean_portal:
+	rm -rf $(BITS_DIR)/portal
+	#(cd build/portal && gmake clean)
+
 #---- RIAK
 
 _riak_stamp=$(RIAK_BRANCH)-$(TIMESTAMP)-g$(RIAK_SHA)

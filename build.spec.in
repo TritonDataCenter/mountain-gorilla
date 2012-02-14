@@ -3,7 +3,9 @@
   "use-proxy": "false",
 
   "agents-shar": "{{BRANCH}}",
-  "adminui-checkout": "origin/{{BRANCH}}",
+  "adminui-tarball": "adminui/adminui-pkg-{{BRANCH}}-.*.tar.bz2",
+  "mapi-tarball": "mapi/mapi-pkg-{{BRANCH}}-.*.tar.bz2",
+  "portal-tarball": "portal/portal-pkg-{{BRANCH}}-.*.tar.bz2",
   "ca-tarball": "ca/ca-pkg-{{BRANCH}}-.*.tar.bz2",
   "assets-tarball": "assets/assets-pkg-{{BRANCH}}-.*.tar.bz2",
   "redis-tarball": "redis/redis-pkg-{{BRANCH}}-.*.tar.bz2",
@@ -15,12 +17,6 @@
   "billapi-tarball": "billapi/billapi-pkg-{{BRANCH}}-.*.tar.bz2",
   "cloudapi-tarball": "cloudapi/cloudapi-pkg-{{BRANCH}}-.*.tar.bz2",
   "dhcpd-tarball": "dhcpd/dhcpd-pkg-{{BRANCH}}-.*.tar.bz2",
-  "mapi-checkout": "origin/{{BRANCH}}",
-  "portal-checkout": "origin/{{BRANCH}}",
-  "cloudapi-checkout": "origin/{{BRANCH}}",
-  "billapi-checkout": "origin/{{BRANCH}}",
-  "rabbitmq-checkout": "origin/{{BRANCH}}",
-  "sdc-webinfo-checkout": "origin/{{BRANCH}}",
   "platform-release": "{{BRANCH}}"
 
 }

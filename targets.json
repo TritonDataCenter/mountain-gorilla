@@ -23,6 +23,24 @@
     ],
     "deps": []
   },
+  "mapi": {
+    "repos": [
+        {"url": "git@git.joyent.com:mcp_api_gateway.git", "dir": "mapi"}
+    ],
+    "deps": []
+  },
+  "adminui": {
+    "repos": [
+        {"url": "git@git.joyent.com:mcp_api_admin.git", "dir": "adminui"}
+    ],
+    "deps": []
+  },
+  "portal": {
+    "repos": [
+        {"url": "git@git.joyent.com:public-web-client.git", "dir": "portal"}
+    ],
+    "deps": []
+  },
   "dhcpd": {
     "repos": [
         {"url": "git@git.joyent.com:booter.git", "dir": "dhcpd"}
