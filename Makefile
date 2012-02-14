@@ -256,7 +256,7 @@ portal: $(PORTAL_BITS)
 $(PORTAL_BITS): build/portal
 	@echo "# Build portal: branch $(PORTAL_BRANCH), sha $(PORTAL_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/portal && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	(cd build/portal && PATH=/opt/node/0.6/bin:$PATH TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
 	@echo "# Created portal bits:"
 	@ls -1 $(PORTAL_BITS)
 	@echo ""
