@@ -196,7 +196,7 @@ function get_pkgsrc() {
     for sourcefile in $(find ${ROOT}/build/usb-headnode/zones | grep "pkgsrc"); do
       pkgsrc_ver=$(basename ${sourcefile} | cut -d "_" -f2)
       pkgsrc_64bit=$(basename ${sourcefile} | grep "_64")
-                 
+
       if [[ -n ${pkgsrc_64bit} ]]; then
         gccver="gcc45-64"
       else
@@ -209,7 +209,7 @@ function get_pkgsrc() {
         curl -o build/pkgsrc/${pkgsrc_ver}/${gccver}/All/md5sums.txt \
         http://pkgsrc.joyent.com/sdc6/${pkgsrc_ver}/${gccver}/All/md5sums.txt
       fi
-                                                                                            
+
       for file in $(cat ${sourcefile}); do
         (cd build/pkgsrc/${pkgsrc_ver}/${gccver}/All && \
           curl -O http://pkgsrc.joyent.com/sdc6/${pkgsrc_ver}/${gccver}/All/${file}.tgz)
@@ -249,6 +249,15 @@ done
 shift $((OPTIND-1))
 
 
+# Pre-condition: must have node >=0.6 first on path (see RELENG-266).
+NODE_VERSION=$(node --version)
+NODE_VERSION=${NODE_VERSION:0:4}
+if [[ "$NODE_VERSION" != "v0.6" ]]; then
+    fatal "Incorrect node version, '${NODE_VERSION}'. First node on PATH must be v0.6."
+fi
+
+
+# '-r' regenerate early out.
 if [[ "$REGENERATE" == 'true' ]]; then
     gen_config
     exit 0
@@ -267,7 +276,7 @@ if [[ ! -z "$TARGET" ]]; then
         preload_bits $targ "$BRANCH" "$TRY_BRANCH"
     done
 else
-    targets=$(node -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); Object.keys(JSON.parse(c)).join("\n")')
+    targets=$(node -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))')
     for targ in $targets; do
         get_target_repos $targ
     done
