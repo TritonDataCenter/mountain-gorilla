@@ -131,8 +131,29 @@
         {"url": "git@git.joyent.com:cloud-api.git"},
         {"url": "git@git.joyent.com:ufds.git"},
         {"url": "git@git.joyent.com:sdc-webinfo.git"},
+        {"url": "git@git.joyent.com:assets.git"},
+        {"url": "git@git.joyent.com:riak.git"},
+        {"url": "git@git.joyent.com:redis.git"},
+        {"url": "git@git.joyent.com:rabbitmq.git"},
         {"url": "git@git.joyent.com:node-sdc-clients.git"}
     ],
-    "deps": ["platform", "agentsshar", "ca", "ufds", "amon", "billapi", "cloudapi"]
+    "deps": [
+        "platform",
+        "agentsshar",
+        "ca",
+        "ufds",
+        "amon",
+        "billapi",
+        "cloudapi",
+        "mapi",
+        "portal",
+        "webinfo",
+        "adminui",
+        "assets",
+        "dhcpd",
+        "rabbitmq",
+        "riak",
+        "redis"
+    ]
   }
 }
