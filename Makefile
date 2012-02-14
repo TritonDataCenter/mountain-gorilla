@@ -42,7 +42,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar billapi cloudapi platform ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets billapi cloudapi platform ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -205,6 +205,28 @@ $(BILLAPI_BITS): build/billing_api
 clean_billapi:
 	rm -rf $(BITS_DIR)/billapi
 	(cd build/billapi && gmake clean)
+
+#---- ASSETS
+
+_assets_stamp=$(ASSETS_BRANCH)-$(TIMESTAMP)-g$(ASSETS_SHA)
+ASSETS_BITS=$(BITS_DIR)/assets/assets-pkg-$(_assets_stamp).tar.bz2
+
+.PHONY: assets
+assets: $(ASSETS_BITS)
+
+# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(ASSETS_BITS): build/assets
+	@echo "# Build assets: branch $(ASSETS_BRANCH), sha $(ASSETS_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/assets && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	@echo "# Created assets bits:"
+	@ls -1 $(ASSETS_BITS)
+	@echo ""
+
+clean_assets:
+	rm -rf $(BITS_DIR)/assets
+	(cd build/assets && gmake clean)
 
 #---- CLOUDAPI
 

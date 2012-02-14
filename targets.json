@@ -17,6 +17,12 @@
     ],
     "deps": []
   },
+  "assets": {
+    "repos": [
+        {"url": "git@git.joyent.com:assets.git"}
+    ],
+    "deps": []
+  },
   "agents": {
     "repos": [
         {"url": "git@git.joyent.com:agents.git"}
