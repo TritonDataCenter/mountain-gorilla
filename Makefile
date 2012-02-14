@@ -42,7 +42,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets redis webinfo billapi cloudapi platform ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets redis riak webinfo billapi cloudapi platform ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -227,6 +227,28 @@ $(ASSETS_BITS): build/assets
 clean_assets:
 	rm -rf $(BITS_DIR)/assets
 	(cd build/assets && gmake clean)
+
+#---- RIAK
+
+_riak_stamp=$(RIAK_BRANCH)-$(TIMESTAMP)-g$(RIAK_SHA)
+RIAK_BITS=$(BITS_DIR)/riak/riak-pkg-$(_riak_stamp).tar.bz2
+
+.PHONY: riak
+riak: $(RIAK_BITS)
+
+# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(RIAK_BITS): build/riak
+	@echo "# Build riak: branch $(RIAK_BRANCH), sha $(RIAK_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/riak && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	@echo "# Created riak bits:"
+	@ls -1 $(RIAK_BITS)
+	@echo ""
+
+clean_riak:
+	rm -rf $(BITS_DIR)/riak
+	(cd build/riak && gmake clean)
 
 #---- REDIS
 
