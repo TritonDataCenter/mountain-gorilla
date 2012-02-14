@@ -42,7 +42,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets redis riak rabbitmq webinfo billapi cloudapi platform ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets redis riak rabbitmq dhcpd webinfo billapi cloudapi platform ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -292,6 +292,28 @@ $(RABBITMQ_BITS): build/rabbitmq
 clean_rabbitmq:
 	rm -rf $(BITS_DIR)/rabbitmq
 	(cd build/rabbitmq && gmake clean)
+
+#---- DHCPD
+
+_dhcpd_stamp=$(DHCPD_BRANCH)-$(TIMESTAMP)-g$(DHCPD_SHA)
+DHCPD_BITS=$(BITS_DIR)/dhcpd/dhcpd-pkg-$(_dhcpd_stamp).tar.bz2
+
+.PHONY: dhcpd
+dhcpd: $(DHCPD_BITS)
+
+# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(DHCPD_BITS): build/dhcpd
+	@echo "# Build dhcpd: branch $(DHCPD_BRANCH), sha $(DHCPD_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/dhcpd && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	@echo "# Created dhcpd bits:"
+	@ls -1 $(DHCPD_BITS)
+	@echo ""
+
+clean_dhcpd:
+	rm -rf $(BITS_DIR)/dhcpd
+	(cd build/dhcpd && gmake clean)
 
 #---- WEBINFO
 
