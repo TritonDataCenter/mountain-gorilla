@@ -49,39 +49,41 @@ for current issues.
 
 MG should be fully buildable on a SmartOS zone. Here are notes on how
 to create one and set it up for building MG. Some issues include having
-multiple gcc's and multiple npm versions. Specific paths are chosen for
-these and presumed by MG's Makefile. There are multiple ways to skin this
+multiple gcc's, multiple node's and multiple npm's. Specific paths are chosen
+for these and presumed by MG's Makefile. There are multiple ways to skin this
 cat -- improvements are welcome.
+
+First, create zone. For example:
 
     # Let's create a zone on bh1-build0 (dev machine in the Bellingham
     # lab, <https://hub.joyent.com/wiki/display/dev/Development+Lab>).
     ssh bh1-build0
     /opt/custom/create-zone.sh trent   # Pick a different name for yourself :)
     # wait 30s or so it to setup.
-    
+
     zlogin trent
     echo "Your IP is $(ifconfig -a | grep 'inet 10\.' | cut -d' ' -f 2)"
     # --> "Your IP is 10.2.0.145"
-    
+
     vi /root/.ssh/authorized_keys   # Add your key
     chmod 600 /root/.ssh/authorized_keys
     chmod 700 /root/.ssh
-    
+
     # Re-login and setup environment:
     ssh -A root@10.2.0.145
     curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/templates/bss-prime/setup-build-zone
     curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/templates/bss-prime/fake-subset.tbz2
     chmod 755 setup-build-zone
     ./setup-build-zone
-    
+
     # Note: After any reboot you'll need to run:
     #   ./setup-build-zone -e
-    
+
     # Having git "core.autocrlf=input" will cause spurious dirty files in
     # some of our repos. Don't go there.
     [[ `git config core.autocrlf` == "input" ]] \
         && echo "* * * Warning: remove 'autocrlf=input' from your ~/.gitconfig"
-    
+
     # Note: This "./configure" step is necessary to setup your system.
     # TODO: Pull out the requisite system setup steps. Shouldn't really
     #       be tucked away in illumos-live.git and configure.joyent.
@@ -89,28 +91,51 @@ cat -- improvements are welcome.
     cd illumos-live
     curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/illumos/configure.joyent
     GIT_SSL_NO_VERIFY=true ./configure
-    
-    # You need nodejs >= 0.4.9 (for usb-headnode) and npm 0.2.x (for agent
-    # builds).
-    pkgin -y in nodejs-0.4.9 npm-0.2.18
-    
+
+    # To build CA you need some more stuff (the authority here on needed
+    # packages is <https://mo.joyent.com/cloud-analytics/blob/master/tools/ca-headnode-setup#L274>
+    pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
+        scmgit python24 python26 png npm GeoIP GeoLiteCity ghostscript
+
+
+Next, setup node 0.4, 0.6 and npm 1.0 and 1.1 in /opt.
+
+    mkdir -p /opt/node
+    mkdir ~/src
+    cd ~/src
+    git clone https://github.com/joyent/node.git
+    cd node
+    git checkout v0.6.10
+    ./configure --prefix=/opt/node/0.6.10 && make && make install
+    (cd /opt/node && ln -s 0.6.10 0.6)
+    make distclean
+    git checkout v0.4.9
+    ./configure --prefix=/opt/node/0.4.9 && make && make install
+    (cd /opt/node && ln -s 0.4.9 0.4)
+    cd /var/tmp
+
+    mkdir -p /opt/npm
+    (export PATH=/opt/node/0.6/bin:$PATH \
+        && curl http://npmjs.org/install.sh | npm_config_prefix=/opt/npm/1.1 npm_config_tar=gtar sh)
+    (export PATH=/opt/node/0.4/bin:$PATH \
+        && curl http://npmjs.org/install.sh | npm_config_prefix=/opt/npm/1.0 npm_config_tar=gtar sh)
+
     # We also need npm 1.x for the usb-headnode build. To not conflict with
     # npm 0.2 in /opt/local we choose to install to "/opt/npm" and
     # *not* put is on our default PATH. "./tools/build-usb-headnode" will
     # ensure it is used from there.
     mkdir -p /opt/npm
     curl http://npmjs.org/install.sh | npm_config_prefix=/opt/npm clean=no sh
-    
-    # To build CA you need some more stuff (the authority here on needed
-    # packages is <https://mo.joyent.com/cloud-analytics/blob/master/tools/ca-headnode-setup#L274>
-    pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
-        scmgit python24 python26 png npm GeoIP GeoLiteCity ghostscript
-    
-    # You should now be able to build mountain-gorilla (MG): i.e. all of SDC.
-    # Let's try that:
+    curl http://npmjs.org/install.sh | npm_config_prefix=/opt/npm/1.1.1 npm_config_tar=gtar sh
+
+
+You should now be able to build mountain-gorilla (MG): i.e. all of SDC.
+Let's try that:
+
     git clone git@git.joyent.com:mountain-gorilla.git
     cd mountain-gorilla
     time (./configure && gmake) 2>&1 | tee build.log
+
 
 If your build zone in inside BH1, then you must add the following to "/etc/inet/hosts"
 for the "tools/upload-bits" script (used by all of the 'upload_' targets) to work:
@@ -128,7 +153,7 @@ where:
 
 - NAME is the package name, e.g. "smartlogin", "ca-pkg".
 - BRANCH is the git branch, e.g. "master", "release-20110714". Use:
-    
+
         BRANCH=$(shell git symbolic-ref HEAD | awk -F / '{print $$3}')  # Makefile
         BRANCH=$(git symbolic-ref HEAD | awk -F / '{print $3}')         # Bash script
 
@@ -152,7 +177,7 @@ where:
 - GITDESCRIBE gives the git sha for the repo and whether the repo was dirty
   (had local changes) when it was built, e.g. "gfa1afe1-dirty", "gbadf00d".
   Use:
-  
+
         # Need GNU awk for multi-char arg to "-F".
         AWK=$((which gawk 2>/dev/null | grep -v "^no ") || which awk)
         # In Bash:
@@ -165,7 +190,7 @@ where:
   head/tag part because we don't reliably use release tags in all our
   repos, so the results can be misleading in package names. E.g., this
   was the smartlogin package for the Lime release:
-  
+
         smartlogin-release-20110714-20110714T170222Z-20110414-2-g07e9e4f.tgz
 
   The "20110414" there is an old old tag because tags aren't being added
@@ -264,4 +289,3 @@ Notes:
 - "make dumpenv" is done at the start of a full build here to dump environment
   details for the build log.
 - Dirty support (ability to do a build with local changes). Low prio.
-
