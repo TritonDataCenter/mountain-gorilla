@@ -144,7 +144,7 @@ ca: $(CA_BITS_0)
 $(CA_BITS): build/cloud-analytics
 	@echo "# Build ca: branch $(CLOUD_ANALYTICS_BRANCH), sha $(CLOUD_ANALYTICS_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/cloud-analytics && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/opt/npm/bin:/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
+	(cd build/cloud-analytics && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/opt/npm/1.1/bin:/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
 	@echo "# Created ca bits:"
 	@ls -1 $(CA_BITS)
 	@echo ""
@@ -170,7 +170,7 @@ ufds: $(UFDS_BITS)
 $(UFDS_BITS): build/ufds
 	@echo "# Build ufds: branch $(UFDS_BRANCH), sha $(UFDS_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/ufds && PATH=/opt/npm/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/ufds && PATH=/opt/npm/1.1/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created ufds bits:"
 	@ls -1 $(UFDS_BITS)
 	@echo ""
@@ -194,7 +194,7 @@ billapi: $(BILLAPI_BITS)
 $(BILLAPI_BITS): build/billing_api
 	@echo "# Build billapi: branch $(BILLING_API_BRANCH), sha $(BILLING_API_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/billing_api && PATH=/opt/npm/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/billing_api && PATH=/opt/npm/1.1/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created billapi bits:"
 	@ls -1 $(BILLAPI_BITS)
 	@echo ""
@@ -398,7 +398,7 @@ cloudapi: $(CLOUDAPI_BITS)
 $(CLOUDAPI_BITS): build/cloud-api
 	@echo "# Build cloudapi: branch $(CLOUD_API_BRANCH), sha $(CLOUD_API_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/cloud-api && PATH=/opt/npm/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/cloud-api && PATH=/opt/npm/1.1/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created cloudapi bits:"
 	@ls -1 $(CLOUDAPI_BITS)
 	@echo ""
@@ -460,7 +460,7 @@ $(BOOT_BIT): bits/usbheadnode/build.spec.local
 	@echo "# Build boot: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		&& PATH=/opt/npm/1.1/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-tar-image -c
 	mv build/usb-headnode/$(shell basename $(BOOT_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created boot bits:"
@@ -482,7 +482,7 @@ $(COAL_BIT): bits/usbheadnode/build.spec.local $(USB_BIT)
 	@echo "# Build coal: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		&& PATH=/opt/npm/1.1/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-coal-image -c $(USB_BIT)
 	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created coal bits:"
@@ -498,7 +498,7 @@ $(USB_BIT): bits/usbheadnode/build.spec.local $(BOOT_BIT)
 	@echo "# Build usb: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		&& PATH=/opt/npm/1.1/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-usb-image -c $(BOOT_BIT)
 	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created usb bits:"
@@ -514,7 +514,7 @@ $(UPGRADE_BIT): bits/usbheadnode/build.spec.local $(BOOT_BIT)
 	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& PATH=/opt/npm/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		&& PATH=/opt/npm/1.1/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-upgrade-image $(BOOT_BIT)
 	mv build/usb-headnode/$(shell basename $(UPGRADE_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created upgrade bits:"
@@ -591,7 +591,7 @@ ILLUMOSEXTRA_BIT=$(BITS_DIR)/illumosextra/$(ILLUMOSEXTRA_TARBALL)
 illumosextra: $(ILLUMOSEXTRA_BIT)
 
 # PATH: Ensure using GCC from SFW as require for platform build.
-$(ILLUMOSEXTRA_BIT): 
+$(ILLUMOSEXTRA_BIT):
 	@echo "# Build illumosextra: branch $(ILLUMOS_EXTRA_BRANCH), sha $(ILLUMOS_EXTRA_SHA)"
 	(cd build/illumos-extra && PATH=/usr/sfw/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) gmake install && PATH=/usr/sfw/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) gmake tarball )
 	(mkdir -p $(BITS_DIR)/illumosextra;  cp build/illumos-extra/$(ILLUMOSEXTRA_TARBALL) $(BITS_DIR)/illumosextra)
@@ -621,4 +621,3 @@ upload_jenkins:
 		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
 		&& exit 1 || true
 	./tools/upload-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(UPLOAD_LOCATION)/$(JOB_NAME)
-
