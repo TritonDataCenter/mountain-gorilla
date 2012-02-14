@@ -42,7 +42,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets redis riak rabbitmq dhcpd webinfo billapi cloudapi platform ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi platform ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -213,8 +213,6 @@ ASSETS_BITS=$(BITS_DIR)/assets/assets-pkg-$(_assets_stamp).tar.bz2
 .PHONY: assets
 assets: $(ASSETS_BITS)
 
-# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
 $(ASSETS_BITS): build/assets
 	@echo "# Build assets: branch $(ASSETS_BRANCH), sha $(ASSETS_SHA)"
 	mkdir -p $(BITS_DIR)
@@ -238,30 +236,14 @@ adminui: $(ADMINUI_BITS)
 $(ADMINUI_BITS): build/adminui
 	@echo "# Build adminui: branch $(ADMINUI_BRANCH), sha $(ADMINUI_SHA)"
 	mkdir -p $(BITS_DIR)
-	# XXX HACK, just until this actually builds
-	scp ${UPLOAD_LOCATION}/adminui/master-19700101T000000Z/adminui/adminui-pkg-master-19700101T000000Z-g78acf11.tar.bz2 ${ADMINUI_BITS}
+	(cd build/adminui && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	@echo "# Created adminui bits:"
+	@ls -1 $(ADMINUI_BITS)
+	@echo ""
 
 clean_adminui:
 	rm -rf $(BITS_DIR)/adminui
-	#(cd build/adminui && gmake clean)
-
-#---- MAPI
-
-_mapi_stamp=$(MAPI_BRANCH)-$(TIMESTAMP)-g$(MAPI_SHA)
-MAPI_BITS=$(BITS_DIR)/mapi/mapi-pkg-$(_mapi_stamp).tar.bz2
-
-.PHONY: mapi
-mapi: $(MAPI_BITS)
-
-$(MAPI_BITS): build/mapi
-	@echo "# Build mapi: branch $(MAPI_BRANCH), sha $(MAPI_SHA)"
-	mkdir -p $(BITS_DIR)
-	# XXX HACK, just until this actually builds
-	scp ${UPLOAD_LOCATION}/mapi/master-19700101T000000Z/mapi/mapi-pkg-master-19700101T000000Z-g5dc5c9b.tar.bz2 ${MAPI_BITS}
-
-clean_mapi:
-	rm -rf $(BITS_DIR)/mapi
-	#(cd build/mapi && gmake clean)
+	(cd build/adminui && gmake clean)
 
 #---- PORTAL
 
@@ -274,12 +256,34 @@ portal: $(PORTAL_BITS)
 $(PORTAL_BITS): build/portal
 	@echo "# Build portal: branch $(PORTAL_BRANCH), sha $(PORTAL_SHA)"
 	mkdir -p $(BITS_DIR)
-	# XXX HACK, just until this actually builds
-	scp ${UPLOAD_LOCATION}/portal/master-19700101T000000Z/portal/portal-pkg-master-19700101T000000Z-g32edf79.tar.bz2 ${PORTAL_BITS}
+	(cd build/portal && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	@echo "# Created portal bits:"
+	@ls -1 $(PORTAL_BITS)
+	@echo ""
 
 clean_portal:
 	rm -rf $(BITS_DIR)/portal
-	#(cd build/portal && gmake clean)
+	(cd build/portal && gmake clean)
+
+#---- MAPI
+
+_mapi_stamp=$(MAPI_BRANCH)-$(TIMESTAMP)-g$(MAPI_SHA)
+MAPI_BITS=$(BITS_DIR)/mapi/mapi-pkg-$(_mapi_stamp).tar.bz2
+
+.PHONY: mapi
+mapi: $(MAPI_BITS)
+
+$(MAPI_BITS): build/mapi
+	@echo "# Build mapi: branch $(MAPI_BRANCH), sha $(MAPI_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/mapi && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	@echo "# Created mapi bits:"
+	@ls -1 $(MAPI_BITS)
+	@echo ""
+
+clean_mapi:
+	rm -rf $(BITS_DIR)/mapi
+	(cd build/mapi && gmake clean)
 
 #---- RIAK
 
@@ -289,8 +293,6 @@ RIAK_BITS=$(BITS_DIR)/riak/riak-pkg-$(_riak_stamp).tar.bz2
 .PHONY: riak
 riak: $(RIAK_BITS)
 
-# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
 $(RIAK_BITS): build/riak
 	@echo "# Build riak: branch $(RIAK_BRANCH), sha $(RIAK_SHA)"
 	mkdir -p $(BITS_DIR)
@@ -311,8 +313,6 @@ REDIS_BITS=$(BITS_DIR)/redis/redis-pkg-$(_redis_stamp).tar.bz2
 .PHONY: redis
 redis: $(REDIS_BITS)
 
-# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
 $(REDIS_BITS): build/redis
 	@echo "# Build redis: branch $(REDIS_BRANCH), sha $(REDIS_SHA)"
 	mkdir -p $(BITS_DIR)
@@ -333,8 +333,6 @@ RABBITMQ_BITS=$(BITS_DIR)/rabbitmq/rabbitmq-pkg-$(_rabbitmq_stamp).tar.bz2
 .PHONY: rabbitmq
 rabbitmq: $(RABBITMQ_BITS)
 
-# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
 $(RABBITMQ_BITS): build/rabbitmq
 	@echo "# Build rabbitmq: branch $(RABBITMQ_BRANCH), sha $(RABBITMQ_SHA)"
 	mkdir -p $(BITS_DIR)
@@ -355,8 +353,6 @@ DHCPD_BITS=$(BITS_DIR)/dhcpd/dhcpd-pkg-$(_dhcpd_stamp).tar.bz2
 .PHONY: dhcpd
 dhcpd: $(DHCPD_BITS)
 
-# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
 $(DHCPD_BITS): build/dhcpd
 	@echo "# Build dhcpd: branch $(DHCPD_BRANCH), sha $(DHCPD_SHA)"
 	mkdir -p $(BITS_DIR)
@@ -377,8 +373,6 @@ WEBINFO_BITS=$(BITS_DIR)/webinfo/webinfo-pkg-$(_webinfo_stamp).tar.bz2
 .PHONY: webinfo
 webinfo: $(WEBINFO_BITS)
 
-# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
 $(WEBINFO_BITS): build/webinfo
 	@echo "# Build webinfo: branch $(WEBINFO_BRANCH), sha $(WEBINFO_SHA)"
 	mkdir -p $(BITS_DIR)
