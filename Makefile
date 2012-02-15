@@ -395,10 +395,10 @@ cloudapi: $(CLOUDAPI_BITS)
 
 # PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(CLOUDAPI_BITS): build/cloud-api
+$(CLOUDAPI_BITS): build/cloudapi
 	@echo "# Build cloudapi: branch $(CLOUD_API_BRANCH), sha $(CLOUD_API_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/cloud-api && PATH=/opt/npm/1.1/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/cloudapi && PATH=/opt/npm/1.1/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created cloudapi bits:"
 	@ls -1 $(CLOUDAPI_BITS)
 	@echo ""
