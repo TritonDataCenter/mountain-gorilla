@@ -398,7 +398,7 @@ cloudapi: $(CLOUDAPI_BITS)
 $(CLOUDAPI_BITS): build/cloud-api
 	@echo "# Build cloudapi: branch $(CLOUD_API_BRANCH), sha $(CLOUD_API_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/cloud-api && PATH=/opt/npm/1.0/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/cloud-api && PATH=/opt/npm/1.1/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created cloudapi bits:"
 	@ls -1 $(CLOUDAPI_BITS)
 	@echo ""
