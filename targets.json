@@ -80,7 +80,7 @@
   },
   "cloudapi": {
     "repos": [
-        {"url": "git@git.joyent.com:cloud-api.git"}
+        {"url": "git@git.joyent.com:cloudapi.git"}
     ],
     "deps": []
   },
