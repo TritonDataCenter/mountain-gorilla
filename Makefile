@@ -387,7 +387,7 @@ clean_webinfo:
 
 #---- CLOUDAPI
 
-_cloudapi_stamp=$(CLOUD_API_BRANCH)-$(TIMESTAMP)-g$(CLOUD_API_SHA)
+_cloudapi_stamp=$(CLOUDAPI_BRANCH)-$(TIMESTAMP)-g$(CLOUDAPI_SHA)
 CLOUDAPI_BITS=$(BITS_DIR)/cloudapi/cloudapi-pkg-$(_cloudapi_stamp).tar.bz2
 
 .PHONY: cloudapi
@@ -396,7 +396,7 @@ cloudapi: $(CLOUDAPI_BITS)
 # PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(CLOUDAPI_BITS): build/cloudapi
-	@echo "# Build cloudapi: branch $(CLOUD_API_BRANCH), sha $(CLOUD_API_SHA)"
+	@echo "# Build cloudapi: branch $(CLOUDAPI_BRANCH), sha $(CLOUDAPI_SHA)"
 	mkdir -p $(BITS_DIR)
 	(cd build/cloudapi && PATH=/opt/npm/1.1/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created cloudapi bits:"
