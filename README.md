@@ -120,13 +120,6 @@ Next, setup node 0.4, 0.6 and npm 1.0 and 1.1 in /opt.
     (export PATH=/opt/node/0.4/bin:$PATH \
         && curl http://npmjs.org/install.sh | npm_config_prefix=/opt/npm/1.0 npm_config_tar=gtar sh)
 
-    # We also need npm 1.x for the usb-headnode build. To not conflict with
-    # npm 0.2 in /opt/local we choose to install to "/opt/npm" and
-    # *not* put is on our default PATH. "./tools/build-usb-headnode" will
-    # ensure it is used from there.
-    mkdir -p /opt/npm
-    curl http://npmjs.org/install.sh | npm_config_prefix=/opt/npm clean=no sh
-    curl http://npmjs.org/install.sh | npm_config_prefix=/opt/npm/1.1.1 npm_config_tar=gtar sh
 
 
 You should now be able to build mountain-gorilla (MG): i.e. all of SDC.
