@@ -128,7 +128,7 @@
         {"url": "git@git.joyent.com:booter.git"},
         {"url": "git@git.joyent.com:mcp_api_gateway.git"},
         {"url": "git@git.joyent.com:public-web-client.git"},
-        {"url": "git@git.joyent.com:cloud-api.git"},
+        {"url": "git@git.joyent.com:cloudapi.git"},
         {"url": "git@git.joyent.com:ufds.git"},
         {"url": "git@git.joyent.com:sdc-webinfo.git"},
         {"url": "git@git.joyent.com:assets.git"},
