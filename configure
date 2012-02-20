@@ -95,7 +95,7 @@ function get_repo2() {
     echo "# get '$repo_url' to 'build/$repo_dir'"
     if [[ ! -d build/$repo_dir ]]; then
         mkdir -p build/$repo_dir
-        git clone --depth 1 $repo_url build/$repo_dir
+        git clone $repo_url build/$repo_dir
         # Note: Use separate `git checkout $branch` instead of `-b $branch`
         # with git clone command because the latter doesn't return non-zero
         # if the branch doesn't exist.
