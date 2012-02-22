@@ -101,7 +101,7 @@ clean_agents:
 #---- amon
 
 _amon_stamp=$(AMON_BRANCH)-$(TIMESTAMP)-g$(AMON_SHA)
-AMON_BITS=$(BITS_DIR)/amon/amon-master-$(_amon_stamp).tar.bz2 \
+AMON_BITS=$(BITS_DIR)/amon/amon-pkg-$(_amon_stamp).tar.bz2 \
 	$(BITS_DIR)/amon/amon-relay-$(_amon_stamp).tgz \
 	$(BITS_DIR)/amon/amon-agent-$(_amon_stamp).tgz
 AMON_BITS_0=$(shell echo $(AMON_BITS) | awk '{print $$1}')
