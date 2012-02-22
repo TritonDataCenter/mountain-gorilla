@@ -12,7 +12,7 @@
   "riak-tarball": "riak/riak-pkg-{{BRANCH}}-.*.tar.bz2",
   "rabbitmq-tarball": "rabbitmq/rabbitmq-pkg-{{BRANCH}}-.*.tar.bz2",
   "webinfo-tarball": "webinfo/webinfo-pkg-{{BRANCH}}-.*.tar.bz2",
-  "amon-tarball": "amon/amon-master-{{BRANCH}}-.*.tar.bz2",
+  "amon-tarball": "amon/amon-pkg-{{BRANCH}}-.*.tar.bz2",
   "ufds-tarball": "ufds/ufds-pkg-{{BRANCH}}-.*.tar.bz2",
   "billapi-tarball": "billapi/billapi-pkg-{{BRANCH}}-.*.tar.bz2",
   "cloudapi-tarball": "cloudapi/cloudapi-pkg-{{BRANCH}}-.*.tar.bz2",
