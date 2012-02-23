@@ -552,7 +552,7 @@ PLATFORM_BIT=$(BITS_DIR)/platform/platform-$(ILLUMOS_LIVE_BRANCH)-$(TIMESTAMP).t
 platform: $(PLATFORM_BIT)
 
 build/illumos-live/configure.mg:
-	sed -e "s/BRANCH/$(ILLUMOS_LIVE_BRANCH)/" -e "s:GITCLONESOURCE:$(shell pwd)/build/:" <illumos-configure.tmpl >build/illumos-live/configure.mg
+	sed -e "s/BRANCH/$(ILLUMOS_LIVE_BRANCH)/" -e "s:BUILDDIR:$(shell pwd)/build/:" <illumos-configure.tmpl >build/illumos-live/configure.mg
 
 build/illumos-live/configure-branches:
 	sed -e "s/BRANCH/$(ILLUMOS_LIVE_BRANCH)/" <illumos-configure-branches.tmpl >build/illumos-live/configure-branches

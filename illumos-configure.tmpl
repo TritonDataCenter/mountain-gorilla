@@ -1,14 +1,14 @@
 mkdir -p projects/local
 (cd projects/local && [[ -d ur-agent ]] \
-    || git clone GITCLONESOURCEur-agent)
+    || cp -r BUILDDIRur-agent ./)
 (cd projects/local && [[ -d operator-toolkit ]] \
-    || git clone GITCLONESOURCEoperator-toolkit)
+    || cp -r BUILDDIRoperator-toolkit ./)
 (cd projects/local && [[ -d kvm ]] \
-    || git clone GITCLONESOURCEkvm)
+    || cp -r BUILDDIRkvm ./)
 (cd projects/local && [[ -d kvm-cmd ]] \
-    || git clone GITCLONESOURCEkvm-cmd-14 kvm-cmd)
+    || cp -r BUILDDIRkvm-cmd-14 kvm-cmd )
 (cd projects/local && [[ -d sdc-platform ]] \
-    || git clone GITCLONESOURCEsdc-platform)
+    || cp -r BUILDDIRsdc-platform ./)
 (cd overlay && [[ -d sdc ]] || \
     ln -s ../projects/local/sdc-platform/overlay sdc)
 
@@ -18,6 +18,6 @@ SUNW_SPRO12_URL="https://guest:GrojhykMid@stuff.joyent.us/stuff/illumos/sunstudi
 SUNW_SPRO12u1_URL="https://guest:GrojhykMid@stuff.joyent.us/stuff/illumos/sunstudio12u1-patched-ii-2010Feb-sol-x86.tar.gz"
 ON_CLOSED_BINS_URL="https://guest:GrojhykMid@stuff.joyent.us/stuff/illumos/on-closed-bins.i386.tar.bz2"
 ON_CLOSED_BINS_ND_URL="https://guest:GrojhykMid@stuff.joyent.us/stuff/illumos/on-closed-bins-nd.i386.tar.bz2"
-GET_ILLUMOS="(git clone GITCLONESOURCEillumos-joyent illumos)"
-GET_ILLUMOS_EXTRA="git clone GITCLONESOURCEillumos-extra illumos-extra"
+GET_ILLUMOS="(cp -r BUILDDIRillumos-joyent illumos)"
+GET_ILLUMOS_EXTRA="cp -r BUILDDIRillumos-extra illumos-extra"
 OVERLAYS="sdc generic"
