@@ -15,7 +15,7 @@ if [ "$TRACE" != "" ]; then
     export PS4='${BASH_SOURCE}:${LINENO}: '
     set -o xtrace
 fi
-#set -o errexit
+set -o errexit
 set -o pipefail
 
 
@@ -195,7 +195,7 @@ function get_pkgsrc() {
 
     for sourcefile in $(find ${ROOT}/build/usb-headnode/zones | grep "pkgsrc"); do
       pkgsrc_ver=$(basename ${sourcefile} | cut -d "_" -f2)
-      pkgsrc_64bit=$(basename ${sourcefile} | grep "_64")
+      pkgsrc_64bit=$(basename ${sourcefile} | grep "_64" || echo "")
 
       if [[ -n ${pkgsrc_64bit} ]]; then
         gccver="gcc45-64"
@@ -248,6 +248,15 @@ while getopts "b:B:hurft:" opt; do
 done
 shift $((OPTIND-1))
 
+# check for existence of /opt/node/0.4 , /opt/node/0.6 and /opt/npm/1.0
+if [[ ! -x /opt/node/0.4/bin/node || \
+  ! -x /opt/node/0.6/bin/node ]]; then
+	fatal "Could not find node in /opt/node/<version>/bin "
+fi
+
+if [[ ! -x /opt/npm/1.0/bin/npm ]]; then
+  fatal "Could not find npm in /opt/node/<version>/bin "
+fi
 
 # Pre-condition: must have node >=0.6 first on path (see RELENG-266).
 NODE_VERSION=$(node --version)
