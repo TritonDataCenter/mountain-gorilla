@@ -97,6 +97,10 @@ First, create zone. For example:
     pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
         scmgit python24 python26 png npm GeoIP GeoLiteCity ghostscript
 
+Next, ensure that you do NOT have the 'nodejs' and 'npm' packages from
+pkgsrc installed:
+
+    pkgin ls | grep '\(nodejs\|npm\)' && pkgin -y rm npm-0.2.18 nodejs-0.4.2
 
 Next, setup node 0.4, 0.6 and npm 1.0 and 1.1 in /opt.
 
