@@ -101,10 +101,9 @@ First, create zone. For example:
 Next, setup node 0.4, 0.6 and npm 1.0 and 1.1 in /opt.
 
     mkdir -p /opt/node
-    mkdir ~/src
-    cd ~/src
-    git clone https://github.com/joyent/node.git
-    cd node
+    cd /opt/node
+    git clone https://github.com/joyent/node.git src
+    cd src
     git checkout v0.6.10
     ./configure --prefix=/opt/node/0.6.10 && make && make install
     (cd /opt/node && ln -s 0.6.10 0.6)
@@ -112,8 +111,8 @@ Next, setup node 0.4, 0.6 and npm 1.0 and 1.1 in /opt.
     git checkout v0.4.9
     ./configure --prefix=/opt/node/0.4.9 && make && make install
     (cd /opt/node && ln -s 0.4.9 0.4)
-    cd /var/tmp
 
+    cd /var/tmp
     mkdir -p /opt/npm
     (export PATH=/opt/node/0.6/bin:$PATH \
         && curl http://npmjs.org/install.sh | npm_config_prefix=/opt/npm/1.1 npm_config_tar=gtar sh)
@@ -121,6 +120,10 @@ Next, setup node 0.4, 0.6 and npm 1.0 and 1.1 in /opt.
         && curl http://npmjs.org/install.sh | npm_config_prefix=/opt/npm/1.0 npm_config_tar=gtar sh)
 
 
+Ensure node 0.6 is the first `node` on your PATH, as required by the MG
+build. For example (but you don't have to use this node):
+
+    export PATH=/opt/node/0.6/bin:$PATH
 
 You should now be able to build mountain-gorilla (MG): i.e. all of SDC.
 Let's try that:
