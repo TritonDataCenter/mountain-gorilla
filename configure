@@ -223,7 +223,7 @@ function get_pkgsrc() {
     echo "# get pkgsrc packages for usb-headnode zones (to build/pkgsrc)"
 
     mkdir -p build/pkgsrc/
-    local curl_opts="--fail --connect-timeout 10 --progress-bar"
+    local curl_opts="--fail --connect-timeout 10 --silent"
 
     for sourcefile in $(find ${ROOT}/build/usb-headnode/zones | grep "pkgsrc"); do
       pkgsrc_ver=$(basename ${sourcefile} | cut -d "_" -f2)
