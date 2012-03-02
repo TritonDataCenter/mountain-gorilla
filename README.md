@@ -95,7 +95,7 @@ First, create zone. For example:
     # To build CA you need some more stuff (the authority here on needed
     # packages is <https://mo.joyent.com/cloud-analytics/blob/master/tools/ca-headnode-setup#L274>
     pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
-        scmgit python24 python26 png npm GeoIP GeoLiteCity ghostscript
+        scmgit python24 python26 png GeoIP GeoLiteCity ghostscript
 
 Next, ensure that you do NOT have the 'nodejs' and 'npm' packages from
 pkgsrc installed:
