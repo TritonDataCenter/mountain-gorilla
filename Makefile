@@ -625,6 +625,11 @@ clean_null:
 distclean:
 	pfexec rm -rf bits build
 
+.PHONY: cacheclean
+cacheclean: distclean
+	pfexec rm -rf cache
+
+
 
 # Upload bits we want to keep for a Jenkins build.
 upload_jenkins:

@@ -26,6 +26,9 @@ BRANCH=master
 TRY_BRANCH=
 
 ROOT=$(pwd)
+CACHE_DIR=${ROOT}/cache
+REPO_CACHE_DIR=${CACHE_DIR}/repos
+
 JSON=$ROOT/tools/json
 
 
@@ -69,6 +72,34 @@ function preload_bits() {
         bits/$target/
 }
 
+
+# Clone/update the given git repo in the repo cache.
+# Usage:
+#   get_repo_cache REPO-URL REPO-DIR SUBMODULE-RECURSIVE
+# Example:
+#   get_repo_cache git@git.joyent.com:smart-login.git smart-login true
+function get_repo_cache() {
+    local repo_url=$1
+    local repo_dir=$2
+    local dst_dir=$REPO_CACHE_DIR/$repo_dir
+
+    if [[ ! -d "$REPO_CACHE_DIR/$repo_dir" ]]; then
+        mkdir -p $REPO_CACHE_DIR
+        local tmp_dir=$REPO_CACHE_DIR/.tmp.$repo_dir
+        rm -rf $tmp_dir
+        git clone $repo_url $tmp_dir
+        mv $tmp_dir $REPO_CACHE_DIR/$repo_dir
+    else
+        (cd $REPO_CACHE_DIR/$repo_dir; git pull)
+    fi
+    if [[ "$submodule_recursive" == "true" ]]; then
+        (cd $REPO_CACHE_DIR/$repo_dir; git submodule update --init --recursive)
+    else
+        (cd $REPO_CACHE_DIR/$repo_dir; git submodule update --init)
+    fi
+}
+
+
 # Get the requested repo.
 # Usage:
 #   get_repo2 REPO-URL BRANCH SUBMODULE-RECURSIVE [NAME] [TRY-BRANCH]
@@ -92,17 +123,16 @@ function get_repo2() {
         repo_dir=${repo_dir%*.git}    # strip '.git' at tail
     fi
 
-    echo "# get '$repo_url' to 'build/$repo_dir'"
-    if [[ ! -d build/$repo_dir ]]; then
-        mkdir -p build/$repo_dir
-        git clone $repo_url build/$repo_dir
-        # Note: Use separate `git checkout $branch` instead of `-b $branch`
-        # with git clone command because the latter doesn't return non-zero
-        # if the branch doesn't exist.
-        (cd build/$repo_dir ; git checkout $branch)
-    else
-        (cd build/$repo_dir ; git checkout $branch ; git pull)
-    fi
+    # Update repo cache.
+    echo "# get '$repo_url' to repo cache ($REPO_CACHE_DIR)"
+    get_repo_cache ${repo_url} ${repo_dir} ${submodule_recursive}
+    local repo_cache_url=$(unset CDPATH; cd $REPO_CACHE_DIR/$repo_dir; pwd) # ensure absolute
+
+    echo "# copy '$REPO_CACHE_DIR/$repo_dir' to 'build/$repo_dir'"
+    mkdir -p build
+    cp -PR $REPO_CACHE_DIR/$repo_dir build/$repo_dir
+    (cd build/$repo_dir ; git checkout $branch)
+
     if [[ ! -z "$try_branch" ]]; then
         (cd build/$repo_dir ; git checkout $try_branch && git pull || true)
     fi
