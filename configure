@@ -26,8 +26,9 @@ BRANCH=master
 TRY_BRANCH=
 
 ROOT=$(pwd)
-CACHE_DIR=${ROOT}/cache
-REPO_CACHE_DIR=${CACHE_DIR}/repos
+if [ "$CACHE_DIR" != "" ]; then
+    CACHE_DIR=${ROOT}/cache
+fi
 
 JSON=$ROOT/tools/json
 
@@ -81,21 +82,21 @@ function preload_bits() {
 function get_repo_cache() {
     local repo_url=$1
     local repo_dir=$2
-    local dst_dir=$REPO_CACHE_DIR/$repo_dir
+    local dst_dir=$CACHE_DIR/repos/$repo_dir
 
-    if [[ ! -d "$REPO_CACHE_DIR/$repo_dir" ]]; then
-        mkdir -p $REPO_CACHE_DIR
-        local tmp_dir=$REPO_CACHE_DIR/.tmp.$repo_dir
+    if [[ ! -d "$CACHE_DIR/repos/$repo_dir" ]]; then
+        mkdir -p $CACHE_DIR/repos
+        local tmp_dir=$CACHE_DIR/repos/.tmp.$repo_dir
         rm -rf $tmp_dir
         git clone $repo_url $tmp_dir
-        mv $tmp_dir $REPO_CACHE_DIR/$repo_dir
+        mv $tmp_dir $CACHE_DIR/repos/$repo_dir
     else
-        (cd $REPO_CACHE_DIR/$repo_dir; git pull)
+        (cd $CACHE_DIR/repos/$repo_dir; git pull)
     fi
     if [[ "$submodule_recursive" == "true" ]]; then
-        (cd $REPO_CACHE_DIR/$repo_dir; git submodule update --init --recursive)
+        (cd $CACHE_DIR/repos/$repo_dir; git submodule update --init --recursive)
     else
-        (cd $REPO_CACHE_DIR/$repo_dir; git submodule update --init)
+        (cd $CACHE_DIR/repos/$repo_dir; git submodule update --init)
     fi
 }
 
@@ -123,14 +124,12 @@ function get_repo2() {
         repo_dir=${repo_dir%*.git}    # strip '.git' at tail
     fi
 
-    # Update repo cache.
-    echo "# get '$repo_url' to repo cache ($REPO_CACHE_DIR)"
+    echo "# get '$repo_url' to repo cache ($CACHE_DIR/repos)"
     get_repo_cache ${repo_url} ${repo_dir} ${submodule_recursive}
-    local repo_cache_url=$(unset CDPATH; cd $REPO_CACHE_DIR/$repo_dir; pwd) # ensure absolute
 
-    echo "# copy '$REPO_CACHE_DIR/$repo_dir' to 'build/$repo_dir'"
+    echo "# copy '$CACHE_DIR/repos/$repo_dir' to 'build/$repo_dir'"
     mkdir -p build
-    cp -PR $REPO_CACHE_DIR/$repo_dir build/$repo_dir
+    cp -PR $CACHE_DIR/repos/$repo_dir build/$repo_dir
     (cd build/$repo_dir ; git checkout $branch)
 
     if [[ ! -z "$try_branch" ]]; then
@@ -202,6 +201,7 @@ function print_help() {
     echo "  -t TARGET    Prepare to build only this target."
     echo "  -r           Regenerate config.mk. This doesn't touch repos in"
     echo "               'build/' or preload in 'bits/'."
+    echo "  -c CACHE_DIR Specify a cache directory. Default: './cache'."
     exit 0
 }
 
@@ -223,7 +223,7 @@ function get_pkgsrc() {
     echo "# get pkgsrc packages for usb-headnode zones (to build/pkgsrc)"
 
     mkdir -p build/pkgsrc/
-    local curl_opts=--fail --connect-timeout 10 --progress-bar
+    local curl_opts="--fail --connect-timeout 10 --progress-bar"
 
     for sourcefile in $(find ${ROOT}/build/usb-headnode/zones | grep "pkgsrc"); do
       pkgsrc_ver=$(basename ${sourcefile} | cut -d "_" -f2)
@@ -273,7 +273,7 @@ REGENERATE='false'
 if [[ "$1" == "--help" ]]; then
   print_help
 fi
-while getopts "b:B:hurft:" opt; do
+while getopts "b:B:hurft:c:" opt; do
     case "$opt" in
         b) BRANCH=$OPTARG ;;
         B) TRY_BRANCH=$OPTARG ;;
@@ -282,6 +282,7 @@ while getopts "b:B:hurft:" opt; do
             REGENERATE='true'
             ;;
         t) TARGET=${OPTARG} ;;
+        c) CACHE_DIR=${OPTARG} ;;
         ?) fatal "unknown option: $opt" ;;
     esac
 done
