@@ -42,7 +42,7 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi platform ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi platform vmtests ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -547,9 +547,11 @@ clean_usb-headnode:
 #---- platform
 
 PLATFORM_BIT=$(BITS_DIR)/platform/platform-$(ILLUMOS_LIVE_BRANCH)-$(TIMESTAMP).tgz
+VMTEST_BIT=$(BITS_DIR)/platform/vmtests-$(ILLUMOS_LIVE_BRANCH)-$(TIMESTAMP).tgz
 
-.PHONY: platform
+.PHONY: platform vmtests
 platform: $(PLATFORM_BIT)
+vmtests: $(VMTEST_BIT)
 
 build/illumos-live/configure.mg:
 	sed -e "s/BRANCH/$(ILLUMOS_LIVE_BRANCH)/" -e "s:BUILDDIR:$(shell pwd)/build/:" <illumos-configure.tmpl >build/illumos-live/configure.mg
@@ -576,6 +578,14 @@ $(PLATFORM_BIT): build/illumos-live/configure.mg build/illumos-live/configure-br
 	(cp build/illumos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/platform/platform-$(ILLUMOS_LIVE_BRANCH)-$(TIMESTAMP).tgz)
 	@echo "# Created platform bits:"
 	@ls -1 $(PLATFORM_BIT)
+	@echo ""
+
+$(VMTEST_BIT): build/illumos-live/configure.mg build/illumos-live/configure-branches $(PLATFORM_BIT)
+	([[ -f build/illumos-live/output/vmtests-$(TIMESTAMP).tgz ]] && \
+		cp build/illumos-live/output/vmtests-$(TIMESTAMP).tgz \
+        $(VMTEST_BIT))
+	@echo "# Created platform bits:"
+	@ls -1 $(VMTEST_BIT)
 	@echo ""
 
 clean_platform:
