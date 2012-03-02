@@ -223,31 +223,12 @@ name so there shouldn't be a mismatch.
 ## Suggested Versioning Usage
 
 It is suggested that the SDC repos use something like this at the top of
-their Makefile to handle package naming:
+their Makefile to handle package naming (using the Joyent Engineering
+Guidelines, eng.git):
 
-    NAME=smartlogin
-    # Need GNU awk for multi-char arg to "-F".
-    AWK=$(shell (which gawk 2>/dev/null | grep -v "^no ") || which awk)
-    BRANCH=$(shell git symbolic-ref HEAD | $(AWK) -F/ '{print $$3}')
-    ifeq ($(TIMESTAMP),)
-        TIMESTAMP=$(shell date -u "+%Y%m%dT%H%M%SZ")
-    endif
-    GITDESCRIBE=g$(shell git describe --all --long --dirty | $(AWK) -F'-g' '{print $$NF}')
+    include ./Makefile.defs   # provides "STAMP"
     ...
-    TARBALL=$(NAME)-$(BRANCH)-$(TIMESTAMP)-$(GITDESCRIBE).tgz
-
-or like this in a Bash script:
-
-    # Need GNU awk for multi-char arg to "-F".
-    AWK=$((which gawk 2>/dev/null | grep -v "^no ") || which awk)
-    BRANCH=$(git symbolic-ref HEAD | ${AWK} -F/ '{print $3}')
-    if [[ -z "$TIMESTAMP" ]]; then
-        TIMESTAMP=$(date -u "+%Y%m%dT%H%M%SZ")
-    fi
-    GITDESCRIBE=g$(git describe --all --long --dirty | ${AWK} -F'-g' '{print $NF}')
-    ...
-    TARBALL=${NAME}-${BRANCH}-${TIMESTAMP}-${GITDESCRIBE}.tgz
-
+    PKG_NAME=$(NAME)-$(STAMP).tgz
 
 
 Notes:
