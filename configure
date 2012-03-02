@@ -26,9 +26,7 @@ BRANCH=master
 TRY_BRANCH=
 
 ROOT=$(pwd)
-if [ "$CACHE_DIR" != "" ]; then
-    CACHE_DIR=${ROOT}/cache
-fi
+CACHE_DIR=${ROOT}/cache
 
 JSON=$ROOT/tools/json
 
@@ -97,6 +95,12 @@ function get_repo_cache() {
         (cd $CACHE_DIR/repos/$repo_dir; git submodule update --init --recursive)
     else
         (cd $CACHE_DIR/repos/$repo_dir; git submodule update --init)
+    fi
+
+    # Error out if the cached repo is dirty. These thigns should always
+    # be pristine.
+    if [[ "$(cd $CACHE_DIR/repos/$repo_dir && git describe --dirty | grep dirty)" != "" ]]; then
+        fatal "Repo '$repo_dir' cache, $CACHE_DIR/repos/$repo_dir, is dirty!"
     fi
 }
 
