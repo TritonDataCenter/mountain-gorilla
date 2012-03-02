@@ -287,15 +287,13 @@ while getopts "b:B:hurft:" opt; do
 done
 shift $((OPTIND-1))
 
-# check for existence of /opt/node/0.4 , /opt/node/0.6 and /opt/npm/1.0
-if [[ ! -x /opt/node/0.4/bin/node || \
-  ! -x /opt/node/0.6/bin/node ]]; then
-	fatal "Could not find node in /opt/node/<version>/bin "
-fi
-
-if [[ ! -x /opt/npm/1.0/bin/npm ]]; then
-  fatal "Could not find npm in /opt/node/<version>/bin "
-fi
+# Pre-condition: some required binaries
+binaries="/opt/node/0.4/bin/node /opt/node/0.6/bin/node /opt/node/0.6.9/bin/node /opt/npm/1.0/bin/npm /opt/npm/1.1/bin/npm"
+for binary in $binaries; do
+    if [[ ! -x $binary ]]; then
+        fatal "Could not find required binary: '$binary'"
+    fi
+done
 
 # Pre-condition: must have node >=0.6 first on path (see RELENG-266).
 NODE_VERSION=$(node --version)
