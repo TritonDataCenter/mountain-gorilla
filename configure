@@ -190,8 +190,10 @@ function get_target_repos() {
 
 function get_pkgsrc() {
   if [[ -d ${ROOT}/build/usb-headnode ]]; then
+    echo "# get pkgsrc packages for usb-headnode zones (to build/pkgsrc)"
 
     mkdir -p build/pkgsrc/
+    local curl_opts=--fail --connect-timeout 10 --progress-bar
 
     for sourcefile in $(find ${ROOT}/build/usb-headnode/zones | grep "pkgsrc"); do
       pkgsrc_ver=$(basename ${sourcefile} | cut -d "_" -f2)
@@ -206,15 +208,22 @@ function get_pkgsrc() {
       mkdir -p build/pkgsrc/${pkgsrc_ver}/${gccver}/All
 
       if [[ ! -f build/pkgsrc/${pkgsrc_ver}/${gccver}/All/md5sums.txt ]]; then
-        curl -o build/pkgsrc/${pkgsrc_ver}/${gccver}/All/md5sums.txt \
-        http://pkgsrc.joyent.com/sdc6/${pkgsrc_ver}/${gccver}/All/md5sums.txt
+        echo "# get http://pkgsrc.joyent.com/sdc6/${pkgsrc_ver}/${gccver}/All/md5sums.txt"
+        curl ${curl_opts} -o build/pkgsrc/${pkgsrc_ver}/${gccver}/All/md5sums.txt \
+            http://pkgsrc.joyent.com/sdc6/${pkgsrc_ver}/${gccver}/All/md5sums.txt
       fi
 
       for file in $(cat ${sourcefile}); do
-        (cd build/pkgsrc/${pkgsrc_ver}/${gccver}/All && \
-          curl -O http://pkgsrc.joyent.com/sdc6/${pkgsrc_ver}/${gccver}/All/${file}.tgz)
+        if [[ ! -f build/pkgsrc/${pkgsrc_ver}/${gccver}/All/${file}.tgz ]]; then
+            echo "# get http://pkgsrc.joyent.com/sdc6/${pkgsrc_ver}/${gccver}/All/${file}.tgz"
+            (cd build/pkgsrc/${pkgsrc_ver}/${gccver}/All && \
+              curl ${curl_opts} -O http://pkgsrc.joyent.com/sdc6/${pkgsrc_ver}/${gccver}/All/${file}.tgz)
+        fi
       done
     done
+
+    #TODO: md5sum check against md5sums.txt
+    #TODO: move to cache/pkgsrc ?
   fi
 }
 
