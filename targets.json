@@ -123,19 +123,7 @@
   },
   "usbheadnode": {
     "repos": [
-        {"url": "git@git.joyent.com:usb-headnode.git"},
-        {"url": "git@git.joyent.com:mcp_api_admin.git"},
-        {"url": "git@git.joyent.com:booter.git"},
-        {"url": "git@git.joyent.com:mcp_api_gateway.git"},
-        {"url": "git@git.joyent.com:public-web-client.git"},
-        {"url": "git@git.joyent.com:cloudapi.git"},
-        {"url": "git@git.joyent.com:ufds.git"},
-        {"url": "git@git.joyent.com:sdc-webinfo.git"},
-        {"url": "git@git.joyent.com:assets.git"},
-        {"url": "git@git.joyent.com:riak.git"},
-        {"url": "git@git.joyent.com:redis.git"},
-        {"url": "git@git.joyent.com:rabbitmq.git"},
-        {"url": "git@git.joyent.com:node-sdc-clients.git"}
+        {"url": "git@git.joyent.com:usb-headnode.git"}
     ],
     "deps": [
         "platform",
