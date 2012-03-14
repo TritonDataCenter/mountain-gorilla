@@ -99,7 +99,7 @@ function get_repo_cache() {
 
     # Error out if the cached repo is dirty. These thigns should always
     # be pristine.
-    if [[ "$(cd $CACHE_DIR/repos/$repo_dir && git describe --dirty | grep dirty)" != "" ]]; then
+    if [[ "$(cd $CACHE_DIR/repos/$repo_dir && git describe --all --dirty | grep dirty)" != "" ]]; then
         fatal "Repo '$repo_dir' cache, $CACHE_DIR/repos/$repo_dir, is dirty!"
     fi
 }
