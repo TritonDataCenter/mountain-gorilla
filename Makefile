@@ -357,7 +357,7 @@ $(DHCPD_BITS): build/dhcpd
 	@echo "# Build dhcpd: branch $(DHCPD_BRANCH), sha $(DHCPD_SHA)"
 	mkdir -p $(BITS_DIR)
 	(cd build/dhcpd && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) \
-		PATH=/opt/node/0.6.9/bin:$(PATH) $(MAKE) release publish)
+		$(MAKE) release publish)
 	@echo "# Created dhcpd bits:"
 	@ls -1 $(DHCPD_BITS)
 	@echo ""
