@@ -411,6 +411,29 @@ clean_cloudapi:
 	(cd build/cloudapi && gmake clean)
 
 
+#---- WORKFLOW
+
+_wf_stamp=$(WORKFLOW_BRANCH)-$(TIMESTAMP)-g$(WORKFLOW_SHA)
+WORKFLOW_BITS=$(BITS_DIR)/workflow/workflow-pkg-$(_wf_stamp).tar.bz2
+
+.PHONY: workflow
+workflow: $(WORKFLOW_BITS)
+
+# PATH for workflow build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(WORKFLOW_BITS): build/workflow
+	@echo "# Build workflow: branch $(WORKFLOW_BRANCH), sha $(WORKFLOW_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/workflow && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	@echo "# Created workflow bits:"
+	@ls -1 $(WORKFLOW_BITS)
+	@echo ""
+
+# Warning: if workflow's submodule deps change, this 'clean_workflow' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_workflow:
+	rm -rf $(BITS_DIR)/workflow
+	(cd build/workflow && gmake clean)
 
 
 #---- agents shar

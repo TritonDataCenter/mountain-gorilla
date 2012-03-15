@@ -97,6 +97,14 @@
     ],
     "deps": []
   },
+
+  "workflow": {
+    "repos": [
+        {"url": "git@git.joyent.com:workflow.git"}
+    ],
+    "deps": []
+  },
+
   "agentsshar": {
     "repos": [
         {"url": "git@git.joyent.com:agents-installer.git"}
