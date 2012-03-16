@@ -229,29 +229,27 @@ function get_pkgsrc() {
     mkdir -p build/pkgsrc/
     local curl_opts="--fail --connect-timeout 10 --silent"
 
-    for sourcefile in $(find ${ROOT}/build/usb-headnode/zones | grep "pkgsrc"); do
-      pkgsrc_ver=$(basename ${sourcefile} | cut -d "_" -f2)
-      pkgsrc_64bit=$(basename ${sourcefile} | grep "_64" || echo "")
-
-      if [[ -n ${pkgsrc_64bit} ]]; then
-        gccver="gcc45-64"
-      else
-        gccver="gcc45"
-      fi
+    for dataset in $(find ${ROOT}/build/usb-headnode/zones -name "dataset"); do
+      ds=$(cat ${dataset})
+      pkgsrc_url=$((${JSON} datasets | ${JSON} -a name pkgsrc_url \
+          | grep "$(basename ${ds})" \
+          | cut -d ' ' -f2) < ${ROOT}/build/usb-headnode/build.spec)
+      pkgsrc_ver=$(echo "${pkgsrc_url}" | cut -d '/' -f5)
+      gccver=$(echo "${pkgsrc_url}" | cut -d '/' -f6)
 
       mkdir -p build/pkgsrc/${pkgsrc_ver}/${gccver}/All
 
       if [[ ! -f build/pkgsrc/${pkgsrc_ver}/${gccver}/All/md5sums.txt ]]; then
-        echo "# get http://pkgsrc.joyent.com/sdc6/${pkgsrc_ver}/${gccver}/All/md5sums.txt"
+        echo "# get ${pkgsrc_url}/md5sums.txt"
         curl ${curl_opts} -o build/pkgsrc/${pkgsrc_ver}/${gccver}/All/md5sums.txt \
-            http://pkgsrc.joyent.com/sdc6/${pkgsrc_ver}/${gccver}/All/md5sums.txt
+            ${pkgsrc_url}/md5sums.txt
       fi
 
-      for file in $(cat ${sourcefile}); do
+      for file in $(cat $(dirname ${dataset})/pkgsrc); do
         if [[ ! -f build/pkgsrc/${pkgsrc_ver}/${gccver}/All/${file}.tgz ]]; then
-            echo "# get http://pkgsrc.joyent.com/sdc6/${pkgsrc_ver}/${gccver}/All/${file}.tgz"
-            (cd build/pkgsrc/${pkgsrc_ver}/${gccver}/All && \
-              curl ${curl_opts} -O http://pkgsrc.joyent.com/sdc6/${pkgsrc_ver}/${gccver}/All/${file}.tgz)
+          echo "# get ${pkgsrc_url}/${file}.tgz"
+          (cd build/pkgsrc/${pkgsrc_ver}/${gccver}/All && \
+            curl ${curl_opts} -O ${pkgsrc_url}/${file}.tgz)
         fi
       done
     done
