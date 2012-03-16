@@ -39,7 +39,7 @@ function errexit {
 
 function print_help() {
     echo "Usage:"
-    echo "  ./tools/upload-bits [-r] [-f FILE] BRANCH TRY-BRANCH TIMESTAMP UPLOAD-BASE-DIR"
+    echo "  ./tools/upload-bits BRANCH TRY-BRANCH TIMESTAMP UPLOAD-BASE-DIR"
     echo ""
     echo "Upload bits. The UPLOAD-BASE-DIR is presumed to be a remote dir "
     echo "(i.e. user@host:path). 'TRY-BRANCH' is often empty. An MG build"
@@ -49,9 +49,7 @@ function print_help() {
     echo "'BRANCH'."
     echo ""
     echo "Options:"
-    echo "  -r           Only upload the 'release/' dir."
     echo "  -h           Print this help and exit."
-    echo "  -f FILE      Upload only file FILE"
     echo ""
     echo "Examples:"
     echo "  ./tool/upload-bits release-20110922 \"\" 20110927T143319Z stuff@stuff.joyent.us:builds/nightly"
@@ -65,12 +63,9 @@ function print_help() {
 
 trap 'errexit $? $LINENO' EXIT
 
-RELEASE_ONLY=0
 while getopts "hrf:" opt; do
     case $opt in
         h) print_help ;;
-        r) RELEASE_ONLY=1 ;;
-        f) RELEASE_FILE_ONLY=1; RELEASE_FILE=$OPTARG ;;
         ?) fatal "unknown option: $opt" ;;
     esac
     shift $((OPTIND-1))
@@ -106,16 +101,8 @@ fi
 
 # Upload to '.'-prefixed dir to hide it until fully uploaded.
 echo "Uploading bits to <$UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/$upload_subdir/>."
-if [[ "$RELEASE_FILE_ONLY" == "1" ]]; then
-    $SSH $UPLOAD_SERVER mkdir -p $UPLOAD_BASE_LOCALDIR/.$upload_subdir
-    #$SCP $RELEASE_FILE_ONLY $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/
-    rsync -e "$SSH" -av $RELEASE_FILE $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/
-elif [[ "$RELEASE_ONLY" == "1" ]]; then
-    $SSH $UPLOAD_SERVER mkdir $UPLOAD_BASE_LOCALDIR/.$upload_subdir
-    rsync -e "$SSH" -av $BITS_DIR/release/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/release/
-else
-    rsync -e "$SSH" -av $BITS_DIR/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/
-fi
+(cd ${BITS_DIR}/ && md5sum $(find ./ -type f) > md5sums.txt)
+rsync -e "$SSH" -av $BITS_DIR/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/
 
 # Unhide and add a "$UPLOAD_BRANCH-$latest" symlink.
 $SSH $UPLOAD_SERVER mv $UPLOAD_BASE_LOCALDIR/.$upload_subdir/ $UPLOAD_BASE_LOCALDIR/$upload_subdir/
