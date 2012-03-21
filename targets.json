@@ -149,7 +149,8 @@
         "dhcpd",
         "rabbitmq",
         "riak",
-        "redis"
+        "redis",
+        "workflow"
     ]
   }
 }
