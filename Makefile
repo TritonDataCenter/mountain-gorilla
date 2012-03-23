@@ -424,7 +424,7 @@ workflow: $(WORKFLOW_BITS)
 $(WORKFLOW_BITS): build/workflow
 	@echo "# Build workflow: branch $(WORKFLOW_BRANCH), sha $(WORKFLOW_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/workflow && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/workflow && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created workflow bits:"
 	@ls -1 $(WORKFLOW_BITS)
 	@echo ""
