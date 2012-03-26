@@ -1,0 +1,2 @@
+echo "$0: Bad npm!" 1>&2
+exit 42

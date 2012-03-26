@@ -28,8 +28,6 @@ TRY_BRANCH=
 ROOT=$(pwd)
 CACHE_DIR=${ROOT}/cache
 
-JSON=$ROOT/tools/json
-
 
 
 #---- internal support functions
@@ -152,6 +150,9 @@ function gen_config() {
 TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
 BRANCH=$BRANCH
 TRY_BRANCH=$TRY_BRANCH
+
+MG_NODE=$MG_NODE
+
 EOF
   cd build/
   for repo in * ; do
@@ -159,29 +160,6 @@ EOF
       branch_name=$((cd ${repo} && git symbolic-ref HEAD 2> /dev/null ) || echo "")
       echo ${upper_repo_name}_BRANCH=$(echo ${branch_name##refs/heads/} || echo "") >> ${ROOT}/bits/config.mk
       echo ${upper_repo_name}_SHA=$((cd ${repo} && git log --pretty=format:'%h' -1 ) || echo "") >> ${ROOT}/bits/config.mk
-  done
-}
-
-function gen_config_old() {
-    mkdir -p bits
-    cat <<EOF >bits/config.mk
-TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
-BRANCH=$BRANCH
-TRY_BRANCH=$TRY_BRANCH
-EOF
-
-  targets=$(node -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); Object.keys(JSON.parse(c)).join(" ")')
-  for target in $targets; do
-      repo_url=$(cat targets.json | json ${target}.repos.0.url)
-      repo_dir=${repo_url##*/}    # strip to last '/'
-      repo_dir=${repo_dir##*:}    # strip to last ':'
-      repo_dir=${repo_dir%*.git}    # strip '.git' at tail
-      if [[ -d build/${repo_dir} ]]; then
-        upper_targ_name=$(echo $target | tr [:lower:] [:upper:] | tr - _)
-        branch_name=$((cd build/${repo_dir} && git symbolic-ref HEAD 2> /dev/null ) || echo "")
-        echo ${upper_targ_name}_BRANCH=$(echo ${branch_name##refs/heads/} || echo "") >> bits/config.mk
-        echo ${upper_targ_name}_SHA=$((cd build/${repo_dir} && git log --pretty=format:'%h' -1 ) || echo "") >> bits/config.mk
-      fi
   done
 }
 
@@ -195,6 +173,9 @@ function print_help() {
     echo ""
     echo "Options:"
     echo "  -h, --help   Print this help and exit."
+    echo ""
+    echo "  -n NODE_EXE  Path to node exe for MG to use."
+    echo ""
     echo "  -b BRANCH    Branch to checkout. Defaults to 'master'."
     echo "               Note that this is for *all* core repositories."
     echo "  -B TRY-BRANCH"
@@ -202,7 +183,10 @@ function print_help() {
     echo "               is used as the default. This is useful for building"
     echo "               a feature branch on one of the many repos used for"
     echo "               a target."
-    echo "  -t TARGET    Prepare to build only this target."
+    echo "  -t TARGET    Prepare to build only this target. Valid targets are"
+    echo "               the keys of 'targets.json' plus a special value"
+    echo "               'all-except-platform' to build all targets except the"
+    echo "               slow-to-build platform."
     echo "  -r           Regenerate config.mk. This doesn't touch repos in"
     echo "               'build/' or preload in 'bits/'."
     echo "  -c CACHE_DIR Specify a cache directory. Default: './cache'."
@@ -271,11 +255,13 @@ trap 'errexit $? $LINENO' EXIT
 # If empty it means that we are configuring for a full build.
 TARGET=
 REGENERATE='false'
+MG_NODE=$(which node)
+
 
 if [[ "$1" == "--help" ]]; then
   print_help
 fi
-while getopts "b:B:hurft:c:" opt; do
+while getopts "b:B:hurft:c:n:" opt; do
     case "$opt" in
         b) BRANCH=$OPTARG ;;
         B) TRY_BRANCH=$OPTARG ;;
@@ -283,6 +269,7 @@ while getopts "b:B:hurft:c:" opt; do
         r)
             REGENERATE='true'
             ;;
+        n) MG_NODE=${OPTARG} ;;
         t) TARGET=${OPTARG} ;;
         c) CACHE_DIR=${OPTARG} ;;
         ?) fatal "unknown option: $opt" ;;
@@ -290,8 +277,12 @@ while getopts "b:B:hurft:c:" opt; do
 done
 shift $((OPTIND-1))
 
+
 # Pre-condition: some required binaries
-binaries="/opt/node/0.4/bin/node /opt/node/0.6/bin/node /opt/node/0.6.9/bin/node /opt/npm/1.0/bin/npm /opt/npm/1.1/bin/npm"
+# - node 0.6.12: cloudapi is using the platform node
+# - node 0.4, npm 1.0: ufds
+# TODO: Drop these requirements. See RELENG-283.
+binaries="/opt/node/0.6.12/bin/node /opt/node/0.4/bin/node /opt/npm/1.0/bin/npm"
 for binary in $binaries; do
     if [[ ! -x $binary ]]; then
         fatal "Could not find required binary: '$binary'"
@@ -299,11 +290,13 @@ for binary in $binaries; do
 done
 
 # Pre-condition: must have node >=0.6 first on path (see RELENG-266).
-NODE_VERSION=$(node --version)
+echo "Ensure have a 'node' v0.6."
+NODE_VERSION=$($MG_NODE --version)
 NODE_VERSION=${NODE_VERSION:0:4}
 if [[ "$NODE_VERSION" != "v0.6" ]]; then
-    fatal "Incorrect node version, '${NODE_VERSION}'. First node on PATH must be v0.6."
+    fatal "Incorrect node version, '${NODE_VERSION}'. MG needs a node v0.6 or later (currently requiring v0.6). Either put a node v0.6 first on your PATH or use the '-n NODE_EXE' configure option."
 fi
+JSON="$MG_NODE $ROOT/tools/json"
 
 
 # '-r' regenerate early out.
@@ -320,12 +313,24 @@ make distclean
 
 
 if [[ ! -z "$TARGET" ]]; then
-    get_target_repos $TARGET
-    for targ in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
-        preload_bits $targ "$BRANCH" "$TRY_BRANCH"
-    done
+    if [[ "$TARGET" == "all-except-platform" ]]; then
+        preload_bits "platform" "$BRANCH" "$TRY_BRANCH"
+        targets=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))' | grep -v '^platform' | grep -v '^illumosextra')
+        for targ in $targets; do
+            get_target_repos $targ
+        done
+    else
+        # Validate target.
+        if [[ -z "$(cat targets.json | $JSON $TARGET)" ]]; then
+            fatal "Unknown target: $TARGET"
+        fi
+        get_target_repos $TARGET
+        for targ in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
+            preload_bits $targ "$BRANCH" "$TRY_BRANCH"
+        done
+    fi
 else
-    targets=$(node -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))')
+    targets=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))')
     for targ in $targets; do
         get_target_repos $targ
     done

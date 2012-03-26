@@ -19,6 +19,7 @@ ifeq ($(UNAME), SunOS)
 	MAKE = gmake
 	TAR = gtar
 endif
+JSON=$(MG_NODE) $(TOP)/tools/json
 
 # Other
 # Is JOBS=16 reasonable here? The old bamboo plans used this (or higher).
@@ -39,10 +40,15 @@ ifeq ($(UPLOAD_LOCATION),)
 	UPLOAD_LOCATION=stuff@stuff.joyent.us:builds
 endif
 
+
+
 #---- Primary targets
 
 .PHONY: all
 all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow platform ufds usbheadnode releasejson
+
+.PHONY: all-except-platform
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -144,7 +150,7 @@ ca: $(CA_BITS_0)
 $(CA_BITS): build/cloud-analytics
 	@echo "# Build ca: branch $(CLOUD_ANALYTICS_BRANCH), sha $(CLOUD_ANALYTICS_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/cloud-analytics && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/opt/npm/1.0/bin:/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
+	(cd build/cloud-analytics && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
 	@echo "# Created ca bits:"
 	@ls -1 $(CA_BITS)
 	@echo ""
@@ -170,7 +176,7 @@ ufds: $(UFDS_BITS)
 $(UFDS_BITS): build/ufds
 	@echo "# Build ufds: branch $(UFDS_BRANCH), sha $(UFDS_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/ufds && PATH=/opt/npm/1.0/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/ufds && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created ufds bits:"
 	@ls -1 $(UFDS_BITS)
 	@echo ""
@@ -194,7 +200,7 @@ billapi: $(BILLAPI_BITS)
 $(BILLAPI_BITS): build/billing_api
 	@echo "# Build billapi: branch $(BILLING_API_BRANCH), sha $(BILLING_API_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/billing_api && PATH=/opt/npm/1.0/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/billing_api && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created billapi bits:"
 	@ls -1 $(BILLAPI_BITS)
 	@echo ""
@@ -256,7 +262,7 @@ portal: $(PORTAL_BITS)
 $(PORTAL_BITS): build/portal
 	@echo "# Build portal: branch $(PORTAL_BRANCH), sha $(PORTAL_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/portal && PATH=/opt/node/0.6/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	(cd build/portal && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
 	@echo "# Created portal bits:"
 	@ls -1 $(PORTAL_BITS)
 	@echo ""
@@ -394,12 +400,12 @@ CLOUDAPI_BITS=$(BITS_DIR)/cloudapi/cloudapi-pkg-$(_cloudapi_stamp).tar.bz2
 .PHONY: cloudapi
 cloudapi: $(CLOUDAPI_BITS)
 
-# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
+# cloudapi still uses platform node, ensure that same version is first
+# node (and npm) on the PATH.
 $(CLOUDAPI_BITS): build/cloudapi
 	@echo "# Build cloudapi: branch $(CLOUDAPI_BRANCH), sha $(CLOUDAPI_SHA)"
 	mkdir -p $(BITS_DIR)
-	(cd build/cloudapi && PATH=/opt/npm/1.1/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/cloudapi && PATH=/opt/node/0.6.12/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created cloudapi bits:"
 	@ls -1 $(CLOUDAPI_BITS)
 	@echo ""
@@ -449,7 +455,7 @@ agentsshar: $(AGENTSSHAR_BITS_0)
 $(AGENTSSHAR_BITS): build/agents-installer/Makefile
 	@echo "# Build agentsshar: branch $(AGENTS_INSTALLER_BRANCH), sha $(AGENTS_INSTALLER_SHA)"
 	mkdir -p $(BITS_DIR)/agentsshar
-	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/agentsshar/ -d $(BITS_DIR) -b $(AGENTS_INSTALLER_BRANCH))
+	(cd build/agents-installer && PATH=$(shell dirname $(MG_NODE)):$(PATH) TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/agentsshar/ -d $(BITS_DIR) -b $(AGENTS_INSTALLER_BRANCH))
 	@echo "# Created agentsshar bits:"
 	@ls -1 $(AGENTSSHAR_BITS)
 	@echo ""
@@ -484,7 +490,8 @@ $(BOOT_BIT): bits/usbheadnode/build.spec.local
 	@echo "# Build boot: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& PATH=/opt/npm/1.1/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		&& PATH=$(shell dirname $(MG_NODE)):$(PATH) \
+		BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-tar-image -c
 	mv build/usb-headnode/$(shell basename $(BOOT_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created boot bits:"
@@ -506,7 +513,8 @@ $(COAL_BIT): bits/usbheadnode/build.spec.local $(USB_BIT)
 	@echo "# Build coal: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& PATH=/opt/npm/1.1/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		&& PATH=$(shell dirname $(MG_NODE)):$(PATH) \
+		BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-coal-image -c $(USB_BIT)
 	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created coal bits:"
@@ -522,7 +530,8 @@ $(USB_BIT): bits/usbheadnode/build.spec.local $(BOOT_BIT)
 	@echo "# Build usb: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& PATH=/opt/npm/1.1/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		&& PATH=$(shell dirname $(MG_NODE)):$(PATH) \
+		BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-usb-image -c $(BOOT_BIT)
 	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created usb bits:"
@@ -538,7 +547,8 @@ $(UPGRADE_BIT): bits/usbheadnode/build.spec.local $(BOOT_BIT)
 	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& PATH=/opt/npm/1.1/bin:$(PATH) BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		&& PATH=$(shell dirname $(MG_NODE)):$(PATH) \
+		BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-upgrade-image $(BOOT_BIT)
 	mv build/usb-headnode/$(shell basename $(UPGRADE_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created upgrade bits:"
@@ -559,7 +569,7 @@ releasejson:
 	\"boot\": \"$(shell basename $(BOOT_BIT))\", \
 	\"usb\": \"$(shell basename $(USB_BIT))\", \
 	\"upgrade\": \"$(shell basename $(UPGRADE_BIT))\" \
-}" | json >$(RELEASEJSON_BIT)
+}" | $(JSON) >$(RELEASEJSON_BIT)
 
 
 clean_usb-headnode:
