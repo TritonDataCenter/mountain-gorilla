@@ -16,6 +16,7 @@
   "ufds-tarball": "ufds/ufds-pkg-{{BRANCH}}-.*.tar.bz2",
   "billapi-tarball": "billapi/billapi-pkg-{{BRANCH}}-.*.tar.bz2",
   "workflow-tarball": "workflow/workflow-pkg-{{BRANCH}}-.*.tar.bz2",
+  "zapi-tarball": "zapi/zapi-pkg-{{BRANCH}}-.*.tar.bz2",
   "cloudapi-tarball": "cloudapi/cloudapi-pkg-{{BRANCH}}-.*.tar.bz2",
   "dhcpd-tarball": "dhcpd/dhcpd-pkg-{{BRANCH}}-.*.tar.bz2",
   "platform-release": "{{BRANCH}}"

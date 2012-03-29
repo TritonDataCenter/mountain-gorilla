@@ -105,6 +105,13 @@
     "deps": []
   },
 
+  "zapi": {
+    "repos": [
+        {"url": "git@git.joyent.com:zapi.git"}
+    ],
+    "deps": []
+  },
+
   "agentsshar": {
     "repos": [
         {"url": "git@git.joyent.com:agents-installer.git"}
@@ -150,7 +157,8 @@
         "rabbitmq",
         "riak",
         "redis",
-        "workflow"
+        "workflow",
+        "zapi"
     ]
   }
 }
