@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow platform ufds usbheadnode releasejson zapi
+all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow platform ufds usbheadnode releasejson zapi dapi
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow ufds usbheadnode releasejson zapi
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow ufds usbheadnode releasejson zapi dapi
 
 
 #---- smartlogin
@@ -450,7 +450,7 @@ ZAPI_BITS=$(BITS_DIR)/zapi/zapi-pkg-$(_zapi_stamp).tar.bz2
 .PHONY: zapi
 zapi: $(ZAPI_BITS)
 
-# PATH for workflow build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# PATH for zapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(ZAPI_BITS): build/zapi
 	@echo "# Build zapi: branch $(ZAPI_BRANCH), sha $(ZAPI_SHA)"
@@ -460,11 +460,37 @@ $(ZAPI_BITS): build/zapi
 	@ls -1 $(ZAPI_BITS)
 	@echo ""
 
-# Warning: if workflow's submodule deps change, this 'clean_workflow' is insufficient. It would
+# Warning: if zapi's submodule deps change, this 'clean_zapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_zapi:
 	rm -rf $(BITS_DIR)/zapi
 	(cd build/zapi && gmake clean)
+
+
+#---- DAPI
+
+_dapi_stamp=$(DAPI_BRANCH)-$(TIMESTAMP)-g$(DAPI_SHA)
+DAPI_BITS=$(BITS_DIR)/dapi/dapi-pkg-$(_dapi_stamp).tar.bz2
+
+.PHONY: dapi
+dapi: $(DAPI_BITS)
+
+# PATH for dapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(DAPI_BITS): build/dapi
+	@echo "# Build dapi: branch $(DAPI_BRANCH), sha $(DAPI_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/dapi && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created dapi bits:"
+	@ls -1 $(DAPI_BITS)
+	@echo ""
+
+# Warning: if dapi's submodule deps change, this 'clean_dapi' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_dapi:
+	rm -rf $(BITS_DIR)/dapi
+	(cd build/dapi && gmake clean)
+
 
 
 #---- agents shar
