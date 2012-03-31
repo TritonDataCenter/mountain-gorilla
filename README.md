@@ -56,6 +56,8 @@ First, create zone. For example:
     # lab, <https://hub.joyent.com/wiki/display/dev/Development+Lab>).
     ssh bh1-build0
     /opt/custom/create-zone.sh trent   # Pick a different name for yourself :)
+    #  Or use Josh's new "/opt/custom/create-zone-16.sh" to use the newer
+    #  smartos-1.6.1 dataset. It is the future.
     # wait 30s or so it to setup.
 
     zlogin trent
