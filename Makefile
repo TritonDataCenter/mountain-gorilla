@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow zapi dapi platform ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow cnapi zapi dapi platform ufds usbheadnode releasejson
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow zapi dapi ufds usbheadnode releasejson
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow cnapi zapi dapi ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -491,6 +491,30 @@ clean_dapi:
 	rm -rf $(BITS_DIR)/dapi
 	(cd build/dapi && gmake clean)
 
+
+#---- CNAPI
+
+_cnapi_stamp=$(CNAPI_BRANCH)-$(TIMESTAMP)-g$(CNAPI_SHA)
+CNAPI_BITS=$(BITS_DIR)/cnapi/cnapi-pkg-$(_cnapi_stamp).tar.bz2
+
+.PHONY: cnapi
+cnapi: $(CNAPI_BITS)
+
+# PATH for cnapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(CNAPI_BITS): build/cnapi
+	@echo "# Build cnapi: branch $(CNAPI_BRANCH), sha $(CNAPI_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/cnapi && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created cnapi bits:"
+	@ls -1 $(CNAPI_BITS)
+	@echo ""
+
+# Warning: if cnapi's submodule deps change, this 'clean_cnapi' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_cnapi:
+	rm -rf $(BITS_DIR)/cnapi
+	(cd build/cnapi && gmake clean)
 
 
 #---- agents shar

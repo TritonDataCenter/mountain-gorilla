@@ -119,6 +119,13 @@
     "deps": []
   },
 
+  "cnapi": {
+    "repos": [
+        {"url": "git@git.joyent.com:cnapi.git"}
+    ],
+    "deps": []
+  },
+
   "agentsshar": {
     "repos": [
         {"url": "git@git.joyent.com:agents-installer.git"}
@@ -166,7 +173,8 @@
         "redis",
         "workflow",
         "zapi",
-        "dapi"
+        "dapi",
+        "cnapi"
     ]
   }
 }
