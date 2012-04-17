@@ -419,8 +419,8 @@ clean_cloudapi:
 
 #---- MANATEE
 
-_wf_stamp=$(MANATEE_BRANCH)-$(TIMESTAMP)-g$(MANATEE_SHA)
-MANATEE_BITS=$(BITS_DIR)/manatee/manatee-pkg-$(_wf_stamp).tar.bz2
+_manatee_stamp=$(MANATEE_BRANCH)-$(TIMESTAMP)-g$(MANATEE_SHA)
+MANATEE_BITS=$(BITS_DIR)/manatee/manatee-pkg-$(_manatee_stamp).tar.bz2
 
 .PHONY: manatee
 manatee: $(MANATEE_BITS)
