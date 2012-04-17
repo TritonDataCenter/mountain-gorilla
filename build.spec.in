@@ -17,6 +17,7 @@
   "ufds-tarball": "ufds/ufds-pkg-{{BRANCH}}-.*.tar.bz2",
   "billapi-tarball": "billapi/billapi-pkg-{{BRANCH}}-.*.tar.bz2",
   "workflow-tarball": "workflow/workflow-pkg-{{BRANCH}}-.*.tar.bz2",
+  "manatee-tarball": "manatee/manatee-pkg-{{BRANCH}}-.*.tar.bz2",
   "zapi-tarball": "zapi/zapi-pkg-{{BRANCH}}-.*.tar.bz2",
   "dapi-tarball": "dapi/dapi-pkg-{{BRANCH}}-.*.tar.bz2",
   "cnapi-tarball": "cnapi/cnapi-pkg-{{BRANCH}}-.*.tar.bz2",

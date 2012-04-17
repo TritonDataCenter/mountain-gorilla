@@ -98,6 +98,13 @@
     "deps": []
   },
 
+  "manatee": {
+    "repos": [
+        {"url": "git@git.joyent.com:manatee.git"}
+    ],
+    "deps": []
+  },
+
   "workflow": {
     "repos": [
         {"url": "git@git.joyent.com:workflow.git"}

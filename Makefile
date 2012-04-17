@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow cnapi zapi dapi platform moray ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi platform moray ufds usbheadnode releasejson
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow cnapi zapi dapi moray ufds usbheadnode releasejson
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi moray ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -415,6 +415,31 @@ $(CLOUDAPI_BITS): build/cloudapi
 clean_cloudapi:
 	rm -rf $(BITS_DIR)/cloudapi
 	(cd build/cloudapi && gmake clean)
+
+
+#---- MANATEE
+
+_wf_stamp=$(MANATEE_BRANCH)-$(TIMESTAMP)-g$(MANATEE_SHA)
+MANATEE_BITS=$(BITS_DIR)/manatee/manatee-pkg-$(_wf_stamp).tar.bz2
+
+.PHONY: manatee
+manatee: $(MANATEE_BITS)
+
+# PATH for manatee build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(MANATEE_BITS): build/manatee
+	@echo "# Build manatee: branch $(MANATEE_BRANCH), sha $(MANATEE_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/manatee && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created manatee bits:"
+	@ls -1 $(MANATEE_BITS)
+	@echo ""
+
+# Warning: if manatee's submodule deps change, this 'clean_manatee' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_manatee:
+	rm -rf $(BITS_DIR)/manatee
+	(cd build/manatee && gmake clean)
 
 
 #---- WORKFLOW
