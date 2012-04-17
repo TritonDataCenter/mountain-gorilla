@@ -126,6 +126,13 @@
     "deps": []
   },
 
+  "moray": {
+    "repos": [
+        {"url": "git@git.joyent.com:moray.git"}
+    ],
+    "deps": []
+  },
+
   "agentsshar": {
     "repos": [
         {"url": "git@git.joyent.com:agents-installer.git"}

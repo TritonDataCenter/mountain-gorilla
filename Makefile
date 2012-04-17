@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow cnapi zapi dapi platform ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow cnapi zapi dapi platform moray ufds usbheadnode releasejson
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow cnapi zapi dapi ufds usbheadnode releasejson
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow cnapi zapi dapi moray ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -516,6 +516,27 @@ clean_cnapi:
 	rm -rf $(BITS_DIR)/cnapi
 	(cd build/cnapi && gmake clean)
 
+#---- Moray
+
+_moray_stamp=$(MORAY_BRANCH)-$(TIMESTAMP)-g$(MORAY_SHA)
+MORAY_BITS=$(BITS_DIR)/moray/moray-pkg-$(_moray_stamp).tar.bz2
+
+.PHONY: moray
+moray: $(MORAY_BITS)
+
+# PATH for moray build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(MORAY_BITS): build/moray
+	@echo "# Build moray: branch $(MORAY_BRANCH), sha $(MORAY_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/moray && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created moray bits:"
+	@ls -1 $(MORAY_BITS)
+	@echo ""
+
+clean_moray:
+	rm -rf $(BITS_DIR)/moray
+	(cd build/moray && gmake distclean)
 
 #---- agents shar
 
