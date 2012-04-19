@@ -797,6 +797,10 @@ clean_docs:
 
 #---- misc targets
 
+.PHONY: clean
+clean: clean_docs
+
+.PHONY: clean_null
 clean_null:
 
 .PHONY: distclean
