@@ -48,7 +48,6 @@ attempt to add support for this (other suggestions welcome):
     results and put everything together.
 
 
-
 Jenkins controlled pros and cons:
 
 - Pro: Easier to get going. Create a Jenkins slave for each deployment
