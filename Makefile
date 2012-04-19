@@ -763,6 +763,37 @@ clean_illumosextra:
 
 
 
+#---- docs target (based on eng.git/tools/mk code for this)
+
+deps/%/.git:
+	git submodule update --init deps/$*
+
+RESTDOWN_EXEC	?= deps/restdown/bin/restdown
+RESTDOWN	?= python2.6 $(RESTDOWN_EXEC)
+RESTDOWN_FLAGS	?=
+DOC_FILES	= design.restdown
+DOC_BUILD	= build/docs/public
+
+$(DOC_BUILD):
+	mkdir -p $@
+
+$(DOC_BUILD)/%.json $(DOC_BUILD)/%.html: docs/%.restdown | $(DOC_BUILD) $(RESTDOWN_EXEC)
+	$(RESTDOWN) $(RESTDOWN_FLAGS) -m $(DOC_BUILD) $<
+	mv $(<:%.restdown=%.json) $(DOC_BUILD)
+	mv $(<:%.restdown=%.html) $(DOC_BUILD)
+
+.PHONY: docs
+docs:							\
+    $(DOC_FILES:%.restdown=$(DOC_BUILD)/%.html)		\
+    $(DOC_FILES:%.restdown=$(DOC_BUILD)/%.json)
+
+$(RESTDOWN_EXEC): | deps/restdown/.git
+
+clean_docs:
+	rm -rf build/docs
+
+
+
 
 #---- misc targets
 

@@ -1,0 +1,16 @@
+---
+title: Mountain Gorilla
+markdown2extras: wiki-tables, cuddled-lists
+apisections:
+---
+
+# Mountain Gorilla
+
+A single repo to build SDC. This is just a *driver* repo, all the components
+are still in their existing separate repos.
+
+Links:
+
+- [README](https://mo.joyent.com/mountain-gorilla/blob/master/README.md)
+- [design notes](https://mo.joyent.com/docs/mg/master/design.html)
+
