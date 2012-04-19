@@ -172,6 +172,7 @@
         "platform",
         "agentsshar",
         "ca",
+        "moray",
         "ufds",
         "amon",
         "billapi",
