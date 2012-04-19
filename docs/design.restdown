@@ -72,13 +72,6 @@ MG controlled pros and cons:
   Possibly even include compute nodes to spread out the build load.
 
 
-TODOs:
-
-- Either way we should be adding safeguards in the build process to ensure
-  that an SDC build (i.e. usb-headnode output) does not allow deploying
-  an SDC zone with build vs. deploy dataset mismatch.
-
-
 My (Trent's) opinion right now is to just go with "Jenkins controlled".
 Implementation details:
 
@@ -109,4 +102,5 @@ Implementation details:
     Not sure the best way to get that dataset name from within the build
     zone. Anybody? Could be passed in from Jenkins in the build environment.
 
+IOW, pretty straightforward. Thoughts?
 
