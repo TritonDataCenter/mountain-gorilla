@@ -771,7 +771,7 @@ deps/%/.git:
 RESTDOWN_EXEC	?= deps/restdown/bin/restdown
 RESTDOWN	?= python2.6 $(RESTDOWN_EXEC)
 RESTDOWN_FLAGS	?=
-DOC_FILES	= design.restdown
+DOC_FILES	= design.restdown index.restdown
 DOC_BUILD	= build/docs/public
 
 $(DOC_BUILD):
@@ -791,7 +791,6 @@ $(RESTDOWN_EXEC): | deps/restdown/.git
 
 clean_docs:
 	rm -rf build/docs
-
 
 
 
