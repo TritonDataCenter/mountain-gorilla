@@ -1,0 +1,246 @@
+#!/bin/bash
+
+#
+# Run this script on the headnode to set up a local zone for developing Cloud
+# Analytics.  The script takes a single argument: the desired username.
+#
+
+shopt -s xpg_echo
+set -o xtrace
+
+#
+# Glogal vars/tuning
+#
+sh_arg0=$(basename $0)
+sh_bconfig=$1
+sh_zconfig=$2
+sh_zone=$3
+sh_sha=$4
+sh_branch=$BRANCH # Passed as env var
+sh_sshopts="-o StrictHostKeyChecking=no -o UserKnownhostsFile=/dev/null"
+sh_bits="mg-build-output.$$"
+sh_zoneip=
+sh_dsurn=
+sh_zid=
+
+#
+# Should all be loaded from a config file.
+#
+sh_dataset=
+sh_dataset_vers=
+sh_package=
+sh_pkgsrc=
+sh_repo=
+
+sh_clapibase=
+sh_clapiuser=
+sh_clapipasswd=
+sh_sshkey=
+sh_output=
+
+#
+# Determined by config
+#
+sh_clapicurl=
+sh_clapiurl=
+
+
+#
+# Based on config file contents
+#
+
+
+function fail
+{
+	local msg="$*"
+	[[ -z "$msg" ]] && msg="failed"
+	echo "$sh_arg0: $msg" >&2
+	exit 1
+}
+
+function sh_load_config
+{
+	local curzone branch use
+	[[ -f $sh_bconfig ]] || fail "failed to read base conifg"
+
+	sh_clapibase=$(json clapi_url < $sh_bconfig)
+	[[ $? -eq 0 ]] || fail "failed to read cloud api base url"
+	[[ -n $sh_clapibase ]] || fail "missing cloud api base url"
+	sh_clapiuser=$(json clapi_user < $sh_bconfig)
+	[[ $? -eq 0 ]] || fail "failed to read cloud api user"
+	[[ -n $sh_clapiuser ]] || fail "missing cloud api user"
+	sh_clapipasswd=$(json clapi_passwd < $sh_bconfig)
+	[[ $? -eq 0 ]] || fail "failed to read cloud api user"
+	[[ -n $sh_clapipasswd ]] || fail "missing cloud api password"
+	sh_sshkey=$(json ssh_private < $sh_bconfig)
+	[[ $? -eq 0 ]] || fail "failed to read ssh private key for gitosis"
+	[[ -f $sh_sshkey ]] || fail "can't access ssh private key"
+	sh_output=$(json output_dir < $sh_bconfig)
+	[[ $? -eq 0 ]] || fail "failed to read output directory"
+	[[ -n $sh_output ]] || fail "missing output directory"
+
+	[[ -f $sh_zconfig ]] || fail "failed to read zone config"
+	use=$(json $sh_zone.usezone < $sh_zconfig)
+	[[ $? -eq 0 ]] || fail "usezone not set, this shouldn't happen"
+	[[ "$use" == "true" ]] || fail "usezone not true, this shouldn't happen"
+
+	branch=$(json $sh_zone.branch < $sh_zconfig)
+	[[ $? -eq 0 ]] || fail "failed to zone's config: $sh_zone"
+	curzone=$(echo $branch | json $sh_branch)
+	if [[ -z "$curzone" ]]; then
+		echo "Warning: $sh_branch undefined in targets.json. " \
+		    "Defaulting to master"
+		curzone=$(echo $branch | json master)
+		[[ -n "$curzone" ]] || fail "Couldn't find master branch"
+	fi
+
+	sh_dataset=$(echo $curzone | json dataset)
+	[[ $? -eq 0 ]] || fail "failed to load dataset"
+	[[ -n $sh_dataset ]] || fail "missing dataset info"
+	sh_dataset_vers=$(echo $curzone | json version)
+	[[ $? -eq 0 ]] || fail "failed to load dataset version"
+	[[ -n $sh_dataset_vers ]] || fail "missing dataset version info"
+	sh_package=$(echo $curzone | json package)
+	[[ $? -eq 0 ]] || fail "failed to load package"
+	[[ -n $sh_package ]] || fail "missing pacakge info"
+	sh_pkgsrc=$(echo $curzone | json pkgsrc)
+	[[ $? -eq 0 ]] || fail "failed to load pkgsrc packages"
+	[[ -n $sh_pkgsrc ]] || fail "missing pkgsrc info"
+	sh_repo=$(echo $curzone | json rname)
+	[[ $? -eq 0 ]] || fail "failed to load git repository"
+	[[ -n $sh_repo ]] || fail "missing repo info"
+	sh_clapicurl="curl -k -H x-api-version:\ ~6.5 -u ${sh_clapiuser}:${sh_clapipasswd}"
+	sh_clapiurl="$sh_clapibase/$sh_clapiuser"
+}
+
+function sh_clapi_curl
+{
+	curl -k -H 'X-api-version: ~6.5' -H 'Accept: application/json' -u \
+	    ${sh_clapiuser}:${sh_clapipasswd} -s --url $*
+}
+
+function sh_verif_package
+{
+	local out npkgs pname found ii
+	out=$(sh_clapi_curl $sh_clapiurl/packages)
+
+	[[ $? -eq 0 ]] || fail "failed to list packages"	
+	found=
+	npkgs=$(echo "$out" | json length)
+	for ((ii=0; ii < $npkgs; ii++)); do
+		pname=$(echo "$out" | json [$ii].name)
+		[[ $? -eq 0 ]] || fail "Failed to get package name"
+		[[ "$sh_package" == $pname ]] && found="true"
+	done
+
+	[[ ! -z "$found" ]]
+
+}
+
+function sh_verif_dataset
+{
+	local out nds vers found ii
+	out=$(sh_clapi_curl $sh_clapiurl/datasets)
+
+	[[ $? -eq 0 ]] || fail "failed to list datasets"	
+	found=
+	nds=$(echo "$out" | json length)
+	for ((ii=0; ii < $nds; ii++)); do
+		vers=$(echo "$out" | json [$ii].urn | \
+		    nawk 'BEGIN { FS=":" } ; { print $3"-"$4 }')
+		[[ $? -eq 0 ]] || fail "Failed to get data"
+		if [[ "$sh_dataset-$sh_dataset_vers" == $vers ]]; then
+			found="true"
+			sh_dsurn=$(echo "$out" | json [$ii].urn)
+		fi
+	done
+
+	[[ ! -z "$found" ]]
+}
+
+function sh_provision
+{
+	local out id cont
+
+        out=$(sh_clapi_curl $sh_clapiurl/machines -X POST \
+	    -d dataset=$sh_dsurn -d package="$sh_package" name="$sh_repo")
+
+	id=$(echo "$out" | json id )
+	[[ -n $id ]] || fail "no uuid: $out"
+
+	cont=
+	while [[ -z $cont ]]; do
+		sleep 1
+		out=$(sh_clapi_curl $sh_clapiurl/machines/$id)
+        	[[ $? -eq 0 ]] || fail "failed to get machine state: $out"
+		state=$(echo "$out" | json state)
+		[[ -n $state ]] || fail "no state: $out"
+		if [[ "running" == $state ]]; then
+			cont="false"
+		fi
+		echo ".\c "
+	done
+
+	sh_zid=$id
+	sh_zoneip=$(echo "$out" | json ips[0])
+	[[ -n "$sh_zoneip" ]] || fail "Couldn't get zone ip"
+}
+
+function sh_delete
+{
+	local out cont
+	sh_clapi_curl $sh_clapiurl/machines/$sh_zid -X POST -d action="stop"
+
+	cont=
+	while [[ -z $cont ]]; do
+		sleep 1
+		out=$(sh_clapi_curl $sh_clapiurl/machines/$sh_zid)
+        	[[ $? -eq 0 ]] || fail "failed to get machine state: $out"
+		state=$(echo "$out" | json state)
+		[[ -n $state ]] || fail "no state: $out"
+		if [[ "stopped" == $state ]]; then
+			cont="false"
+		fi
+	done
+	sh_clapi_curl $sh_clapiurl/machines/$sh_zid -X DELETE
+}
+
+[[ -n $sh_zone ]] || fail "missing requsted zone"
+[[ -n $sh_sha ]] || fail "missing requested branch"
+sh_load_config || fail "failed to load configuration"
+sh_verif_dataset || fail "Missing dataset $sh_dataset"
+sh_verif_package || fail "Missing package $sh_package"
+sh_provision 
+
+sleep 5
+ssh $sh_sshopts root@$sh_zoneip pkgin -y install $sh_pkgsrc
+[[ $? -eq 0 ]] || fail "failed to install packages"
+cat > sshconfig.$$ <<EOF
+host git.joyent.com
+	StrictHostKeyChecking no
+	UserKnownHostsFile=/dev/null
+EOF
+scp $sh_sshopts sshconfig.$$ root@$sh_zoneip:~/.ssh/config
+[[ $? -eq 0 ]] || fail "failed to set .ssh/config"
+rm -f sshconfig.$$
+scp $sh_sshopts $sh_sshkey root@$sh_zoneip:~/.ssh/id_rsa
+[[ $? -eq 0 ]] || fail "failed to copy private key"
+
+ssh $sh_sshopts root@$sh_zoneip git clone git@git.joyent.com:$sh_repo.git
+[[ $? -eq 0 ]] || fail "failed to clone repo"
+
+ssh $sh_sshopts root@$sh_zoneip "cd $sh_repo && git checkout $sh_sha"
+[[ $? -eq 0 ]] || fail "failed to clone repo"
+
+ssh $sh_sshopts root@$sh_zoneip BRANCH=$BRANCH TIMESTAMP=$TIMESTAMP gmake -C $sh_repo release
+[[ $? -eq 0 ]] || fail "failed to build release target"
+
+ssh $sh_sshopts root@$sh_zoneip BRANCH=$BRANCH TIMESTAMP=$TIMESTAMP BITS_DIR=$sh_bits gmake -C $sh_repo publish
+[[ $? -eq 0 ]] || fail "failed to build release target"
+
+mkdir -p $sh_output 2>&1 >/dev/null
+scp $sh_sshopts -r root@$sh_zoneip:~/$sh_repo/$sh_bits/* $sh_output/
+[[ $? -eq 0 ]] || fail "failed to retrieve release object"
+
+sh_delete
+exit 0

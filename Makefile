@@ -147,11 +147,21 @@ ca: $(CA_BITS_0)
 
 # PATH for ca build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(CA_BITS): build/cloud-analytics
+config_ca_old: build/cloud-analytics
 	@echo "# Build ca: branch $(CLOUD_ANALYTICS_BRANCH), sha $(CLOUD_ANALYTICS_SHA)"
 	mkdir -p $(BITS_DIR)
 	(cd build/cloud-analytics && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
 	@echo "# Created ca bits:"
+	@ls -1 $(CA_BITS)
+	@echo ""
+
+#
+# Build CA in the new build-zone style if requested by configure.
+#
+config_ca_new: build/cloud-analytics
+	@echo "# Build ca: branch $(CLOUD_ANALYTICS_BRANCH), sha $(CLOUD_ANALYTICS_SHA)"
+	mkdir -p $(BITS_DIR)
+	TIMESTAMP=$(TIMESTAMP) BRANCH=$(BRANCH) $(TOP)/tools/build-zone build.json $(TOP)/targets.json ca $(CLOUD_ANALYTICS_SHA)
 	@ls -1 $(CA_BITS)
 	@echo ""
 
@@ -818,3 +828,5 @@ upload_jenkins:
 		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
 		&& exit 1 || true
 	./tools/upload-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(UPLOAD_LOCATION)/$(JOB_NAME)
+
+include bits/config.targ.mk

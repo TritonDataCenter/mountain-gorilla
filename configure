@@ -28,7 +28,8 @@ TRY_BRANCH=
 ROOT=$(pwd)
 CACHE_DIR=${ROOT}/cache
 
-
+USEZONE=
+NOUSEZONE=
 
 #---- internal support functions
 
@@ -69,6 +70,31 @@ function preload_bits() {
         bits/$target/
 }
 
+#
+# The requested target may use the new functionality to build it inside of an
+# SDC zone. We check that here and note it for later use. We need to see whether
+# use zone is set for the specified branch.
+#
+# Based on targets.json, we have three specific states. Something is entirely in
+# the old world, in which case, neither USEZONE or NOUSEZONE get set. If the
+# usezone value is there, then we need to check which it is so we can properly
+# emit the right Makefile target snippet.
+#
+function check_usezone() {
+	local zone use	
+	local target=$1
+
+	zone=$(json $target < targets.json)
+	[[ $? -eq 0 ]] || fatal "failed to read targets.json"
+	use=$(echo $zone | json usezone)
+	if [[ -n "$use" ]]; then
+		if [[ "$use" == "true" ]]; then
+			USEZONE="$target $USEZONE"
+		else
+			NOUSEZONE="$target $NOUSEZONE"
+		fi
+	fi
+}
 
 # Clone/update the given git repo in the repo cache.
 # Usage:
@@ -145,6 +171,7 @@ function get_repo2() {
 }
 
 function gen_config() {
+    local output
     mkdir -p bits
     cat <<EOF >bits/config.mk
 TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
@@ -160,6 +187,16 @@ EOF
       branch_name=$((cd ${repo} && git symbolic-ref HEAD 2> /dev/null ) || echo "")
       echo ${upper_repo_name}_BRANCH=$(echo ${branch_name##refs/heads/} || echo "") >> ${ROOT}/bits/config.mk
       echo ${upper_repo_name}_SHA=$((cd ${repo} && git log --pretty=format:'%h' -1 ) || echo "") >> ${ROOT}/bits/config.mk
+  done
+
+  for targ in $USEZONE; do
+      output="\$($(echo $targ | tr [:lower:] [:upper:])_BITS): config_${targ}_new"
+      echo $output >> ${ROOT}/bits/config.targ.mk 
+  done
+
+  for targ in $NOUSEZONE; do
+      output="\$($(echo $targ | tr [:lower:] [:upper:])_BITS): config_${targ}_old"
+      echo $output >> ${ROOT}/bits/config.targ.mk 
   done
 }
 
@@ -309,6 +346,7 @@ fi
 # Else we are doing a full configure for a fresh build. Start fresh:
 mkdir -p bits
 touch bits/config.mk
+touch bits/config.targ.mk
 make distclean
 
 
@@ -317,6 +355,7 @@ if [[ ! -z "$TARGET" ]]; then
         preload_bits "platform" "$BRANCH" "$TRY_BRANCH"
         targets=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))' | grep -v '^platform' | grep -v '^illumosextra')
         for targ in $targets; do
+            check_usezone $targ
             get_target_repos $targ
         done
     else
@@ -324,6 +363,7 @@ if [[ ! -z "$TARGET" ]]; then
         if [[ -z "$(cat targets.json | $JSON $TARGET)" ]]; then
             fatal "Unknown target: $TARGET"
         fi
+        check_usezone $TARGET
         get_target_repos $TARGET
         for targ in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
             preload_bits $targ "$BRANCH" "$TRY_BRANCH"
@@ -332,6 +372,7 @@ if [[ ! -z "$TARGET" ]]; then
 else
     targets=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))')
     for targ in $targets; do
+        check_usezone $targ
         get_target_repos $targ
     done
 fi
