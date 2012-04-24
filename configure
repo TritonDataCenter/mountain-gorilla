@@ -191,6 +191,8 @@ EOF
       echo ${upper_repo_name}_SHA=$((cd ${repo} && git log --pretty=format:'%h' -1 ) || echo "") >> ${ROOT}/bits/config.mk
   done
 
+  touch ${ROOT}/bits/config.targ.mk
+
   for targ in $USEZONE; do
       output="\$($(echo $targ | tr [:lower:] [:upper:])_BITS): config_${targ}_new"
       echo $output >> ${ROOT}/bits/config.targ.mk
