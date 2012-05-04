@@ -143,6 +143,13 @@
     "deps": []
   },
 
+  "napi": {
+    "repos": [
+        {"url": "git@git.joyent.com:napi.git"}
+    ],
+    "deps": []
+  },
+
   "moray": {
     "repos": [
         {"url": "git@git.joyent.com:moray.git"}

@@ -23,6 +23,7 @@
   "cnapi-tarball": "cnapi/cnapi-pkg-{{BRANCH}}-.*.tar.bz2",
   "cloudapi-tarball": "cloudapi/cloudapi-pkg-{{BRANCH}}-.*.tar.bz2",
   "dhcpd-tarball": "dhcpd/dhcpd-pkg-{{BRANCH}}-.*.tar.bz2",
+  "napi-tarball": "napi/napi-pkg-{{BRANCH}}-.*.tar.bz2",
   "platform-release": "{{BRANCH}}"
 
 }

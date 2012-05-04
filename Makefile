@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi platform moray ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi platform moray ufds usbheadnode releasejson
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi moray ufds usbheadnode releasejson
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi moray ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -550,6 +550,32 @@ $(CNAPI_BITS): build/cnapi
 clean_cnapi:
 	rm -rf $(BITS_DIR)/cnapi
 	(cd build/cnapi && gmake clean)
+
+
+#---- NAPI
+
+_napi_stamp=$(NAPI_BRANCH)-$(TIMESTAMP)-g$(NAPI_SHA)
+NAPI_BITS=$(BITS_DIR)/napi/napi-pkg-$(_napi_stamp).tar.bz2
+
+.PHONY: napi
+napi: $(NAPI_BITS)
+
+# PATH for napi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(NAPI_BITS): build/napi
+	@echo "# Build napi: branch $(NAPI_BRANCH), sha $(NAPI_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/napi && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	@echo "# Created napi bits:"
+	@ls -1 $(NAPI_BITS)
+	@echo ""
+
+# Warning: if NAPI's submodule deps change, this 'clean_napi' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_napi:
+	rm -rf $(BITS_DIR)/napi
+	(cd build/napi && gmake clean)
+
 
 #---- Moray
 
