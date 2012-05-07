@@ -206,7 +206,8 @@
         "workflow",
         "zapi",
         "dapi",
-        "cnapi"
+        "cnapi",
+        "napi"
     ]
   }
 }
