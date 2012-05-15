@@ -157,6 +157,13 @@
     "deps": []
   },
 
+  "dcapi": {
+    "repos": [
+        {"url": "git@git.joyent.com:dcapi.git"}
+    ],
+    "deps": []
+  },
+
   "agentsshar": {
     "repos": [
         {"url": "git@git.joyent.com:agents-installer.git"}

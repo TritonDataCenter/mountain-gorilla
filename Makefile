@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi platform moray ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi platform moray ufds usbheadnode releasejson
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi moray ufds usbheadnode releasejson
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi moray ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -598,6 +598,32 @@ $(MORAY_BITS): build/moray
 clean_moray:
 	rm -rf $(BITS_DIR)/moray
 	(cd build/moray && gmake distclean)
+
+
+#---- DCAPI
+
+_dcapi_stamp=$(DCAPI_BRANCH)-$(TIMESTAMP)-g$(DCAPI_SHA)
+DCAPI_BITS=$(BITS_DIR)/dcapi/dcapi-pkg-$(_dcapi_stamp).tar.bz2
+
+.PHONY: dcapi
+napi: $(DCAPI_BITS)
+
+# PATH for dcapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(DCAPI_BITS): build/dcapi
+	@echo "# Build dcapi: branch $(DCAPI_BRANCH), sha $(DCAPI_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/dcapi && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created dcapi bits:"
+	@ls -1 $(DCAPI_BITS)
+	@echo ""
+
+# Warning: if DCAPI's submodule deps change, this 'clean_dcapi' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_dcapi:
+	rm -rf $(BITS_DIR)/dcapi
+	(cd build/dcapi && gmake clean)
+
 
 #---- agents shar
 
