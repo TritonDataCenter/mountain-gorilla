@@ -606,7 +606,7 @@ _dcapi_stamp=$(DCAPI_BRANCH)-$(TIMESTAMP)-g$(DCAPI_SHA)
 DCAPI_BITS=$(BITS_DIR)/dcapi/dcapi-pkg-$(_dcapi_stamp).tar.bz2
 
 .PHONY: dcapi
-napi: $(DCAPI_BITS)
+dcapi: $(DCAPI_BITS)
 
 # PATH for dcapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
