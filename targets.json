@@ -213,7 +213,8 @@
         "zapi",
         "dapi",
         "cnapi",
-        "napi"
+        "napi",
+        "dcapi"
     ]
   }
 }
