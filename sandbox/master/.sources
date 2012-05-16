@@ -15,7 +15,6 @@ booter git git@git.joyent.com:booter.git
 capi git git@git.joyent.com:customers_api.git
 
 # platform
-operator-toolkit git git@git.joyent.com:operator-toolkit.git
 illumos-live git git@git.joyent.com:illumos-live.git
 ur-agent git git@git.joyent.com:ur-agent.git
 illumos-extra git git@github.com:joyent/illumos-extra.git
