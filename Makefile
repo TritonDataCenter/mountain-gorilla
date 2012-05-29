@@ -81,10 +81,8 @@ _a_stamp=$(AGENTS_BRANCH)-$(TIMESTAMP)-g$(AGENTS_SHA)
 AGENTS_BITS=$(BITS_DIR)/agents/agents_core/agents_core-$(_a_stamp).tgz \
 	$(BITS_DIR)/agents/heartbeater/heartbeater-$(_a_stamp).tgz \
 	$(BITS_DIR)/agents/dataset_manager/dataset_manager-$(_a_stamp).tgz \
-	$(BITS_DIR)/agents/zonetracker/zonetracker-$(_a_stamp).tgz \
 	$(BITS_DIR)/agents/provisioner-v2/provisioner-v2-$(_a_stamp).tgz \
-	$(BITS_DIR)/agents/zonetracker-v2/zonetracker-v2-$(_a_stamp).tgz \
-	$(BITS_DIR)/agents/mock_cloud/mock_cloud-$(_a_stamp).tgz
+	$(BITS_DIR)/agents/zonetracker-v2/zonetracker-v2-$(_a_stamp).tgz
 AGENTS_BITS_0=$(shell echo $(AGENTS_BITS) | awk '{print $$1}')
 
 agents: $(AGENTS_BITS_0)
