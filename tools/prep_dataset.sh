@@ -4,20 +4,37 @@ set -o errexit
 
 JSON="tools/json"
 
-tarball=$1
-output=$2
-gzservers=$3
+tarballs=""
+packages=""
+output=""
+
+while getopts t:p:s:o: opt; do
+     case $opt in
+       t)
+         tarballs="${tarballs} ${OPTARG}"
+         ;;
+       p)
+         packages="${packages} ${OPTARG}"
+         ;;
+       s)
+         gzservers=$OPTARG
+         ;;
+       o)
+         output=$OPTARG
+         ;;
+       \?)
+         echo "Invalid flag"
+         exit 1;
+     esac
+done
+
+if [[ -z ${output} ]]; then
+  echo "No output file specified"
+  exit 1;
+fi
 
 if [[ -z ${gzservers} ]]; then
   gzservers=gzhosts.json
-fi
-
-bzip=$(echo $tarball | grep "tar.bz2" || /bin/true ) 
-
-if [[ -n ${bzip} ]]; then
-  UNCOMPRESS=bzcat
-else
-  UNCOMPRESS=gzcat
 fi
 
 host=$(cat ${gzservers} | json  $(($RANDOM % `cat ${gzservers} | ./tools/json length`)) )
@@ -51,9 +68,29 @@ echo "{
 
 uuid=$(${SSH} "vmadm list -p -o uuid,alias | grep temp_image.$$ | cut -d ':' -f 1")
 
-cat ${tarball} | ${SSH} "zlogin ${uuid} 'cd / ; ${UNCOMPRESS} | tar -xf -'"
+for tarball in $tarballs; do
+  bzip=$(echo $tarball | grep "tar.bz2" || /bin/true ) 
 
-cat tools/clean-image.sh | ${SSH} "zlogin ${uuid} 'cat > /tmp/clean-image.sh; /usr/bin/bash /tmp/prepare-image.sh; shutdown -i5 -g0 -y;'"
+  if [[ -n ${bzip} ]]; then
+    uncompress=bzcat
+  else
+    uncompress=gzcat
+  fi
+
+  cat ${tarball} | ${SSH} "zlogin ${uuid} 'cd / ; ${uncompress} | gtar --strip-components 1 -xf - root'"
+done
+
+##
+# install packages
+if [[ -n ${packages} ]]; then
+  ${SSH} "zlogin ${uuid} '/opt/local/bin/pkgin -f -y update'"
+  ${SSH} "zlogin ${uuid} '/opt/local/bin/pkgin -y in ${packages}'"
+fi
+#
+# import smf manifests
+${SSH} "zlogin ${uuid} '/usr/bin/find /opt/smartdc -name manifests -exec svccfg import {} \;'"
+
+cat tools/clean-image.sh | ${SSH} "zlogin ${uuid} 'cat > /tmp/clean-image.sh; /usr/bin/bash /tmp/clean-image.sh; shutdown -i5 -g0 -y;'"
 
 ${SSH} "zfs snapshot zones/${uuid}@dataset.$$ ; zfs send zones/${uuid}@dataset.$$" | cat > ${output}
 
