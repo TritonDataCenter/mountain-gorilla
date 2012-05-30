@@ -186,6 +186,10 @@ EOF
   cd build/
   for repo in * ; do
       upper_repo_name=$(echo $repo | tr [:lower:] [:upper:] | tr - _)
+      if [[ $(cat ${ROOT}/appliances.json | json $repo) ]]; then
+        echo ${upper_repo_name}_DATASET=$(cat ${ROOT}/appliances.json | json ${repo}.dataset_uuid) >> ${ROOT}/bits/config.mk
+        echo ${upper_repo_name}_PKGSRC=\"$(cat ${ROOT}/appliances.json | json ${repo}.pkgsrc | json -a |  xargs)\" >> ${ROOT}/bits/config.mk
+      fi
       branch_name=$((cd ${repo} && git symbolic-ref HEAD 2> /dev/null ) || echo "")
       echo ${upper_repo_name}_BRANCH=$(echo ${branch_name##refs/heads/} || echo "") >> ${ROOT}/bits/config.mk
       echo ${upper_repo_name}_SHA=$((cd ${repo} && git log --pretty=format:'%h' -1 ) || echo "") >> ${ROOT}/bits/config.mk
