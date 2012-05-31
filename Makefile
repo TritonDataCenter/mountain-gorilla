@@ -636,7 +636,7 @@ agentsshar: $(AGENTSSHAR_BITS_0)
 $(AGENTSSHAR_BITS): build/agents-installer/Makefile
 	@echo "# Build agentsshar: branch $(AGENTS_INSTALLER_BRANCH), sha $(AGENTS_INSTALLER_SHA)"
 	mkdir -p $(BITS_DIR)/agentsshar
-	(cd build/agents-installer && PATH=$(shell dirname $(MG_NODE)):$(PATH) TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/agentsshar/ -d $(BITS_DIR) -b $(AGENTS_INSTALLER_BRANCH))
+	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/agentsshar/ -d $(BITS_DIR) -b $(AGENTS_INSTALLER_BRANCH))
 	@echo "# Created agentsshar bits:"
 	@ls -1 $(AGENTSSHAR_BITS)
 	@echo ""
@@ -671,8 +671,7 @@ $(BOOT_BIT): bits/usbheadnode/build.spec.local
 	@echo "# Build boot: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& PATH=$(shell dirname $(MG_NODE)):$(PATH) \
-		BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		&& BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-tar-image -c
 	mv build/usb-headnode/$(shell basename $(BOOT_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created boot bits:"
@@ -694,8 +693,7 @@ $(COAL_BIT): bits/usbheadnode/build.spec.local $(USB_BIT)
 	@echo "# Build coal: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& PATH=$(shell dirname $(MG_NODE)):$(PATH) \
-		BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		&& BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-coal-image -c $(USB_BIT)
 	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created coal bits:"
@@ -711,8 +709,7 @@ $(USB_BIT): bits/usbheadnode/build.spec.local $(BOOT_BIT)
 	@echo "# Build usb: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& PATH=$(shell dirname $(MG_NODE)):$(PATH) \
-		BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		&& BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-usb-image -c $(BOOT_BIT)
 	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created usb bits:"
@@ -728,8 +725,7 @@ $(UPGRADE_BIT): bits/usbheadnode/build.spec.local $(BOOT_BIT)
 	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& PATH=$(shell dirname $(MG_NODE)):$(PATH) \
-		BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		&& BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-upgrade-image $(BOOT_BIT)
 	mv build/usb-headnode/$(shell basename $(UPGRADE_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created upgrade bits:"
@@ -753,7 +749,7 @@ releasejson:
 }" | $(JSON) >$(RELEASEJSON_BIT)
 
 
-clean_usb-headnode:
+clean_usbheadnode:
 	rm -rf $(BOOT_BIT) $(UPGRADE_BIT) $(USB_BIT) $(COAL_BIT)
 
 
