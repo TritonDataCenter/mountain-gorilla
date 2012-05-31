@@ -41,7 +41,7 @@
   },
   "adminui": {
     "repos": [
-        {"url": "git@git.joyent.com:mcp_api_admin.git", "dir": "adminui"}
+        {"url": "git@git.joyent.com:adminui.git", "dir": "adminui"}
     ],
     "deps": []
   },
