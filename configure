@@ -186,9 +186,17 @@ EOF
   cd build/
   for repo in * ; do
       upper_repo_name=$(echo $repo | tr [:lower:] [:upper:] | tr - _)
-      if [[ $(cat ${ROOT}/appliances.json | json $repo) ]]; then
-        echo ${upper_repo_name}_DATASET=$(cat ${ROOT}/appliances.json | json ${repo}.dataset_uuid) >> ${ROOT}/bits/config.mk
-        echo ${upper_repo_name}_PKGSRC=\"$(cat ${ROOT}/appliances.json | json ${repo}.pkgsrc | json -a |  xargs)\" >> ${ROOT}/bits/config.mk
+      if [[ $(cat ${ROOT}/targets.json | $JSON ${repo} | $JSON appliance) == 'true' ]]; then
+        echo ${upper_repo_name}_DATASET=$(cat ${ROOT}/targets.json | json ${repo}.dataset_uuid) >> ${ROOT}/bits/config.mk
+        echo ${upper_repo_name}_PKGSRC=\"$(cat ${ROOT}/targets.json | json ${repo}.pkgsrc | json -a |  xargs)\" >> ${ROOT}/bits/config.mk
+        deps=""
+        for dep in $(cat ${ROOT}/targets.json | json ${repo}.deps | json -a |  xargs); do
+           deps="${deps} $(ls ${ROOT}/bits/${dep}/*.tar.* | xargs)"
+        done
+        if [[ -n ${deps} ]]; then
+            echo ${upper_repo_name}_EXTRA_TARBALLS=\"${deps}\" >> ${ROOT}/bits/config.mk
+        fi
+
       fi
       branch_name=$((cd ${repo} && git symbolic-ref HEAD 2> /dev/null ) || echo "")
       echo ${upper_repo_name}_BRANCH=$(echo ${branch_name##refs/heads/} || echo "") >> ${ROOT}/bits/config.mk
