@@ -145,6 +145,13 @@
     "deps": []
   },
 
+  "binder": {
+    "repos": [
+        {"url": "git@git.joyent.com:binder.git"}
+    ],
+    "deps": []
+  },
+
   "dcapi": {
     "repos": [
         {"url": "git@git.joyent.com:dcapi.git"}
