@@ -84,6 +84,7 @@ done
 # install packages
 if [[ -n ${packages} ]]; then
   ${SSH} "zlogin ${uuid} '/opt/local/bin/pkgin -f -y update'"
+  ${SSH} "zlogin ${uuid} 'touch /opt/local/.dli_license_accepted"
   ${SSH} "zlogin ${uuid} '/opt/local/bin/pkgin -y in ${packages}'"
 fi
 #
