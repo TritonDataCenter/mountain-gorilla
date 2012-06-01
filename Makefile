@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi platform moray ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi platform moray ufds usbheadnode releasejson binder
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi moray ufds usbheadnode releasejson
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi moray ufds usbheadnode releasejson binder
 
 
 #---- smartlogin
@@ -557,6 +557,26 @@ $(MORAY_BITS): build/moray
 clean_moray:
 	rm -rf $(BITS_DIR)/moray
 	(cd build/moray && gmake distclean)
+
+#---- Binder
+
+_binder_stamp=$(BINDER_BRANCH)-$(TIMESTAMP)-g$(BINDER_SHA)
+BINDER_BITS=$(BITS_DIR)/binder/binder-pkg-$(_binder_stamp).tar.bz2
+
+.PHONY: binder
+binder: $(BINDER_BITS)
+
+$(BINDER_BITS): build/binder
+	@echo "# Build binder: branch $(BINDER_BRANCH), sha $(BINDER_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/binder && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created binder bits:"
+	@ls -1 $(BINDER_BITS)
+	@echo ""
+
+clean_binder:
+	rm -rf $(BITS_DIR)/binder
+	(cd build/binder && gmake distclean)
 
 
 #---- DCAPI
