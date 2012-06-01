@@ -102,6 +102,7 @@ fi
 # Upload to '.'-prefixed dir to hide it until fully uploaded.
 echo "Uploading bits to <$UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/$upload_subdir/>."
 (cd ${BITS_DIR}/ && md5sum $(find ./ -type f) > md5sums.txt)
+($SSH $UPLOAD_SERVER "mkdir -p ${UPLOAD_BASE_LOCALDIR}/.${upload_subdir}/" || /bin/true)
 rsync -e "$SSH" -av $BITS_DIR/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/
 
 # Unhide and add a "$UPLOAD_BRANCH-$latest" symlink.
