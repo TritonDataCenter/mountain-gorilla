@@ -33,12 +33,6 @@
     ],
     "deps": []
   },
-  "mapi": {
-    "repos": [
-        {"url": "git@git.joyent.com:mcp_api_gateway.git", "dir": "mapi"}
-    ],
-    "deps": []
-  },
   "adminui": {
     "repos": [
         {"url": "git@git.joyent.com:adminui.git", "dir": "adminui"}
@@ -200,7 +194,6 @@
         "amon",
         "billapi",
         "cloudapi",
-        "mapi",
         "portal",
         "webinfo",
         "adminui",

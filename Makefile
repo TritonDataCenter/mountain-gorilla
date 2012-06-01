@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi platform moray ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets adminui portal redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi platform moray ufds usbheadnode releasejson
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal mapi redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi moray ufds usbheadnode releasejson
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi moray ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -279,25 +279,6 @@ clean_portal:
 	rm -rf $(BITS_DIR)/portal
 	(cd build/portal && gmake clean)
 
-#---- MAPI
-
-_mapi_stamp=$(MAPI_BRANCH)-$(TIMESTAMP)-g$(MAPI_SHA)
-MAPI_BITS=$(BITS_DIR)/mapi/mapi-pkg-$(_mapi_stamp).tar.bz2
-
-.PHONY: mapi
-mapi: $(MAPI_BITS)
-
-$(MAPI_BITS): build/mapi
-	@echo "# Build mapi: branch $(MAPI_BRANCH), sha $(MAPI_SHA)"
-	mkdir -p $(BITS_DIR)
-	(cd build/mapi && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
-	@echo "# Created mapi bits:"
-	@ls -1 $(MAPI_BITS)
-	@echo ""
-
-clean_mapi:
-	rm -rf $(BITS_DIR)/mapi
-	(cd build/mapi && gmake clean)
 
 #---- RIAK
 

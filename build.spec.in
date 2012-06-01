@@ -4,7 +4,6 @@
 
   "agents-shar": "{{BRANCH}}",
   "adminui-tarball": "adminui/adminui-pkg-{{BRANCH}}-.*.tar.bz2",
-  "mapi-tarball": "mapi/mapi-pkg-{{BRANCH}}-.*.tar.bz2",
   "portal-tarball": "portal/portal-pkg-{{BRANCH}}-.*.tar.bz2",
   "ca-tarball": "ca/ca-pkg-{{BRANCH}}-.*.tar.bz2",
   "assets-tarball": "assets/assets-pkg-{{BRANCH}}-.*.tar.bz2",
