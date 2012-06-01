@@ -54,21 +54,32 @@ function preload_bits() {
     local target=$1
     local branch=$2
     local try_branch=$3
+    local stuff_login=stuff@stuff.joyent.us
+    
+    # This is a HACK to figure out if we're in the bh1 lab (assume we are if
+    # the IP is 10.2.X.X) so that we can switch the stuff url to an IP because
+    # the URL doesn't work in the lab.
+    if [[ $(uname -s) == "SunOS" && \
+          $(sysinfo -p | grep "Network_Interface.*IPv4_Address=" \
+            | cut -d "'" -f2 | grep 10\.2\. | wc -l | tr -d ' ') -gt 0 ]]; then
+        # assume we're in the lab
+        echo "Looks like this is running in the BH1 lab."
+        stuff_login=stuff@10.2.0.190
+    fi
 
     echo "# preload bits/$target from stuff.joyent.us/builds/$target/$branch-latest/$target"
     local ssh="ssh -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
     mkdir -p bits/$target
     if [[ ! -z "$try_branch" ]]; then
-        local out=$($ssh stuff@stuff.joyent.us ls -d builds/$target/$try_branch-latest/$target 2>&1 || true)
+        local out=$($ssh $stuff_login ls -d builds/$target/$try_branch-latest/$target 2>&1 || true)
         if [[ "${out##*: }" != "No such file or directory" ]]; then
             rsync -e "$ssh" -av \
-                stuff@stuff.joyent.us:builds/$target/$try_branch-latest/$target/ \
+                $stuff_login:builds/$target/$try_branch-latest/$target/ \
                 bits/$target/
             return
         fi
     fi
-    rsync -e "$ssh" -av \
-        stuff@stuff.joyent.us:builds/$target/$branch-latest/$target/ \
+    rsync -e "$ssh" -av $stuff_login:builds/$target/$branch-latest/$target/ \
         bits/$target/
 }
 
@@ -350,7 +361,6 @@ if [[ "$NODE_VERSION" != "v0.6" ]]; then
     fatal "Incorrect node version, '${NODE_VERSION}'. MG needs a node v0.6 or later (currently requiring v0.6). Either put a node v0.6 first on your PATH or use the '-n NODE_EXE' configure option."
 fi
 JSON="$MG_NODE $ROOT/tools/json"
-
 
 # '-r' regenerate early out.
 if [[ "$REGENERATE" == 'true' ]]; then
