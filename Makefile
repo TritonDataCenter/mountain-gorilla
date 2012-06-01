@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi platform moray ufds usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi platform moray ufds usbheadnode releasejson
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis riak rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi moray ufds usbheadnode releasejson
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi moray ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -279,26 +279,6 @@ clean_portal:
 	rm -rf $(BITS_DIR)/portal
 	(cd build/portal && gmake clean)
 
-
-#---- RIAK
-
-_riak_stamp=$(RIAK_BRANCH)-$(TIMESTAMP)-g$(RIAK_SHA)
-RIAK_BITS=$(BITS_DIR)/riak/riak-pkg-$(_riak_stamp).tar.bz2
-
-.PHONY: riak
-riak: $(RIAK_BITS)
-
-$(RIAK_BITS): build/riak
-	@echo "# Build riak: branch $(RIAK_BRANCH), sha $(RIAK_SHA)"
-	mkdir -p $(BITS_DIR)
-	(cd build/riak && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
-	@echo "# Created riak bits:"
-	@ls -1 $(RIAK_BITS)
-	@echo ""
-
-clean_riak:
-	rm -rf $(BITS_DIR)/riak
-	(cd build/riak && gmake clean)
 
 #---- REDIS
 

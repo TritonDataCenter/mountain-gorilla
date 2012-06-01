@@ -63,12 +63,6 @@
     ],
     "deps": []
   },
-  "riak": {
-    "repos": [
-        {"url": "git@git.joyent.com:riak.git"}
-    ],
-    "deps": []
-  },
   "webinfo": {
     "repos": [
         {"url": "git@git.joyent.com:sdc-webinfo.git",
@@ -200,7 +194,6 @@
         "assets",
         "dhcpd",
         "rabbitmq",
-        "riak",
         "redis",
         "workflow",
         "zapi",

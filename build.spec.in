@@ -23,7 +23,6 @@
   "portal-tarball": "portal/portal-pkg-{{BRANCH}}-.*.tar.bz2",
   "rabbitmq-tarball": "rabbitmq/rabbitmq-pkg-{{BRANCH}}-.*.tar.bz2",
   "redis-tarball": "redis/redis-pkg-{{BRANCH}}-.*.tar.bz2",
-  "riak-tarball": "riak/riak-pkg-{{BRANCH}}-.*.tar.bz2",
   "ufds-tarball": "ufds/ufds-pkg-{{BRANCH}}-.*.tar.bz2",
   "webinfo-tarball": "webinfo/webinfo-pkg-{{BRANCH}}-.*.tar.bz2",
   "workflow-tarball": "workflow/workflow-pkg-{{BRANCH}}-.*.tar.bz2",
