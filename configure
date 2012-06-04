@@ -55,7 +55,7 @@ function preload_bits() {
     local branch=$2
     local try_branch=$3
     local stuff_login=stuff@stuff.joyent.us
-    
+
     # This is a HACK to figure out if we're in the bh1 lab (assume we are if
     # the IP is 10.2.X.X) so that we can switch the stuff url to an IP because
     # the URL doesn't work in the lab.
@@ -341,17 +341,6 @@ while getopts "b:B:hurft:c:n:" opt; do
 done
 shift $((OPTIND-1))
 
-
-# Pre-condition: some required binaries
-# - node 0.6.12: cloudapi is using the platform node
-# - node 0.4, npm 1.0: ufds
-# TODO: Drop these requirements. See RELENG-283.
-binaries="/opt/node/0.6.12/bin/node /opt/node/0.4/bin/node /opt/npm/1.0/bin/npm"
-for binary in $binaries; do
-    if [[ ! -x $binary ]]; then
-        fatal "Could not find required binary: '$binary'"
-    fi
-done
 
 # Pre-condition: must have node >=0.6 first on path (see RELENG-266).
 echo "Ensure have a 'node' v0.6."
