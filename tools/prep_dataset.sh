@@ -33,6 +33,13 @@ if [[ -z ${output} ]]; then
   exit 1;
 fi
 
+ofbzip=$(echo ${output} | grep ".bz2$" || /bin/true )
+
+if [[ -n $ofbzip ]]; then
+  dobzip="true"
+  output=${output%.bz2}
+fi
+
 if [[ -z ${gzservers} ]]; then
   gzservers=gzhosts.json
 fi
@@ -84,7 +91,7 @@ done
 # install packages
 if [[ -n ${packages} ]]; then
   ${SSH} "zlogin ${uuid} '/opt/local/bin/pkgin -f -y update'"
-  ${SSH} "zlogin ${uuid} 'touch /opt/local/.dli_license_accepted"
+  ${SSH} "zlogin ${uuid} 'touch /opt/local/.dli_license_accepted'"
   ${SSH} "zlogin ${uuid} '/opt/local/bin/pkgin -y in ${packages}'"
 fi
 #
@@ -96,3 +103,49 @@ cat tools/clean-image.sh | ${SSH} "zlogin ${uuid} 'cat > /tmp/clean-image.sh; /u
 ${SSH} "zfs snapshot zones/${uuid}@dataset.$$ ; zfs send zones/${uuid}@dataset.$$" | cat > ${output}
 
 ${SSH} "vmadm destroy ${uuid}"
+
+if [[ -n $dobzip ]]; then
+  bzip2 ${output}
+  output=${output}.bz2
+fi
+
+timestamp=$(node -e 'console.log(new Date().toISOString())')
+shasum=$(/usr/bin/sum -x sha1 ${output} | cut -d ' ' -f1)
+size=$(/usr/bin/du -ks ${output} | cut -f 1)
+
+cat <<EOF>> ${output%.bz2}.dsmanifest
+  {
+    "name": "${output%.zfs}",
+    "version": "0.0",
+    "type": "zone-dataset",
+    "description": "${output}",
+    "published_at": "${timestamp}",
+    "os": "smartos",
+    "files": [
+      {
+        "path": "${output}",
+        "sha1": "${shasum}",
+        "size": ${size},
+        "url": "${output}"
+      }
+    ],
+    "requirements": {
+      "networks": [
+        {
+          "name": "net0",
+          "description": "admin"
+        }
+      ]
+    },
+    "uuid": "$(uuid)",
+    "creator_uuid": "352971aa-31ba-496c-9ade-a379feaecd52",
+    "vendor_uuid": "352971aa-31ba-496c-9ade-a379feaecd52",
+    "creator_name": "sdc",
+    "platform_type": "smartos",
+    "cloud_name": "sdc",
+    "urn": "sdc:sdc:${output%.bz2}:0.0",
+    "created_at": "${timestamp}",
+    "updated_at": "${timestamp}"
+  }
+EOF
+
