@@ -562,9 +562,10 @@ clean_moray:
 
 _binder_stamp=$(BINDER_BRANCH)-$(TIMESTAMP)-g$(BINDER_SHA)
 BINDER_BITS=$(BITS_DIR)/binder/binder-pkg-$(_binder_stamp).tar.bz2
+BINDER_DATASET=$(BITS_DIR)/binder/binder-zfs-$(_binder_stamp).zfs.bz2
 
 .PHONY: binder
-binder: $(BINDER_BITS)
+binder: $(BINDER_BITS) binder_dataset
 
 $(BINDER_BITS): build/binder
 	@echo "# Build binder: branch $(BINDER_BRANCH), sha $(BINDER_SHA)"
@@ -574,10 +575,19 @@ $(BINDER_BITS): build/binder
 	@ls -1 $(BINDER_BITS)
 	@echo ""
 
+.PHONY: binder_dataset
+binder_dataset: $(BINDER_DATASET)
+
+$(BINDER_DATASET): $(BINDER_BITS)
+	@echo "# Build binder dataset: branch $(BINDER_BRANCH), sha $(UFDS_SHA)"
+	./tools/prep_dataset.sh -t $(BINDER_BITS) -o $(BINDER_DATASET) -p $(BINDER_PKGSRC)
+	@echo "# Created binder dataset:"
+	@ls -1 $(BINDER_DATASET)
+	@echo ""
+
 clean_binder:
 	rm -rf $(BITS_DIR)/binder
 	(cd build/binder && gmake distclean)
-
 
 #---- DCAPI
 

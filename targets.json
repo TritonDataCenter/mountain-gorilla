@@ -146,8 +146,15 @@
   },
 
   "binder": {
+    "appliance": "true",
+    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [
+      "sun-jre6-6.0.26",
+      "zookeeper-client-3.4.3",
+      "zookeeper-server-3.4.3"
+    ],
     "repos": [
-        {"url": "git@git.joyent.com:binder.git"}
+      {"url": "git@git.joyent.com:binder.git"}
     ],
     "deps": []
   },
