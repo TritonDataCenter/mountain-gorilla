@@ -92,6 +92,9 @@ Re-login and setup environment:
     pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
         scmgit python24 python26 png GeoIP GeoLiteCity ghostscript
 
+    # 'binder' target needs zookeeper client libs.
+    pkgin -y zookeeper-client
+
     # Note: This "./configure" step is necessary to setup your system.
     # TODO: Why is this necessary?
     # TODO: Pull out the requisite system setup steps. Shouldn't really
