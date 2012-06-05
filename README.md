@@ -109,9 +109,6 @@ pkgsrc installed:
 
     pkgin ls | grep '\(nodejs\|npm\)' && pkgin -y rm npm-0.2.18 nodejs-0.4.2
 
-binder introduces a dependency on zookeeper-client also:
-    pkgin -y zookeeper-client
-
 Next, setup a few required versions of node and npm. (See RELENG-283 for
 efforts to remove this requirement.)
 

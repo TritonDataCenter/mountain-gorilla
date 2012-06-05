@@ -579,7 +579,7 @@ $(BINDER_BITS): build/binder
 binder_dataset: $(BINDER_DATASET)
 
 $(BINDER_DATASET): $(BINDER_BITS)
-	@echo "# Build binder dataset: branch $(BINDER_BRANCH), sha $(UFDS_SHA)"
+	@echo "# Build binder dataset: branch $(BINDER_BRANCH), sha $(BINDER_SHA)"
 	./tools/prep_dataset.sh -t $(BINDER_BITS) -o $(BINDER_DATASET) -p $(BINDER_PKGSRC)
 	@echo "# Created binder dataset:"
 	@ls -1 $(BINDER_DATASET)
