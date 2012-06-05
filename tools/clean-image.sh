@@ -33,7 +33,9 @@ cleanup() {
 
   # interface configuration files
   find /etc/hostname.net* | xargs rm -f
-
+  
+  # remove zoneconfig
+  rm /root/zoneconfig
 }
 
 cleanup
