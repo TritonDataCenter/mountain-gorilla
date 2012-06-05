@@ -71,8 +71,8 @@ First, create zone. For example:
 Re-login and setup environment:
 
     ssh -A root@10.2.0.145
-    curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/templates/bss-prime/setup-build-zone
-    curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/templates/bss-prime/fake-subset.tbz2
+    curl -k -O https://download.joyent.com/pub/build/setup-build-zone
+    curl -k -O https://download.joyent.com/pub/build/fake-subset.tbz2
     chmod 755 setup-build-zone
     ./setup-build-zone
 
