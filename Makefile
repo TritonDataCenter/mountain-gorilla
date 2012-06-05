@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi binder moray ufds platform usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi binder moray registrar ufds platform usbheadnode releasejson
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi binder moray ufds usbheadnode releasejson
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi binder registrar moray ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -557,6 +557,26 @@ $(MORAY_BITS): build/moray
 clean_moray:
 	rm -rf $(BITS_DIR)/moray
 	(cd build/moray && gmake distclean)
+
+#---- Registrar
+
+_registrar_stamp=$(REGISTRAR_BRANCH)-$(TIMESTAMP)-g$(MORAY_SHA)
+REGISTRAR_BITS=$(BITS_DIR)/registrar/registrar-pkg-$(_registrar_stamp).tar.bz2
+
+.PHONY: registrar
+registrar: $(REGISTRAR_BITS)
+
+$(REGISTRAR_BITS): build/registrar
+	@echo "# Build registrar: branch $(REGISTRAR_BRANCH), sha $(REGISTRAR_SHA)"
+	mkdir -p $(BITS_DIR)
+	(cd build/registrar && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created registrar bits:"
+	@ls -1 $(REGISTRAR_BITS)
+	@echo ""
+
+clean_registrar:
+	rm -rf $(BITS_DIR)/registrar
+	(cd build/registrar && gmake distclean)
 
 #---- Binder
 
