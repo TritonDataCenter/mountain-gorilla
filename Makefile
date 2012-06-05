@@ -63,10 +63,10 @@ smartlogin: $(SMARTLOGIN_BITS)
 # PATH: ensure using GCC from SFW. Not sure this is necessary, but has been
 # the case for release builds pre-MG.
 $(SMARTLOGIN_BITS): build/smart-login
-	@echo "# Build smartlogin: branch $(SMART_LOGIN_BRANCH), sha $(SMART_LOGIN_SHA)"
+	@echo "# Build smartlogin: branch $(SMART_LOGIN_BRANCH), sha $(SMART_LOGIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/smart-login && TIMESTAMP=$(TIMESTAMP) PATH=/usr/sfw/bin:$(PATH) BITS_DIR=$(BITS_DIR) gmake clean all publish)
-	@echo "# Created smartlogin bits:"
+	@echo "# Created smartlogin bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(SMARTLOGIN_BITS)
 	@echo ""
 
@@ -90,10 +90,10 @@ agents: $(AGENTS_BITS_0)
 # PATH: ensure using GCC from SFW. Not sure this is necessary, but has been
 # the case for release builds pre-MG.
 $(AGENTS_BITS): build/agents
-	@echo "# Build agents: branch $(AGENTS_BRANCH), sha $(AGENTS_SHA)"
+	@echo "# Build agents: branch $(AGENTS_BRANCH), sha $(AGENTS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/agents && TIMESTAMP=$(TIMESTAMP) PATH=/usr/sfw/bin:$(PATH) ./build.sh -p -n -l $(BITS_DIR)/agents -L)
-	@echo "# Created agents bits:"
+	@echo "# Created agents bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(AGENTS_BITS)
 	@echo ""
 
@@ -114,10 +114,10 @@ AMON_BITS_0=$(shell echo $(AMON_BITS) | awk '{print $$1}')
 amon: $(AMON_BITS_0)
 
 $(AMON_BITS): build/amon
-	@echo "# Build amon: branch $(AMON_BRANCH), sha $(AMON_SHA)"
+	@echo "# Build amon: branch $(AMON_BRANCH), sha $(AMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/amon && IGNORE_DIRTY=1 TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake clean all pkg publish)
-	@echo "# Created amon bits:"
+	@echo "# Created amon bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(AMON_BITS)
 	@echo ""
 
@@ -146,10 +146,10 @@ ca: $(CA_BITS_0)
 # PATH for ca build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 config_ca_old: build/cloud-analytics
-	@echo "# Build ca: branch $(CLOUD_ANALYTICS_BRANCH), sha $(CLOUD_ANALYTICS_SHA)"
+	@echo "# Build ca: branch $(CLOUD_ANALYTICS_BRANCH), sha $(CLOUD_ANALYTICS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/cloud-analytics && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
-	@echo "# Created ca bits:"
+	@echo "# Created ca bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(CA_BITS)
 	@echo ""
 
@@ -157,7 +157,7 @@ config_ca_old: build/cloud-analytics
 # Build CA in the new build-zone style if requested by configure.
 #
 config_ca_new: build/cloud-analytics
-	@echo "# Build ca: branch $(CLOUD_ANALYTICS_BRANCH), sha $(CLOUD_ANALYTICS_SHA)"
+	@echo "# Build ca: branch $(CLOUD_ANALYTICS_BRANCH), sha $(CLOUD_ANALYTICS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	TIMESTAMP=$(TIMESTAMP) BRANCH=$(BRANCH) $(TOP)/tools/build-zone build.json $(TOP)/targets.json ca $(CLOUD_ANALYTICS_SHA)
 	@ls -1 $(CA_BITS)
@@ -182,10 +182,10 @@ ufds: $(UFDS_BITS)
 # PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(UFDS_BITS): build/ufds
-	@echo "# Build ufds: branch $(UFDS_BRANCH), sha $(UFDS_SHA)"
+	@echo "# Build ufds: branch $(UFDS_BRANCH), sha $(UFDS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/ufds && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
-	@echo "# Created ufds bits:"
+	@echo "# Created ufds bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(UFDS_BITS)
 	@echo ""
 
@@ -206,10 +206,10 @@ billapi: $(BILLAPI_BITS)
 # PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(BILLAPI_BITS): build/billing_api
-	@echo "# Build billapi: branch $(BILLING_API_BRANCH), sha $(BILLING_API_SHA)"
+	@echo "# Build billapi: branch $(BILLING_API_BRANCH), sha $(BILLING_API_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/billing_api && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
-	@echo "# Created billapi bits:"
+	@echo "# Created billapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(BILLAPI_BITS)
 	@echo ""
 
@@ -228,10 +228,10 @@ ASSETS_BITS=$(BITS_DIR)/assets/assets-pkg-$(_assets_stamp).tar.bz2
 assets: $(ASSETS_BITS)
 
 $(ASSETS_BITS): build/assets
-	@echo "# Build assets: branch $(ASSETS_BRANCH), sha $(ASSETS_SHA)"
+	@echo "# Build assets: branch $(ASSETS_BRANCH), sha $(ASSETS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/assets && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
-	@echo "# Created assets bits:"
+	@echo "# Created assets bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(ASSETS_BITS)
 	@echo ""
 
@@ -248,10 +248,10 @@ ADMINUI_BITS=$(BITS_DIR)/adminui/adminui-pkg-$(_adminui_stamp).tar.bz2
 adminui: $(ADMINUI_BITS)
 
 $(ADMINUI_BITS): build/adminui
-	@echo "# Build adminui: branch $(ADMINUI_BRANCH), sha $(ADMINUI_SHA)"
+	@echo "# Build adminui: branch $(ADMINUI_BRANCH), sha $(ADMINUI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/adminui && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
-	@echo "# Created adminui bits:"
+	@echo "# Created adminui bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(ADMINUI_BITS)
 	@echo ""
 
@@ -268,10 +268,10 @@ PORTAL_BITS=$(BITS_DIR)/portal/portal-pkg-$(_portal_stamp).tar.bz2
 portal: $(PORTAL_BITS)
 
 $(PORTAL_BITS): build/portal
-	@echo "# Build portal: branch $(PORTAL_BRANCH), sha $(PORTAL_SHA)"
+	@echo "# Build portal: branch $(PORTAL_BRANCH), sha $(PORTAL_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/portal && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
-	@echo "# Created portal bits:"
+	@echo "# Created portal bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(PORTAL_BITS)
 	@echo ""
 
@@ -289,10 +289,10 @@ REDIS_BITS=$(BITS_DIR)/redis/redis-pkg-$(_redis_stamp).tar.bz2
 redis: $(REDIS_BITS)
 
 $(REDIS_BITS): build/redis
-	@echo "# Build redis: branch $(REDIS_BRANCH), sha $(REDIS_SHA)"
+	@echo "# Build redis: branch $(REDIS_BRANCH), sha $(REDIS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/redis && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
-	@echo "# Created redis bits:"
+	@echo "# Created redis bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(REDIS_BITS)
 	@echo ""
 
@@ -309,10 +309,10 @@ RABBITMQ_BITS=$(BITS_DIR)/rabbitmq/rabbitmq-pkg-$(_rabbitmq_stamp).tar.bz2
 rabbitmq: $(RABBITMQ_BITS)
 
 $(RABBITMQ_BITS): build/rabbitmq
-	@echo "# Build rabbitmq: branch $(RABBITMQ_BRANCH), sha $(RABBITMQ_SHA)"
+	@echo "# Build rabbitmq: branch $(RABBITMQ_BRANCH), sha $(RABBITMQ_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/rabbitmq && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
-	@echo "# Created rabbitmq bits:"
+	@echo "# Created rabbitmq bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(RABBITMQ_BITS)
 	@echo ""
 
@@ -329,11 +329,11 @@ DHCPD_BITS=$(BITS_DIR)/dhcpd/dhcpd-pkg-$(_dhcpd_stamp).tar.bz2
 dhcpd: $(DHCPD_BITS)
 
 $(DHCPD_BITS): build/dhcpd
-	@echo "# Build dhcpd: branch $(DHCPD_BRANCH), sha $(DHCPD_SHA)"
+	@echo "# Build dhcpd: branch $(DHCPD_BRANCH), sha $(DHCPD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/dhcpd && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) \
 		$(MAKE) release publish)
-	@echo "# Created dhcpd bits:"
+	@echo "# Created dhcpd bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(DHCPD_BITS)
 	@echo ""
 
@@ -350,10 +350,10 @@ WEBINFO_BITS=$(BITS_DIR)/webinfo/webinfo-pkg-$(_webinfo_stamp).tar.bz2
 webinfo: $(WEBINFO_BITS)
 
 $(WEBINFO_BITS): build/webinfo
-	@echo "# Build webinfo: branch $(WEBINFO_BRANCH), sha $(WEBINFO_SHA)"
+	@echo "# Build webinfo: branch $(WEBINFO_BRANCH), sha $(WEBINFO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/webinfo && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
-	@echo "# Created webinfo bits:"
+	@echo "# Created webinfo bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(WEBINFO_BITS)
 	@echo ""
 
@@ -372,10 +372,10 @@ cloudapi: $(CLOUDAPI_BITS)
 # cloudapi still uses platform node, ensure that same version is first
 # node (and npm) on the PATH.
 $(CLOUDAPI_BITS): build/cloudapi
-	@echo "# Build cloudapi: branch $(CLOUDAPI_BRANCH), sha $(CLOUDAPI_SHA)"
+	@echo "# Build cloudapi: branch $(CLOUDAPI_BRANCH), sha $(CLOUDAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/cloudapi && PATH=/opt/node/0.6.12/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created cloudapi bits:"
+	@echo "# Created cloudapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(CLOUDAPI_BITS)
 	@echo ""
 
@@ -397,10 +397,10 @@ manatee: $(MANATEE_BITS)
 # PATH for manatee build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(MANATEE_BITS): build/manatee
-	@echo "# Build manatee: branch $(MANATEE_BRANCH), sha $(MANATEE_SHA)"
+	@echo "# Build manatee: branch $(MANATEE_BRANCH), sha $(MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/manatee && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created manatee bits:"
+	@echo "# Created manatee bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MANATEE_BITS)
 	@echo ""
 
@@ -422,10 +422,10 @@ workflow: $(WORKFLOW_BITS)
 # PATH for workflow build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(WORKFLOW_BITS): build/workflow
-	@echo "# Build workflow: branch $(WORKFLOW_BRANCH), sha $(WORKFLOW_SHA)"
+	@echo "# Build workflow: branch $(WORKFLOW_BRANCH), sha $(WORKFLOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/workflow && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created workflow bits:"
+	@echo "# Created workflow bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(WORKFLOW_BITS)
 	@echo ""
 
@@ -447,10 +447,10 @@ zapi: $(ZAPI_BITS)
 # PATH for zapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(ZAPI_BITS): build/zapi
-	@echo "# Build zapi: branch $(ZAPI_BRANCH), sha $(ZAPI_SHA)"
+	@echo "# Build zapi: branch $(ZAPI_BRANCH), sha $(ZAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/zapi && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created zapi bits:"
+	@echo "# Created zapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(ZAPI_BITS)
 	@echo ""
 
@@ -472,10 +472,10 @@ dapi: $(DAPI_BITS)
 # PATH for dapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(DAPI_BITS): build/dapi
-	@echo "# Build dapi: branch $(DAPI_BRANCH), sha $(DAPI_SHA)"
+	@echo "# Build dapi: branch $(DAPI_BRANCH), sha $(DAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/dapi && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created dapi bits:"
+	@echo "# Created dapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(DAPI_BITS)
 	@echo ""
 
@@ -497,10 +497,10 @@ cnapi: $(CNAPI_BITS)
 # PATH for cnapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(CNAPI_BITS): build/cnapi
-	@echo "# Build cnapi: branch $(CNAPI_BRANCH), sha $(CNAPI_SHA)"
+	@echo "# Build cnapi: branch $(CNAPI_BRANCH), sha $(CNAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/cnapi && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created cnapi bits:"
+	@echo "# Created cnapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(CNAPI_BITS)
 	@echo ""
 
@@ -522,10 +522,10 @@ napi: $(NAPI_BITS)
 # PATH for napi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(NAPI_BITS): build/napi
-	@echo "# Build napi: branch $(NAPI_BRANCH), sha $(NAPI_SHA)"
+	@echo "# Build napi: branch $(NAPI_BRANCH), sha $(NAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/napi && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
-	@echo "# Created napi bits:"
+	@echo "# Created napi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(NAPI_BITS)
 	@echo ""
 
@@ -547,10 +547,10 @@ moray: $(MORAY_BITS)
 # PATH for moray build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(MORAY_BITS): build/moray
-	@echo "# Build moray: branch $(MORAY_BRANCH), sha $(MORAY_SHA)"
+	@echo "# Build moray: branch $(MORAY_BRANCH), sha $(MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/moray && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created moray bits:"
+	@echo "# Created moray bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MORAY_BITS)
 	@echo ""
 
@@ -588,10 +588,10 @@ BINDER_DATASET=$(BITS_DIR)/binder/binder-zfs-$(_binder_stamp).zfs.bz2
 binder: $(BINDER_BITS) binder_dataset
 
 $(BINDER_BITS): build/binder
-	@echo "# Build binder: branch $(BINDER_BRANCH), sha $(BINDER_SHA)"
+	@echo "# Build binder: branch $(BINDER_BRANCH), sha $(BINDER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/binder && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created binder bits:"
+	@echo "# Created binder bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(BINDER_BITS)
 	@echo ""
 
@@ -599,9 +599,9 @@ $(BINDER_BITS): build/binder
 binder_dataset: $(BINDER_DATASET)
 
 $(BINDER_DATASET): $(BINDER_BITS)
-	@echo "# Build binder dataset: branch $(BINDER_BRANCH), sha $(BINDER_SHA)"
+	@echo "# Build binder dataset: branch $(BINDER_BRANCH), sha $(BINDER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset.sh -t $(BINDER_BITS) -o $(BINDER_DATASET) -p $(BINDER_PKGSRC)
-	@echo "# Created binder dataset:"
+	@echo "# Created binder dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(BINDER_DATASET)
 	@echo ""
 
@@ -620,10 +620,10 @@ dcapi: $(DCAPI_BITS)
 # PATH for dcapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(DCAPI_BITS): build/dcapi
-	@echo "# Build dcapi: branch $(DCAPI_BRANCH), sha $(DCAPI_SHA)"
+	@echo "# Build dcapi: branch $(DCAPI_BRANCH), sha $(DCAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/dcapi && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created dcapi bits:"
+	@echo "# Created dcapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(DCAPI_BITS)
 	@echo ""
 
@@ -645,10 +645,10 @@ AGENTSSHAR_BITS_0=$(shell echo $(AGENTSSHAR_BITS) | awk '{print $$1}')
 agentsshar: $(AGENTSSHAR_BITS_0)
 
 $(AGENTSSHAR_BITS): build/agents-installer/Makefile
-	@echo "# Build agentsshar: branch $(AGENTS_INSTALLER_BRANCH), sha $(AGENTS_INSTALLER_SHA)"
+	@echo "# Build agentsshar: branch $(AGENTS_INSTALLER_BRANCH), sha $(AGENTS_INSTALLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)/agentsshar
 	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/agentsshar/ -d $(BITS_DIR) -b $(AGENTS_INSTALLER_BRANCH))
-	@echo "# Created agentsshar bits:"
+	@echo "# Created agentsshar bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(AGENTSSHAR_BITS)
 	@echo ""
 
@@ -679,13 +679,13 @@ BOOT_BIT=$(BITS_DIR)/usbheadnode/boot-$(_usbheadnode_stamp).tgz
 boot: $(BOOT_BIT)
 
 $(BOOT_BIT): bits/usbheadnode/build.spec.local
-	@echo "# Build boot: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
+	@echo "# Build boot: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-tar-image -c
 	mv build/usb-headnode/$(shell basename $(BOOT_BIT)) $(BITS_DIR)/usbheadnode
-	@echo "# Created boot bits:"
+	@echo "# Created boot bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(BOOT_BIT)
 	@echo ""
 
@@ -701,13 +701,13 @@ bits/usbheadnode/build.spec.local:
 coal: usb $(COAL_BIT)
 
 $(COAL_BIT): bits/usbheadnode/build.spec.local $(USB_BIT)
-	@echo "# Build coal: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
+	@echo "# Build coal: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-coal-image -c $(USB_BIT)
 	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/usbheadnode
-	@echo "# Created coal bits:"
+	@echo "# Created coal bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(COAL_BIT)
 	@echo ""
 
@@ -717,13 +717,13 @@ USB_BIT=$(BITS_DIR)/usbheadnode/usb-$(_usbheadnode_stamp).tgz
 usb: $(USB_BIT)
 
 $(USB_BIT): bits/usbheadnode/build.spec.local $(BOOT_BIT)
-	@echo "# Build usb: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
+	@echo "# Build usb: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-usb-image -c $(BOOT_BIT)
 	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/usbheadnode
-	@echo "# Created usb bits:"
+	@echo "# Created usb bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(USB_BIT)
 	@echo ""
 
@@ -733,13 +733,13 @@ UPGRADE_BIT=$(BITS_DIR)/usbheadnode/upgrade-$(_usbheadnode_stamp).tgz
 upgrade: $(UPGRADE_BIT)
 
 $(UPGRADE_BIT): bits/usbheadnode/build.spec.local $(BOOT_BIT)
-	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA)"
+	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
 		&& BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-upgrade-image $(BOOT_BIT)
 	mv build/usb-headnode/$(shell basename $(UPGRADE_BIT)) $(BITS_DIR)/usbheadnode
-	@echo "# Created upgrade bits:"
+	@echo "# Created upgrade bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(UPGRADE_BIT)
 	@echo ""
 
@@ -782,7 +782,7 @@ build/illumos-live/configure-branches:
 
 # PATH: Ensure using GCC from SFW as require for platform build.
 $(PLATFORM_BITS): build/illumos-live/configure.mg build/illumos-live/configure-branches
-	@echo "# Build platform: branch $(ILLUMOS_LIVE_BRANCH), sha $(ILLUMOS_LIVE_SHA)"
+	@echo "# Build platform: branch $(ILLUMOS_LIVE_BRANCH), sha $(ILLUMOS_LIVE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	(cd build/illumos-live \
 		&& PATH=/usr/sfw/bin:$(PATH) \
 			EXTRA_TARBALL=$(shell ls -1 $(BITS_DIR)/illumosextra/illumos-extra-* | tail -1) \
@@ -798,7 +798,7 @@ $(PLATFORM_BITS): build/illumos-live/configure.mg build/illumos-live/configure-b
 	(mkdir -p $(BITS_DIR)/platform)
 	(cp build/illumos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/platform/platform-$(ILLUMOS_LIVE_BRANCH)-$(TIMESTAMP).tgz)
 	cp build/illumos-live/output/vmtests-$(TIMESTAMP).tgz $(BITS_DIR)/platform/vmtests-$(ILLUMOS_LIVE_BRANCH)-$(TIMESTAMP).tgz
-	@echo "# Created platform bits:"
+	@echo "# Created platform bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(PLATFORM_BITS)
 	@echo ""
 
@@ -817,10 +817,10 @@ illumosextra: $(ILLUMOSEXTRA_BIT)
 
 # PATH: Ensure using GCC from SFW as require for platform build.
 $(ILLUMOSEXTRA_BIT):
-	@echo "# Build illumosextra: branch $(ILLUMOS_EXTRA_BRANCH), sha $(ILLUMOS_EXTRA_SHA)"
+	@echo "# Build illumosextra: branch $(ILLUMOS_EXTRA_BRANCH), sha $(ILLUMOS_EXTRA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	(cd build/illumos-extra && PATH=/usr/sfw/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) gmake install && PATH=/usr/sfw/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) gmake tarball )
 	(mkdir -p $(BITS_DIR)/illumosextra;  cp build/illumos-extra/$(ILLUMOSEXTRA_TARBALL) $(BITS_DIR)/illumosextra)
-	@echo "# Created illumosextra bits:"
+	@echo "# Created illumosextra bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(ILLUMOSEXTRA_BIT)
 	@echo ""
 
