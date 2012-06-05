@@ -567,10 +567,10 @@ REGISTRAR_BITS=$(BITS_DIR)/registrar/registrar-pkg-$(_registrar_stamp).tar.bz2
 registrar: $(REGISTRAR_BITS)
 
 $(REGISTRAR_BITS): build/registrar
-	@echo "# Build registrar: branch $(REGISTRAR_BRANCH), sha $(REGISTRAR_SHA)"
+	@echo "# Build registrar: branch $(REGISTRAR_BRANCH), sha $(REGISTRAR_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/registrar && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created registrar bits:"
+	@echo "# Created registrar bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(REGISTRAR_BITS)
 	@echo ""
 
