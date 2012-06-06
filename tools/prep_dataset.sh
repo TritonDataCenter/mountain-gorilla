@@ -8,7 +8,7 @@ tarballs=""
 packages=""
 output=""
 
-while getopts t:p:s:o: opt; do
+while getopts t:p:s:o:u:v: opt; do
      case $opt in
        t)
          tarballs="${tarballs} ${OPTARG}"
