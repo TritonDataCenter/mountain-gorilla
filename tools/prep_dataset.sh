@@ -22,6 +22,12 @@ while getopts t:p:s:o: opt; do
        o)
          output=$OPTARG
          ;;
+       u)
+         urn=$OPTARG
+         ;;
+       v)
+         version=$OPTARG
+         ;;
        \?)
          echo "Invalid flag"
          exit 1;
@@ -31,6 +37,15 @@ done
 if [[ -z ${output} ]]; then
   echo "No output file specified"
   exit 1;
+fi
+
+if [[ -z $version ]]; then
+  version="0.0"
+fi
+
+if [[ -z $urn ]]; then
+  urn=${output%.bz2}
+  urn="sdc:sdc:${urn%.zfs}:${version}"
 fi
 
 ofbzip=$(echo ${output} | grep ".bz2$" || /bin/true )
@@ -116,7 +131,7 @@ size=$(/usr/bin/du -ks ${output} | cut -f 1)
 cat <<EOF>> ${output%.bz2}.dsmanifest
   {
     "name": "${output%.zfs}",
-    "version": "0.0",
+    "version": "${version}",
     "type": "zone-dataset",
     "description": "${output}",
     "published_at": "${timestamp}",
@@ -137,13 +152,13 @@ cat <<EOF>> ${output%.bz2}.dsmanifest
         }
       ]
     },
-    "uuid": "$(uuid)",
+    "uuid": "${uuid}",
     "creator_uuid": "352971aa-31ba-496c-9ade-a379feaecd52",
     "vendor_uuid": "352971aa-31ba-496c-9ade-a379feaecd52",
     "creator_name": "sdc",
     "platform_type": "smartos",
     "cloud_name": "sdc",
-    "urn": "sdc:sdc:${output%.bz2}:0.0",
+    "urn": "${urn}",
     "created_at": "${timestamp}",
     "updated_at": "${timestamp}"
   }
