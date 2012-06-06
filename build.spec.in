@@ -27,6 +27,6 @@
   "webinfo-tarball": "webinfo/webinfo-pkg-{{BRANCH}}-.*.tar.bz2",
   "workflow-tarball": "workflow/workflow-pkg-{{BRANCH}}-.*.tar.bz2",
   "manatee-tarball": "manatee/manatee-pkg-{{BRANCH}}-.*.tar.bz2",
-  "zapi-tarball": "zapi/zapi-pkg-{{BRANCH}}-.*.tar.bz2",
+  "vmapi-tarball": "vmapi/vmapi-pkg-{{BRANCH}}-.*.tar.bz2",
   "zookeeper-tarball": "none"
 }

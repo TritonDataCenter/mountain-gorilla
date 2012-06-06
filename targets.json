@@ -110,9 +110,9 @@
     "deps": []
   },
 
-  "zapi": {
+  "vmapi": {
     "repos": [
-        {"url": "git@git.joyent.com:zapi.git"}
+        {"url": "git@git.joyent.com:vmapi.git"}
     ],
     "deps": []
   },
@@ -217,7 +217,7 @@
         "rabbitmq",
         "redis",
         "workflow",
-        "zapi",
+        "vmapi",
         "dapi",
         "cnapi",
         "napi",

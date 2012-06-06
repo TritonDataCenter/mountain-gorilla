@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi binder moray registrar ufds platform usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder moray registrar ufds platform usbheadnode releasejson
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi zapi dapi napi dcapi binder registrar moray ufds usbheadnode releasejson
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder registrar moray ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -436,29 +436,29 @@ clean_workflow:
 	(cd build/workflow && gmake clean)
 
 
-#---- ZAPI
+#---- VMAPI
 
-_zapi_stamp=$(ZAPI_BRANCH)-$(TIMESTAMP)-g$(ZAPI_SHA)
-ZAPI_BITS=$(BITS_DIR)/zapi/zapi-pkg-$(_zapi_stamp).tar.bz2
+_vmapi_stamp=$(VMAPI_BRANCH)-$(TIMESTAMP)-g$(VMAPI_SHA)
+VMAPI_BITS=$(BITS_DIR)/vmapi/vmapi-pkg-$(_vmapi_stamp).tar.bz2
 
-.PHONY: zapi
-zapi: $(ZAPI_BITS)
+.PHONY: vmapi
+vmapi: $(VMAPI_BITS)
 
-# PATH for zapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# PATH for vmapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(ZAPI_BITS): build/zapi
-	@echo "# Build zapi: branch $(ZAPI_BRANCH), sha $(ZAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(VMAPI_BITS): build/vmapi
+	@echo "# Build vmapi: branch $(VMAPI_BRANCH), sha $(VMAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/zapi && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created zapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(ZAPI_BITS)
+	(cd build/vmapi && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created vmapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(VMAPI_BITS)
 	@echo ""
 
-# Warning: if zapi's submodule deps change, this 'clean_zapi' is insufficient. It would
+# Warning: if vmapi's submodule deps change, this 'clean_vmapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
-clean_zapi:
-	rm -rf $(BITS_DIR)/zapi
-	(cd build/zapi && gmake clean)
+clean_vmapi:
+	rm -rf $(BITS_DIR)/vmapi
+	(cd build/vmapi && gmake clean)
 
 
 #---- DAPI
