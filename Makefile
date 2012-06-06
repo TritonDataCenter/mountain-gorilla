@@ -560,7 +560,7 @@ clean_moray:
 
 #---- Registrar
 
-_registrar_stamp=$(REGISTRAR_BRANCH)-$(TIMESTAMP)-g$(MORAY_SHA)
+_registrar_stamp=$(REGISTRAR_BRANCH)-$(TIMESTAMP)-g$(REGISTRAR_SHA)
 REGISTRAR_BITS=$(BITS_DIR)/registrar/registrar-pkg-$(_registrar_stamp).tar.bz2
 
 .PHONY: registrar
