@@ -86,13 +86,16 @@ Re-login and setup environment:
     [[ `git config core.autocrlf` == "input" ]] \
         && echo "* * * Warning: remove 'autocrlf=input' from your ~/.gitconfig"
 
-    # To build CA you need some more stuff (the authority here on needed
-    # packages is <https://mo.joyent.com/cloud-analytics/blob/master/tools/ca-headnode-setup#L274>
-    # TODO: Are these all still necessary?
-    pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
-        scmgit python24 python26 png GeoIP GeoLiteCity ghostscript
+   # scmgit, gcc-*, gmake: needed by most parts of sdc build
+   # python24, png, GeoIP, GeoLiteCity, ghostscript: cloud-analytics (CA)
+   # cscope: I (Trent) believe this is just for CA dev work
+   # python26: many parts of the build for javascriptlint
+   # zookeeper-client: binder needs this
+   pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
+      scmgit python24 python26 png GeoIP GeoLiteCity ghostscript \
+      zookeeper-client
 
-    # 'mynewrepo' target needs zookeeper client libs.
+    # 'binder' target needs zookeeper client libs.
     pkgin -y zookeeper-client
 
     # Note: This "./configure" step is necessary to setup your system.
