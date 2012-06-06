@@ -109,34 +109,9 @@ pkgsrc installed:
 
     pkgin ls | grep '\(nodejs\|npm\)' && pkgin -y rm npm-0.2.18 nodejs-0.4.2
 
-Next, setup a few required versions of node and npm. (See RELENG-283 for
-efforts to remove this requirement.)
-
-    # node 0.6.12
-    mkdir -p /opt/node
-    cd /opt/node
-    git clone https://github.com/joyent/node.git src
-    cd src
-    git checkout v0.6.12
-    ./configure --prefix=/opt/node/0.6.12 && make && make install
-
-    # node 0.4.9
-    make distclean
-    git checkout v0.4.9
-    ./configure --prefix=/opt/node/0.4.9 && make && make install
-    (cd /opt/node && ln -s 0.4.9 0.4)
-
-    # npm 1.0
-    cd /var/tmp
-    mkdir -p /opt/npm
-    (export PATH=/opt/node/0.4/bin:$PATH \
-        && curl http://npmjs.org/install.sh | npm_config_prefix=/opt/npm/1.0 npm_config_tar=gtar sh)
-
-
-Ensure node 0.6 is the first `node` on your PATH, as required by the MG
-build. For example (but you don't have to use this node):
-
-    export PATH=/opt/node/0.6.12/bin:$PATH
+The MG build requires that a node 0.6 first on your PATH. If you are building
+on smartos recent enough that `/usr/bin/json --version` is 0.6.x then you
+should be good.
 
 If your build zone in inside BH1, then you must add the following to "/etc/inet/hosts"
 for the "tools/upload-bits" script (used by all of the 'upload_' targets) to work:
