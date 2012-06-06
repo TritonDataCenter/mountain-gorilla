@@ -86,14 +86,14 @@ Re-login and setup environment:
     [[ `git config core.autocrlf` == "input" ]] \
         && echo "* * * Warning: remove 'autocrlf=input' from your ~/.gitconfig"
 
-    # scmgit, gcc-*, gmake: needed by most parts of sdc build
-    # python24, png, GeoIP, GeoLiteCity, ghostscript: cloud-analytics (CA)
-    # cscope: I (Trent) believe this is just for CA dev work
-    # python26: many parts of the build for javascriptlint
-    # zookeeper-client: binder needs this
+    # To build CA you need some more stuff (the authority here on needed
+    # packages is <https://mo.joyent.com/cloud-analytics/blob/master/tools/ca-headnode-setup#L274>
+    # TODO: Are these all still necessary?
     pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
-        scmgit python24 python26 png GeoIP GeoLiteCity ghostscript \
-        zookeeper-client
+        scmgit python24 python26 png GeoIP GeoLiteCity ghostscript
+
+    # 'mynewrepo' target needs zookeeper client libs.
+    pkgin -y zookeeper-client
 
     # Note: This "./configure" step is necessary to setup your system.
     # TODO: Why is this necessary?
@@ -103,6 +103,11 @@ Re-login and setup environment:
     cd illumos-live
     curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/illumos/configure.joyent
     GIT_SSL_NO_VERIFY=true ./configure
+
+Next, ensure that you do NOT have the 'nodejs' and 'npm' packages from
+pkgsrc installed:
+
+    pkgin ls | grep '\(nodejs\|npm\)' && pkgin -y rm npm-0.2.18 nodejs-0.4.2
 
 The MG build requires that a node 0.6 first on your PATH. If you are building
 on smartos recent enough that `/usr/bin/json --version` is 0.6.x then you
@@ -184,6 +189,100 @@ where:
 - TGZ is a catch-all for whatever the package format is. E.g.: ".tgz",
   ".sh" (shar), ".md5sum", ".tar.bz2".
 
+## Adding a repository quickstart
+
+- add it as a top-lever property in targets.json, as an object with properties
+"repos" and "deps" minimally, both are arrays.
+
+"repos" is an array of objects, with the property "url", pointing at a git url
+"deps" is an array of strings, where the string is another top-level target in targets.json
+
+{ 
+  ...
+  mynewrepo: {
+  "repos": [ {"url": "git://github.com/joyent/mynewrepo.git" } ],
+  "deps": [ "platform" ]
+  },
+  ...
+}
+
+
+Then you'll add the target to Makefile. MG's configure will automatically populate
+some Makefile values for you, noteably: xxx_BRANCH , xxx_SHA, but you will need to fill
+in the build stamp yourself. Configure will also git checkout your repo in build/
+
+"""
+#---- MYNEWREPO
+
+_mynewrepo_stamp=$(MYNEWREPO_BRANCH)-$(TIMESTAMP)-g$(MYNEWREPO_SHA)
+MYNEWREPO_BITS=$(BITS_DIR)/mynewrepo/mynewrepo-pkg-$(_mynewrepo_stamp).tar.bz2
+
+.PHONY: mynewrepo
+mynewrepo: $(MYNEWREPO_BITS)
+
+$(mynewrepo_BITS): build/mynewrepo
+  mkdir -p $(BITS_DIR)
+  (cd build/mynewrepo && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+  @echo "# Created mynewrepo bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+  @ls -1 $(MYNEWREPO_BITS)
+  @echo ""
+
+clean_mynewrepo:
+  rm -rf $(BITS_DIR)/mynewrepo
+  (cd build/mynewrepo && gmake clean)
+"""
+
+if you wish to build an application zone dataset, the process is roughly similar
+except you will need to add the "appliance":"true" property, the "pkgsrc" property
+and "dataset_uuid"
+
+{
+  ...
+  "mynewrepo": {
+    "repos" : [ {"url":"git://github.com/joyent/mynewrepo.git"} ],
+    "appliance": "true",
+    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [
+      "sun-jre6-6.0.26",
+      "zookeeper-client-3.4.3",
+      "zookeeper-server-3.4.3"
+    ],
+    deps: []
+  },
+  ...
+}
+
+where dataset_uuid is the uuid of the source dataset you wish to build off
+pkgsrc is an array of strings of package names to install.
+
+Your Makefile target will look as above, with the addition of the xxx_dataset target:
+"""
+...
+MYNEWREPO_DATASET=$(BITS_DIR)/mynewrepo/mynewrepo-zfs-$(_mynewrepo_stamp).zfs.bz2
+
+.PHONY: mynewrepo_dataset
+
+mynewrepo_dataset: $(MYNEWREPO_DATASET)
+
+$(MYNEWREPO_DATASET): $(MYNEWREPO_BITS)
+        @echo "# Build mynewrepo dataset: branch $(MYNEWREPO_BRANCH), sha $(MYNEWREPO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+        ./tools/prep_dataset.sh -t $(MYNEWREPO_BITS) -o $(MYNEWREPO_DATASET) -p $(MYNEWREPO_PKGSRC)
+        @echo "# Created mynewrepo dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
+        @ls -1 $(MYNEWREPO_DATASET)
+        @echo ""
+...
+"""
+
+prep_dataset.sh is a script that generates datasets out of tarballs and lists of packages.
+
+It takes arguments of the form -t <tarball> where <tarball> is a .tar.gz file, containing a directory "root", which is unpacked to /
+-p "list of pkgsrc packages" where list of pkgsrc packages is a list of the pkgsrc packages to be installed in the zone.
+
+Configure will populate xxx_DATASET and xxx_PKGSRC based on targets.json. 
+
+Additionally, you can set the dsadm URN for the target by adding the "urn" and "version" properties to targets.json, as properties of
+the target you wish to manipulate. These will show up as urn:version ( sdc:sdc:mynewrepo:0.1 for instance ). To use them, configure will
+populate xxx_URN and xxx_VERSION for you in the Makefile
 
 ## Exceptions
 
