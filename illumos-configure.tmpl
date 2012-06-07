@@ -2,9 +2,9 @@ mkdir -p projects/local
 (cd projects/local && [[ -d ur-agent ]] \
     || git clone GITCLONESOURCEur-agent)
 (cd projects/local && [[ -d kvm ]] \
-    || git clone GITCLONESOURCEkvm)
+    || git clone GITCLONESOURCEillumos-kvm kvm)
 (cd projects/local && [[ -d kvm-cmd ]] \
-    || git clone GITCLONESOURCEkvm-cmd-14 kvm-cmd)
+    || git clone GITCLONESOURCEillumos-kvm-cmd kvm-cmd)
 (cd projects/local && [[ -d sdc-platform ]] \
     || git clone GITCLONESOURCEsdc-platform)
 (cd overlay && [[ -d sdc ]] || \

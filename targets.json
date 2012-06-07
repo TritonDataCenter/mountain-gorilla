@@ -186,8 +186,8 @@
         {"url": "git://github.com/joyent/smartos-live.git"},
         {"url": "git://github.com/joyent/illumos-joyent.git"},
         {"url": "git@git.joyent.com:ur-agent.git"},
-        {"url": "git@git.joyent.com:kvm.git"},
-        {"url": "git@git.joyent.com:kvm-cmd-14.git"},
+        {"url": "git://github.com/joyent/illumos-kvm.git"},
+        {"url": "git://github.com/joyent/illumos-kvm-cmd.git"},
         {"url": "git@git.joyent.com:sdc-platform.git"}
     ],
     "deps": ["illumosextra"]
