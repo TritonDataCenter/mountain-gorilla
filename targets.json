@@ -183,8 +183,8 @@
   },
   "platform": {
     "repos": [
-        {"url": "git@git.joyent.com:illumos-live.git"},
-        {"url": "git@git.joyent.com:illumos-joyent.git"},
+        {"url": "git://github.com/joyent/smartos-live.git"},
+        {"url": "git://github.com/joyent/illumos-joyent.git"},
         {"url": "git@git.joyent.com:ur-agent.git"},
         {"url": "git@git.joyent.com:kvm.git"},
         {"url": "git@git.joyent.com:kvm-cmd-14.git"},

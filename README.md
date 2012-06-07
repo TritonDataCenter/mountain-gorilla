@@ -98,9 +98,9 @@ Re-login and setup environment:
     # Note: This "./configure" step is necessary to setup your system.
     # TODO: Why is this necessary?
     # TODO: Pull out the requisite system setup steps. Shouldn't really
-    #       be tucked away in illumos-live.git and configure.joyent.
-    git clone git@git.joyent.com:illumos-live.git
-    cd illumos-live
+    #       be tucked away in smartos-live.git and configure.joyent.
+    git clone git@git.joyent.com:smartos-live.git
+    cd smartos-live
     curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/illumos/configure.joyent
     GIT_SSL_NO_VERIFY=true ./configure
 

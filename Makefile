@@ -774,16 +774,16 @@ PLATFORM_BITS_0=$(shell echo $(PLATFORM_BITS) | awk '{print $$1}')
 .PHONY: platform
 platform: $(PLATFORM_BITS_0)
 
-build/illumos-live/configure.mg:
-	sed -e "s/BRANCH/$(ILLUMOS_LIVE_BRANCH)/" -e "s:GITCLONESOURCE:$(shell pwd)/build/:" <illumos-configure.tmpl >build/illumos-live/configure.mg
+build/smartos-live/configure.mg:
+	sed -e "s/BRANCH/$(ILLUMOS_LIVE_BRANCH)/" -e "s:GITCLONESOURCE:$(shell pwd)/build/:" <illumos-configure.tmpl >build/smartos-live/configure.mg
 
-build/illumos-live/configure-branches:
-	sed -e "s/BRANCH/$(ILLUMOS_LIVE_BRANCH)/" <illumos-configure-branches.tmpl >build/illumos-live/configure-branches
+build/smartos-live/configure-branches:
+	sed -e "s/BRANCH/$(ILLUMOS_LIVE_BRANCH)/" <illumos-configure-branches.tmpl >build/smartos-live/configure-branches
 
 # PATH: Ensure using GCC from SFW as require for platform build.
-$(PLATFORM_BITS): build/illumos-live/configure.mg build/illumos-live/configure-branches
+$(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-branches
 	@echo "# Build platform: branch $(ILLUMOS_LIVE_BRANCH), sha $(ILLUMOS_LIVE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	(cd build/illumos-live \
+	(cd build/smartos-live \
 		&& PATH=/usr/sfw/bin:$(PATH) \
 			EXTRA_TARBALL=$(shell ls -1 $(BITS_DIR)/illumosextra/illumos-extra-* | tail -1) \
 			./configure \
@@ -796,15 +796,15 @@ $(PLATFORM_BITS): build/illumos-live/configure.mg build/illumos-live/configure-b
 			EXTRA_TARBALL=$(shell ls -1 $(BITS_DIR)/illumosextra/illumos-extra-* | tail -1) \
 			gmake live)
 	(mkdir -p $(BITS_DIR)/platform)
-	(cp build/illumos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/platform/platform-$(ILLUMOS_LIVE_BRANCH)-$(TIMESTAMP).tgz)
-	cp build/illumos-live/output/vmtests-$(TIMESTAMP).tgz $(BITS_DIR)/platform/vmtests-$(ILLUMOS_LIVE_BRANCH)-$(TIMESTAMP).tgz
+	(cp build/smartos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/platform/platform-$(ILLUMOS_LIVE_BRANCH)-$(TIMESTAMP).tgz)
+	cp build/smartos-live/output/vmtests-$(TIMESTAMP).tgz $(BITS_DIR)/platform/vmtests-$(ILLUMOS_LIVE_BRANCH)-$(TIMESTAMP).tgz
 	@echo "# Created platform bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(PLATFORM_BITS)
 	@echo ""
 
 clean_platform:
 	rm -rf $(BITS_DIR)/platform
-	(cd build/illumos-live && gmake clean)
+	(cd build/smartos-live && gmake clean)
 
 #---- extras
 
