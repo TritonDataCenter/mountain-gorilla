@@ -86,17 +86,14 @@ Re-login and setup environment:
     [[ `git config core.autocrlf` == "input" ]] \
         && echo "* * * Warning: remove 'autocrlf=input' from your ~/.gitconfig"
 
-   # scmgit, gcc-*, gmake: needed by most parts of sdc build
-   # python24, png, GeoIP, GeoLiteCity, ghostscript: cloud-analytics (CA)
-   # cscope: I (Trent) believe this is just for CA dev work
-   # python26: many parts of the build for javascriptlint
-   # zookeeper-client: binder needs this
-   pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
+    # scmgit, gcc-*, gmake: needed by most parts of sdc build
+    # python24, png, GeoIP, GeoLiteCity, ghostscript: cloud-analytics (CA)
+    # cscope: I (Trent) believe this is just for CA dev work
+    # python26: many parts of the build for javascriptlint
+    # zookeeper-client: binder needs this
+    pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
       scmgit python24 python26 png GeoIP GeoLiteCity ghostscript \
       zookeeper-client
-
-    # 'binder' target needs zookeeper client libs.
-    pkgin -y zookeeper-client
 
     # Note: This "./configure" step is necessary to setup your system.
     # TODO: Why is this necessary?
@@ -106,11 +103,6 @@ Re-login and setup environment:
     cd illumos-live
     curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/illumos/configure.joyent
     GIT_SSL_NO_VERIFY=true ./configure
-
-Next, ensure that you do NOT have the 'nodejs' and 'npm' packages from
-pkgsrc installed:
-
-    pkgin ls | grep '\(nodejs\|npm\)' && pkgin -y rm npm-0.2.18 nodejs-0.4.2
 
 The MG build requires that a node 0.6 first on your PATH. If you are building
 on smartos recent enough that `/usr/bin/json --version` is 0.6.x then you
