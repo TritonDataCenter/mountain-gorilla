@@ -200,8 +200,8 @@ EOF
       if [[ $(cat ${ROOT}/targets.json | $JSON ${repo} | $JSON appliance) == 'true' ]]; then
         echo ${upper_repo_name}_DATASET=$(cat ${ROOT}/targets.json | json ${repo}.dataset_uuid) >> ${ROOT}/bits/config.mk
         echo ${upper_repo_name}_PKGSRC=\"$(cat ${ROOT}/targets.json | json ${repo}.pkgsrc | json -a |  xargs)\" >> ${ROOT}/bits/config.mk
-        echo ${upper_repo_name}_URN=\"$(cat ${ROOT}/targets.json | json ${repo}.urn | json -a |  xargs)\" >> ${ROOT}/bits/config.mk
-        echo ${upper_repo_name}_VERSION=\"$(cat ${ROOT}/targets.json | json ${repo}.version | json -a |  xargs)\" >> ${ROOT}/bits/config.mk
+        echo ${upper_repo_name}_URN=\"$(cat ${ROOT}/targets.json | json ${repo}.urn)\" >> ${ROOT}/bits/config.mk
+        echo ${upper_repo_name}_VERSION=\"$(cat ${ROOT}/targets.json | json ${repo}.version)\" >> ${ROOT}/bits/config.mk
         deps=""
         for dep in $(cat ${ROOT}/targets.json | json ${repo}.deps | json -a |  xargs); do
            deps="${deps} $(ls ${ROOT}/bits/${dep}/*.tar.* | xargs)"
