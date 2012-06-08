@@ -609,6 +609,37 @@ clean_binder:
 	rm -rf $(BITS_DIR)/binder
 	(cd build/binder && gmake distclean)
 
+#---- Muppet
+
+_muppet_stamp=$(MUPPET_BRANCH)-$(TIMESTAMP)-g$(MUPPET_SHA)
+MUPPET_BITS=$(BITS_DIR)/muppet/muppet-pkg-$(_muppet_stamp).tar.bz2
+MUPPET_DATASET=$(BITS_DIR)/muppet/muppet-zfs-$(_muppet_stamp).zfs.bz2
+
+.PHONY: muppet
+muppet: $(MUPPET_BITS) muppet_dataset
+
+$(MUPPET_BITS): build/muppet
+	@echo "# Build muppet: branch $(MUPPET_BRANCH), sha $(MUPPET_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/muppet && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created muppet bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MUPPET_BITS)
+	@echo ""
+
+.PHONY: muppet_dataset
+muppet_dataset: $(MUPPET_DATASET)
+
+$(MUPPET_DATASET): $(MUPPET_BITS)
+	@echo "# Build muppet_dataset: branch $(MUPPET_BRANCH), sha $(MUPPET_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -t $(MUPPET_BITS) -o $(MUPPET_DATASET) -p $(MUPPET_PKGSRC) -t $(MUPPET_EXTRA_TARBALLS) -u $(MUPPET_URN) -v $(MUPPET_VERSION)
+	@echo "# Created muppet dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MUPPET_DATASET)
+	@echo ""
+
+clean_muppet:
+	rm -rf $(BITS_DIR)/muppet
+	(cd build/muppet && gmake distclean)
+
 #---- DCAPI
 
 _dcapi_stamp=$(DCAPI_BRANCH)-$(TIMESTAMP)-g$(DCAPI_SHA)

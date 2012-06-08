@@ -168,6 +168,21 @@
     "deps": []
   },
 
+  "muppet": {
+    "appliance": "true",
+    "urn": "sdc:sds:loadbalancer",
+    "version": "1.0.0",
+    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [
+      "haproxy-1.4.18",
+      "zookeeper-client-3.4.3"
+    ],
+    "repos": [
+      {"url": "git@git.joyent.com:muppet.git"}
+    ],
+    "deps": ["registrar"]
+  },
+
   "dcapi": {
     "repos": [
         {"url": "git@git.joyent.com:dcapi.git"}
