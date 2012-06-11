@@ -223,27 +223,27 @@
         {"url": "git@git.joyent.com:usb-headnode.git"}
     ],
     "deps": [
-        "platform",
-        "agentsshar",
-        "ca",
-        "moray",
-        "ufds",
-        "amon",
-        "billapi",
-        "cloudapi",
-        "portal",
-        "webinfo",
         "adminui",
+        "agentsshar",
+        "amon",
         "assets",
+        "billapi",
+        "ca",
+        "cloudapi",
+        "cnapi",
+        "dapi",
+        "dcapi",
         "dhcpd",
+        "moray",
+        "napi",
+        "platform",
+        "portal",
         "rabbitmq",
         "redis",
-        "workflow",
+        "ufds",
         "vmapi",
-        "dapi",
-        "cnapi",
-        "napi",
-        "dcapi"
+        "webinfo",
+        "workflow"
     ]
   }
 }
