@@ -25,7 +25,9 @@
     "repos": [
         {"url": "git@git.joyent.com:amon.git"}
     ],
-    "deps": []
+    "deps": [
+        "sdcnode"
+    ]
   },
   "assets": {
     "repos": [
