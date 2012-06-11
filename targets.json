@@ -138,13 +138,6 @@
     "deps": []
   },
 
-  "moray": {
-    "repos": [
-        {"url": "git@git.joyent.com:moray.git"}
-    ],
-    "deps": []
-  },
-
   "registrar": {
     "repos": [
         {"url": "git@git.joyent.com:registrar.git"}
@@ -166,6 +159,18 @@
       {"url": "git@git.joyent.com:binder.git"}
     ],
     "deps": []
+  },
+
+  "moray": {
+    "appliance": "true",
+    "urn": "sdc:sds:moray",
+    "version": "1.0.0",
+    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": ["postgresql91-client-9.1.2"],
+    "repos": [
+        {"url": "git@git.joyent.com:moray.git"}
+    ],
+    "deps": ["registrar"]
   },
 
   "muppet": {

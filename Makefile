@@ -540,9 +540,10 @@ clean_napi:
 
 _moray_stamp=$(MORAY_BRANCH)-$(TIMESTAMP)-g$(MORAY_SHA)
 MORAY_BITS=$(BITS_DIR)/moray/moray-pkg-$(_moray_stamp).tar.bz2
+MORAY_DATASET=$(BITS_DIR)/moray/moray-zfs-$(_moray_stamp).zfs.bz2
 
 .PHONY: moray
-moray: $(MORAY_BITS)
+moray: $(MORAY_BITS) moray_dataset
 
 # PATH for moray build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -554,9 +555,20 @@ $(MORAY_BITS): build/moray
 	@ls -1 $(MORAY_BITS)
 	@echo ""
 
+.PHONY: moray_dataset
+moray_dataset: $(MORAY_DATASET)
+
+$(MORAY_DATASET): $(MORAY_BITS)
+	@echo "# Build moray_dataset: branch $(MORAY_BRANCH), sha $(MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -t $(MORAY_BITS) -o $(MORAY_DATASET) -p $(MORAY_PKGSRC) -t $(MORAY_EXTRA_TARBALLS) -u $(MORAY_URN) -v $(MORAY_VERSION)
+	@echo "# Created moray dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MORAY_DATASET)
+	@echo ""
+
 clean_moray:
 	rm -rf $(BITS_DIR)/moray
 	(cd build/moray && gmake distclean)
+
 
 #---- Registrar
 
