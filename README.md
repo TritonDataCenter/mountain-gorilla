@@ -86,13 +86,16 @@ Re-login (`ssh -A root@10.2.0.145`) and setup environment:
         && echo "* * * Warning: remove 'autocrlf=input' from your ~/.gitconfig"
 
     # scmgit, gcc-*, gmake: needed by most parts of sdc build
-    # python24, png, GeoIP, GeoLiteCity, ghostscript: cloud-analytics (CA)
+    # png, GeoIP, GeoLiteCity, ghostscript: cloud-analytics (CA)
     # cscope: I (Trent) believe this is just for CA dev work
     # python26: many parts of the build for javascriptlint
     # zookeeper-client: binder needs this
     pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
-      scmgit python24 python26 png GeoIP GeoLiteCity ghostscript \
-      zookeeper-client
+      scmgit python26 png GeoIP GeoLiteCity ghostscript zookeeper-client
+    # python24: cloud-analytics (CA). This is installed separately and *after
+    #   python26* to ensure that Python 2.6 is first on the PATH.
+    pkgin -y python24
+
 
     # Note: This "./configure" step is necessary to setup your system.
     # TODO: Why is this necessary?
