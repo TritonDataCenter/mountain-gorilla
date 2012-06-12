@@ -390,12 +390,11 @@ clean_cloudapi:
 
 _manatee_stamp=$(MANATEE_BRANCH)-$(TIMESTAMP)-g$(MANATEE_SHA)
 MANATEE_BITS=$(BITS_DIR)/manatee/manatee-pkg-$(_manatee_stamp).tar.bz2
+MANATEE_DATASET=$(BITS_DIR)/manatee/manatee-zfs-$(_manatee_stamp).zfs.bz2
 
 .PHONY: manatee
-manatee: $(MANATEE_BITS)
+manatee: $(MANATEE_BITS) manatee_dataset
 
-# PATH for manatee build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
 $(MANATEE_BITS): build/manatee
 	@echo "# Build manatee: branch $(MANATEE_BRANCH), sha $(MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
@@ -404,12 +403,19 @@ $(MANATEE_BITS): build/manatee
 	@ls -1 $(MANATEE_BITS)
 	@echo ""
 
-# Warning: if manatee's submodule deps change, this 'clean_manatee' is insufficient. It would
-# then need to call 'gmake dist-clean'.
+.PHONY: manatee_dataset
+manatee_dataset: $(MANATEE_DATASET)
+
+$(MANATEE_DATASET): $(MANATEE_BITS)
+	@echo "# Build manatee_dataset: branch $(MANATEE_BRANCH), sha $(MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -t $(MANATEE_BITS) -o $(MANATEE_DATASET) -p $(MANATEE_PKGSRC) -u $(MANATEE_URN) -v $(MANATEE_VERSION)
+	@echo "# Created manatee dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MANATEE_DATASET)
+	@echo ""
+
 clean_manatee:
 	rm -rf $(BITS_DIR)/manatee
-	(cd build/manatee && gmake clean)
-
+	(cd build/manatee && gmake distclean)
 
 #---- WORKFLOW
 
