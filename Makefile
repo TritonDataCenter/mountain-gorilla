@@ -116,7 +116,7 @@ amon: $(AMON_BITS_0)
 $(AMON_BITS): build/amon
 	@echo "# Build amon: branch $(AMON_BRANCH), sha $(AMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/amon && IGNORE_DIRTY=1 TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake clean all pkg publish)
+	(cd build/amon && IGNORE_DIRTY=1 TIMESTAMP=$(TIMESTAMP) NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode BITS_DIR=$(BITS_DIR) gmake clean all pkg publish)
 	@echo "# Created amon bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(AMON_BITS)
 	@echo ""
@@ -546,9 +546,10 @@ clean_napi:
 
 _moray_stamp=$(MORAY_BRANCH)-$(TIMESTAMP)-g$(MORAY_SHA)
 MORAY_BITS=$(BITS_DIR)/moray/moray-pkg-$(_moray_stamp).tar.bz2
+MORAY_DATASET=$(BITS_DIR)/moray/moray-zfs-$(_moray_stamp).zfs.bz2
 
 .PHONY: moray
-moray: $(MORAY_BITS)
+moray: $(MORAY_BITS) moray_dataset
 
 # PATH for moray build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -560,9 +561,20 @@ $(MORAY_BITS): build/moray
 	@ls -1 $(MORAY_BITS)
 	@echo ""
 
+.PHONY: moray_dataset
+moray_dataset: $(MORAY_DATASET)
+
+$(MORAY_DATASET): $(MORAY_BITS)
+	@echo "# Build moray_dataset: branch $(MORAY_BRANCH), sha $(MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -t $(MORAY_BITS) -o $(MORAY_DATASET) -p $(MORAY_PKGSRC) -t $(MORAY_EXTRA_TARBALLS) -u $(MORAY_URN) -v $(MORAY_VERSION)
+	@echo "# Created moray dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MORAY_DATASET)
+	@echo ""
+
 clean_moray:
 	rm -rf $(BITS_DIR)/moray
 	(cd build/moray && gmake distclean)
+
 
 #---- Registrar
 
@@ -614,6 +626,37 @@ $(BINDER_DATASET): $(BINDER_BITS)
 clean_binder:
 	rm -rf $(BITS_DIR)/binder
 	(cd build/binder && gmake distclean)
+
+#---- Muppet
+
+_muppet_stamp=$(MUPPET_BRANCH)-$(TIMESTAMP)-g$(MUPPET_SHA)
+MUPPET_BITS=$(BITS_DIR)/muppet/muppet-pkg-$(_muppet_stamp).tar.bz2
+MUPPET_DATASET=$(BITS_DIR)/muppet/muppet-zfs-$(_muppet_stamp).zfs.bz2
+
+.PHONY: muppet
+muppet: $(MUPPET_BITS) muppet_dataset
+
+$(MUPPET_BITS): build/muppet
+	@echo "# Build muppet: branch $(MUPPET_BRANCH), sha $(MUPPET_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/muppet && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created muppet bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MUPPET_BITS)
+	@echo ""
+
+.PHONY: muppet_dataset
+muppet_dataset: $(MUPPET_DATASET)
+
+$(MUPPET_DATASET): $(MUPPET_BITS)
+	@echo "# Build muppet_dataset: branch $(MUPPET_BRANCH), sha $(MUPPET_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -t $(MUPPET_BITS) -o $(MUPPET_DATASET) -p $(MUPPET_PKGSRC) -t $(MUPPET_EXTRA_TARBALLS) -u $(MUPPET_URN) -v $(MUPPET_VERSION)
+	@echo "# Created muppet dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MUPPET_DATASET)
+	@echo ""
+
+clean_muppet:
+	rm -rf $(BITS_DIR)/muppet
+	(cd build/muppet && gmake distclean)
 
 #---- DCAPI
 

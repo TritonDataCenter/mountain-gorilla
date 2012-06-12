@@ -55,7 +55,7 @@ First, create zone. For example:
     # Let's create a zone on bh1-build0 (dev machine in the Bellingham
     # lab, <https://hub.joyent.com/wiki/display/dev/Development+Lab>).
     ssh bh1-build0
-    /opt/custom/create-zone.sh trent   # Pick a different name for yourself :)
+    /opt/custom/create-zone-163.sh trent   # Pick a different name for yourself :)
     #  Or use Josh's new "/opt/custom/create-zone-16.sh" to use the newer
     #  smartos-1.6.1 dataset. It is the future.
     # wait 30s or so it to setup.
@@ -68,9 +68,8 @@ First, create zone. For example:
     chmod 600 /root/.ssh/authorized_keys
     chmod 700 /root/.ssh
 
-Re-login and setup environment:
+Re-login (`ssh -A root@10.2.0.145`) and setup environment:
 
-    ssh -A root@10.2.0.145
     curl -k -O https://download.joyent.com/pub/build/setup-build-zone
     curl -k -O https://download.joyent.com/pub/build/fake-subset.tbz2
     chmod 755 setup-build-zone
@@ -87,19 +86,22 @@ Re-login and setup environment:
         && echo "* * * Warning: remove 'autocrlf=input' from your ~/.gitconfig"
 
     # scmgit, gcc-*, gmake: needed by most parts of sdc build
-    # python24, png, GeoIP, GeoLiteCity, ghostscript: cloud-analytics (CA)
+    # png, GeoIP, GeoLiteCity, ghostscript: cloud-analytics (CA)
     # cscope: I (Trent) believe this is just for CA dev work
     # python26: many parts of the build for javascriptlint
     # zookeeper-client: binder needs this
     pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
-      scmgit python24 python26 png GeoIP GeoLiteCity ghostscript \
-      zookeeper-client
+      scmgit python26 png GeoIP GeoLiteCity ghostscript zookeeper-client
+    # python24: cloud-analytics (CA). This is installed separately and *after
+    #   python26* to ensure that Python 2.6 is first on the PATH.
+    pkgin -y python24
+
 
     # Note: This "./configure" step is necessary to setup your system.
     # TODO: Why is this necessary?
     # TODO: Pull out the requisite system setup steps. Shouldn't really
     #       be tucked away in smartos-live.git and configure.joyent.
-    git clone git@git.joyent.com:smartos-live.git
+    git clone https://github.com/joyent/smartos-live.git
     cd smartos-live
     curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/illumos/configure.joyent
     GIT_SSL_NO_VERIFY=true ./configure

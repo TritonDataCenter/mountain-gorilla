@@ -25,7 +25,9 @@
     "repos": [
         {"url": "git@git.joyent.com:amon.git"}
     ],
-    "deps": []
+    "deps": [
+        "sdcnode"
+    ]
   },
   "assets": {
     "repos": [
@@ -148,13 +150,6 @@
     "deps": []
   },
 
-  "moray": {
-    "repos": [
-        {"url": "git@git.joyent.com:moray.git"}
-    ],
-    "deps": []
-  },
-
   "registrar": {
     "repos": [
         {"url": "git@git.joyent.com:registrar.git"}
@@ -176,6 +171,33 @@
       {"url": "git@git.joyent.com:binder.git"}
     ],
     "deps": []
+  },
+
+  "moray": {
+    "appliance": "true",
+    "urn": "sdc:sds:moray",
+    "version": "1.0.0",
+    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": ["postgresql91-client-9.1.2"],
+    "repos": [
+        {"url": "git@git.joyent.com:moray.git"}
+    ],
+    "deps": ["registrar"]
+  },
+
+  "muppet": {
+    "appliance": "true",
+    "urn": "sdc:sds:loadbalancer",
+    "version": "1.0.0",
+    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [
+      "haproxy-1.4.18",
+      "zookeeper-client-3.4.3"
+    ],
+    "repos": [
+      {"url": "git@git.joyent.com:muppet.git"}
+    ],
+    "deps": ["registrar"]
   },
 
   "dcapi": {
@@ -213,27 +235,27 @@
         {"url": "git@git.joyent.com:usb-headnode.git"}
     ],
     "deps": [
-        "platform",
-        "agentsshar",
-        "ca",
-        "moray",
-        "ufds",
-        "amon",
-        "billapi",
-        "cloudapi",
-        "portal",
-        "webinfo",
         "adminui",
+        "agentsshar",
+        "amon",
         "assets",
+        "billapi",
+        "ca",
+        "cloudapi",
+        "cnapi",
+        "dapi",
+        "dcapi",
         "dhcpd",
+        "moray",
+        "napi",
+        "platform",
+        "portal",
         "rabbitmq",
         "redis",
-        "workflow",
+        "ufds",
         "vmapi",
-        "dapi",
-        "cnapi",
-        "napi",
-        "dcapi"
+        "webinfo",
+        "workflow"
     ]
   }
 }

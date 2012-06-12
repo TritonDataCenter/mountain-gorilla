@@ -25,11 +25,37 @@ set -o pipefail
 BRANCH=master
 TRY_BRANCH=
 
+# These two are used for tracking which targets will be built in a
+# provisioned zone (separate from the current zone).
+USEZONE=
+NOUSEZONE=
+
 ROOT=$(pwd)
 CACHE_DIR=${ROOT}/cache
 
-USEZONE=
-NOUSEZONE=
+# Username and password filled by `ensure_bits_credentials`.
+BITS_USERNAME=
+BITS_PASSWORD=
+BITS_PROTO=https
+BITS_HOST=stuff.joyent.us
+BITS_BASE_PATH=/stuff/builds
+
+# This is a HACK to figure out if we're in the bh1 lab (assume we are if
+# the IP is 10.2.X.X) so that we can switch the stuff url to an IP because
+# the URL doesn't work in the lab.
+if [[ $(uname -s) == "SunOS" && \
+      $(sysinfo -p | grep "Network_Interface.*IPv4_Address=" \
+        | cut -d "'" -f2 | grep 10\.2\. | wc -l | tr -d ' ') -gt 0 ]]; then
+    # Assume we're in the BH-1 lab.
+    echo "# Looks like we're in the BH-1 lab."
+    BITS_HOST=10.2.0.190
+fi
+
+CP_LINK_OPT=
+if [[ $(uname -s) == "SunOS" ]]; then
+    CP_LINK_OPT=--link
+fi
+CURL="curl --fail --connect-timeout 10 -s"
 
 
 
@@ -45,43 +71,123 @@ function errexit {
     fatal "error exit status $1 at line $2"
 }
 
-# Preload bits/ with the latest built and uploaded bits for
+function ensure_bits_credentials {
+    MG_CONFIG_PATH=~/.mg.json
+    if [[ -z "$BITS_USERNAME" ]]; then
+        BITS_USERNAME=$(cat $MG_CONFIG_PATH | $JSON bits_username)
+    fi
+    if [[ -z "$BITS_USERNAME" ]]; then
+        fatal "Could not get 'bits_username' from '$MG_CONFIG_PATH'."
+    fi
+    if [[ -z "$BITS_PASSWORD" ]]; then
+        BITS_PASSWORD=$(cat $MG_CONFIG_PATH | $JSON bits_password)
+    fi
+    if [[ -z "$BITS_PASSWORD" ]]; then
+        fatal "Could not get 'bits_password' from '$MG_CONFIG_PATH'."
+    fi
+}
+
+# Blow away the bits cache once per-day because don't want it to grow
+# unbounded in size (esp. for the continuous-build system). An alternative
+# would be to put a size limit on it.
+function flush_bits_cache() {
+    if [[ -f $CACHE_DIR/bits/created ]]; then
+        local bits_cache_age=$((`date "+%s"` - `stat -c %X $CACHE_DIR/bits/created`))
+        # One day in 86400. We use a bit more to avoid harmonics with
+        # once-per-day builds.
+        if [[ $bits_cache_age -gt 100000 ]]; then
+            echo "# Bit cache '$CACHE_DIR/bits' is more than a day old. Blowing it away to be recreated."
+            rm -rf $CACHE_DIR/bits
+        fi
+    fi
+}
+
+# Preload $CACHE_DIR/bits/ with the latest built and uploaded bits for
 # the given target and branch.
 # Usage:
 #   preload_bits TARGET BRANCH TRY_BRANCH
-#
+# Example:
+#   preload_bits smartlogin master ""
 function preload_bits() {
     local target=$1
     local branch=$2
     local try_branch=$3
-    local stuff_login=stuff@stuff.joyent.us
+    echo ""
+    echo "# preload 'bits/$target'"
 
-    # This is a HACK to figure out if we're in the bh1 lab (assume we are if
-    # the IP is 10.2.X.X) so that we can switch the stuff url to an IP because
-    # the URL doesn't work in the lab.
-    if [[ $(uname -s) == "SunOS" && \
-          $(sysinfo -p | grep "Network_Interface.*IPv4_Address=" \
-            | cut -d "'" -f2 | grep 10\.2\. | wc -l | tr -d ' ') -gt 0 ]]; then
-        # assume we're in the lab
-        echo "Looks like this is running in the BH1 lab."
-        stuff_login=stuff@10.2.0.190
+    ensure_bits_credentials
+
+    local bits_url=$BITS_PROTO://$BITS_USERNAME:$BITS_PASSWORD@$BITS_HOST$BITS_BASE_PATH
+    if [[ "${bits_url:(-1)}" != "/" ]]; then
+        bits_url=$bits_url/
+    fi
+    local bits_url_censor=$BITS_PROTO://$BITS_USERNAME:*password*@$BITS_HOST$BITS_BASE_PATH
+    if [[ "${bits_url_censor:(-1)}" != "/" ]]; then
+        bits_url_censor=$bits_url_censor/
     fi
 
-    echo "# preload bits/$target from stuff.joyent.us/builds/$target/$branch-latest/$target"
-    local ssh="ssh -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-    mkdir -p bits/$target
-    if [[ ! -z "$try_branch" ]]; then
-        local out=$($ssh $stuff_login ls -d builds/$target/$try_branch-latest/$target 2>&1 || true)
-        if [[ "${out##*: }" != "No such file or directory" ]]; then
-            rsync -e "$ssh" -av \
-                $stuff_login:builds/$target/$try_branch-latest/$target/ \
-                bits/$target/
-            return
+    # Branch dir: try $try_branch, then $branch.
+    local best_branch=$try_branch
+    local latest_url=$bits_url$target/$try_branch-latest/
+    if [[ $($CURL -kI $latest_url | head -1 | awk '{print $2}') != "200" ]]; then
+        best_branch=$branch
+        latest_url=$bits_url$target/$branch-latest/
+        if [[ $($CURL -kIS $latest_url | head -1 | awk '{print $2}') != "200" ]]; then
+            fatal "'$bits_url_censor$target/$branch-latest/' does not exist"
         fi
+    fi 
+    echo "# use branch '$best_branch'"
+
+    # Find the latest build time for this branch.
+    local latest_build=$($CURL -Sk $bits_url$target/ \
+        | grep "href=\"" \
+        | cut -d'"' -f2 \
+        | grep "^$best_branch-" \
+        | grep -v -- '-latest/$' \
+        | sort \
+        | tail -1)
+    local local_cache_dir=$CACHE_DIR/bits/$BITS_HOST$BITS_BASE_PATH/$target/$latest_build$target
+
+    if [[ -d $local_cache_dir ]]; then
+        echo "# local cache at '$local_cache_dir' already exists"
+    else
+        # Mark creation for bits cache flush every day.
+        mkdir -p $CACHE_DIR/bits
+        if [[ ! -f $CACHE_DIR/bits/created ]]; then
+            touch $CACHE_DIR/bits/created
+        fi
+
+        latest_url=$bits_url$target/$latest_build
+        local latest_url_censor=$bits_url_censor$target/$latest_build
+
+        # Update cache in $CACHE_DIR/bits
+        # `-l 2`: Two levels deep needed for 2-level depth of 'agents' bits area.
+        echo "# download from $latest_url_censor"
+        (cd $CACHE_DIR/bits \
+            && wget -q -np -l 2 --no-check-certificate -r -L -R 'index.html,*.log' \
+                $latest_url$target/)
     fi
-    rsync -e "$ssh" -av $stuff_login:builds/$target/$branch-latest/$target/ \
-        bits/$target/
+    local md5sums_path=$local_cache_dir/../md5sums.txt
+    if [[ ! -f $md5sums_path ]]; then
+        $CURL -Sk ${latest_url}md5sums.txt -o $md5sums_path
+    fi
+
+    # MD5 check of downloaded bits.
+    for bit in $(cd $local_cache_dir/../ && find . -type f | grep -v md5sums.txt); do
+        local correct_md5=$(grep $bit $md5sums_path | cut -d ' ' -f1)
+        local actual_md5=$(openssl dgst -md5 < $local_cache_dir/../$bit | awk '{print $NF}')
+        if [[ $correct_md5 != $actual_md5 ]]; then
+            rm $local_cache_dir/../$bit
+            fatal "md5 check failure on $local_cache_dir/../$bit (actual '$actual_md5', from md5sums '$correct_md5')"
+        fi
+    done
+
+    # Copy over to bits dir.
+    mkdir -p bits
+    [[ -d "bits/$target" ]] && fatal "'bits/$target' already exists"
+    cp -PR $CP_LINK_OPT $local_cache_dir bits/$target
 }
+
 
 #
 # The requested target may use the new functionality to build it inside of an
@@ -190,12 +296,12 @@ function gen_config() {
 TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
 BRANCH=$BRANCH
 TRY_BRANCH=$TRY_BRANCH
-
 MG_NODE=$MG_NODE
 
 EOF
+  mkdir -p build
   cd build/
-  for repo in * ; do
+  for repo in $(ls -1) ; do
       upper_repo_name=$(echo $repo | tr [:lower:] [:upper:] | tr - _)
       if [[ $(cat ${ROOT}/targets.json | $JSON ${repo} | $JSON appliance) == 'true' ]]; then
         echo ${upper_repo_name}_DATASET=$(cat ${ROOT}/targets.json | json ${repo}.dataset_uuid) >> ${ROOT}/bits/config.mk
@@ -235,7 +341,7 @@ function print_help() {
     echo "component source repositories."
     echo ""
     echo "Usage:"
-    echo "  ./configure [ -b BRANCH ] [ -r REPO [-f] ] [ -t TARGET ]"
+    echo "  ./configure [OPTIONS]"
     echo ""
     echo "Options:"
     echo "  -h, --help   Print this help and exit."
@@ -256,6 +362,9 @@ function print_help() {
     echo "  -r           Regenerate config.mk. This doesn't touch repos in"
     echo "               'build/' or preload in 'bits/'."
     echo "  -c CACHE_DIR Specify a cache directory. Default: './cache'."
+    echo "               The cache is used for caching git clones and"
+    echo "               preloaded bits. The 'bits cache' is automatically"
+    echo "               removed if it is more than a day old."
     exit 0
 }
 
@@ -274,38 +383,52 @@ function get_target_repos() {
 
 function get_pkgsrc() {
   if [[ -d ${ROOT}/build/usb-headnode ]]; then
-    echo "# get pkgsrc packages for usb-headnode zones (to build/pkgsrc)"
+    echo "# get pkgsrc packages for build/usb-headnode zones (to build/pkgsrc)"
 
     mkdir -p build/pkgsrc/
-    local curl_opts="--fail --connect-timeout 10 --silent"
 
     for dataset in $(find ${ROOT}/build/usb-headnode/zones -name "dataset"); do
-      ds=$(cat ${dataset})
-      pkgsrc_url=$((${JSON} datasets | ${JSON} -a name pkgsrc_url \
+      local ds=$(cat ${dataset})
+      local pkgsrc_url=$((${JSON} datasets | ${JSON} -a name pkgsrc_url \
           | grep "$(basename ${ds})" \
           | cut -d ' ' -f2) < ${ROOT}/build/usb-headnode/build.spec)
-      pkgsrc_ver=$(echo "${pkgsrc_url}" | cut -d '/' -f5)
-      gccver=$(echo "${pkgsrc_url}" | cut -d '/' -f6)
+      if [[ ${pkgsrc_url:(-1)} != "/" ]]; then
+        pkgsrc_url=$pkgsrc_url/
+      fi
+      local pkgsrc_ver=$(echo "${pkgsrc_url}" | cut -d '/' -f5)
+      local gccver=$(echo "${pkgsrc_url}" | cut -d '/' -f6)
 
-      mkdir -p build/pkgsrc/${pkgsrc_ver}/${gccver}/All
+      local cache_dir=$CACHE_DIR/pkgsrc/$pkgsrc_ver/$gccver/All
+      local dest_dir=build/pkgsrc/${pkgsrc_ver}/${gccver}/All
+      mkdir -p $cache_dir
+      mkdir -p $dest_dir
 
-      if [[ ! -f build/pkgsrc/${pkgsrc_ver}/${gccver}/All/md5sums.txt ]]; then
-        echo "# get ${pkgsrc_url}/md5sums.txt"
-        curl ${curl_opts} -o build/pkgsrc/${pkgsrc_ver}/${gccver}/All/md5sums.txt \
-            ${pkgsrc_url}/md5sums.txt
+      if [[ ! -f $dest_dir/md5sums.txt ]]; then
+          echo "# get ${pkgsrc_url}md5sums.txt"
+          ${CURL} -S -o $cache_dir/md5sums.txt ${pkgsrc_url}md5sums.txt
+          cp $CP_LINK_OPT $cache_dir/md5sums.txt $dest_dir/md5sums.txt
       fi
 
       for file in $(cat $(dirname ${dataset})/pkgsrc); do
-        if [[ ! -f build/pkgsrc/${pkgsrc_ver}/${gccver}/All/${file}.tgz ]]; then
-          echo "# get ${pkgsrc_url}/${file}.tgz"
-          (cd build/pkgsrc/${pkgsrc_ver}/${gccver}/All && \
-            curl ${curl_opts} -O ${pkgsrc_url}/${file}.tgz)
+        if [[ -f $dest_dir/$file.tgz ]]; then
+            true # pass through
+        else
+            if [[ ! -f $cache_dir/${file}.tgz ]]; then
+              echo "# get ${pkgsrc_url}${file}.tgz"
+              ${CURL} -S -o $cache_dir/$file.tgz ${pkgsrc_url}/${file}.tgz
+              local correct_md5=$(grep $file $cache_dir/md5sums.txt | cut -d ' ' -f1)
+              local actual_md5=$(openssl dgst -md5 < $cache_dir/$file.tgz | awk '{print $NF}')
+              if [[ $correct_md5 != $actual_md5 ]]; then
+                  rm $cache_dir/$file.tgz
+                  fatal "md5 check failure on $cache_dir/$file.tgz (actual $actual_md5, from md5sums $correct_md5)"
+              fi
+            else
+                echo "# have $cache_dir/$file.tgz"
+            fi
+            cp $CP_LINK_OPT $cache_dir/$file.tgz $dest_dir/
         fi
       done
     done
-
-    #TODO: md5sum check against md5sums.txt
-    #TODO: move to cache/pkgsrc ?
   fi
 }
 
@@ -327,7 +450,7 @@ MG_NODE=$(which node)
 if [[ "$1" == "--help" ]]; then
   print_help
 fi
-while getopts "b:B:hurft:c:n:" opt; do
+while getopts "b:B:hrft:c:n:" opt; do
     case "$opt" in
         b) BRANCH=$OPTARG ;;
         B) TRY_BRANCH=$OPTARG ;;
@@ -368,6 +491,7 @@ make distclean
 
 
 if [[ ! -z "$TARGET" ]]; then
+    flush_bits_cache
     if [[ "$TARGET" == "all-except-platform" ]]; then
         preload_bits "platform" "$BRANCH" "$TRY_BRANCH"
         targets=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))' | grep -v '^platform' | grep -v '^illumosextra')
