@@ -116,7 +116,7 @@ amon: $(AMON_BITS_0)
 $(AMON_BITS): build/amon
 	@echo "# Build amon: branch $(AMON_BRANCH), sha $(AMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/amon && IGNORE_DIRTY=1 TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake clean all pkg publish)
+	(cd build/amon && IGNORE_DIRTY=1 TIMESTAMP=$(TIMESTAMP) NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode BITS_DIR=$(BITS_DIR) gmake clean all pkg publish)
 	@echo "# Created amon bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(AMON_BITS)
 	@echo ""
