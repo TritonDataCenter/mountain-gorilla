@@ -63,7 +63,7 @@ host=$(cat ${gzservers} | json  $(($RANDOM % `cat ${gzservers} | ./tools/json le
 gzhost=$(echo ${host} | json hostname)
 dataset=$(echo ${host} | json dataset)
 
-SSH="ssh root@${gzhost}"
+SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${gzhost}"
 
 echo "{
   \"brand\": \"joyent\",
