@@ -126,7 +126,9 @@
     "repos": [
         {"url": "git@git.joyent.com:vmapi.git"}
     ],
-    "deps": []
+    "deps": [
+        "sdcnode"
+    ]
   },
 
   "dapi": {
