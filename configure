@@ -310,12 +310,15 @@ EOF
         echo ${upper_repo_name}_VERSION=\"$(cat ${ROOT}/targets.json | json ${repo}.version)\" >> ${ROOT}/bits/config.mk
         deps=""
         for dep in $(cat ${ROOT}/targets.json | json ${repo}.deps | json -a |  xargs); do
-           deps="${deps} $(ls ${ROOT}/bits/${dep}/*.tar.* | xargs)"
+          if [[ -n $TARGET ]]; then
+            deps="${deps} $(ls ${ROOT}/bits/${dep}/*.tar.* | xargs)"
+          else
+            deps="${deps} \$($(echo $dep | tr [:lower:] [:upper:])_BITS)"
+          fi
         done
         if [[ -n ${deps} ]]; then
-            echo ${upper_repo_name}_EXTRA_TARBALLS=\"${deps}\" >> ${ROOT}/bits/config.mk
+          echo ${upper_repo_name}_EXTRA_TARBALLS=\"${deps}\" >> ${ROOT}/bits/config.mk
         fi
-
       fi
       branch_name=$((cd ${repo} && git symbolic-ref HEAD 2> /dev/null ) || echo "")
       echo ${upper_repo_name}_BRANCH=$(echo ${branch_name##refs/heads/} || echo "") >> ${ROOT}/bits/config.mk
