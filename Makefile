@@ -455,7 +455,7 @@ vmapi: $(VMAPI_BITS)
 $(VMAPI_BITS): build/vmapi
 	@echo "# Build vmapi: branch $(VMAPI_BRANCH), sha $(VMAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/vmapi && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/vmapi && TIMESTAMP=$(TIMESTAMP) NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created vmapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(VMAPI_BITS)
 	@echo ""
