@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder mako moray registrar ufds platform usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder mako moray registrar ufds platform usbheadnode
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder mako registrar moray ufds usbheadnode releasejson
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder mako registrar moray ufds usbheadnode
 
 
 #---- smartlogin
@@ -748,7 +748,7 @@ clean_agentsshar:
 # - pkgsrc isolation
 
 .PHONY: usbheadnode
-usbheadnode: boot coal usb upgrade
+usbheadnode: boot coal usb upgrade releasejson
 
 _usbheadnode_stamp=$(USB_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(USB_HEADNODE_SHA)
 
@@ -841,7 +841,7 @@ releasejson:
 
 
 clean_usbheadnode:
-	rm -rf $(BOOT_BIT) $(UPGRADE_BIT) $(USB_BIT) $(COAL_BIT)
+	rm -rf $(BOOT_BIT) $(UPGRADE_BIT) $(USB_BIT) $(COAL_BIT) $(RELEASEJSON_BIT)
 
 
 
