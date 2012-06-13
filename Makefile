@@ -587,7 +587,7 @@ registrar: $(REGISTRAR_BITS)
 $(REGISTRAR_BITS): build/registrar
 	@echo "# Build registrar: branch $(REGISTRAR_BRANCH), sha $(REGISTRAR_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/registrar && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/registrar && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created registrar bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(REGISTRAR_BITS)
 	@echo ""
@@ -608,7 +608,7 @@ binder: $(BINDER_BITS) binder_dataset
 $(BINDER_BITS): build/binder
 	@echo "# Build binder: branch $(BINDER_BRANCH), sha $(BINDER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/binder && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/binder && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created binder bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(BINDER_BITS)
 	@echo ""
@@ -639,7 +639,7 @@ muppet: $(MUPPET_BITS) muppet_dataset
 $(MUPPET_BITS): build/muppet
 	@echo "# Build muppet: branch $(MUPPET_BRANCH), sha $(MUPPET_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/muppet && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/muppet && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created muppet bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MUPPET_BITS)
 	@echo ""
