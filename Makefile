@@ -408,7 +408,7 @@ manatee_dataset: $(MANATEE_DATASET)
 
 $(MANATEE_DATASET): $(MANATEE_BITS)
 	@echo "# Build manatee_dataset: branch $(MANATEE_BRANCH), sha $(MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset.sh -t $(MANATEE_BITS) -o $(MANATEE_DATASET) -p $(MANATEE_PKGSRC) -u $(MANATEE_URN) -v $(MANATEE_VERSION)
+	./tools/prep_dataset.sh -t $(MANATEE_BITS) -o $(MANATEE_DATASET) -p $(MANATEE_PKGSRC) -t $(MANATEE_EXTRA_TARBALLS) -u $(MANATEE_URN) -v $(MANATEE_VERSION)
 	@echo "# Created manatee dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MANATEE_DATASET)
 	@echo ""
