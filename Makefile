@@ -398,7 +398,7 @@ manatee: $(MANATEE_BITS) manatee_dataset
 $(MANATEE_BITS): build/manatee
 	@echo "# Build manatee: branch $(MANATEE_BRANCH), sha $(MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/manatee && LD_FLAGS="-L/opt/local/lib -R/opt/local/lib" TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manatee && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created manatee bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MANATEE_BITS)
 	@echo ""
