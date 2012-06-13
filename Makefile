@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder moray registrar ufds platform usbheadnode releasejson
+all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder mako moray registrar ufds platform usbheadnode releasejson
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder registrar moray ufds usbheadnode releasejson
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder mako registrar moray ufds usbheadnode releasejson
 
 
 #---- smartlogin
@@ -657,6 +657,37 @@ $(MUPPET_DATASET): $(MUPPET_BITS)
 clean_muppet:
 	rm -rf $(BITS_DIR)/muppet
 	(cd build/muppet && gmake distclean)
+
+#---- Mako
+
+_mako_stamp=$(MAKO_BRANCH)-$(TIMESTAMP)-g$(MAKO_SHA)
+MAKO_BITS=$(BITS_DIR)/mako/mako-pkg-$(_mako_stamp).tar.bz2
+MAKO_DATASET=$(BITS_DIR)/mako/mako-zfs-$(_mako_stamp).zfs.bz2
+
+.PHONY: mako
+mako: $(MAKO_BITS) mako_dataset
+
+$(MAKO_BITS): build/mako
+	@echo "# Build mako: branch $(MAKO_BRANCH), sha $(MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/mako && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created mako bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MAKO_BITS)
+	@echo ""
+
+.PHONY: mako_dataset
+mako_dataset: $(MAKO_DATASET)
+
+$(MAKO_DATASET): $(MAKO_BITS)
+	@echo "# Build mako dataset: branch $(MAKO_BRANCH), sha $(MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -t $(MAKO_BITS) -o $(MAKO_DATASET) -p $(MAKO_PKGSRC)
+	@echo "# Created mako dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MAKO_DATASET)
+	@echo ""
+
+clean_mako:
+	rm -rf $(BITS_DIR)/mako
+	(cd build/mako && gmake distclean)
 
 #---- DCAPI
 

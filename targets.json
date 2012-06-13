@@ -203,6 +203,20 @@
     "deps": ["registrar"]
   },
 
+  "mako": {
+    "appliance": "true",
+    "urn": "sdc:sds:storage",
+    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "version": "1.0.0",
+    "pkgsrc": [
+      "pcre-8.21"
+    ],
+    "repos": [
+      {"url": "git@git.joyent.com:mako.git"}
+    ],
+    "deps": []
+  },
+
   "dcapi": {
     "repos": [
         {"url": "git@git.joyent.com:dcapi.git"}
