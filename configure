@@ -509,8 +509,8 @@ if [[ ! -z "$TARGET" ]]; then
         fi
         check_usezone $TARGET
         get_target_repos $TARGET
-        for targ in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
-            preload_bits $targ "$BRANCH" "$TRY_BRANCH"
+        for dep in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
+            preload_bits $dep "$BRANCH" "$TRY_BRANCH"
         done
     fi
 else
@@ -520,6 +520,12 @@ else
         get_target_repos $targ
     done
 fi
+
+# "all" is a special target with deps to always preload.
+# I.e. for which "make all" doesn't build it.
+for dep in `cat targets.json | $JSON all.deps | $JSON -a`; do
+    preload_bits $dep "$BRANCH" "$TRY_BRANCH"
+done
 
 get_pkgsrc
 
