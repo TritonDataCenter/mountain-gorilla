@@ -112,6 +112,12 @@ function preload_bits() {
     local target=$1
     local branch=$2
     local try_branch=$3
+
+    # Don't bork if this was already preloaded by another target.
+    if [[ -d bits/$target ]]; then
+        return;
+    fi
+
     echo ""
     echo "# preload 'bits/$target'"
 
