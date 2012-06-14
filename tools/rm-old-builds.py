@@ -68,7 +68,14 @@ def rm_old_builds(dir):
     # Skip young ones.
     cutoff = time.mktime((datetime.datetime.now() - OLD).timetuple())
     for branch, dirs in dirs_from_branch.items():
+        marked_for_death = set()
+        if len(dirs) > 20:
+            # Only keep up to 20 recent ones in the same branch, this is
+            # to avoid a dir with frequent builds swamping things.
+            marked_for_death = set(list(sorted(dirs))[:-20])
         for d in list(dirs):
+            if d in marked_for_death:
+                continue
             mtime = os.stat(d).st_mtime
             if mtime > cutoff:
                 if VERBOSE:
