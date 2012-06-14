@@ -12,7 +12,7 @@
 # For each given DIR, remove all old MG-style build dirs. If DIRS is not given, then
 # all subdirs in the cwd are checked.
 #
-# "Old" is anything older than 30 days.
+# "Old" is anything older than 20 days.
 #
 
 import sys
@@ -28,7 +28,7 @@ from pprint import pprint
 
 DRYRUN = False
 VERBOSE = True
-OLD = datetime.timedelta(days=30)
+OLD = datetime.timedelta(days=20)
 BUILD_DIR_PATH = re.compile(r"^(?P<branch>.*?)-(?P<time>\d{8}T\d{6}Z)$")
 
 
