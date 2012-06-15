@@ -209,7 +209,8 @@
     "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "version": "1.0.0",
     "pkgsrc": [
-      "pcre-8.21"
+      "pcre-8.21",
+      "zookeeper-client-3.4.3"
     ],
     "repos": [
       {"url": "git@git.joyent.com:mako.git"}
