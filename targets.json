@@ -214,7 +214,7 @@
     "repos": [
       {"url": "git@git.joyent.com:mako.git"}
     ],
-    "deps": []
+    "deps": ["registrar"]
   },
 
   "dcapi": {
