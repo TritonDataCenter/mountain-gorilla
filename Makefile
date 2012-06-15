@@ -680,7 +680,7 @@ mako_dataset: $(MAKO_DATASET)
 
 $(MAKO_DATASET): $(MAKO_BITS)
 	@echo "# Build mako dataset: branch $(MAKO_BRANCH), sha $(MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset.sh -t $(MAKO_BITS) -o $(MAKO_DATASET) -p $(MAKO_PKGSRC)
+	./tools/prep_dataset.sh -t $(MAKO_BITS) -o $(MAKO_DATASET) -p $(MAKO_PKGSRC) -t $(MAKO_EXTRA_TARBALLS) -u $(MAKO_URN) -v $(MAKO_VERSION)
 	@echo "# Created mako dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MAKO_DATASET)
 	@echo ""
