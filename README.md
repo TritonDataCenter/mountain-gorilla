@@ -92,10 +92,6 @@ Re-login (`ssh -A root@10.2.0.145`) and setup environment:
     # zookeeper-client: binder needs this
     pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
       scmgit python26 png GeoIP GeoLiteCity ghostscript zookeeper-client
-    # python24: cloud-analytics (CA). This is installed separately and *after
-    #   python26* to ensure that Python 2.6 is first on the PATH.
-    pkgin -y python24
-
 
     # Note: This "./configure" step is necessary to setup your system.
     # TODO: Why is this necessary?
