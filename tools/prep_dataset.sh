@@ -63,6 +63,7 @@ host=$(cat ${gzservers} | json  $(($RANDOM % `cat ${gzservers} | ./tools/json le
 gzhost=$(echo ${host} | json hostname)
 dataset=$(echo ${host} | json dataset)
 
+echo "Using gzhost ${gzhost}"
 SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${gzhost}"
 
 echo "{
@@ -90,8 +91,9 @@ echo "{
 
 uuid=$(${SSH} "vmadm list -p -o uuid,alias | grep temp_image.$$ | cut -d ':' -f 1")
 
+echo "Created build zone ${uuid}"
 for tarball in $tarballs; do
-  bzip=$(echo $tarball | grep "tar.bz2" || /bin/true ) 
+  bzip=$(echo $tarball | grep "tar.bz2" || /bin/true )
 
   if [[ -n ${bzip} ]]; then
     uncompress=bzcat
@@ -99,17 +101,41 @@ for tarball in $tarballs; do
     uncompress=gzcat
   fi
 
+  echo "Copying tarball ${tarball} to ${uuid}"
   cat ${tarball} | ${SSH} "zlogin ${uuid} 'cd / ; ${uncompress} | gtar --strip-components 1 -xf - root'"
 done
 
 ##
 # install packages
 if [[ -n ${packages} ]]; then
-  sleep 30 # for networking to come up. Hack.
+  echo "Installing pkgsrc ${packages}"
+
+  echo "Need to wait for an IP address..."
+  IP_ADDR=$(${SSH} "vmadm get ${uuid} | json nics | json -a ip")
+  until [[ -n $IP_ADDR ]]
+  do
+      sleep 5
+      IP_ADDR=$(${SSH} "vmadm get ${uuid} | json nics | json -a ip")
+  done
+  echo "IP address acquired ${IP_ADDR}"
+
   ${SSH} "zlogin ${uuid} '/opt/local/bin/pkgin -f -y update'"
   ${SSH} "zlogin ${uuid} 'touch /opt/local/.dlj_license_accepted'"
   ${SSH} "zlogin ${uuid} '/opt/local/bin/pkgin -y in ${packages}'"
+
+  echo "Validating pkgsrc installation"
+  for p in ${packages}
+  do
+    echo "Checking for $p"
+    PKG_OK=$(${SSH} "zlogin ${uuid} '/opt/local/bin/pkgin -y list | grep ${p}'")
+    if [[ -z ${PKG_OK} ]]; then
+      echo "pkgin install failed (${p})"
+      exit 1
+    fi
+  done
+
 fi
+
 #
 # import smf manifests
 ${SSH} "zlogin ${uuid} '/usr/bin/find /opt/smartdc -name manifests -exec svccfg import {} \;'"
