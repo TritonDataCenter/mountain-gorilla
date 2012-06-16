@@ -40,7 +40,7 @@ if [[ -z ${output} ]]; then
 fi
 
 if [[ -z $version ]]; then
-  version="0.0"
+  version="0.0.0"
 fi
 
 if [[ -z $urn ]]; then
@@ -185,7 +185,7 @@ cat <<EOF>> ${output%.bz2}.dsmanifest
     "creator_name": "sdc",
     "platform_type": "smartos",
     "cloud_name": "sdc",
-    "urn": "${urn}",
+    "urn": "${urn}:${version}",
     "created_at": "${timestamp}",
     "updated_at": "${timestamp}"
   }
