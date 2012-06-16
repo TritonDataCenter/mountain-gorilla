@@ -25,9 +25,7 @@
     "repos": [
         {"url": "git@git.joyent.com:amon.git"}
     ],
-    "deps": [
-        "sdcnode"
-    ]
+    "deps": []
   },
   "assets": {
     "repos": [
@@ -124,9 +122,7 @@
     "repos": [
         {"url": "git@git.joyent.com:vmapi.git"}
     ],
-    "deps": [
-        "sdcnode"
-    ]
+    "deps": []
   },
 
   "dapi": {
@@ -303,7 +299,7 @@
 
   "all": {
     "deps": [
-        "sdcnode"
+      "https://download.joyent.com/pub/build/sdcnode"
     ]
   }
 }
