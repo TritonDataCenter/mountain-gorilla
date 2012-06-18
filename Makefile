@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder mako moray registrar ufds platform usbheadnode
+all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder mako moray registrar ufds platform usbheadnode minnow
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder mako registrar moray ufds usbheadnode
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder mako registrar moray ufds usbheadnode minnow
 
 
 #---- smartlogin
@@ -657,6 +657,27 @@ $(MUPPET_DATASET): $(MUPPET_BITS)
 clean_muppet:
 	rm -rf $(BITS_DIR)/muppet
 	(cd build/muppet && gmake distclean)
+
+#---- Minnow
+
+_minnow_stamp=$(MINNOW_BRANCH)-$(TIMESTAMP)-g$(MINNOW_SHA)
+MINNOW_BITS=$(BITS_DIR)/minnow/minnow-pkg-$(_minnow_stamp).tar.bz2
+
+.PHONY: minnow
+minnow: $(MINNOW_BITS)
+
+$(MINNOW_BITS): build/minnow
+	@echo "# Build minnow: branch $(MINNOW_BRANCH), sha $(MINNOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/minnow && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created minnow bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MINNOW_BITS)
+	@echo ""
+
+clean_minnow:
+	rm -rf $(BITS_DIR)/minnow
+	(cd build/minnow && gmake distclean)
+
 
 #---- Mako
 

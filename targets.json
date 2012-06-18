@@ -157,6 +157,13 @@
     "deps": []
   },
 
+  "minnow": {
+    "repos": [
+        {"url": "git@git.joyent.com:minnow.git"}
+    ],
+    "deps": []
+  },
+
   "binder": {
     "appliance": "true",
     "urn": "sdc:sds:nameservice",
@@ -215,7 +222,10 @@
     "repos": [
       {"url": "git@git.joyent.com:mako.git"}
     ],
-    "deps": ["registrar"]
+    "deps": [
+      "minnow",
+      "registrar"
+    ]
   },
 
   "dcapi": {
