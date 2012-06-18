@@ -2,6 +2,25 @@
 
 set -o errexit
 
+gzhost=""
+uuid=""
+
+# if this is unset, it means the remote host's already destroyed the dataset
+docleanup=true
+
+function cleanup() {
+  local exit_status=${1:-$?}
+  if [[ -n $gzhost ]]; then
+    SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${gzhost}"
+    if [[ -n $uuid ]]; then
+      ${SSH} "vmadm stop -F ${uuid} ; vmadm destroy ${uuid}"
+    fi
+  fi
+  exit $exit_status
+}
+
+trap cleanup ERR
+
 JSON="tools/json"
 
 tarballs=""
@@ -145,6 +164,8 @@ cat tools/clean-image.sh | ${SSH} "zlogin ${uuid} 'cat > /tmp/clean-image.sh; /u
 ${SSH} "zfs snapshot zones/${uuid}@dataset.$$ ; zfs send zones/${uuid}@dataset.$$" | cat > ${output}
 
 ${SSH} "vmadm destroy ${uuid}"
+
+docleanup=false
 
 if [[ -n $dobzip ]]; then
   bzip2 ${output}
