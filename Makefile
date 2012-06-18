@@ -37,7 +37,7 @@ ifeq ($(TIMESTAMP),)
 endif
 
 ifeq ($(UPLOAD_LOCATION),)
-	UPLOAD_LOCATION=stuff@stuff.joyent.us:builds
+	UPLOAD_LOCATION=stuff@stuff.smartdatacenter.org:/shared/http/root/
 endif
 
 
