@@ -120,7 +120,7 @@ function preload_bits() {
     local target=$1
     local branch=$2
     local try_branch=$3
-    local target_base = $(basename $target)
+    local target_base=$(basename $target)
 
     # Don't bork if this was already preloaded by another target.
     if [[ -d bits/$target_base ]]; then
@@ -132,7 +132,8 @@ function preload_bits() {
 
     ensure_bits_credentials
 
-    local target_url, target_url_censor
+    local target_url
+    local target_url_censor
     if [[ $(echo $target | cut -c 1-4) == "http" ]]; then
         target_url=$target
         if [[ "${target_url:(-1)}" != "/" ]]; then
@@ -151,11 +152,14 @@ function preload_bits() {
         target_url=$bits_url$target_base
         target_url_censor=$bits_url_censor$target_base
     fi
+    local_cache_reldir=${target_url#*://}
+    local_cache_reldir=${local_cache_reldir#*@}
 
     # Branch dir: try $try_branch, then $branch.
     local best_branch=$try_branch
     local latest_url=$target_url$try_branch-latest/
-    if [[ $($CURL -kI $latest_url | head -1 | awk '{print $2}') != "200" ]]; then
+    if [[ -z "$best_branch" ||
+          $($CURL -kI $latest_url | head -1 | awk '{print $2}') != "200" ]]; then
         best_branch=$branch
         latest_url=$target_url$branch-latest/
         if [[ $($CURL -kIS $latest_url | head -1 | awk '{print $2}') != "200" ]]; then
@@ -172,7 +176,7 @@ function preload_bits() {
         | grep -v -- '-latest/$' \
         | sort \
         | tail -1)
-    local local_cache_dir=$CACHE_DIR/bits/$BITS_HOST$BITS_BASE_PATH/$target_base/$latest_build$target_base
+    local local_cache_dir=$CACHE_DIR/bits/$local_cache_reldir$latest_build$target_base
 
     if [[ -d $local_cache_dir ]]; then
         echo "# local cache at '$local_cache_dir' already exists"
