@@ -149,7 +149,7 @@ function preload_bits() {
         if [[ "${bits_url_censor:(-1)}" != "/" ]]; then
             bits_url_censor=$bits_url_censor/
         fi
-        target_url=$bits_url$target_base
+        target_url=$bits_url$target_base/
         target_url_censor=$bits_url_censor$target_base
     fi
     local_cache_reldir=${target_url#*://}
