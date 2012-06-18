@@ -576,6 +576,40 @@ clean_moray:
 	(cd build/moray && gmake distclean)
 
 
+#---- Muskie
+
+_muskie_stamp=$(MUSKIE_BRANCH)-$(TIMESTAMP)-g$(MUSKIE_SHA)
+MUSKIE_BITS=$(BITS_DIR)/muskie/muskie-pkg-$(_muskie_stamp).tar.bz2
+MUSKIE_DATASET=$(BITS_DIR)/muskie/muskie-zfs-$(_muskie_stamp).zfs.bz2
+
+.PHONY: muskie
+muskie: $(MUSKIE_BITS) muskie_dataset
+
+# PATH for muskie build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(MUSKIE_BITS): build/muskie
+	@echo "# Build muskie: branch $(MUSKIE_BRANCH), sha $(MUSKIE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/muskie && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created muskie bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MUSKIE_BITS)
+	@echo ""
+
+.PHONY: muskie_dataset
+muskie_dataset: $(MUSKIE_DATASET)
+
+$(MUSKIE_DATASET): $(MUSKIE_BITS)
+	@echo "# Build muskie_dataset: branch $(MUSKIE_BRANCH), sha $(MUSKIE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -t $(MUSKIE_BITS) -o $(MUSKIE_DATASET) -p $(MUSKIE_PKGSRC) -t $(MUSKIE_EXTRA_TARBALLS) -u $(MUSKIE_URN) -v $(MUSKIE_VERSION)
+	@echo "# Created muskie dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MUSKIE_DATASET)
+	@echo ""
+
+clean_muskie:
+	rm -rf $(BITS_DIR)/muskie
+	(cd build/muskie && gmake distclean)
+
+
 #---- Registrar
 
 _registrar_stamp=$(REGISTRAR_BRANCH)-$(TIMESTAMP)-g$(REGISTRAR_SHA)

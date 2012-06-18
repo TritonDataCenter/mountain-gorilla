@@ -210,6 +210,20 @@
     "deps": ["registrar"]
   },
 
+  "muskie": {
+    "appliance": "true",
+    "urn": "sdc:sds:webapi",
+    "version": "1.0.0",
+    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [
+      "zookeeper-client-3.4.3"
+    ],
+    "repos": [
+      {"url": "git@git.joyent.com:muskie.git"}
+    ],
+    "deps": ["registrar"]
+  },
+
   "mako": {
     "appliance": "true",
     "urn": "sdc:sds:storage",
