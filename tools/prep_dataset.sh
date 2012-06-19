@@ -176,6 +176,9 @@ timestamp=$(node -e 'console.log(new Date().toISOString())')
 shasum=$(/usr/bin/sum -x sha1 ${output} | cut -d ' ' -f1)
 size=$(/usr/bin/du -ks ${output} | cut -f 1)
 
+# hack to fix our lab's DHCP
+mac="c0:ff:ee:$(uuid | cut -c 1-2):$(uuid | cut -c 1-2):$(uuid | cut -c 1-2)"
+
 cat <<EOF>> ${output%.bz2}.dsmanifest
   {
     "name": "${output%.zfs}",
@@ -196,7 +199,8 @@ cat <<EOF>> ${output%.bz2}.dsmanifest
       "networks": [
         {
           "name": "net0",
-          "description": "admin"
+          "description": "admin",
+          "mac": "${mac}"
         }
       ]
     },
