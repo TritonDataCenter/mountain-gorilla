@@ -130,13 +130,13 @@ if [[ -n ${packages} ]]; then
   echo "Installing pkgsrc ${packages}"
 
   echo "Need to wait for an IP address..."
-  IP_ADDR=$(${SSH} "vmadm get ${uuid} | json nics | json -a ip")
+  IP_ADDR=$(${SSH} "zlogin ${uuid} 'ipadm show-addr -p -o addrobj,addr | grep net0 | cut -d : -f 2 | xargs dirname'")
   until [[ -n $IP_ADDR ]]
   do
       sleep 5
-      IP_ADDR=$(${SSH} "vmadm get ${uuid} | json nics | json -a ip")
+      IP_ADDR=$(${SSH} "zlogin ${uuid} 'ipadm show-addr -p -o addrobj,addr | grep net0 | cut -d : -f 2 | xargs dirname'")
   done
-  echo "IP address acquired ${IP_ADDR}"
+  echo "IP address acquired: ${IP_ADDR}"
 
   ${SSH} "zlogin ${uuid} '/opt/local/bin/pkgin -f -y update'"
   ${SSH} "zlogin ${uuid} 'touch /opt/local/.dlj_license_accepted'"
