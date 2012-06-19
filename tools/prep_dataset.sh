@@ -85,6 +85,9 @@ dataset=$(echo ${host} | json dataset)
 echo "Using gzhost ${gzhost}"
 SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${gzhost}"
 
+# hack to fix our lab's DHCP
+mac="c0:ff:ee:$(uuid | cut -c 1-2):$(uuid | cut -c 1-2):$(uuid | cut -c 1-2)"
+
 echo "{
   \"brand\": \"joyent\",
   \"zfs_io_priority\": 10,
@@ -103,7 +106,8 @@ echo "{
   \"nics\": [
     {
       \"nic_tag\": \"admin\",
-      \"ip\": \"dhcp\"
+      \"ip\": \"dhcp\",
+      \"mac\": \"${mac}\"
     }
   ]
 }" | $SSH "vmadm create"
@@ -176,8 +180,6 @@ timestamp=$(node -e 'console.log(new Date().toISOString())')
 shasum=$(/usr/bin/sum -x sha1 ${output} | cut -d ' ' -f1)
 size=$(/usr/bin/du -ks ${output} | cut -f 1)
 
-# hack to fix our lab's DHCP
-mac="c0:ff:ee:$(uuid | cut -c 1-2):$(uuid | cut -c 1-2):$(uuid | cut -c 1-2)"
 
 cat <<EOF>> ${output%.bz2}.dsmanifest
   {
@@ -199,8 +201,7 @@ cat <<EOF>> ${output%.bz2}.dsmanifest
       "networks": [
         {
           "name": "net0",
-          "description": "admin",
-          "mac": "${mac}"
+          "description": "admin"
         }
       ]
     },
