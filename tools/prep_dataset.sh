@@ -134,11 +134,18 @@ if [[ -n ${packages} ]]; then
   echo "Installing pkgsrc ${packages}"
 
   echo "Need to wait for an IP address..."
+  count=0
   IP_ADDR=$(${SSH} "zlogin ${uuid} 'ipadm show-addr -p -o addrobj,addr | grep net0 | cut -d : -f 2 | xargs dirname'")
   until [[ -n $IP_ADDR && $IP_ADDR != '.' ]]
   do
+    if [[ $count -gt 10 ]];  then
+      echo "**Could not acquire IP address**"
+      cleanup
+      exit 1
+    fi
       sleep 5
       IP_ADDR=$(${SSH} "zlogin ${uuid} 'ipadm show-addr -p -o addrobj,addr | grep net0 | cut -d : -f 2 | xargs dirname'")
+      count=$(($count + 1))
   done
   echo "IP address acquired: ${IP_ADDR}"
 
