@@ -833,7 +833,7 @@ COAL_BIT=$(BITS_DIR)/usbheadnode/coal-$(_usbheadnode_stamp)-4gb.tgz
 
 bits/usbheadnode/build.spec.local:
 	mkdir -p bits/usbheadnode
-	sed -e "s/{{BRANCH}}/$(USB_HEADNODE_BRANCH)/" <build.spec.in >bits/usbheadnode/build.spec.local
+	bash <build.spec.in >bits/usbheadnode/build.spec.local
 	(cd build/usb-headnode; rm -f build.spec.local; ln -s ../../bits/usbheadnode/build.spec.local)
 
 .PHONY: coal
