@@ -771,7 +771,11 @@ clean_dcapi:
 
 #---- agents shar
 
+ifeq ($(TRY_BRANCH),)
 _as_stamp=$(AGENTS_INSTALLER_BRANCH)-$(TIMESTAMP)-g$(AGENTS_INSTALLER_SHA)
+else
+_as_stamp=$(TRY_BRANCH)-$(TIMESTAMP)-g$(AGENTS_INSTALLER_SHA)
+endif
 AGENTSSHAR_BITS=$(BITS_DIR)/agentsshar/agents-$(_as_stamp).sh \
 	$(BITS_DIR)/agentsshar/agents-$(_as_stamp).md5sum
 AGENTSSHAR_BITS_0=$(shell echo $(AGENTSSHAR_BITS) | awk '{print $$1}')
