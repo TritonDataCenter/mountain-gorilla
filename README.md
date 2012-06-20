@@ -171,7 +171,7 @@ checkout your repo in build/
       rm -rf $(BITS_DIR)/mynewrepo
       (cd build/mynewrepo && gmake clean)
 
-if you wish to build an application zone dataset, the process is roughly
+if you wish to build an application zone image, the process is roughly
 similar except you will need to add the "appliance":"true" property, the
 "pkgsrc" property and "dataset_uuid"
 
@@ -191,7 +191,7 @@ similar except you will need to add the "appliance":"true" property, the
       ...
     }
 
-where dataset_uuid is the uuid of the source dataset you wish to build off
+where dataset_uuid is the uuid of the source image you wish to build off
 pkgsrc is an array of strings of package names to install.
 
 Your Makefile target will look as above, with the addition of the xxx_dataset target:
@@ -212,7 +212,7 @@ Your Makefile target will look as above, with the addition of the xxx_dataset ta
             @echo ""
     ...
 
-prep_dataset.sh is a script that generates datasets out of tarballs and lists
+prep_dataset.sh is a script that generates images out of tarballs and lists
 of packages.
 
 It takes arguments of the form -t <tarball> where <tarball> is a .tar.gz
@@ -226,7 +226,16 @@ Additionally, you can set the dsadm URN for the target by adding the "urn"
 and "version" properties to targets.json, as properties of the target you
 wish to manipulate. These will show up as urn:version ( sdc:sdc:mynewrepo:0.1
 for instance ). To use them, configure will populate xxx_URN and xxx_VERSION
-for you in the Makefile
+for you in the Makefile.
+
+Note that these images can only be provisioned with the joyent-minimal brand.
+If one is provisioned with the joyent brand, that zone's networking may not be
+working.  Normally, the networking setup is done through zoneinit, but since
+that script has already run and had its effects undone (as part of the MG
+build), there's no mechanism to automatically bring that zone's VNIC up.  You
+can recover by manually enabling network/physical:default, but you should just
+be provisioning with the joyent-minimal brand instead.  See RELENG-337 for
+details.
 
 
 
