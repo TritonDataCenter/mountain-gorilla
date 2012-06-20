@@ -102,6 +102,15 @@ Re-login (`ssh -A root@10.2.0.145`) and setup environment:
     curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/illumos/configure.joyent
     GIT_SSL_NO_VERIFY=true ./configure
 
+Also, to access stuff.joyent.us (where bits are preloaded from and built bits are
+uploaded) you'll need to encode the https://stuff.joyent.us username and password
+in your environment:
+
+    echo '{
+      "bits_username": "guest",
+      "bits_password": "*password*"
+    }' > ~/.mg.json
+
 The MG build requires that a node 0.6 first on your PATH. If you are building
 on smartos recent enough that `/usr/bin/json --version` is 0.6.x then you
 should be good.
