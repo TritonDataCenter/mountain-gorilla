@@ -527,7 +527,7 @@ if [[ ! -z "$TARGET" ]]; then
     flush_bits_cache
     if [[ "$TARGET" == "all-except-platform" ]]; then
         preload_bits "platform" "$BRANCH" "$TRY_BRANCH"
-        targets=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))' | grep -v '^platform' | grep -v '^illumosextra')
+        targets=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))' | grep -v '^platform')
         for targ in $targets; do
             check_usezone $targ
             get_target_repos $targ

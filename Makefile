@@ -924,15 +924,12 @@ $(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-b
 	@echo "# Build platform: branch $(SMARTOS_LIVE_BRANCH), sha $(SMARTOS_LIVE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	(cd build/smartos-live \
 		&& PATH=/usr/sfw/bin:$(PATH) \
-			EXTRA_TARBALL=$(shell ls -1 $(BITS_DIR)/illumosextra/illumos-extra-* | tail -1) \
 			./configure \
 		&& PATH=/usr/sfw/bin:$(PATH) \
-			EXTRA_TARBALL=$(shell ls -1 $(BITS_DIR)/illumosextra/illumos-extra-* | tail -1) \
 			BUILDSTAMP=$(TIMESTAMP) \
 			gmake world \
 		&& PATH=/usr/sfw/bin:$(PATH) \
 			BUILDSTAMP=$(TIMESTAMP) \
-			EXTRA_TARBALL=$(shell ls -1 $(BITS_DIR)/illumosextra/illumos-extra-* | tail -1) \
 			gmake live)
 	(mkdir -p $(BITS_DIR)/platform)
 	(cp build/smartos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/platform/platform-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz)
@@ -944,30 +941,6 @@ $(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-b
 clean_platform:
 	rm -rf $(BITS_DIR)/platform
 	(cd build/smartos-live && gmake clean)
-
-#---- extras
-
-ILLUMOSEXTRA_TARBALL=illumos-extra-$(ILLUMOS_EXTRA_BRANCH)-$(TIMESTAMP)-g$(ILLUMOS_EXTRA_SHA).tgz
-ILLUMOSEXTRA_BIT=$(BITS_DIR)/illumosextra/$(ILLUMOSEXTRA_TARBALL)
-
-.PHONY: illumosextra
-
-illumosextra: $(ILLUMOSEXTRA_BIT)
-
-# PATH: Ensure using GCC from SFW as require for platform build.
-$(ILLUMOSEXTRA_BIT):
-	@echo "# Build illumosextra: branch $(ILLUMOS_EXTRA_BRANCH), sha $(ILLUMOS_EXTRA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	(cd build/illumos-extra && PATH=/usr/sfw/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) gmake install && PATH=/usr/sfw/bin:$(PATH) TIMESTAMP=$(TIMESTAMP) gmake tarball )
-	(mkdir -p $(BITS_DIR)/illumosextra;  cp build/illumos-extra/$(ILLUMOSEXTRA_TARBALL) $(BITS_DIR)/illumosextra)
-	@echo "# Created illumosextra bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(ILLUMOSEXTRA_BIT)
-	@echo ""
-
-clean_illumosextra:
-	rm -rf $(BITS_DIR)/illumosextra
-	(cd build/illumos-extra && gmake clean)
-
-
 
 #---- docs target (based on eng.git/tools/mk code for this)
 
