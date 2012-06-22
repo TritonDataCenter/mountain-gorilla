@@ -238,6 +238,22 @@
     ]
   },
 
+  "marlin": {
+    "appliance": "true",
+    "urn": "sdc:sds:storage",
+    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "version": "1.0.0",
+    "pkgsrc": [
+      "zookeeper-client-3.4.3"
+    ],
+    "repos": [
+      {"url": "git@git.joyent.com:marlin.git"}
+    ],
+    "deps": [
+      "registrar"
+    ]
+  },
+
   "dcapi": {
     "repos": [
         {"url": "git@git.joyent.com:dcapi.git"}

@@ -542,6 +542,40 @@ clean_napi:
 	(cd build/napi && gmake clean)
 
 
+#---- Marlin
+
+_marlin_stamp=$(MARLIN_BRANCH)-$(TIMESTAMP)-g$(MARLIN_SHA)
+MARLIN_BITS=$(BITS_DIR)/marlin/marlin-pkg-$(_marlin_stamp).tar.bz2
+MARLIN_DATASET=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).zfs.bz2
+
+.PHONY: marlin
+marlin: $(MARLIN_BITS) marlin_dataset
+
+# PATH for marlin build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(MARLIN_BITS): build/marlin
+	@echo "# Build marlin: branch $(MARLIN_BRANCH), sha $(MARLIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/marlin && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created marlin bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MARLIN_BITS)
+	@echo ""
+
+.PHONY: marlin_dataset
+marlin_dataset: $(MARLIN_DATASET)
+
+$(MARLIN_DATASET): $(MARLIN_BITS)
+	@echo "# Build marlin_dataset: branch $(MARLIN_BRANCH), sha $(MARLIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -t $(MARLIN_BITS) -o $(MARLIN_DATASET) -p $(MARLIN_PKGSRC) -t $(MARLIN_EXTRA_TARBALLS) -u $(MARLIN_URN) -v $(MARLIN_VERSION)
+	@echo "# Created marlin dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MARLIN_DATASET)
+	@echo ""
+
+clean_marlin:
+	rm -rf $(BITS_DIR)/marlin
+	(cd build/marlin && gmake distclean)
+
+
 #---- Moray
 
 _moray_stamp=$(MORAY_BRANCH)-$(TIMESTAMP)-g$(MORAY_SHA)
