@@ -51,9 +51,11 @@ if [[ $(uname -s) == "SunOS" && \
     BITS_HOST=10.2.0.190
 fi
 
-CP_LINK_OPT=
-if [[ $(uname -s) == "SunOS" ]]; then
-    CP_LINK_OPT=--link
+# GNU cp has '--link'.
+if [[ -x `which gcp` ]]; then
+    CP_LINK="gcp --link"
+else
+    CP_LINK=$((cp --version 2>/dev/null | grep GNU >/dev/null) && echo "cp --link" || echo "cp")
 fi
 CURL="curl --fail --connect-timeout 10 -s"
 
@@ -215,7 +217,7 @@ function preload_bits() {
     # Copy over to bits dir.
     mkdir -p bits
     [[ -d "bits/$target_base" ]] && fatal "'bits/$target_base' already exists"
-    cp -PR $CP_LINK_OPT $local_cache_dir bits/$target_base
+    $CP_LINK -PR $local_cache_dir bits/$target_base
 }
 
 
@@ -439,7 +441,7 @@ function get_pkgsrc() {
       if [[ ! -f $dest_dir/md5sums.txt ]]; then
           echo "# get ${pkgsrc_url}md5sums.txt"
           ${CURL} -S -o $cache_dir/md5sums.txt ${pkgsrc_url}md5sums.txt
-          cp $CP_LINK_OPT $cache_dir/md5sums.txt $dest_dir/md5sums.txt
+          $CP_LINK $cache_dir/md5sums.txt $dest_dir/md5sums.txt
       fi
 
       for file in $(cat $(dirname ${dataset})/pkgsrc); do
@@ -458,7 +460,7 @@ function get_pkgsrc() {
             else
                 echo "# have $cache_dir/$file.tgz"
             fi
-            cp $CP_LINK_OPT $cache_dir/$file.tgz $dest_dir/
+            $CP_LINK $cache_dir/$file.tgz $dest_dir/
         fi
       done
     done
