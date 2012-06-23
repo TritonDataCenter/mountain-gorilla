@@ -51,21 +51,23 @@ function fatal {
     exit 1
 }
 
-#TODO: This is HACK, the repo URL should be in targets.json.
-function repo_url_from_name () {
-    local name=$1
-    if [[ "$name" == "illumos-extra" ]]; then
-        echo "git://github.com/joyent/$name.git"
-    else
-        echo "git@git.joyent.com:$name.git"
-    fi
+function get_repo_url_from_targ {
+  local targ=$1
+  echo $(json targets.json $targ | grep -v undefined | cut -d ':' -f2 | xargs -I {} basename {} .git)
+}
+
+function get_repo_name_from_targ {
+  targ=$1
+  echo $(json targets.json ${targ}.url | grep -v undefined | cut -d ':' -f2 | xargs -I {} basename {} .git)
 }
 
 function apply_missing {
-    local repo_name=$1
+    local repo_targ=$1
     local tag=$2
     local branch=$3
-    local repo_url=$(repo_url_from_name $repo_name)
+    local repo_url=$(get_repo_url_from_targ $repo_targ)
+    local repo_name=$(get_repo_name_from_targ $repo_targ)
+
     echo "Prep $repo ($repo_url) for release: branch '$branch', tag '$tag'."
     mkdir -p $WORKDIR
     cd $WORKDIR;
@@ -75,11 +77,7 @@ function apply_missing {
     if [[ ! -z "$tag" ]]; then
         # Consider '-B' to force reset of branch if already exists.
         git tag -a "$tag" -m "$tag release"
-        if [[ $repo_name  == "illumos-extra" ]]; then 
-            git push -q --tags git@github.com:joyent/illumos-extra.git
-        else
-            git push -q --tags
-        fi
+        git push -q --tags
     fi
     if [[ ! -z "$branch" ]]; then
         # Consider '-B' to force reset of branch if already exists.
@@ -87,8 +85,6 @@ function apply_missing {
         git push -q origin $branch
     fi
 }
-
-
 
 
 #---- mainline
@@ -140,36 +136,17 @@ fi
 
 
 if [[ -z "$REPOS" ]]; then
-    # Note: The trailing '' is to get `node -e` to shut up about that retval.
-  REPOS=$(cd $TOP; node -e "var fs = require('fs');
-    var targets = JSON.parse(fs.readFileSync('targets.json'));
-    var repourls = [];
-    for (targ in targets) {
-      if (targets[targ].repos != undefined ) {
-        var repos = targets[targ].repos;
-        repos.forEach( function(repo) {
-          if (repo.url && repourls.indexOf(repo.url) == -1 ) console.log(repo.url)
-        });
-      };
-    };"| grep -v undefined | cut -d ':' -f2 | xargs -I {} basename {} .git)
+  TARGETS=$(node -e "var fs = require('fs');
+      var targets = JSON.parse(fs.readFileSync('targets.json'));
+      Object.keys(targets).forEach( function(targ) { console.log(targ) });" | xargs)
 fi
 
-for repo in $REPOS; do
-  if [[ "$repo" == "illumos-extra" ]]; then
-    # illumos-extra is special, it is on GitHub and only gets tagged, not
-    # branched.
-    hit=$(curl -sS https://mo.joyent.com/api/repos/$repo/refs -u $CREDS | $TOP/tools/json tags | grep "\"$TAG\"" || true)
-    if [[ -z "$hit" ]]; then
-      if [[ $APPLY -eq 1 ]]; then
-        echo "$repo: missing '$TAG' tag"
-        apply_missing $repo "$TAG" ""
-      else
-        echo "$repo: FAIL (no '$TAG' tag, use -a to apply)"
-      fi
-    else
-      echo "$repo: OK"
-    fi
-  else
+for target in $TARGETS; do
+  if [[ $target == 'all' ]]; then
+    continue
+  fi
+  repos=$(cat targets.json | ./tools/json ${target}.repos  | ./tools/json -a url | cut -f 2 -d ':' | xargs -I {} basename {} .git)
+  for repo in $repos; do
     hit=$(curl -sS https://mo.joyent.com/api/repos/$repo/refs -u $CREDS | $TOP/tools/json branches | grep "\"$BRANCH\"" || true)
     if [[ -z "$hit" ]]; then
       if [[ $APPLY -eq 1 ]]; then
@@ -181,5 +158,5 @@ for repo in $REPOS; do
     else
       echo "$repo: OK"
     fi
-  fi
+  done
 done
