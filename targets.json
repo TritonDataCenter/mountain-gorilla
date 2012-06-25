@@ -240,7 +240,7 @@
 
   "marlin": {
     "appliance": "true",
-    "urn": "sdc:sds:storage",
+    "urn": "sdc:sds:jobworker",
     "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "version": "1.0.0",
     "pkgsrc": [
