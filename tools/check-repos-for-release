@@ -53,37 +53,46 @@ function fatal {
 
 function get_repo_url_from_targ {
   local targ=$1
-  echo $(json targets.json $targ | grep -v undefined | cut -d ':' -f2 | xargs -I {} basename {} .git)
+  local urls=$(cat targets.json | ./tools/json $targ | grep -v undefined | ./tools/json repos | ./tools/json -a url )
+  local ret=""
+  for url in $urls; do
+   ret="$ret $(echo $url)" # | cut -d ':' -f2 | xargs -I {} basename {} .git)"
+  done
+  echo $ret
 }
 
-function get_repo_name_from_targ {
+function get_repo_name_from_url {
   targ=$1
-  echo $(json targets.json ${targ}.url | grep -v undefined | cut -d ':' -f2 | xargs -I {} basename {} .git)
+  echo $targ | cut -d ':' -f2 | xargs -I {} basename {} .git
 }
 
 function apply_missing {
     local repo_targ=$1
     local tag=$2
     local branch=$3
-    local repo_url=$(get_repo_url_from_targ $repo_targ)
-    local repo_name=$(get_repo_name_from_targ $repo_targ)
+    local repo_urls="$(get_repo_url_from_targ $repo_targ)"
+    #local repo_name=$(get_repo_name_from_targ $repo_targ)
 
     echo "Prep $repo ($repo_url) for release: branch '$branch', tag '$tag'."
     mkdir -p $WORKDIR
-    cd $WORKDIR;
-    git clone $repo_url $repo_name;
-    cd $repo_name;
-    git checkout master;
-    if [[ ! -z "$tag" ]]; then
+    for repo_url in $repo_urls; do
+      repo_name=$(get_repo_name_from_url $repo_url)
+      cd $WORKDIR;
+      git clone $repo_url $repo_name;
+      cd $repo_name;
+      git checkout master;
+      if [[ ! -z "$tag" ]]; then
         # Consider '-B' to force reset of branch if already exists.
         git tag -a "$tag" -m "$tag release"
         git push -q --tags
-    fi
-    if [[ ! -z "$branch" ]]; then
+      fi
+      if [[ ! -z "$branch" ]]; then
         # Consider '-B' to force reset of branch if already exists.
         git checkout -b $branch
         git push -q origin $branch
-    fi
+      fi
+    done
+    cd $TOP
 }
 
 
@@ -151,7 +160,7 @@ for target in $TARGETS; do
     if [[ -z "$hit" ]]; then
       if [[ $APPLY -eq 1 ]]; then
         echo "$repo: missing '$BRANCH' branch"
-        apply_missing $repo "$TAG" "$BRANCH" 
+        apply_missing $target "$TAG" "$BRANCH" 
       else
         echo "$repo: FAIL (no '$BRANCH' branch, use -a to apply)"
       fi
