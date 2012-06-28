@@ -282,6 +282,12 @@
     ],
     "deps": ["agents", "amon", "ca", "smartlogin"]
   },
+  "convertvm": {
+    "repos": [
+        {"url":  "git@github.com:joyent/convertvm.git" }
+    ],
+    "deps": []
+  },
   "platform": {
     "repos": [
         {"url": "git@github.com:joyent/smartos-live.git"},
