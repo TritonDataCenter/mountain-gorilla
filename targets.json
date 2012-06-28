@@ -176,6 +176,20 @@
     "deps": []
   },
 
+  "mahi": {
+    "appliance": "true",
+    "urn": "sdc:sds:postgres",
+    "version": "1.0.0",
+    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [
+      "redis-2.4.13"
+    ],
+    "repos": [
+      {"url": "git@git.joyent.com:mahi.git"}
+    ],
+    "deps": ["registrar"]
+  },
+
   "moray": {
     "appliance": "true",
     "urn": "sdc:sds:moray",

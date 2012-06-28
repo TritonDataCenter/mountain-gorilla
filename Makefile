@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder mako moray registrar ufds platform usbheadnode minnow
+all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee mahi cnapi vmapi dapi napi dcapi binder mako moray registrar ufds platform usbheadnode minnow
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee cnapi vmapi dapi napi dcapi binder mako registrar moray ufds usbheadnode minnow
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee mahi cnapi vmapi dapi napi dcapi binder mako registrar moray ufds usbheadnode minnow
 
 
 #---- smartlogin
@@ -574,6 +574,38 @@ $(MARLIN_DATASET): $(MARLIN_BITS)
 clean_marlin:
 	rm -rf $(BITS_DIR)/marlin
 	(cd build/marlin && gmake distclean)
+
+
+#---- MAHI
+
+_mahi_stamp=$(MAHI_BRANCH)-$(TIMESTAMP)-g$(MAHI_SHA)
+MAHI_BITS=$(BITS_DIR)/mahi/mahi-pkg-$(_mahi_stamp).tar.bz2
+MAHI_DATASET=$(BITS_DIR)/mahi/mahi-zfs-$(_mahi_stamp).zfs.bz2
+
+.PHONY: mahi
+mahi: $(MAHI_BITS) mahi_dataset
+
+$(MAHI_BITS): build/mahi
+	@echo "# Build mahi: branch $(MAHI_BRANCH), sha $(MAHI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/mahi && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created mahi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MAHI_BITS)
+	@echo ""
+
+.PHONY: mahi_dataset
+mahi_dataset: $(MAHI_DATASET)
+
+$(MAHI_DATASET): $(MAHI_BITS)
+	@echo "# Build mahi_dataset: branch $(MAHI_BRANCH), sha $(MAHI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -t $(MAHI_BITS) -o $(MAHI_DATASET) -p $(MAHI_PKGSRC) -t $(MAHI_EXTRA_TARBALLS) -u $(MAHI_URN) -v $(MAHI_VERSION)
+	@echo "# Created mahi dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MAHI_DATASET)
+	@echo ""
+
+clean_mahi:
+	rm -rf $(BITS_DIR)/mahi
+	(cd build/mahi && gmake distclean)
 
 
 #---- Moray
