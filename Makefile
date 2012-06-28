@@ -517,6 +517,8 @@ clean_cnapi:
 	(cd build/cnapi && gmake clean)
 
 
+
+
 #---- NAPI
 
 _napi_stamp=$(NAPI_BRANCH)-$(TIMESTAMP)-g$(NAPI_SHA)
@@ -861,6 +863,29 @@ clean_agentsshar:
 	rm -rf $(BITS_DIR)/agentsshar
 	(if [[ -d build/agents-installer ]]; then cd build/agents-installer && gmake clean; fi )
 
+#---- convertvm
+
+_convertvm_stamp=$(CONVERTVM_BRANCH)-$(TIMESTAMP)-g$(CONVERTVM_SHA)
+CONVERTVM_BITS=$(BITS_DIR)/convertvm/convertvm-pkg-$(_convertvm_stamp).tar.bz2
+
+.PHONY: convertvm
+convertvm: $(CONVERTVM_BITS)
+
+# PATH for convertvm build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(CONVERTVM_BITS): build/convertvm
+	@echo "# Build convertvm: branch $(CONVERTVM_BRANCH), sha $(CONVERTVM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/convertvm && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created convertvm bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(CONVERTVM_BITS)
+	@echo ""
+
+# Warning: if convertvm's submodule deps change, this 'clean_convertvm' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_convertvm:
+	rm -rf $(BITS_DIR)/convertvm
+	(cd build/convertvm && gmake clean)
 
 
 #---- usb-headnode
