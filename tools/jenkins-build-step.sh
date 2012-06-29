@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# This script lives at <mountain-gorilla.git/tools/jenkins-sdc-build.sh>.
+# This script lives at <mountain-gorilla.git/tools/jenkins-build-step.sh>.
 # A suggested jenkins build step for an MG component or full SDC build.
 #
 # See the appropriate jenkins job for the *actual* current build steps:
