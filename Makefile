@@ -866,7 +866,7 @@ clean_agentsshar:
 #---- convertvm
 
 _convertvm_stamp=$(CONVERTVM_BRANCH)-$(TIMESTAMP)-g$(CONVERTVM_SHA)
-CONVERTVM_BITS=$(BITS_DIR)/convertvm/convertvm-pkg-$(_convertvm_stamp).tar.bz2
+CONVERTVM_BITS=$(BITS_DIR)/convertvm/convertvm-$(_convertvm_stamp).tar.bz2
 
 .PHONY: convertvm
 convertvm: $(CONVERTVM_BITS)
