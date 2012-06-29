@@ -876,7 +876,7 @@ convertvm: $(CONVERTVM_BITS)
 $(CONVERTVM_BITS): build/convertvm
 	@echo "# Build convertvm: branch $(CONVERTVM_BRANCH), sha $(CONVERTVM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/convertvm && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/convertvm && NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created convertvm bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(CONVERTVM_BITS)
 	@echo ""
