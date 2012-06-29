@@ -31,7 +31,7 @@ USEZONE=
 NOUSEZONE=
 
 ROOT=$(pwd)
-CACHE_DIR=${ROOT}/cache
+MG_CACHE_DIR=${ROOT}/cache
 
 # Username and password filled by `ensure_bits_credentials`.
 BITS_USERNAME=
@@ -93,18 +93,18 @@ function ensure_bits_credentials {
 # unbounded in size (esp. for the continuous-build system). An alternative
 # would be to put a size limit on it.
 function flush_bits_cache() {
-    if [[ -f $CACHE_DIR/bits/created ]]; then
-        local bits_cache_age=$((`date "+%s"` - `stat -c %X $CACHE_DIR/bits/created`))
+    if [[ -f $MG_CACHE_DIR/bits/created ]]; then
+        local bits_cache_age=$((`date "+%s"` - `stat -c %X $MG_CACHE_DIR/bits/created`))
         # One day in 86400. We use a bit more to avoid harmonics with
         # once-per-day builds.
         if [[ $bits_cache_age -gt 100000 ]]; then
-            echo "# Bit cache '$CACHE_DIR/bits' is more than a day old. Blowing it away to be recreated."
-            rm -rf $CACHE_DIR/bits
+            echo "# Bit cache '$MG_CACHE_DIR/bits' is more than a day old. Blowing it away to be recreated."
+            rm -rf $MG_CACHE_DIR/bits
         fi
     fi
 }
 
-# Preload $CACHE_DIR/bits/ with the latest built and uploaded bits for
+# Preload $MG_CACHE_DIR/bits/ with the latest built and uploaded bits for
 # the given target and branch.
 #
 # Usage:
@@ -178,24 +178,24 @@ function preload_bits() {
         | grep -v -- '-latest/$' \
         | sort \
         | tail -1)
-    local local_cache_dir=$CACHE_DIR/bits/$local_cache_reldir$latest_build$target_base
+    local local_cache_dir=$MG_CACHE_DIR/bits/$local_cache_reldir$latest_build$target_base
 
     if [[ -d $local_cache_dir ]]; then
         echo "# local cache at '$local_cache_dir' already exists"
     else
         # Mark creation for bits cache flush every day.
-        mkdir -p $CACHE_DIR/bits
-        if [[ ! -f $CACHE_DIR/bits/created ]]; then
-            touch $CACHE_DIR/bits/created
+        mkdir -p $MG_CACHE_DIR/bits
+        if [[ ! -f $MG_CACHE_DIR/bits/created ]]; then
+            touch $MG_CACHE_DIR/bits/created
         fi
 
         latest_url=$target_url$latest_build
         local latest_url_censor=$target_url_censor$latest_build
 
-        # Update cache in $CACHE_DIR/bits
+        # Update cache in $MG_CACHE_DIR/bits
         # `-l 2`: Two levels deep needed for 2-level depth of 'agents' bits area.
         echo "# download from $latest_url_censor"
-        (cd $CACHE_DIR/bits \
+        (cd $MG_CACHE_DIR/bits \
             && wget -q -np -l 2 --no-check-certificate -r -L -R 'index.html,*.log' \
                 $latest_url$target_base/)
     fi
@@ -255,27 +255,27 @@ function check_usezone() {
 function get_repo_cache() {
     local repo_url=$1
     local repo_dir=$2
-    local dst_dir=$CACHE_DIR/repos/$repo_dir
+    local dst_dir=$MG_CACHE_DIR/repos/$repo_dir
 
-    if [[ ! -d "$CACHE_DIR/repos/$repo_dir" ]]; then
-        mkdir -p $CACHE_DIR/repos
-        local tmp_dir=$CACHE_DIR/repos/.tmp.$repo_dir
+    if [[ ! -d "$MG_CACHE_DIR/repos/$repo_dir" ]]; then
+        mkdir -p $MG_CACHE_DIR/repos
+        local tmp_dir=$MG_CACHE_DIR/repos/.tmp.$repo_dir
         rm -rf $tmp_dir
         git clone $repo_url $tmp_dir
-        mv $tmp_dir $CACHE_DIR/repos/$repo_dir
+        mv $tmp_dir $MG_CACHE_DIR/repos/$repo_dir
     else
-        (cd $CACHE_DIR/repos/$repo_dir; git pull)
+        (cd $MG_CACHE_DIR/repos/$repo_dir; git pull)
     fi
     if [[ "$submodule_recursive" == "true" ]]; then
-        (cd $CACHE_DIR/repos/$repo_dir; git submodule update --init --recursive)
+        (cd $MG_CACHE_DIR/repos/$repo_dir; git submodule update --init --recursive)
     else
-        (cd $CACHE_DIR/repos/$repo_dir; git submodule update --init)
+        (cd $MG_CACHE_DIR/repos/$repo_dir; git submodule update --init)
     fi
 
     # Error out if the cached repo is dirty. These thigns should always
     # be pristine.
-    if [[ "$(cd $CACHE_DIR/repos/$repo_dir && git describe --all --dirty | grep dirty)" != "" ]]; then
-        fatal "Repo '$repo_dir' cache, $CACHE_DIR/repos/$repo_dir, is dirty!"
+    if [[ "$(cd $MG_CACHE_DIR/repos/$repo_dir && git describe --all --dirty | grep dirty)" != "" ]]; then
+        fatal "Repo '$repo_dir' cache, $MG_CACHE_DIR/repos/$repo_dir, is dirty!"
     fi
 }
 
@@ -303,12 +303,12 @@ function get_repo2() {
         repo_dir=${repo_dir%*.git}    # strip '.git' at tail
     fi
 
-    echo "# get '$repo_url' to repo cache ($CACHE_DIR/repos)"
+    echo "# get '$repo_url' to repo cache ($MG_CACHE_DIR/repos)"
     get_repo_cache ${repo_url} ${repo_dir} ${submodule_recursive}
 
-    echo "# copy '$CACHE_DIR/repos/$repo_dir' to 'build/$repo_dir'"
+    echo "# copy '$MG_CACHE_DIR/repos/$repo_dir' to 'build/$repo_dir'"
     mkdir -p build
-    cp -PR $CACHE_DIR/repos/$repo_dir build/$repo_dir
+    cp -PR $MG_CACHE_DIR/repos/$repo_dir build/$repo_dir
     (cd build/$repo_dir ; git checkout $branch)
 
     if [[ ! -z "$try_branch" ]]; then
@@ -329,6 +329,7 @@ TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
 BRANCH=$BRANCH
 TRY_BRANCH=$TRY_BRANCH
 MG_NODE=$MG_NODE
+MG_CACHE_DIR=$(cd $MG_CACHE_DIR >/dev/null; pwd)
 
 EOF
   mkdir -p build
@@ -396,10 +397,10 @@ function print_help() {
     echo "               slow-to-build platform."
     echo "  -r           Regenerate config.mk. This doesn't touch repos in"
     echo "               'build/' or preload in 'bits/'."
-    echo "  -c CACHE_DIR Specify a cache directory. Default: './cache'."
-    echo "               The cache is used for caching git clones and"
-    echo "               preloaded bits. The 'bits cache' is automatically"
-    echo "               removed if it is more than a day old."
+    echo "  -c CACHE-DIR Specify a cache directory. Default: './cache'."
+    echo "               The cache is used for caching git clones, preloaded"
+    echo "               bits and npm downloads. The 'bits cache' is"
+    echo "               automatically removed if it is more than a day old."
     exit 0
 }
 
@@ -433,7 +434,7 @@ function get_pkgsrc() {
       local pkgsrc_ver=$(echo "${pkgsrc_url}" | cut -d '/' -f5)
       local gccver=$(echo "${pkgsrc_url}" | cut -d '/' -f6)
 
-      local cache_dir=$CACHE_DIR/pkgsrc/$pkgsrc_ver/$gccver/All
+      local cache_dir=$MG_CACHE_DIR/pkgsrc/$pkgsrc_ver/$gccver/All
       local dest_dir=build/pkgsrc/${pkgsrc_ver}/${gccver}/All
       mkdir -p $cache_dir
       mkdir -p $dest_dir
@@ -495,7 +496,7 @@ while getopts "b:B:hrft:c:n:" opt; do
             ;;
         n) MG_NODE=${OPTARG} ;;
         t) TARGET=${OPTARG} ;;
-        c) CACHE_DIR=${OPTARG} ;;
+        c) MG_CACHE_DIR=${OPTARG} ;;
         ?) fatal "unknown option: $opt" ;;
     esac
 done
