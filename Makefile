@@ -997,8 +997,7 @@ clean_usbheadnode:
 
 #---- platform
 
-PLATFORM_BITS=$(BITS_DIR)/platform/platform-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz \
-	$(BITS_DIR)/platform/vmtests-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz
+PLATFORM_BITS=$(BITS_DIR)/platform/platform-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz
 PLATFORM_BITS_0=$(shell echo $(PLATFORM_BITS) | awk '{print $$1}')
 
 .PHONY: platform
@@ -1024,7 +1023,6 @@ $(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-b
 			gmake live)
 	(mkdir -p $(BITS_DIR)/platform)
 	(cp build/smartos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/platform/platform-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz)
-	cp build/smartos-live/output/vmtests-$(TIMESTAMP).tgz $(BITS_DIR)/platform/vmtests-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz
 	@echo "# Created platform bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(PLATFORM_BITS)
 	@echo ""
