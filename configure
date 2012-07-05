@@ -507,8 +507,8 @@ shift $((OPTIND-1))
 echo "Ensure have a 'node' v0.6."
 NODE_VERSION=$($MG_NODE --version)
 NODE_VERSION=${NODE_VERSION:0:4}
-if [[ "$NODE_VERSION" != "v0.6" ]]; then
-    fatal "Incorrect node version, '${NODE_VERSION}'. MG needs a node v0.6 or later (currently requiring v0.6). Either put a node v0.6 first on your PATH or use the '-n NODE_EXE' configure option."
+if [[ "$NODE_VERSION" != "v0.6" && "$NODE_VERSION" != "v0.8" ]]; then
+    fatal "Incorrect node version, '${NODE_VERSION}'. MG needs a node v0.6 or later (currently requiring v0.6 or v0.8). Either put a node v0.6 first on your PATH or use the '-n NODE_EXE' configure option."
 fi
 JSON="$MG_NODE $ROOT/tools/json"
 
