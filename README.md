@@ -90,8 +90,10 @@ Re-login (`ssh -A root@10.2.0.145`) and setup environment:
     # cscope: I (Trent) believe this is just for CA dev work
     # python26: many parts of the build for javascriptlint
     # zookeeper-client: binder needs this
+    # nodejs: needed for ronn.js man page building in the platform build
     pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
-      scmgit python26 png GeoIP GeoLiteCity ghostscript zookeeper-client
+      scmgit python26 png GeoIP GeoLiteCity ghostscript zookeeper-client \
+      nodejs
 
     # Note: This "./configure" step is necessary to setup your system.
     # TODO: Why is this necessary?
