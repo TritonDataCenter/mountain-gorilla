@@ -32,7 +32,7 @@ fi
 ARCHIVE_VERSION=$1
 
 
-echo "This will archive version '$NEW_VERSION' for all devhub Jira projects."
+echo "This will archive version '$ARCHIVE_VERSION' for all devhub Jira projects."
 read -p "Hit Enter to continue..."
 echo
 
@@ -42,7 +42,7 @@ PROJECTS=$(./jira.sh `cat ~/.jiraclirc` --action getProjectList --server https:/
 
 for project in $PROJECTS
 do
-  echo "# $project: add new version '$NEW_VERSION' with release date '$RELEASE_DATE'"
+  echo "# $project: archive version '$ARCHIVE_VERSION'"
   $TOP/jira.sh $JIRACLI_OPTS --action archiveVersion  \
     --project $project  --name "$ARCHIVE_VERSION" || true
 done
