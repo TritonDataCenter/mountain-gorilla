@@ -13,13 +13,7 @@ set -e
 #set -x
 TOP=$(cd $(dirname "$0") >/dev/null; pwd)
 
-# Check if version name was supplied as parameter to script
-if [ -z "$1" ]; then
-    echo "You must specify a version name e.g. '2011-12-29 Duffman' on the command line.";
-    exit 1
-fi
-VERSION_TO_RELEASE=$1
-SERVER=
+
 JIRACLI_OPTS="--server https://devhub.joyent.com/jira"
 JIRACLI_RC_PATH="$HOME/.jiraclirc"
 if [ ! -f "$JIRACLI_RC_PATH" ]; then
@@ -29,7 +23,15 @@ if [ ! -f "$JIRACLI_RC_PATH" ]; then
 fi
 JIRACLI_OPTS+=" $(cat $JIRACLI_RC_PATH)"
 
-# Assumes your username/password and server are all set in your jira.sh script
+
+# Check if version name was supplied as parameter to script
+if [ -z "$1" ]; then
+    echo "You must specify a version name e.g. '2011-12-29 Duffman' on the command line.";
+    exit 1
+fi
+VERSION_TO_RELEASE=$1
+
+
 echo "This will 'release' version '$VERSION_TO_RELEASE' for all devhub Jira projects."
 read -p "Hit Enter to continue..."
 echo

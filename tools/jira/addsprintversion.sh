@@ -1,23 +1,52 @@
 #!/bin/bash
+#
+# Update a new sprint version to all (non-archived) devhub Jira projects.
+#
+# Usage:
+#   ./addsprintversion.sh VERSION
+#
+# Example:
+#   ./addsprintversion.sh '2011-12-29 Duffman'
+#
 
-# Check if version name was supplied as parameter to script
-if [ -z "$1" ];
-  then echo "Provide NEW_VERSION name and RELEASE_DATE on command line, e.g. $0 \"2012-03-22 Jimbo\" \"3/22/12\". Exiting ..."; exit
-  else NEW_VERSION=$1; RELEASE_DATE=$2
+set -e
+#set -x
+TOP=$(cd $(dirname "$0") >/dev/null; pwd)
+
+
+JIRACLI_OPTS="--server https://devhub.joyent.com/jira"
+JIRACLI_RC_PATH="$HOME/.jiraclirc"
+if [ ! -f "$JIRACLI_RC_PATH" ]; then
+    echo "'$JIRACLI_RC_PATH' does not exist. You need one that looks like this:"
+    echo "    --user=joe.blow --password='his-jira-password'"
+    exit 1
 fi
+JIRACLI_OPTS+=" $(cat $JIRACLI_RC_PATH)"
 
-# Assumes your username/password and server are all set in your jira.sh script
-echo "This script will need updating if new projects are added to Jira"
-echo "This script should be called with the Version you wish to add. i.e. $0 \"New Version\""
-echo  "The version that will be added to all Jira projects is $NEW_VERSION, with a release date of $RELEASE_DATE"
-echo "I will sleep for 5 secs so CTRL C if this is not what you wanted!"
+
+if [[ -z "$1" ]]; then
+    echo "Provide NEW_VERSION name, e.g. $0 '2012-03-22 Jimbo'";
+    exit 1
+fi
+NEW_VERSION=$1
+
+YEAR=$(echo $NEW_VERSION | cut -c 3-4)
+MONTH=$(echo $NEW_VERSION | cut -c 6-7)
+DAY=$(echo $NEW_VERSION | cut -c 9-10)
+RELEASE_DATE=$MONTH/$DAY/$YEAR
+
+
+echo "This will add the new version '$NEW_VERSION' with release date '$RELEASE_DATE' for all devhub Jira projects."
+read -p "Hit Enter to continue..."
 echo
-sleep 5
 
-for project in ADMINUI AGENT BILLING CAPI PUBAPI DATASET DOC HVM HEAD INTRO MON NET OS PROV QA RELENG STOR PORTAL TOOLS DSAPI CNAPI DAPI FWAPI NAPI ZAPI MANTA WORKFLOW DCAPI CONSOLEAPI IMGAPI
+PROJECTS=$(./jira.sh `cat ~/.jiraclirc` --action getProjectList --server https://devhub.joyent.com/jira \
+    | python -c "import sys, csv; rows = list(csv.reader(sys.stdin)); projects = ['%s  %s' % (r[0], r[2]) for r in rows[2:] if r]; print '\n'.join(projects)" \
+    | grep -v Archived | cut -d' ' -f1 | xargs)
+
+for project in $PROJECTS
 do
-  echo "Adding new version: $NEW_VERSION to Jira project: $project with release date $RELEASE_DATE"
-#  echo "jira.sh --action addVersion  --project $project  --name $NEW_VERSION --date $RELEASE_DATE"
-  jira.sh --action addVersion  --project $project  --name "$NEW_VERSION" --date "$RELEASE_DATE"
-  sleep 5
+  echo "# $project: add new version '$NEW_VERSION' with release date '$RELEASE_DATE'"
+  $TOP/jira.sh $JIRACLI_OPTS --action addVersion  \
+    --project $project  --name "$NEW_VERSION" --date "$RELEASE_DATE" || true
 done
