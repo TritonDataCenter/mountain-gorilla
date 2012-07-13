@@ -86,7 +86,7 @@ echo "Using gzhost ${gzhost}"
 SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${gzhost}"
 
 # hack to fix our lab's DHCP
-mac="c0:ff:ee:$(uuid | cut -c 1-2):$(uuid | cut -c 1-2):$(uuid | cut -c 1-2)"
+mac="c0:ff:ee:$(openssl rand -hex 1):$(openssl rand -hex 1):$(openssl rand -hex 1)"
 
 echo "{
   \"brand\": \"joyent\",
@@ -223,4 +223,3 @@ cat <<EOF>> ${output%.bz2}.dsmanifest
     "updated_at": "${timestamp}"
   }
 EOF
-
