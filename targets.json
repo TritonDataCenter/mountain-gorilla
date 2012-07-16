@@ -316,6 +316,7 @@
         "dapi",
         "dcapi",
         "dhcpd",
+        "manatee",
         "moray",
         "napi",
         "platform",
