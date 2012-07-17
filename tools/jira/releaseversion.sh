@@ -42,7 +42,7 @@ PROJECTS=$(./jira.sh `cat ~/.jiraclirc` --action getProjectList --server https:/
 
 for project in $PROJECTS
 do
-  echo "# $project: release version '$ARCHIVE_VERSION'"
+  echo "# $project: release version '$VERSION_TO_RELEASE'"
   #$TOP/jira.sh $JIRACLI_OPTS --action getIssue --issue MON-1   # testing auth
   $TOP/jira.sh $JIRACLI_OPTS --action releaseVersion  \
     --project $project  --name "$VERSION_TO_RELEASE"  || true
