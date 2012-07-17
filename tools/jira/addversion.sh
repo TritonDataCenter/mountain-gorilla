@@ -35,12 +35,11 @@ echo "This will add the new version '$NEW_VERSION' for all devhub Jira projects.
 read -p "Hit Enter to continue..."
 echo
 
-#PROJECTS=$(./jira.sh `cat ~/.jiraclirc` --action getProjectList --server https://devhub.joyent.com/jira \
-#    | python -c "import sys, csv; rows = list(csv.reader(sys.stdin)); projects = ['%s  %s' % (r[0], r[2]) for r in rows[2:] if r]; print '\n'.join(projects)" \
-#    | grep -v Archived | cut -d' ' -f1 | xargs)
-#
-#for project in $PROJECTS
-for project in ADMINUI
+PROJECTS=$(./jira.sh `cat ~/.jiraclirc` --action getProjectList --server https://devhub.joyent.com/jira \
+    | python -c "import sys, csv; rows = list(csv.reader(sys.stdin)); projects = ['%s  %s' % (r[0], r[2]) for r in rows[2:] if r]; print '\n'.join(projects)" \
+    | grep -v Archived | cut -d' ' -f1 | xargs)
+
+for project in $PROJECTS
 do
   echo "# $project: add new version '$NEW_VERSION'"
   $TOP/jira.sh $JIRACLI_OPTS --action addVersion  \
