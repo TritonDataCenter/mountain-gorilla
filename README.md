@@ -34,7 +34,7 @@ cloudapi:
     ./configure -t cloudapi
     make cloudapi
 
-Likewise for any target (a key in "targets.json").
+Likewise for any target (`cat targets.json | json --keys`)
 
 There is also a special target to build everything from scratch *except* the
 platform (because the platform is by far the longest part of the build):
@@ -45,82 +45,22 @@ platform (because the platform is by far the longest part of the build):
 
 # Prerequisites
 
+The "tools/mk-jenkins-slave/mk-jenkins-slave.sh" script is used to build
+new Jenkins (CI system) slaves and set them up for building SDC. Basically
+it creates a new zone (current using the smartos-1.6.3 image) passing in
+"tools/mk-jenkins-slave/jenkins-slave-setup.user-script". See
+"tools/mk-jenkins-slave/README.md" for how to create a new build zone
+for yourself.
+
+You should be able to just manually run that user script in a smartos-1.6.3
+zone of your own (though that hasn't been tested), if you don't want to
+create a new zone.
+
+
 MG should be fully buildable on a SmartOS zone. Here are notes on how
 to create one and set it up for building MG. Some issues include having
 multiple gcc's and some specific node's. Specific paths are chosen
 for these and presumed by MG's Makefile.
-
-First, create zone. For example:
-
-    # Let's create a zone on bh1-build0 (dev machine in the Bellingham
-    # lab, <https://hub.joyent.com/wiki/display/dev/Development+Lab>).
-    ssh bh1-build0
-    /opt/custom/create-zone-163.sh trent   # Pick a different name for yourself :)
-    #  Or use Josh's new "/opt/custom/create-zone-16.sh" to use the newer
-    #  smartos-1.6.1 dataset. It is the future.
-    # wait 30s or so it to setup.
-
-    zlogin trent
-    echo "Your IP is $(ifconfig -a | grep 'inet 10\.' | cut -d' ' -f 2)"
-    # --> "Your IP is 10.2.0.145"
-
-    vi /root/.ssh/authorized_keys   # Add your key
-    chmod 600 /root/.ssh/authorized_keys
-    chmod 700 /root/.ssh
-
-Re-login (`ssh -A root@10.2.0.145`) and setup environment:
-
-    curl -k -O https://download.joyent.com/pub/build/setup-build-zone
-    curl -k -O https://download.joyent.com/pub/build/fake-subset.tbz2
-    chmod 755 setup-build-zone
-    ./setup-build-zone
-
-    # Note: After any reboot you'll need to run:
-    #   ./setup-build-zone -e
-    # On the Jenkins build slaves a transient SMF service is setup for
-    # this. See <https://hub.joyent.com/wiki/display/dev/Jenkins#Jenkins-JenkinsSetupDetails>
-
-    # Having git "core.autocrlf=input" will cause spurious dirty files in
-    # some of our repos. Don't go there.
-    [[ `git config core.autocrlf` == "input" ]] \
-        && echo "* * * Warning: remove 'autocrlf=input' from your ~/.gitconfig"
-
-    # scmgit, gcc-*, gmake: needed by most parts of sdc build
-    # png, GeoIP, GeoLiteCity, ghostscript: cloud-analytics (CA)
-    # cscope: I (Trent) believe this is just for CA dev work
-    # python26: many parts of the build for javascriptlint
-    # zookeeper-client: binder needs this
-    # nodejs: needed for ronn.js man page building in the platform build
-    pkgin -y in gcc-compiler gcc-runtime gcc-tools cscope gmake \
-      scmgit python26 png GeoIP GeoLiteCity ghostscript zookeeper-client \
-      nodejs
-
-    # Note: This "./configure" step is necessary to setup your system.
-    # TODO: Why is this necessary?
-    # TODO: Pull out the requisite system setup steps. Shouldn't really
-    #       be tucked away in smartos-live.git and configure.joyent.
-    git clone https://github.com/joyent/smartos-live.git
-    cd smartos-live
-    curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/illumos/configure.joyent
-    GIT_SSL_NO_VERIFY=true ./configure
-
-Also, to access stuff.joyent.us (where bits are preloaded from and built bits are
-uploaded) you'll need to encode the https://stuff.joyent.us username and password
-in your environment:
-
-    echo '{
-      "bits_username": "guest",
-      "bits_password": "*password*"
-    }' > ~/.mg.json
-
-The MG build requires that a node 0.6 first on your PATH. If you are building
-on smartos recent enough that `/usr/bin/json --version` is 0.6.x then you
-should be good.
-
-If your build zone in inside BH1, then you must add the following to "/etc/inet/hosts"
-for the "tools/upload-bits" script (used by all of the 'upload_' targets) to work:
-
-    10.2.0.190      stuff.joyent.us
 
 You should now be able to build mountain-gorilla (MG): i.e. all of SDC.
 Let's try that:

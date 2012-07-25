@@ -27,16 +27,27 @@ set -o xtrace
 set -o errexit
 
 export PATH=/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin
-
-echo "StrictHostKeyChecking=no" > /root/.ssh/config
-
-# Add the automation key
+BATCH_SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o BatchMode=yes"
 
 mkdir -p /root/.ssh
-cat > /root/.ssh/id_dsa <<KEY
-KEY
+echo "StrictHostKeyChecking=no" > /root/.ssh/config
+
+
+# Ensure can use "stuff.joyent.us" inside BH-1
+echo '' >>/etc/inet/hosts
+echo '10.2.0.190      stuff.joyent.us' >>/etc/inet/hosts
+
+
+# Add the automation key
+$BATCH_SCP stuff@stuff.joyent.us:trent/mk-jenkins-slave/id_dsa.automation /root/.ssh/id_dsa
 chmod 600 /root/.ssh/id_dsa
 
+# Encode the https://stuff.joyent.us username and password in your
+# environment for the MG build.
+($BATCH_SCP stuff@stuff.joyent.us:.mg.json /root/.mg.json || /usr/bin/true)
+
+
+# Add fake-subset et al to setup for building.
 cd /root
 curl -k -O https://download.joyent.com/pub/build/setup-build-zone
 curl -k -O https://download.joyent.com/pub/build/fake-subset.tbz2
@@ -75,14 +86,11 @@ SETUPBUILDZONE
 /usr/sbin/svccfg import /var/tmp/setup-build-zone.xml
 
 
-# Ensure can use "stuff.joyent.us" inside BH-1:
-echo '' >>/etc/hosts
-echo '10.2.0.190      stuff.joyent.us' >>/etc/hosts
-
 # Having git "core.autocrlf=input" will cause spurious dirty files in
 # some of our repos. Don't go there.
 [[ \\\$(git config core.autocrlf) == "input" ]] \
     && echo "* * * Warning: remove 'autocrlf=input' from your ~/.gitconfig"
+
 
 # Stupid Java will ask us for license otherwise.
 mkdir -p /opt/local
@@ -108,19 +116,11 @@ cd smartos-live
 curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/illumos/configure.joyent
 GIT_SSL_NO_VERIFY=true ./configure
 
-# encode the https://stuff.joyent.us username and password in your environment:
-echo '{
-    "bits_username": "guest",
-    "bits_password": "GrojhykMid"
-}' > /root/.mg.json
 
 # The MG build requires that a node 0.6 first on your PATH. If you are building
 # on smartos recent enough that `/usr/bin/json --version` is 0.6.x then you
 # should be good.
 # TODO : make this happen
-
-# Fix hosts for BH1
-echo "10.2.0.190      stuff.joyent.us" >> /etc/inet/hosts
 
 # Finally clone MG
 cd /root
@@ -140,9 +140,6 @@ mv /root/MG/cache/repos/smartos-live/projects/local/ur-agent /root/MG/cache/repo
 
 # Disable the disabling of StrictHostKeyChecking
 rm /root/.ssh/config
-
-# move this key out of the way:
-mv -f /root/.ssh/id_dsa /root/.ssh/id_dsa.automation
 
 echo "ALL DONE"
 
