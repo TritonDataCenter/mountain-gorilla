@@ -88,6 +88,12 @@
     ],
     "deps": []
   },
+  "usageapi": {
+    "repos": [
+        {"url": "git@git.joyent.com:usageapi.git"}
+    ],
+    "deps": []
+  },
 
   "ufds": {
     "repos": [
