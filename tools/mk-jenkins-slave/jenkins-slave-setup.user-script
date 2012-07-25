@@ -43,7 +43,36 @@ curl -k -O https://download.joyent.com/pub/build/fake-subset.tbz2
 chmod 755 setup-build-zone
 ./setup-build-zone
 
-# TODO: add smf service
+cat > /var/tmp/setup-build-zone.xml <<SETUPBUILDZONE
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<service_bundle type='manifest' name='export'>
+  <service name='smartdc/setup-build-zone' type='service' version='0'>
+    <dependency name='network' grouping='require_all' restart_on='error' type='service'>
+      <service_fmri value='svc:/milestone/multi-user:default'/>
+    </dependency>
+    <dependency name='filesystem' grouping='require_all' restart_on='error' type='service'>
+      <service_fmri value='svc:/system/filesystem/local'/>
+    </dependency>
+    <instance name='default' enabled='true'>
+      <exec_method name='start' type='method' exec='/root/setup-build-zone -e' timeout_seconds='60'>
+        <method_context working_directory='/root'/>
+      </exec_method>
+      <exec_method name='stop' type='method' exec=':true' timeout_seconds='3'/>
+      <property_group name='startd' type='framework'>
+        <propval name='duration' type='astring' value='transient'/>
+      </property_group>
+    </instance>
+    <stability value='Evolving'/>
+    <template>
+      <common_name>
+        <loctext xml:lang='C'>Setup build zone (-e)</loctext>
+      </common_name>
+    </template>
+  </service>
+</service_bundle>
+SETUPBUILDZONE
+/usr/sbin/svccfg import /var/tmp/setup-build-zone.xml
 
 # Having git "core.autocrlf=input" will cause spurious dirty files in
 # some of our repos. Don't go there.
