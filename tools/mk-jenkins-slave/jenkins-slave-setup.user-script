@@ -1,0 +1,112 @@
+#!/usr/bin/bash
+#
+# Copyright (c) 2012 Joyent Inc., All Rights Reserved.
+#
+
+set -o xtrace
+set -o errexit
+
+if [[ $(zonename) == "global" ]]; then
+    echo "This script is to be run in a zone" >&2
+    exit 1
+fi
+
+cat >/var/svc/setup <<EOF
+#!/usr/bin/bash
+
+set -o xtrace
+set -o errexit
+
+export PATH=/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin
+
+echo "StrictHostKeyChecking=no" > /root/.ssh/config
+
+# Add the automation key
+
+mkdir -p /root/.ssh
+cat > /root/.ssh/id_dsa <<KEY
+KEY
+chmod 600 /root/.ssh/id_dsa
+
+cd /root
+curl -k -O https://download.joyent.com/pub/build/setup-build-zone
+curl -k -O https://download.joyent.com/pub/build/fake-subset.tbz2
+chmod 755 setup-build-zone
+./setup-build-zone
+
+# TODO: add smf service
+
+# Having git "core.autocrlf=input" will cause spurious dirty files in
+# some of our repos. Don't go there.
+[[ \\\$(git config core.autocrlf) == "input" ]] \
+    && echo "* * * Warning: remove 'autocrlf=input' from your ~/.gitconfig"
+
+# Stupid Java will ask us for license otherwise.
+mkdir -p /opt/local
+touch /opt/local/.dlj_license_accepted
+
+# install binutils first since otherwise somehow we can't install it.
+pkgin -y install binutils
+
+# scmgit, gcc-*, gmake: needed by most parts of sdc build
+# png, GeoIP, GeoLiteCity, ghostscript: cloud-analytics (CA)
+# cscope: I (Trent) believe this is just for CA dev work
+# python26: many parts of the build for javascriptlint
+# zookeeper-client: binder needs this
+pkgin -y in gcc-compiler gcc-runtime cscope gmake \
+    scmgit python26 png GeoIP GeoLiteCity ghostscript zookeeper-client
+
+# Note: This "./configure" step is necessary to setup your system.
+# TODO: Why is this necessary?
+# TODO: Pull out the requisite system setup steps. Shouldn't really
+#       be tucked away in smartos-live.git and configure.joyent.
+git clone https://github.com/joyent/smartos-live.git
+cd smartos-live
+curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/illumos/configure.joyent
+GIT_SSL_NO_VERIFY=true ./configure
+
+# encode the https://stuff.joyent.us username and password in your environment:
+echo '{
+    "bits_username": "guest",
+    "bits_password": "GrojhykMid"
+}' > /root/.mg.json
+
+# The MG build requires that a node 0.6 first on your PATH. If you are building
+# on smartos recent enough that `/usr/bin/json --version` is 0.6.x then you
+# should be good.
+# TODO : make this happen
+
+# Fix hosts for BH1
+echo "10.2.0.190      stuff.joyent.us" >> /etc/inet/hosts
+
+# Finally clone MG
+cd /root
+git clone git@git.joyent.com:mountain-gorilla.git MG
+
+# smartos-live's configure was used to setup some things, move the repos it created into the
+# MG cache dir to warm the cache.
+mkdir -p /root/MG/cache/repos
+mv /root/smartos-live /root/MG/cache/repos
+mv /root/MG/cache/repos/smartos-live/configure.joyent /root
+mv /root/MG/cache/repos/smartos-live/projects/illumos /root/MG/cache/repos/illumos-joyent
+mv /root/MG/cache/repos/smartos-live/projects/illumos-extra /root/MG/cache/repos
+mv /root/MG/cache/repos/smartos-live/projects/local/kvm /root/MG/cache/repos/illumos-kvm
+mv /root/MG/cache/repos/smartos-live/projects/local/kvm-cmd /root/MG/cache/repos/illumos-kvm-cmd
+mv /root/MG/cache/repos/smartos-live/projects/local/sdc-platform /root/MG/cache/repos
+mv /root/MG/cache/repos/smartos-live/projects/local/ur-agent /root/MG/cache/repos
+
+# Disable the disabling of StrictHostKeyChecking
+rm /root/.ssh/config
+
+# move this key out of the way:
+mv -f /root/.ssh/id_dsa /root/.ssh/id_dsa.automation
+
+echo "ALL DONE"
+
+EOF
+
+# kick off setup as a separate process since mdata:execute is time-limited.
+chmod 755 /var/svc/setup
+/var/svc/setup &
+
+exit 0
