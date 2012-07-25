@@ -38,9 +38,14 @@ echo '' >>/etc/inet/hosts
 echo '10.2.0.190      stuff.joyent.us' >>/etc/inet/hosts
 
 
-# Add the automation key
+# Add the automation and molybdenum keys.
+# The latter was (at least) necessary to clone
+# "git@github.com:twitter/bootstrap.git" for the portal build. I don't know
+# why.
 $BATCH_SCP stuff@stuff.joyent.us:trent/mk-jenkins-slave/id_dsa.automation /root/.ssh/id_dsa
 chmod 600 /root/.ssh/id_dsa
+$BATCH_SCP stuff@stuff.joyent.us:trent/mk-jenkins-slave/id_rsa.molybdenum /root/.ssh/id_rsa
+chmod 600 /root/.ssh/id_rsa
 
 # Encode the https://stuff.joyent.us username and password in your
 # environment for the MG build.
