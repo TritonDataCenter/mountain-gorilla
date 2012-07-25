@@ -223,20 +223,20 @@ clean_billapi:
 
 #---- usageapi
 
-_usageapi_stamp=$(BILLING_API_BRANCH)-$(TIMESTAMP)-g$(BILLING_API_SHA)
-usageapi_BITS=$(BITS_DIR)/usageapi/usageapi-pkg-$(_usageapi_stamp).tar.bz2
+_usageapi_stamp=$(USAGEAPI_BRANCH)-$(TIMESTAMP)-g$(USAGEAPI_SHA)
+USAGEAPI_BITS=$(BITS_DIR)/usageapi/usageapi-pkg-$(_usageapi_stamp).tar.bz2
 
 .PHONY: usageapi
-usageapi: $(usageapi_BITS)
+usageapi: $(USAGEAPI_BITS)
 
 # PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(usageapi_BITS): build/usageapi
-	@echo "# Build usageapi: branch $(BILLING_API_BRANCH), sha $(BILLING_API_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(USAGEAPI_BITS): build/usageapi
+	@echo "# Build usageapi: branch $(USAGEAPI_BRANCH), sha $(USAGEAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/usageapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created usageapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(usageapi_BITS)
+	@ls -1 $(USAGEAPI_BITS)
 	@echo ""
 
 # Warning: if usageapi's submodule deps change, this 'clean_ufds' is insufficient. It would
