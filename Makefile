@@ -750,9 +750,6 @@ clean_configurator:
 #---- Binder
 
 _binder_stamp=$(BINDER_BRANCH)-$(TIMESTAMP)-g$(BINDER_SHA)
-#---- Binder
-
-_binder_stamp=$(BINDER_BRANCH)-$(TIMESTAMP)-g$(BINDER_SHA)
 BINDER_BITS=$(BITS_DIR)/binder/binder-pkg-$(_binder_stamp).tar.bz2
 BINDER_DATASET=$(BITS_DIR)/binder/binder-zfs-$(_binder_stamp).zfs.bz2
 
