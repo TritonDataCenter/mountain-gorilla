@@ -256,7 +256,8 @@
     ],
     "deps": [
       "minnow",
-      "registrar"
+      "registrar",
+      "configurator"
     ]
   },
 
