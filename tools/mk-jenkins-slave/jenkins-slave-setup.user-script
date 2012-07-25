@@ -74,6 +74,11 @@ cat > /var/tmp/setup-build-zone.xml <<SETUPBUILDZONE
 SETUPBUILDZONE
 /usr/sbin/svccfg import /var/tmp/setup-build-zone.xml
 
+
+# Ensure can use "stuff.joyent.us" inside BH-1:
+echo '' >>/etc/hosts
+echo '10.2.0.190      stuff.joyent.us' >>/etc/hosts
+
 # Having git "core.autocrlf=input" will cause spurious dirty files in
 # some of our repos. Don't go there.
 [[ \\\$(git config core.autocrlf) == "input" ]] \
