@@ -166,6 +166,13 @@
     "deps": []
   },
 
+  "configurator": {
+    "repos": [
+        {"url": "git@git.joyent.com:configurator.git"}
+    ],
+    "deps": []
+  },
+
   "binder": {
     "appliance": "true",
     "urn": "sdc:sds:nameservice",

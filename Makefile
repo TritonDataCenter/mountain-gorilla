@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee mahi cnapi vmapi dapi napi dcapi binder mako moray registrar ufds platform usbheadnode minnow
+all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee mahi cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee mahi cnapi vmapi dapi napi dcapi binder mako registrar moray ufds usbheadnode minnow
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee mahi cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow
 
 
 #---- smartlogin
@@ -725,6 +725,31 @@ clean_registrar:
 	rm -rf $(BITS_DIR)/registrar
 	(cd build/registrar && gmake distclean)
 
+
+#---- Configurator
+
+_configurator_stamp=$(CONFIGURATOR_BRANCH)-$(TIMESTAMP)-g$(CONFIGURATOR_SHA)
+CONFIGURATOR_BITS=$(BITS_DIR)/configurator/configurator-pkg-$(_configurator_stamp).tar.bz2
+
+.PHONY: configurator
+configurator: $(CONFIGURATOR_BITS)
+
+$(CONFIGURATOR_BITS): build/configurator
+	@echo "# Build configurator: branch $(CONFIGURATOR_BRANCH), sha $(CONFIGURATOR_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/configurator && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created configurator bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(CONFIGURATOR_BITS)
+	@echo ""
+
+clean_configurator:
+	rm -rf $(BITS_DIR)/configurator
+	(cd build/configurator && gmake distclean)
+
+
+#---- Binder
+
+_binder_stamp=$(BINDER_BRANCH)-$(TIMESTAMP)-g$(BINDER_SHA)
 #---- Binder
 
 _binder_stamp=$(BINDER_BRANCH)-$(TIMESTAMP)-g$(BINDER_SHA)
