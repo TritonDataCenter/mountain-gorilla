@@ -82,12 +82,6 @@
     ],
     "deps": []
   },
-  "billapi": {
-    "repos": [
-        {"url": "git@git.joyent.com:billing_api.git"}
-    ],
-    "deps": []
-  },
   "usageapi": {
     "repos": [
         {"url": "git@git.joyent.com:usageapi.git"}
@@ -322,7 +316,6 @@
         "agentsshar",
         "amon",
         "assets",
-        "billapi",
         "ca",
         "cloudapi",
         "cnapi",
@@ -337,6 +330,7 @@
         "rabbitmq",
         "redis",
         "ufds",
+        "usageapi",
         "vmapi",
         "webinfo",
         "workflow"

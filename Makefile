@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee mahi cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow
+all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo billapi cloudapi workflow manatee mahi cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow
 
 
 #---- smartlogin
@@ -194,31 +194,6 @@ $(UFDS_BITS): build/ufds
 clean_ufds:
 	rm -rf $(BITS_DIR)/ufds
 	(cd build/ufds && gmake clean)
-
-
-#---- BILLAPI
-
-_billapi_stamp=$(BILLING_API_BRANCH)-$(TIMESTAMP)-g$(BILLING_API_SHA)
-BILLAPI_BITS=$(BITS_DIR)/billapi/billapi-pkg-$(_billapi_stamp).tar.bz2
-
-.PHONY: billapi
-billapi: $(BILLAPI_BITS)
-
-# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
-$(BILLAPI_BITS): build/billing_api
-	@echo "# Build billapi: branch $(BILLING_API_BRANCH), sha $(BILLING_API_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/billing_api && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
-	@echo "# Created billapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(BILLAPI_BITS)
-	@echo ""
-
-# Warning: if billapi's submodule deps change, this 'clean_ufds' is insufficient. It would
-# then need to call 'gmake dist-clean'.
-clean_billapi:
-	rm -rf $(BITS_DIR)/billapi
-	(cd build/billapi && gmake clean)
 
 
 #---- usageapi
