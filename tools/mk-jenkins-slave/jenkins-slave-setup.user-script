@@ -11,6 +11,15 @@ if [[ $(zonename) == "global" ]]; then
     exit 1
 fi
 
+
+# Only want to run this initial user-script once
+if [[ -f /var/svc/.ran-user-script ]]; then
+    echo "Initial user-script has already been run."
+    exit 0
+fi
+touch /var/svc/.ran-user-script
+
+
 cat >/var/svc/setup <<EOF
 #!/usr/bin/bash
 
@@ -105,8 +114,8 @@ echo "ALL DONE"
 
 EOF
 
-# kick off setup as a separate process since mdata:execute is time-limited.
+# Kick off setup as a separate process since mdata:execute is time-limited.
 chmod 755 /var/svc/setup
-/var/svc/setup &
+(bash /var/svc/setup) >/var/svc/setup.log 2>&1 &
 
 exit 0

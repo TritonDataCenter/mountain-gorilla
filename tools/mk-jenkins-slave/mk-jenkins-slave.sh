@@ -17,8 +17,7 @@ fi
 # 01b2c898-945f-11e1-a523-af1afbe22822
 
 TOP=$(cd $(dirname $0)/ >/dev/null; pwd)
-#USERSCRIPT=/opt/custom/script
-USERSCRIPT=$TOP/script
+USERSCRIPT=$TOP/jenkins-slave-setup.user-script
 
 uuid=$(uuid)
 (cat | /usr/vm/sbin/add-userscript $USERSCRIPT | vmadm create)<<EOF
