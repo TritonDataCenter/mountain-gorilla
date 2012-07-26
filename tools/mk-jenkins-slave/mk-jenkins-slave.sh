@@ -40,7 +40,7 @@ uuid=$(uuid)
         "ip": "dhcp"
       }
     ]
-}  
+}
 EOF
 
 # Drop in hostname
@@ -54,6 +54,19 @@ chmod 600 /zones/${uuid}/root/root/.ssh/authorized_keys
 
 # Add their keys if they've forwarded agent
 ssh-add -L > /zones/${uuid}/root/root/.ssh/authorized_keys
+
+# Add the automation and molybdenum keys.
+# The latter was (at least) necessary to clone
+# "git@github.com:twitter/bootstrap.git" for the portal build. I don't know
+# why.
+STUFF_IP=10.2.0.190
+export BATCH_SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o BatchMode=yes"
+$BATCH_SCP stuff@$STUFF_IP:trent/mk-jenkins-slave/id_dsa.automation \
+    /zones/${uuid}/root/root/.ssh/id_dsa
+chmod 600 /zones/${uuid}/root/root/.ssh/id_dsa
+$BATCH_SCP stuff@$STUFF_IP:trent/mk-jenkins-slave/id_rsa.molybdenum \
+    /zones/${uuid}/root/root/.ssh/id_rsa
+chmod 600 /zones/${uuid}/root/root/.ssh/id_rsa
 
 sleep 3
 

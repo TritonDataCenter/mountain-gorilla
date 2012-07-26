@@ -27,7 +27,7 @@ set -o xtrace
 set -o errexit
 
 export PATH=/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin
-BATCH_SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o BatchMode=yes"
+export BATCH_SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o BatchMode=yes"
 
 mkdir -p /root/.ssh
 echo "StrictHostKeyChecking=no" > /root/.ssh/config
@@ -38,18 +38,9 @@ echo '' >>/etc/inet/hosts
 echo '10.2.0.190      stuff.joyent.us' >>/etc/inet/hosts
 
 
-# Add the automation and molybdenum keys.
-# The latter was (at least) necessary to clone
-# "git@github.com:twitter/bootstrap.git" for the portal build. I don't know
-# why.
-$BATCH_SCP stuff@stuff.joyent.us:trent/mk-jenkins-slave/id_dsa.automation /root/.ssh/id_dsa
-chmod 600 /root/.ssh/id_dsa
-$BATCH_SCP stuff@stuff.joyent.us:trent/mk-jenkins-slave/id_rsa.molybdenum /root/.ssh/id_rsa
-chmod 600 /root/.ssh/id_rsa
-
 # Encode the https://stuff.joyent.us username and password in your
 # environment for the MG build.
-($BATCH_SCP stuff@stuff.joyent.us:.mg.json /root/.mg.json || /usr/bin/true)
+(\\\$BATCH_SCP stuff@stuff.joyent.us:.mg.json /root/.mg.json || /usr/bin/true)
 
 
 # Add fake-subset et al to setup for building.
@@ -118,7 +109,7 @@ pkgin -y in gcc-compiler gcc-runtime cscope gmake \
 #       be tucked away in smartos-live.git and configure.joyent.
 git clone https://github.com/joyent/smartos-live.git
 cd smartos-live
-curl -k -O https://joydev:leichiB8eeQu@216.57.203.66/illumos/configure.joyent
+curl -k -O https://download.joyent.com/pub/build/configure.joyent
 GIT_SSL_NO_VERIFY=true ./configure
 
 
