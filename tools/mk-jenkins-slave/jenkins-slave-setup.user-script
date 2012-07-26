@@ -40,7 +40,7 @@ echo '10.2.0.190      stuff.joyent.us' >>/etc/inet/hosts
 
 # Encode the https://stuff.joyent.us username and password in your
 # environment for the MG build.
-(\\\$BATCH_SCP stuff@stuff.joyent.us:.mg.json /root/.mg.json || /usr/bin/true)
+(\\\$BATCH_SCP stuff@stuff.joyent.us:trent/mk-jenkins-slave/.mg.json /root/.mg.json)
 
 
 # Add fake-subset et al to setup for building.
