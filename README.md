@@ -50,17 +50,12 @@ new Jenkins (CI system) slaves and set them up for building SDC. Basically
 it creates a new zone (current using the smartos-1.6.3 image) passing in
 "tools/mk-jenkins-slave/jenkins-slave-setup.user-script". See
 "tools/mk-jenkins-slave/README.md" for how to create a new build zone
-for yourself.
+for yourself, but basically it means running this from the GZ:
 
-You should be able to just manually run that user script in a smartos-1.6.3
-zone of your own (though that hasn't been tested), if you don't want to
-create a new zone.
+    ./tools/mk-jenkins-slave/mk-jenkins-slave.sh BUILD-ZONE-ALIAS
 
-
-MG should be fully buildable on a SmartOS zone. Here are notes on how
-to create one and set it up for building MG. Some issues include having
-multiple gcc's and some specific node's. Specific paths are chosen
-for these and presumed by MG's Makefile.
+If you already have a zone that you want to setup, you *should* be able to just
+manually run that user script (though that hasn't been tested).
 
 You should now be able to build mountain-gorilla (MG): i.e. all of SDC.
 Let's try that:

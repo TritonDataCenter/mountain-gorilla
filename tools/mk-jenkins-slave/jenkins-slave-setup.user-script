@@ -40,12 +40,13 @@ echo '10.2.0.190      stuff.joyent.us' >>/etc/inet/hosts
 
 # Encode the https://stuff.joyent.us username and password in your
 # environment for the MG build.
-(\\\$BATCH_SCP stuff@stuff.joyent.us:trent/mk-jenkins-slave/.mg.json /root/.mg.json)
+\\\$BATCH_SCP stuff@stuff.joyent.us:trent/mk-jenkins-slave/.mg.json /root/.mg.json
 
 
 # Add fake-subset et al to setup for building.
 cd /root
-curl -k -O https://download.joyent.com/pub/build/setup-build-zone
+\\\$BATCH_SCP stuff@stuff.joyent.us:trent/mk-jenkins-slave/setup-build-zone.new /root/setup-build-zone
+# curl -k -O https://download.joyent.com/pub/build/setup-build-zone
 curl -k -O https://download.joyent.com/pub/build/fake-subset.tbz2
 chmod 755 setup-build-zone
 ./setup-build-zone
