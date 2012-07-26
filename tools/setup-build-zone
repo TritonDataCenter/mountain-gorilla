@@ -55,6 +55,13 @@ EOF
 	exit 2
 }
 
+function fail_if_already_setup
+{
+	if [[ -n $(mount | grep fake-subset) ]]; then
+		fail "Already setup."
+	fi
+}
+
 #
 # XXX We assume that fake-subset.tbz2 is in /root
 #
@@ -119,6 +126,7 @@ while getopts "e" c $@; do
 	esac
 done
 
+fail_if_already_setup
 
 if [[ $sbz_env_flag -ne 1 ]]; then
 	echo "Setting up fake files ... \c "
@@ -130,6 +138,6 @@ if [[ $sbz_env_flag -ne 1 ]]; then
 	echo "done."
 fi
 
-echo "Setting up environment ... \c " 
+echo "Setting up environment ... \c "
 setup_environment || fail "failed"
 echo "done."
