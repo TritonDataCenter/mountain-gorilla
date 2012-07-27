@@ -6,12 +6,22 @@
 set -e
 set -o xtrace
 
-zonename=$1
+# smartos-1.6.3
+DEFAULT_IMAGE_UUID=01b2c898-945f-11e1-a523-af1afbe22822
 
-if [[ -z ${zonename} || -n $2 ]]; then
-    echo "Usage: $0 <zonename>"
+zonename=$1
+if [[ -z "${zonename}" ]]; then
+    echo "Usage: $0 <zonename> [<image-uuid>]"
+    echo "Where <image-uuid> defaults to the smartos-1.6.3 UUID."
     exit 1
 fi
+
+image_uuid=$2
+if [[ -z "$image_uuid" ]]; then
+    image_uuid=$DEFAULT_IMAGE_UUID
+fi
+echo "Using image $image_uuid"
+
 
 # TODO: this is the part where we'd use imgadm to ensure we have
 # 01b2c898-945f-11e1-a523-af1afbe22822
@@ -32,7 +42,7 @@ uuid=$(uuid)
     "tmpfs": 8192,
     "dns_domain": "joyent.us",
     "delegate_dataset": true,
-    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "dataset_uuid": "${image_uuid}",
     "fs_allowed": ["ufs", "pcfs", "tmpfs"],
     "nics": [
       {
