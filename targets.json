@@ -131,6 +131,13 @@
     "deps": []
   },
 
+  "imgapi": {
+    "repos": [
+        {"url": "git@git.joyent.com:imgapi.git"}
+    ],
+    "deps": []
+  },
+
   "cnapi": {
     "repos": [
         {"url": "git@git.joyent.com:cnapi.git"}

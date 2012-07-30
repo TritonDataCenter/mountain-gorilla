@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow
+all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow
 
 
 #---- smartlogin
@@ -492,6 +492,28 @@ $(DAPI_BITS): build/dapi
 clean_dapi:
 	rm -rf $(BITS_DIR)/dapi
 	(cd build/dapi && gmake clean)
+
+
+#---- IMGAPI
+
+_imgapi_stamp=$(IMGAPI_BRANCH)-$(TIMESTAMP)-g$(IMGAPI_SHA)
+IMGAPI_BITS=$(BITS_DIR)/imgapi/imgapi-pkg-$(_imgapi_stamp).tar.bz2
+
+.PHONY: imgapi
+imgapi: $(IMGAPI_BITS)
+
+$(IMGAPI_BITS): build/imgapi
+	@echo "# Build imgapi: branch $(IMGAPI_BRANCH), sha $(IMGAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/imgapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created imgapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(IMGAPI_BITS)
+	@echo ""
+
+clean_imgapi:
+	rm -rf $(BITS_DIR)/imgapi
+	(cd build/imgapi && gmake clean)
+
 
 
 #---- CNAPI
