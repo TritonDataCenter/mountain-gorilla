@@ -329,6 +329,7 @@
         "dapi",
         "dcapi",
         "dhcpd",
+        "imgapi",
         "manatee",
         "moray",
         "napi",
