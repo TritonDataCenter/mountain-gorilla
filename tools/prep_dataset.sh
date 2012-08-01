@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export PS4='${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+set -o xtrace
 set -o errexit
 
 gzhost=""
@@ -30,10 +32,14 @@ output=""
 while getopts t:p:s:o:u:v: opt; do
      case $opt in
        t)
-         tarballs="${tarballs} ${OPTARG}"
-         ;;
+        if [[ -n "${OPTARG}" ]]; then
+            tarballs="${tarballs} ${OPTARG}"
+        fi
+        ;;
        p)
-         packages="${packages} ${OPTARG}"
+        if [[ -n "${OPTARG}" ]]; then
+            packages="${packages} ${OPTARG}"
+        fi
          ;;
        s)
          gzservers=$OPTARG
@@ -130,8 +136,8 @@ done
 
 ##
 # install packages
-if [[ -n ${packages} ]]; then
-  echo "Installing pkgsrc ${packages}"
+if [[ -n "${packages}" ]]; then
+  echo "Installing these pkgsrc package: '${packages}'"
 
   echo "Need to wait for an IP address..."
   count=0
