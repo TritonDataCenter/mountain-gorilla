@@ -30,33 +30,33 @@ packages=""
 output=""
 
 while getopts t:p:s:o:u:v: opt; do
-     case $opt in
-       t)
-        if [[ -n "${OPTARG}" ]]; then
-            tarballs="${tarballs} ${OPTARG}"
-        fi
-        ;;
-       p)
-        if [[ -n "${OPTARG}" ]]; then
-            packages="${packages} ${OPTARG}"
-        fi
-         ;;
-       s)
-         gzservers=$OPTARG
-         ;;
-       o)
-         output=$OPTARG
-         ;;
-       u)
-         urn=$OPTARG
-         ;;
-       v)
-         version=$OPTARG
-         ;;
-       \?)
-         echo "Invalid flag"
-         exit 1;
-     esac
+  case $opt in
+  t)
+    if [[ -n "${OPTARG}" ]]; then
+      tarballs="${tarballs} ${OPTARG}"
+    fi
+    ;;
+  p)
+    if [[ -n "${OPTARG}" ]]; then
+      packages="${packages} ${OPTARG}"
+    fi
+    ;;
+  s)
+    gzservers=$OPTARG
+    ;;
+  o)
+    output=$OPTARG
+    ;;
+  u)
+    urn=$OPTARG
+    ;;
+  v)
+    version=$OPTARG
+    ;;
+  \?)
+    echo "Invalid flag"
+    exit 1;
+  esac
 done
 
 if [[ -z ${output} ]]; then
