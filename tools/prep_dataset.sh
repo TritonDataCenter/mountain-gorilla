@@ -119,19 +119,34 @@ echo "{
 }" | $SSH "vmadm create"
 
 uuid=$(${SSH} "vmadm list -p -o uuid,alias | grep temp_image.$$ | cut -d ':' -f 1")
-
 echo "Created build zone ${uuid}"
-for tarball in $tarballs; do
-  bzip=$(echo $tarball | grep "tar.bz2" || /bin/true )
 
+
+# "tarballs" is a list of:
+#   TARBALL-ABSOLUTE-PATH-PATTERN[:SYSROOT]
+# e.g.:
+#   /root/joy/mountain-gorilla/bits/amon/amon-agent-*.tgz:/opt
+for tb_info in $tarballs; do
+  tb_tarball=$(echo "$tb_info" | awk -F':' '{print $1}')
+  tb_sysroot=$(echo "$tb_info" | awk -F':' '{print $2}')
+  [[ -z "$tb_sysroot" ]] && tb_sysroot=/
+
+  bzip=$(echo $tb_tarball | grep "bz2$" || /bin/true)
   if [[ -n ${bzip} ]]; then
     uncompress=bzcat
   else
     uncompress=gzcat
   fi
 
-  echo "Copying tarball ${tarball} to ${uuid}"
-  cat ${tarball} | ${SSH} "zlogin ${uuid} 'cd / ; ${uncompress} | gtar --strip-components 1 -xf - root'"
+  echo "Copying tarball '${tb_tarball}' to zone '${uuid}'."
+  if [[ "$tb_sysroot" == "/" ]]; then
+    # Special case: for tb_sysroot == '/' we presume these are fs-tarball
+    # style tarballs with "/root/..." and "/site/...". We strip
+    # appropriately.
+    cat ${tb_tarball} | ${SSH} "zlogin ${uuid} 'cd / ; ${uncompress} | gtar --strip-components 1 -xf - root'"
+  else
+    cat ${tb_tarball} | ${SSH} "zlogin ${uuid} 'cd ${tb_sysroot} ; ${uncompress} | gtar -xf -'"
+  fi
 done
 
 ##

@@ -333,38 +333,46 @@ MG_CACHE_DIR=$(cd $MG_CACHE_DIR >/dev/null; pwd)
 
 EOF
   mkdir -p build
-  cd build/
-  for repo in $(ls -1) ; do
-      upper_repo_name=$(echo $repo | tr [:lower:] [:upper:] | tr - _)
-      if [[ $(cat ${ROOT}/targets.json | $JSON ${repo} | $JSON appliance) == 'true' ]]; then
-        echo ${upper_repo_name}_DATASET=$(cat ${ROOT}/targets.json | json ${repo}.dataset_uuid) >> ${ROOT}/bits/config.mk
-        echo ${upper_repo_name}_PKGSRC=\"$(cat ${ROOT}/targets.json | json ${repo}.pkgsrc | json -a |  xargs)\" >> ${ROOT}/bits/config.mk
-        echo ${upper_repo_name}_URN=\"$(cat ${ROOT}/targets.json | json ${repo}.urn)\" >> ${ROOT}/bits/config.mk
-        echo ${upper_repo_name}_VERSION=\"$(cat ${ROOT}/targets.json | json ${repo}.version)\" >> ${ROOT}/bits/config.mk
-        deps=""
-        for dep in $(cat ${ROOT}/targets.json | json ${repo}.deps | json -a |  xargs); do
-          if [[ -n $TARGET ]]; then
-            deps="${deps} $(ls ${ROOT}/bits/${dep}/*.tar.* | xargs)"
-          else
-            deps="${deps} \$($(echo $dep | tr [:lower:] [:upper:])_BITS)"
-          fi
+  for repo in $(ls -1 build/); do
+      repo_mk_name=$(echo $repo | tr [:lower:] [:upper:] | tr - _)
+      branch_name=$((cd build/${repo} && git symbolic-ref HEAD 2> /dev/null ) || echo "")
+      echo ${repo_mk_name}_BRANCH=$(echo ${branch_name##refs/heads/} || echo "") >> ${ROOT}/bits/config.mk
+      echo ${repo_mk_name}_SHA=$((cd build/${repo} && git log --pretty=format:'%h' -1 ) || echo "") >> ${ROOT}/bits/config.mk
+  done
+
+  # Makefile vars for appliance builds (i.e. the "foo_dataset" targets).
+  for targ in $TARGETS; do
+      targ_mk_name=$(echo $targ | tr [:lower:] [:upper:] | tr - _)
+      if [[ $(cat ${ROOT}/targets.json | $JSON ${targ} | $JSON appliance) == 'true' ]]; then
+        echo ${targ_mk_name}_DATASET=$(cat ${ROOT}/targets.json | $JSON ${targ}.dataset_uuid) >> ${ROOT}/bits/config.mk
+        echo ${targ_mk_name}_PKGSRC=\"$(cat ${ROOT}/targets.json | $JSON ${targ}.pkgsrc | $JSON -a |  xargs)\" >> ${ROOT}/bits/config.mk
+        echo ${targ_mk_name}_URN=\"$(cat ${ROOT}/targets.json | $JSON ${targ}.urn)\" >> ${ROOT}/bits/config.mk
+        echo ${targ_mk_name}_VERSION=\"$(cat ${ROOT}/targets.json | $JSON ${targ}.version)\" >> ${ROOT}/bits/config.mk
+        #echo ${targ_mk_name}_EXTRA_TARBALLS=\'$(cat ${ROOT}/targets.json | $JSON ${targ}.tarballs | $JSON -o json-0)\' >> ${ROOT}/bits/config.mk
+        local num_tarballs=$(cat ${ROOT}/targets.json | $JSON ${targ}.tarballs.length)
+        local tarballs=""
+        local index=0
+        while [[ ${index} -lt ${num_tarballs} ]]; do
+            local tb_name=$(cat ${ROOT}/targets.json | $JSON ${targ}.tarballs.${index}.name)
+            local tb_tarball=$(cat ${ROOT}/targets.json | $JSON ${targ}.tarballs.${index}.tarball)
+            [[ -z "$tb_tarball" ]] && fatal "no '$targ.tarballs.$index.tarball' in targets.json"
+            tb_tarball=$ROOT/bits/$tb_tarball
+            local tb_sysroot=$(cat ${ROOT}/targets.json | $JSON ${targ}.tarballs.${index}.sysroot)
+            [[ -z "$tb_sysroot" ]] && fatal "no '$targ.tarballs.$index.sysroot' in targets.json"
+            tarballs="$tarballs $tb_tarball:$tb_sysroot"
+            index=$((${index} + 1))
         done
-        if [[ -n ${deps} ]]; then
-          echo ${upper_repo_name}_EXTRA_TARBALLS=\"${deps}\" >> ${ROOT}/bits/config.mk
+        if [[ -n "${tarballs}" ]]; then
+          echo ${targ_mk_name}_EXTRA_TARBALLS=\"${tarballs}\" >> ${ROOT}/bits/config.mk
         fi
       fi
-      branch_name=$((cd ${repo} && git symbolic-ref HEAD 2> /dev/null ) || echo "")
-      echo ${upper_repo_name}_BRANCH=$(echo ${branch_name##refs/heads/} || echo "") >> ${ROOT}/bits/config.mk
-      echo ${upper_repo_name}_SHA=$((cd ${repo} && git log --pretty=format:'%h' -1 ) || echo "") >> ${ROOT}/bits/config.mk
   done
 
   touch ${ROOT}/bits/config.targ.mk
-
   for targ in $USEZONE; do
       output="\$($(echo $targ | tr [:lower:] [:upper:])_BITS): config_${targ}_new"
       echo $output >> ${ROOT}/bits/config.targ.mk
   done
-
   for targ in $NOUSEZONE; do
       output="\$($(echo $targ | tr [:lower:] [:upper:])_BITS): config_${targ}_old"
       echo $output >> ${ROOT}/bits/config.targ.mk
@@ -530,13 +538,14 @@ if [[ ! -z "$TARGET" ]]; then
     flush_bits_cache
     if [[ "$TARGET" == "all-except-platform" ]]; then
         preload_bits "platform" "$BRANCH" "$TRY_BRANCH"
-        targets=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))' | grep -v '^platform')
-        for targ in $targets; do
+        TARGETS=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))' | grep -v '^platform')
+        for targ in $TARGETS; do
             check_usezone $targ
             get_target_repos $targ
         done
     else
         # Validate target.
+        TARGETS=$TARGET
         if [[ -z "$(cat targets.json | $JSON $TARGET)" ]]; then
             fatal "Unknown target: $TARGET"
         fi
@@ -547,8 +556,8 @@ if [[ ! -z "$TARGET" ]]; then
         done
     fi
 else
-    targets=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))')
-    for targ in $targets; do
+    TARGETS=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))')
+    for targ in $TARGETS; do
         check_usezone $targ
         get_target_repos $targ
     done

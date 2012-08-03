@@ -107,7 +107,10 @@
     "repos": [
       {"url": "git@git.joyent.com:manatee.git"}
     ],
-    "deps": ["registrar"]
+    "deps": ["registrar"],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "workflow": {
@@ -201,7 +204,10 @@
     "repos": [
       {"url": "git@git.joyent.com:mahi.git"}
     ],
-    "deps": ["registrar"]
+    "deps": ["registrar"],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "moray": {
@@ -216,7 +222,10 @@
     "repos": [
         {"url": "git@git.joyent.com:moray.git"}
     ],
-    "deps": ["registrar"]
+    "deps": ["registrar"],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "muppet": {
@@ -231,7 +240,10 @@
     "repos": [
       {"url": "git@git.joyent.com:muppet.git"}
     ],
-    "deps": ["registrar"]
+    "deps": ["registrar"],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "muskie": {
@@ -245,7 +257,10 @@
     "repos": [
       {"url": "git@git.joyent.com:muskie.git"}
     ],
-    "deps": ["registrar"]
+    "deps": ["registrar"],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "mako": {
@@ -264,6 +279,11 @@
       "minnow",
       "registrar",
       "configurator"
+    ],
+    "tarballs": [
+      {"tarball": "minnow/minnow-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"}
     ]
   },
 
@@ -280,6 +300,9 @@
     ],
     "deps": [
       "registrar"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
     ]
   },
 
