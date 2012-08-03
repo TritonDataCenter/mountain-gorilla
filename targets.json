@@ -107,9 +107,10 @@
     "repos": [
       {"url": "git@git.joyent.com:manatee.git"}
     ],
-    "deps": ["registrar"],
+    "deps": ["registrar", "amon"],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
 
@@ -189,7 +190,10 @@
     "repos": [
       {"url": "git@git.joyent.com:binder.git"}
     ],
-    "deps": []
+    "deps": ["amon"],
+    "tarballs": [
+        {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
+    ]
   },
 
   "mahi": {
@@ -204,9 +208,10 @@
     "repos": [
       {"url": "git@git.joyent.com:mahi.git"}
     ],
-    "deps": ["registrar"],
+    "deps": ["registrar", "amon"],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
 
@@ -222,9 +227,10 @@
     "repos": [
         {"url": "git@git.joyent.com:moray.git"}
     ],
-    "deps": ["registrar"],
+    "deps": ["registrar", "amon"],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
 
@@ -240,9 +246,10 @@
     "repos": [
       {"url": "git@git.joyent.com:muppet.git"}
     ],
-    "deps": ["registrar"],
+    "deps": ["registrar", "amon"],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
 
@@ -257,9 +264,10 @@
     "repos": [
       {"url": "git@git.joyent.com:muskie.git"}
     ],
-    "deps": ["registrar"],
+    "deps": ["registrar", "amon"],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
 
@@ -278,12 +286,14 @@
     "deps": [
       "minnow",
       "registrar",
-      "configurator"
+      "configurator",
+      "amon"
     ],
     "tarballs": [
       {"tarball": "minnow/minnow-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"}
+      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
 
@@ -299,10 +309,12 @@
       {"url": "git@git.joyent.com:marlin.git"}
     ],
     "deps": [
-      "registrar"
+      "registrar",
+      "amon"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
 

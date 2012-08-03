@@ -128,10 +128,10 @@ similar except you will need to add the "appliance":"true" property, the
       ...
     }
 
-where dataset_uuid is the uuid of the source image you wish to build off
+where dataset\_uuid is the uuid of the source image you wish to build off
 pkgsrc is an array of strings of package names to install.
 
-Your Makefile target will look as above, with the addition of the xxx_dataset target:
+Your Makefile target will look as above, with the addition of the xxx\_dataset target:
 
 
     ...
@@ -149,7 +149,7 @@ Your Makefile target will look as above, with the addition of the xxx_dataset ta
             @echo ""
     ...
 
-prep_dataset.sh is a script that generates images out of tarballs and lists
+prep\_dataset.sh is a script that generates images out of tarballs and lists
 of packages.
 
 It takes arguments of the form -t <tarball> where <tarball> is a .tar.gz
@@ -157,12 +157,12 @@ file, containing a directory "root", which is unpacked to / -p "list of
 pkgsrc packages" where list of pkgsrc packages is a list of the pkgsrc
 packages to be installed in the zone.
 
-Configure will populate xxx_DATASET and xxx_PKGSRC based on targets.json.
+Configure will populate xxx\_DATASET and xxx\_PKGSRC based on targets.json.
 
 Additionally, you can set the dsadm URN for the target by adding the "urn"
 and "version" properties to targets.json, as properties of the target you
 wish to manipulate. These will show up as urn:version ( sdc:sdc:mynewrepo:0.1
-for instance ). To use them, configure will populate xxx_URN and xxx_VERSION
+for instance ). To use them, configure will populate xxx\_URN and xxx\_VERSION
 for you in the Makefile.
 
 Note that these images can only be provisioned with the joyent-minimal brand.
