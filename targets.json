@@ -102,6 +102,7 @@
     "version": "1.0.0",
     "dataset_uuid": "f9e4be48-9466-11e1-bc41-9f993f5dff36",
     "pkgsrc": [
+      "zookeeper-client-3.4.3"
     ],
     "repos": [
       {"url": "git@git.joyent.com:manatee.git"}
