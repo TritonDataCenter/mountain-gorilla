@@ -766,7 +766,7 @@ binder_dataset: $(BINDER_DATASET)
 
 $(BINDER_DATASET): $(BINDER_BITS)
 	@echo "# Build binder_dataset: branch $(BINDER_BRANCH), sha $(BINDER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset.sh -t $(BINDER_BITS) -o $(BINDER_DATASET) -p $(BINDER_PKGSRC) -u $(BINDER_URN) -v $(BINDER_VERSION)
+	./tools/prep_dataset.sh -t $(BINDER_BITS) -o $(BINDER_DATASET) -p $(BINDER_PKGSRC) -t $(BINDER_EXTRA_TARBALLS) -u $(BINDER_URN) -v $(BINDER_VERSION)
 	@echo "# Created binder dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(BINDER_DATASET)
 	@echo ""
