@@ -31,9 +31,10 @@ USERSCRIPT=$TOP/jenkins-slave-setup.user-script
 
 uuid=$(uuid)
 
-# "longleasenodes" MAC prefix configuration in the BH-1 lab.
-mac_prefix="11:22:33"
+# "longleasenodes" MAC prefix configuration in the BH-1 lab (see TOOLS-132).
+mac_prefix="12:22:32"
 mac="$mac_prefix:$(openssl rand -hex 1):$(openssl rand -hex 1):$(openssl rand -hex 1)"
+
 (cat | /usr/vm/sbin/add-userscript $USERSCRIPT | vmadm create)<<EOF
 {
     "brand": "joyent",
