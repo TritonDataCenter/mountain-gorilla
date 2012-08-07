@@ -1,14 +1,40 @@
 #!/bin/bash
+# vi: expandtab sw=2 ts=2
+#
+# "Prepare a dataset." 
+#
+# This is called for "appliance" dataset/image builds to: (a) provision
+# a new zone of a given dataset, (b) drop in an fs tarball and
+# optionally some other tarballs, and (c) make a dataset out of this.
+#
+# 
 
 export PS4='${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
-set -o xtrace
+if [[ -z "$(echo "$*" | grep -- '-h' || /bin/true)" ]]; then
+  # Try to avoid xtrace goop when print help/usage output.
+  set -o xtrace
+fi
 set -o errexit
 
+
+
+#---- globals, config
+
+JSON="tools/json"
+
+# The host on which we build the output image/dataset.
 gzhost=""
+
+# UUID of the created image/dataset.
 uuid=""
 
-# if this is unset, it means the remote host's already destroyed the dataset
-docleanup=true
+tarballs=""
+packages=""
+output=""
+
+
+
+#---- functions
 
 function cleanup() {
   local exit_status=${1:-$?}
@@ -21,16 +47,47 @@ function cleanup() {
   exit $exit_status
 }
 
+function usage() {
+    if [[ -n "$1" ]]; then
+        echo "error: $1"
+        echo ""
+    fi
+    echo "Usage:"
+    echo "  prep_dataset.sh [OPTIONS]"
+    echo ""
+    echo "Options:"
+    echo "  -h              Print this help and exit."
+    echo "  -t TARBALL      Space-separated list of tarballs to unarchive into"
+    echo "                  the new dataset. A tarball is of the form:"
+    echo "                    TARBALL-ABSOLUTE-PATH-PATTERN[:SYSROOT]"
+    echo "                  The default 'SYSROOT' is '/'. A '/' sysroot is the"
+    echo "                  typical fs tarball layout with '/root' and '/site'"
+    echo "                  base dirs."
+    echo "  -p PACKAGES     Space-separated list of pkgsrc package to install."
+    echo "  -o OUTPUT       Image output path. Should be of the form:"
+    echo "                  '/path/to/name.zfs.bz2'."
+    echo "  -v VERSION      Version for produced image manifest. Default"
+    echo "                  to '0.0.0'."
+    echo "  -u URN          URN for produced image manifest. Defaults"
+    echo "                  to 'sdc:sdc:$output_basename:$version'."
+    echo ""
+    echo "  -s GZSERVERS    DEPRECATED. Don't see this being used."
+    echo ""
+    exit 1
+}
+
+
+
+
+#---- mainline
+
 trap cleanup ERR
 
-JSON="tools/json"
-
-tarballs=""
-packages=""
-output=""
-
-while getopts t:p:s:o:u:v: opt; do
+while getopts ht:p:s:o:u:v: opt; do
   case $opt in
+  h)
+    usage
+    ;;
   t)
     if [[ -n "${OPTARG}" ]]; then
       tarballs="${tarballs} ${OPTARG}"
@@ -196,8 +253,6 @@ cat tools/clean-image.sh | ${SSH} "zlogin ${uuid} 'cat > /tmp/clean-image.sh; /u
 ${SSH} "zfs snapshot zones/${uuid}@dataset.$$ ; zfs send zones/${uuid}@dataset.$$" | cat > ${output}
 
 ${SSH} "vmadm destroy ${uuid}"
-
-docleanup=false
 
 if [[ -n $dobzip ]]; then
   bzip2 ${output}
