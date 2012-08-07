@@ -7,6 +7,8 @@
 # a new zone of a given dataset, (b) drop in an fs tarball and
 # optionally some other tarballs, and (c) make a dataset out of this.
 #
+# This uses a "gzhost" on which to create a new zone for the image
+# build. One of the hosts in "gzhosts.json" is chosen at random.
 # 
 
 export PS4='${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
@@ -83,7 +85,7 @@ function usage() {
 
 trap cleanup ERR
 
-while getopts ht:p:s:o:u:v: opt; do
+while getopts ht:p:o:u:v: opt; do
   case $opt in
   h)
     usage
@@ -97,9 +99,6 @@ while getopts ht:p:s:o:u:v: opt; do
     if [[ -n "${OPTARG}" ]]; then
       packages="${packages} ${OPTARG}"
     fi
-    ;;
-  s)
-    gzservers=$OPTARG
     ;;
   o)
     output=$OPTARG
@@ -137,11 +136,7 @@ if [[ -n $ofbzip ]]; then
   output=${output%.bz2}
 fi
 
-if [[ -z ${gzservers} ]]; then
-  gzservers=gzhosts.json
-fi
-
-host=$(cat ${gzservers} | json  $(($RANDOM % `cat ${gzservers} | ./tools/json length`)) )
+host=$(cat gzhosts.json | json  $(($RANDOM % `cat gzhosts.json | ./tools/json length`)) )
 gzhost=$(echo ${host} | json hostname)
 dataset=$(echo ${host} | json dataset)
 
