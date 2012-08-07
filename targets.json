@@ -100,7 +100,7 @@
     "appliance": "true",
     "urn": "sdc:sds:postgres",
     "version": "1.0.0",
-    "dataset_uuid": "f9e4be48-9466-11e1-bc41-9f993f5dff36",
+    "image_uuid": "f9e4be48-9466-11e1-bc41-9f993f5dff36",
     "pkgsrc": [
       "zookeeper-client-3.4.3"
     ],
@@ -181,7 +181,7 @@
     "appliance": "true",
     "urn": "sdc:sds:nameservice",
     "version": "1.0.0",
-    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "sun-jre6-6.0.26",
       "zookeeper-client-3.4.3",
@@ -200,7 +200,7 @@
     "appliance": "true",
     "urn": "sdc:sds:postgres",
     "version": "1.0.0",
-    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "redis-2.4.13",
       "zookeeper-client-3.4.3"
@@ -219,7 +219,7 @@
     "appliance": "true",
     "urn": "sdc:sds:moray",
     "version": "1.0.0",
-    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "postgresql91-client-9.1.2",
       "zookeeper-client-3.4.3"
@@ -238,7 +238,7 @@
     "appliance": "true",
     "urn": "sdc:sds:loadbalancer",
     "version": "1.0.0",
-    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "haproxy-1.4.18",
       "zookeeper-client-3.4.3"
@@ -257,7 +257,7 @@
     "appliance": "true",
     "urn": "sdc:sds:webapi",
     "version": "1.0.0",
-    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "zookeeper-client-3.4.3"
     ],
@@ -274,7 +274,7 @@
   "mako": {
     "appliance": "true",
     "urn": "sdc:sds:storage",
-    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "version": "1.0.0",
     "pkgsrc": [
       "pcre-8.21",
@@ -300,7 +300,7 @@
   "marlin": {
     "appliance": "true",
     "urn": "sdc:sds:jobworker",
-    "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "version": "1.0.0",
     "pkgsrc": [
       "zookeeper-client-3.4.3"

@@ -392,10 +392,10 @@ clean_cloudapi:
 
 _manatee_stamp=$(MANATEE_BRANCH)-$(TIMESTAMP)-g$(MANATEE_SHA)
 MANATEE_BITS=$(BITS_DIR)/manatee/manatee-pkg-$(_manatee_stamp).tar.bz2
-MANATEE_DATASET=$(BITS_DIR)/manatee/manatee-zfs-$(_manatee_stamp).zfs.bz2
+MANATEE_IMAGE_BIT=$(BITS_DIR)/manatee/manatee-zfs-$(_manatee_stamp).zfs.bz2
 
 .PHONY: manatee
-manatee: $(MANATEE_BITS) manatee_dataset
+manatee: $(MANATEE_BITS) manatee_image
 
 $(MANATEE_BITS): build/manatee
 	@echo "# Build manatee: branch $(MANATEE_BRANCH), sha $(MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
@@ -405,19 +405,22 @@ $(MANATEE_BITS): build/manatee
 	@ls -1 $(MANATEE_BITS)
 	@echo ""
 
-.PHONY: manatee_dataset
-manatee_dataset: $(MANATEE_DATASET)
+.PHONY: manatee_image
+manatee_image: $(MANATEE_IMAGE_BIT)
 
-$(MANATEE_DATASET): $(MANATEE_BITS)
-	@echo "# Build manatee_dataset: branch $(MANATEE_BRANCH), sha $(MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset.sh -t $(MANATEE_BITS) -o $(MANATEE_DATASET) -p $(MANATEE_PKGSRC) -t $(MANATEE_EXTRA_TARBALLS) -u $(MANATEE_URN) -v $(MANATEE_VERSION)
-	@echo "# Created manatee dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MANATEE_DATASET)
+$(MANATEE_IMAGE_BIT): $(MANATEE_BITS)
+	@echo "# Build manatee_image: branch $(MANATEE_BRANCH), sha $(MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(MANATEE_IMAGE_UUID)" -t $(MANATEE_BITS) \
+		-o "$(MANATEE_IMAGE_BIT)" -p $(MANATEE_PKGSRC) \
+		-t $(MANATEE_EXTRA_TARBALLS) -u $(MANATEE_URN) -v $(MANATEE_VERSION)
+	@echo "# Created manatee image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MANATEE_IMAGE_BIT)
 	@echo ""
 
 clean_manatee:
 	rm -rf $(BITS_DIR)/manatee
 	(cd build/manatee && gmake distclean)
+
 
 #---- WORKFLOW
 
@@ -572,10 +575,10 @@ clean_napi:
 
 _marlin_stamp=$(MARLIN_BRANCH)-$(TIMESTAMP)-g$(MARLIN_SHA)
 MARLIN_BITS=$(BITS_DIR)/marlin/marlin-pkg-$(_marlin_stamp).tar.bz2
-MARLIN_DATASET=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).zfs.bz2
+MARLIN_IMAGE_BIT=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).zfs.bz2
 
 .PHONY: marlin
-marlin: $(MARLIN_BITS) marlin_dataset
+marlin: $(MARLIN_BITS) marlin_image
 
 # PATH for marlin build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -587,14 +590,16 @@ $(MARLIN_BITS): build/marlin
 	@ls -1 $(MARLIN_BITS)
 	@echo ""
 
-.PHONY: marlin_dataset
-marlin_dataset: $(MARLIN_DATASET)
+.PHONY: marlin_image
+marlin_image: $(MARLIN_IMAGE_BIT)
 
-$(MARLIN_DATASET): $(MARLIN_BITS)
-	@echo "# Build marlin_dataset: branch $(MARLIN_BRANCH), sha $(MARLIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset.sh -t $(MARLIN_BITS) -o $(MARLIN_DATASET) -p $(MARLIN_PKGSRC) -t $(MARLIN_EXTRA_TARBALLS) -u $(MARLIN_URN) -v $(MARLIN_VERSION)
-	@echo "# Created marlin dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MARLIN_DATASET)
+$(MARLIN_IMAGE_BIT): $(MARLIN_BITS)
+	@echo "# Build marlin_image: branch $(MARLIN_BRANCH), sha $(MARLIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(MARLIN_IMAGE_UUID)" -t $(MARLIN_BITS) \
+		-o "$(MARLIN_IMAGE_BIT)" -p $(MARLIN_PKGSRC) \
+		-t $(MARLIN_EXTRA_TARBALLS) -u $(MARLIN_URN) -v $(MARLIN_VERSION)
+	@echo "# Created marlin image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MARLIN_IMAGE_BIT)
 	@echo ""
 
 clean_marlin:
@@ -606,10 +611,10 @@ clean_marlin:
 
 _mahi_stamp=$(MAHI_BRANCH)-$(TIMESTAMP)-g$(MAHI_SHA)
 MAHI_BITS=$(BITS_DIR)/mahi/mahi-pkg-$(_mahi_stamp).tar.bz2
-MAHI_DATASET=$(BITS_DIR)/mahi/mahi-zfs-$(_mahi_stamp).zfs.bz2
+MAHI_IMAGE_BIT=$(BITS_DIR)/mahi/mahi-zfs-$(_mahi_stamp).zfs.bz2
 
 .PHONY: mahi
-mahi: $(MAHI_BITS) mahi_dataset
+mahi: $(MAHI_BITS) mahi_image
 
 $(MAHI_BITS): build/mahi
 	@echo "# Build mahi: branch $(MAHI_BRANCH), sha $(MAHI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
@@ -619,14 +624,16 @@ $(MAHI_BITS): build/mahi
 	@ls -1 $(MAHI_BITS)
 	@echo ""
 
-.PHONY: mahi_dataset
-mahi_dataset: $(MAHI_DATASET)
+.PHONY: mahi_image
+mahi_image: $(MAHI_IMAGE_BIT)
 
-$(MAHI_DATASET): $(MAHI_BITS)
-	@echo "# Build mahi_dataset: branch $(MAHI_BRANCH), sha $(MAHI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset.sh -t $(MAHI_BITS) -o $(MAHI_DATASET) -p $(MAHI_PKGSRC) -t $(MAHI_EXTRA_TARBALLS) -u $(MAHI_URN) -v $(MAHI_VERSION)
-	@echo "# Created mahi dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MAHI_DATASET)
+$(MAHI_IMAGE_BIT): $(MAHI_BITS)
+	@echo "# Build mahi_image: branch $(MAHI_BRANCH), sha $(MAHI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(MAHI_IMAGE_UUID)" -t $(MAHI_BITS) \
+		-o "$(MAHI_IMAGE_BIT)" -p $(MAHI_PKGSRC) \
+		-t $(MAHI_EXTRA_TARBALLS) -u $(MAHI_URN) -v $(MAHI_VERSION)
+	@echo "# Created mahi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MAHI_IMAGE_BIT)
 	@echo ""
 
 clean_mahi:
@@ -638,10 +645,10 @@ clean_mahi:
 
 _moray_stamp=$(MORAY_BRANCH)-$(TIMESTAMP)-g$(MORAY_SHA)
 MORAY_BITS=$(BITS_DIR)/moray/moray-pkg-$(_moray_stamp).tar.bz2
-MORAY_DATASET=$(BITS_DIR)/moray/moray-zfs-$(_moray_stamp).zfs.bz2
+MORAY_IMAGE_BIT=$(BITS_DIR)/moray/moray-zfs-$(_moray_stamp).zfs.bz2
 
 .PHONY: moray
-moray: $(MORAY_BITS) moray_dataset
+moray: $(MORAY_BITS) moray_image
 
 # PATH for moray build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -653,14 +660,16 @@ $(MORAY_BITS): build/moray
 	@ls -1 $(MORAY_BITS)
 	@echo ""
 
-.PHONY: moray_dataset
-moray_dataset: $(MORAY_DATASET)
+.PHONY: moray_image
+moray_image: $(MORAY_IMAGE_BIT)
 
-$(MORAY_DATASET): $(MORAY_BITS)
-	@echo "# Build moray_dataset: branch $(MORAY_BRANCH), sha $(MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset.sh -t $(MORAY_BITS) -o $(MORAY_DATASET) -p $(MORAY_PKGSRC) -t $(MORAY_EXTRA_TARBALLS) -u $(MORAY_URN) -v $(MORAY_VERSION)
-	@echo "# Created moray dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MORAY_DATASET)
+$(MORAY_IMAGE_BIT): $(MORAY_BITS)
+	@echo "# Build moray_image: branch $(MORAY_BRANCH), sha $(MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(MORAY_IMAGE_UUID)" -t $(MORAY_BITS) \
+		-o "$(MORAY_IMAGE_BIT)" -p $(MORAY_PKGSRC) \
+		-t $(MORAY_EXTRA_TARBALLS) -u $(MORAY_URN) -v $(MORAY_VERSION)
+	@echo "# Created moray image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MORAY_IMAGE_BIT)
 	@echo ""
 
 clean_moray:
@@ -672,10 +681,10 @@ clean_moray:
 
 _muskie_stamp=$(MUSKIE_BRANCH)-$(TIMESTAMP)-g$(MUSKIE_SHA)
 MUSKIE_BITS=$(BITS_DIR)/muskie/muskie-pkg-$(_muskie_stamp).tar.bz2
-MUSKIE_DATASET=$(BITS_DIR)/muskie/muskie-zfs-$(_muskie_stamp).zfs.bz2
+MUSKIE_IMAGE_BIT=$(BITS_DIR)/muskie/muskie-zfs-$(_muskie_stamp).zfs.bz2
 
 .PHONY: muskie
-muskie: $(MUSKIE_BITS) muskie_dataset
+muskie: $(MUSKIE_BITS) muskie_image
 
 # PATH for muskie build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -687,14 +696,16 @@ $(MUSKIE_BITS): build/muskie
 	@ls -1 $(MUSKIE_BITS)
 	@echo ""
 
-.PHONY: muskie_dataset
-muskie_dataset: $(MUSKIE_DATASET)
+.PHONY: muskie_image
+muskie_image: $(MUSKIE_IMAGE_BIT)
 
-$(MUSKIE_DATASET): $(MUSKIE_BITS)
-	@echo "# Build muskie_dataset: branch $(MUSKIE_BRANCH), sha $(MUSKIE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset.sh -t $(MUSKIE_BITS) -o $(MUSKIE_DATASET) -p $(MUSKIE_PKGSRC) -t $(MUSKIE_EXTRA_TARBALLS) -u $(MUSKIE_URN) -v $(MUSKIE_VERSION)
-	@echo "# Created muskie dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MUSKIE_DATASET)
+$(MUSKIE_IMAGE_BIT): $(MUSKIE_BITS)
+	@echo "# Build muskie_image: branch $(MUSKIE_BRANCH), sha $(MUSKIE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(MUSKIE_IMAGE_UUID)" -t $(MUSKIE_BITS) \
+		-o "$(MUSKIE_IMAGE_BIT)" -p $(MUSKIE_PKGSRC) \
+		-t $(MUSKIE_EXTRA_TARBALLS) -u $(MUSKIE_URN) -v $(MUSKIE_VERSION)
+	@echo "# Created muskie image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MUSKIE_IMAGE_BIT)
 	@echo ""
 
 clean_muskie:
@@ -748,10 +759,10 @@ clean_configurator:
 
 _binder_stamp=$(BINDER_BRANCH)-$(TIMESTAMP)-g$(BINDER_SHA)
 BINDER_BITS=$(BITS_DIR)/binder/binder-pkg-$(_binder_stamp).tar.bz2
-BINDER_DATASET=$(BITS_DIR)/binder/binder-zfs-$(_binder_stamp).zfs.bz2
+BINDER_IMAGE_BIT=$(BITS_DIR)/binder/binder-zfs-$(_binder_stamp).zfs.bz2
 
 .PHONY: binder
-binder: $(BINDER_BITS) binder_dataset
+binder: $(BINDER_BITS) binder_image
 
 $(BINDER_BITS): build/binder
 	@echo "# Build binder: branch $(BINDER_BRANCH), sha $(BINDER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
@@ -761,14 +772,16 @@ $(BINDER_BITS): build/binder
 	@ls -1 $(BINDER_BITS)
 	@echo ""
 
-.PHONY: binder_dataset
-binder_dataset: $(BINDER_DATASET)
+.PHONY: binder_image
+binder_image: $(BINDER_IMAGE_BIT)
 
-$(BINDER_DATASET): $(BINDER_BITS)
-	@echo "# Build binder_dataset: branch $(BINDER_BRANCH), sha $(BINDER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset.sh -t $(BINDER_BITS) -o $(BINDER_DATASET) -p $(BINDER_PKGSRC) -t $(BINDER_EXTRA_TARBALLS) -u $(BINDER_URN) -v $(BINDER_VERSION)
-	@echo "# Created binder dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(BINDER_DATASET)
+$(BINDER_IMAGE_BIT): $(BINDER_BITS)
+	@echo "# Build binder_image: branch $(BINDER_BRANCH), sha $(BINDER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(BINDER_IMAGE_UUID)" -t $(BINDER_BITS) \
+		-o "$(BINDER_IMAGE_BIT)" -p $(BINDER_PKGSRC) \
+		-t $(BINDER_EXTRA_TARBALLS) -u $(BINDER_URN) -v $(BINDER_VERSION)
+	@echo "# Created binder image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(BINDER_IMAGE_BIT)
 	@echo ""
 
 clean_binder:
@@ -779,10 +792,10 @@ clean_binder:
 
 _muppet_stamp=$(MUPPET_BRANCH)-$(TIMESTAMP)-g$(MUPPET_SHA)
 MUPPET_BITS=$(BITS_DIR)/muppet/muppet-pkg-$(_muppet_stamp).tar.bz2
-MUPPET_DATASET=$(BITS_DIR)/muppet/muppet-zfs-$(_muppet_stamp).zfs.bz2
+MUPPET_IMAGE_BIT=$(BITS_DIR)/muppet/muppet-zfs-$(_muppet_stamp).zfs.bz2
 
 .PHONY: muppet
-muppet: $(MUPPET_BITS) muppet_dataset
+muppet: $(MUPPET_BITS) muppet_image
 
 $(MUPPET_BITS): build/muppet
 	@echo "# Build muppet: branch $(MUPPET_BRANCH), sha $(MUPPET_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
@@ -792,14 +805,16 @@ $(MUPPET_BITS): build/muppet
 	@ls -1 $(MUPPET_BITS)
 	@echo ""
 
-.PHONY: muppet_dataset
-muppet_dataset: $(MUPPET_DATASET)
+.PHONY: muppet_image
+muppet_image: $(MUPPET_IMAGE_BIT)
 
-$(MUPPET_DATASET): $(MUPPET_BITS)
-	@echo "# Build muppet_dataset: branch $(MUPPET_BRANCH), sha $(MUPPET_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset.sh -t $(MUPPET_BITS) -o $(MUPPET_DATASET) -p $(MUPPET_PKGSRC) -t $(MUPPET_EXTRA_TARBALLS) -u $(MUPPET_URN) -v $(MUPPET_VERSION)
-	@echo "# Created muppet dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MUPPET_DATASET)
+$(MUPPET_IMAGE_BIT): $(MUPPET_BITS)
+	@echo "# Build muppet_image: branch $(MUPPET_BRANCH), sha $(MUPPET_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(MUPPET_IMAGE_UUID)" -t $(MUPPET_BITS) \
+		-o "$(MUPPET_IMAGE_BIT)" -p $(MUPPET_PKGSRC) \
+		-t $(MUPPET_EXTRA_TARBALLS) -u $(MUPPET_URN) -v $(MUPPET_VERSION)
+	@echo "# Created muppet image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MUPPET_IMAGE_BIT)
 	@echo ""
 
 clean_muppet:
@@ -831,10 +846,10 @@ clean_minnow:
 
 _mako_stamp=$(MAKO_BRANCH)-$(TIMESTAMP)-g$(MAKO_SHA)
 MAKO_BITS=$(BITS_DIR)/mako/mako-pkg-$(_mako_stamp).tar.bz2
-MAKO_DATASET=$(BITS_DIR)/mako/mako-zfs-$(_mako_stamp).zfs.bz2
+MAKO_IMAGE_BIT=$(BITS_DIR)/mako/mako-zfs-$(_mako_stamp).zfs.bz2
 
 .PHONY: mako
-mako: $(MAKO_BITS) mako_dataset
+mako: $(MAKO_BITS) mako_image
 
 $(MAKO_BITS): build/mako
 	@echo "# Build mako: branch $(MAKO_BRANCH), sha $(MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
@@ -844,14 +859,16 @@ $(MAKO_BITS): build/mako
 	@ls -1 $(MAKO_BITS)
 	@echo ""
 
-.PHONY: mako_dataset
-mako_dataset: $(MAKO_DATASET)
+.PHONY: mako_image
+mako_image: $(MAKO_IMAGE_BIT)
 
-$(MAKO_DATASET): $(MAKO_BITS)
-	@echo "# Build mako dataset: branch $(MAKO_BRANCH), sha $(MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset.sh -t $(MAKO_BITS) -o $(MAKO_DATASET) -p $(MAKO_PKGSRC) -t $(MAKO_EXTRA_TARBALLS) -u $(MAKO_URN) -v $(MAKO_VERSION)
-	@echo "# Created mako dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MAKO_DATASET)
+$(MAKO_IMAGE_BIT): $(MAKO_BITS)
+	@echo "# Build mako_image: branch $(MAKO_BRANCH), sha $(MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(MAKO_IMAGE_UUID)" -t $(MAKO_BITS) \
+		-o "$(MAKO_IMAGE_BIT)" -p $(MAKO_PKGSRC) \
+		-t $(MAKO_EXTRA_TARBALLS) -u $(MAKO_URN) -v $(MAKO_VERSION)
+	@echo "# Created mako image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MAKO_IMAGE_BIT)
 	@echo ""
 
 clean_mako:

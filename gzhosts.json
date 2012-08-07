@@ -1,5 +1,6 @@
 [
-  { "hostname" : "10.2.0.197",
-    "dataset" : "7fb9fe4a-8fa3-46ad-9405-60c842a8a40c" 
+  { 
+    "// name" : "bh1-build2",
+    "hostname" : "10.2.0.197"
   }
 ]

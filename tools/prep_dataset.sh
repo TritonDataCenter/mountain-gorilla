@@ -3,9 +3,9 @@
 #
 # "Prepare a dataset." 
 #
-# This is called for "appliance" dataset/image builds to: (a) provision
-# a new zone of a given dataset, (b) drop in an fs tarball and
-# optionally some other tarballs, and (c) make a dataset out of this.
+# This is called for "appliance" image/dataset builds to: (a) provision
+# a new zone of a given image, (b) drop in an fs tarball and
+# optionally some other tarballs, and (c) make an image out of this.
 #
 # This uses a "gzhost" on which to create a new zone for the image
 # build. One of the hosts in "gzhosts.json" is chosen at random.
@@ -30,6 +30,7 @@ gzhost=""
 # UUID of the created image/dataset.
 uuid=""
 
+image_uuid=""
 tarballs=""
 packages=""
 output=""
@@ -38,12 +39,17 @@ output=""
 
 #---- functions
 
+function fatal {
+  echo "$(basename $0): error: $1"
+  exit 1
+}
+
 function cleanup() {
   local exit_status=${1:-$?}
   if [[ -n $gzhost ]]; then
     SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${gzhost}"
-    if [[ -n $uuid ]]; then
-      ${SSH} "vmadm stop -F ${uuid} ; vmadm destroy ${uuid}"
+    if [[ -n "$uuid" ]]; then
+      echo ${SSH} "vmadm stop -F ${uuid} ; vmadm destroy ${uuid}"
     fi
   fi
   exit $exit_status
@@ -59,13 +65,16 @@ function usage() {
     echo ""
     echo "Options:"
     echo "  -h              Print this help and exit."
+    echo "  -i IMAGE_UUID   The base image UUID."
     echo "  -t TARBALL      Space-separated list of tarballs to unarchive into"
-    echo "                  the new dataset. A tarball is of the form:"
+    echo "                  the new image. A tarball is of the form:"
     echo "                    TARBALL-ABSOLUTE-PATH-PATTERN[:SYSROOT]"
     echo "                  The default 'SYSROOT' is '/'. A '/' sysroot is the"
     echo "                  typical fs tarball layout with '/root' and '/site'"
-    echo "                  base dirs."
+    echo "                  base dirs. This can be called multiple times for"
+    echo "                  more tarballs."
     echo "  -p PACKAGES     Space-separated list of pkgsrc package to install."
+    echo "                  This can be called multiple times."
     echo "  -o OUTPUT       Image output path. Should be of the form:"
     echo "                  '/path/to/name.zfs.bz2'."
     echo "  -v VERSION      Version for produced image manifest. Default"
@@ -85,7 +94,7 @@ function usage() {
 
 trap cleanup ERR
 
-while getopts ht:p:o:u:v: opt; do
+while getopts ht:p:i:o:u:v: opt; do
   case $opt in
   h)
     usage
@@ -99,6 +108,9 @@ while getopts ht:p:o:u:v: opt; do
     if [[ -n "${OPTARG}" ]]; then
       packages="${packages} ${OPTARG}"
     fi
+    ;;
+  i)
+    image_uuid=${OPTARG}
     ;;
   o)
     output=$OPTARG
@@ -116,12 +128,15 @@ while getopts ht:p:o:u:v: opt; do
 done
 
 if [[ -z ${output} ]]; then
-  echo "No output file specified"
-  exit 1;
+  fatal "No output file specified. Use '-o' option."
 fi
 
 if [[ -z $version ]]; then
   version="0.0.0"
+fi
+
+if [[ -z "$image_uuid" ]]; then
+  fatal "No image_uuid provided. Use the '-i' option."
 fi
 
 if [[ -z $urn ]]; then
@@ -138,7 +153,6 @@ fi
 
 host=$(cat gzhosts.json | json  $(($RANDOM % `cat gzhosts.json | ./tools/json length`)) )
 gzhost=$(echo ${host} | json hostname)
-dataset=$(echo ${host} | json dataset)
 
 echo "Using gzhost ${gzhost}"
 SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${gzhost}"
@@ -147,13 +161,13 @@ SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${gzho
 mac="c0:ff:ee:$(openssl rand -hex 1):$(openssl rand -hex 1):$(openssl rand -hex 1)"
 
 echo "{
-  \"brand\": \"joyent\",
+  \"brand\": \"joyent-minimal\",
   \"zfs_io_priority\": 10,
   \"quota\": 10000,
   \"ram\": 1024,
   \"max_physical_memory\": 1024,
   \"nowait\": true,
-  \"dataset_uuid\": \"${dataset}\",
+  \"image_uuid\": \"${image_uuid}\",
   \"alias\": \"temp_image.$$\",
   \"hostname\": \"temp_image.$$\",
   \"dns_domain\": \"lab.joyent.dev\",
@@ -231,7 +245,7 @@ if [[ -n "${packages}" ]]; then
   do
     echo "Checking for $p"
     PKG_OK=$(${SSH} "zlogin ${uuid} '/opt/local/bin/pkgin -y list | grep ${p}'")
-    if [[ -z ${PKG_OK} ]]; then
+    if [[ -z "${PKG_OK}" ]]; then
       echo "pkgin install failed (${p})"
       exit 1
     fi
@@ -245,7 +259,7 @@ ${SSH} "zlogin ${uuid} '/usr/bin/find /opt/smartdc -name manifests -exec svccfg 
 
 cat tools/clean-image.sh | ${SSH} "zlogin ${uuid} 'cat > /tmp/clean-image.sh; /usr/bin/bash /tmp/clean-image.sh; shutdown -i5 -g0 -y;'"
 
-${SSH} "zfs snapshot zones/${uuid}@dataset.$$ ; zfs send zones/${uuid}@dataset.$$" | cat > ${output}
+${SSH} "zfs snapshot zones/${uuid}@prep_dataset.$$ ; zfs send zones/${uuid}@prep_dataset.$$" | cat > ${output}
 
 ${SSH} "vmadm destroy ${uuid}"
 
