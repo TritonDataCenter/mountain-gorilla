@@ -30,6 +30,10 @@ TOP=$(cd $(dirname $0)/ >/dev/null; pwd)
 USERSCRIPT=$TOP/jenkins-slave-setup.user-script
 
 uuid=$(uuid)
+
+# "longleasenodes" MAC prefix configuration in the BH-1 lab.
+mac_prefix="11:22:33"
+mac="$mac_prefix:$(openssl rand -hex 1):$(openssl rand -hex 1):$(openssl rand -hex 1)"
 (cat | /usr/vm/sbin/add-userscript $USERSCRIPT | vmadm create)<<EOF
 {
     "brand": "joyent",
@@ -47,7 +51,8 @@ uuid=$(uuid)
     "nics": [
       {
         "nic_tag": "admin",
-        "ip": "dhcp"
+        "ip": "dhcp",
+        "mac": "${mac}"
       }
     ]
 }
