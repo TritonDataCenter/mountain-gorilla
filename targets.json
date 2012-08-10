@@ -102,7 +102,8 @@
     "version": "1.0.0",
     "image_uuid": "f9e4be48-9466-11e1-bc41-9f993f5dff36",
     "pkgsrc": [
-      "zookeeper-client-3.4.3"
+      "zookeeper-client-3.4.3",
+      "postgresql91-client-9.1.2"
     ],
     "repos": [
       {"url": "git@git.joyent.com:manatee.git"}
