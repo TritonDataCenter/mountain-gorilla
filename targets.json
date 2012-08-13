@@ -199,7 +199,7 @@
 
   "mahi": {
     "appliance": "true",
-    "urn": "sdc:sds:postgres",
+    "urn": "sdc:sds:authcache",
     "version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
