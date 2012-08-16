@@ -338,6 +338,13 @@
     ],
     "deps": []
   },
+  "clortho": {
+    "repos": [
+        {"url":  "git@github.com:joyent-smartdatacenter/clortho.git" }
+    ],
+    "deps": []
+  },
+
   "platform": {
     "repos": [
         {"url": "git@github.com:joyent/smartos-live.git"},

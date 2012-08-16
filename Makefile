@@ -543,6 +543,30 @@ clean_cnapi:
 	(cd build/cnapi && gmake clean)
 
 
+#---- Clortho
+
+_clortho_stamp=$(CLORTHO_BRANCH)-$(TIMESTAMP)-g$(CLORTHO_SHA)
+CLORTHO_BITS=$(BITS_DIR)/clortho/clortho-pkg-$(_clortho_stamp).tar.bz2
+
+.PHONY: clortho
+clortho: $(CLORTHO_BITS)
+
+# PATH for clortho build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(CLORTHO_BITS): build/clortho
+	@echo "# Build clortho: branch $(CLORTHO_BRANCH), sha $(CLORTHO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/clortho && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created clortho bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(CLORTHO_BITS)
+	@echo ""
+
+# Warning: if NAPI's submodule deps change, this 'clean_clortho' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_clortho:
+	rm -rf $(BITS_DIR)/clortho
+	(cd build/clortho && gmake clean)
+
 
 
 #---- NAPI
