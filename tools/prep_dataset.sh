@@ -1,7 +1,7 @@
 #!/bin/bash
 # vi: expandtab sw=2 ts=2
 #
-# "Prepare a dataset." 
+# "Prepare a dataset."
 #
 # This is called for "appliance" image/dataset builds to: (a) provision
 # a new zone of a given image, (b) drop in an fs tarball and
@@ -9,7 +9,7 @@
 #
 # This uses a "gzhost" on which to create a new zone for the image
 # build. One of the hosts in "gzhosts.json" is chosen at random.
-# 
+#
 
 export PS4='${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 if [[ -z "$(echo "$*" | grep -- '-h' || /bin/true)" ]]; then
@@ -157,8 +157,9 @@ gzhost=$(echo ${host} | json hostname)
 echo "Using gzhost ${gzhost}"
 SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${gzhost}"
 
-# hack to fix our lab's DHCP
-mac="c0:ff:ee:$(openssl rand -hex 1):$(openssl rand -hex 1):$(openssl rand -hex 1)"
+# Mac prefix to use for short-lease DHCP
+# See https://hub.joyent.com/wiki/display/dev/Development+Lab
+mac="32:22:12:$(openssl rand -hex 1):$(openssl rand -hex 1):$(openssl rand -hex 1)"
 
 echo "{
   \"brand\": \"joyent-minimal\",
