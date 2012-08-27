@@ -72,7 +72,6 @@ function setup_fakes
 	cp $sbz_fake_loc $sbz_fake_target
 	gtar xjf $sbz_fake_target -C $sbz_fake_root
 	[[ -d $sbz_fake_dir/usr ]] || fail "fake files missing /usr"
-	[[ -d $sbz_fake_dir/lib ]] || fail "fake files missing /lib"
 	[[ $? -eq 0 ]] || fail "failed to extract fake files"
 	gcp -a /usr $sbz_fake_dir
 	[[ $? -eq 0 ]] || fail "failed to copy /usr"
@@ -80,12 +79,6 @@ function setup_fakes
 	[[ $? -eq 0 ]] || fail "failed to fix suid on /usr"
 	gfind /usr -type f \( -perm -02000 \) -exec chmod g+s $sbz_fake_dir/'{}' \;
 	[[ $? -eq 0 ]] || fail "failed to fix sgid on /usr"
-	gcp -a /lib $sbz_fake_dir
-	gfind /lib -type f \( -perm -04000 \) -exec chmod u+s $sbz_fake_dir/'{}' \;
-	[[ $? -eq 0 ]] || fail "failed to fix suid on /lib"
-	gfind /lib -type f \( -perm -02000 \) -exec chmod g+s $sbz_fake_dir/'{}' \;
-	[[ $? -eq 0 ]] || fail "failed to fix sgid on /lib"
-	[[ $? -eq 0 ]] || fail "failed to copy /lib"
 	return 0
 }
 
@@ -97,8 +90,6 @@ function setup_environment
 {
 	mount -O -F lofs $sbz_fake_dir/usr /usr
 	[[ $? -eq 0 ]] || fail "failed to mount /usr"
-	mount -O -F lofs $sbz_fake_dir/lib /lib
-	[[ $? -eq 0 ]] || fail "failed to mount /lib"
 	crle -u -l /usr/sfw/lib
 	[[ $? -eq 0 ]] || fail "failed to add /usr/sfw/lib to crle"
 	crle -64 -u -l /usr/sfw/lib/64
