@@ -28,7 +28,7 @@ cat <<HERE;
   "usageapi-tarball": "usageapi/$(ls bits/usageapi/usageapi-pkg* | xargs basename)",
   "vmapi-tarball": "vmapi/$(ls bits/vmapi/vmapi-pkg* | xargs basename)",
   "webinfo-tarball": "webinfo/$(ls bits/webinfo/webinfo-pkg* | xargs basename)",
-  "workflow-tarball": "workflow/$(ls bits/workflow/workflow-pkg* | xargs basename)",
+  "workflow-tarball": "https://stuff.joyent.us/stuff/builds/workflow/release-20120809-20120809T173325Z/workflow/workflow-pkg-release-20120809-20120809T173325Z-gea41bc8.tar.bz2",
   "zookeeper-tarball": "none"
 }
 HERE
