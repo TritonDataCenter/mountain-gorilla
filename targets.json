@@ -337,9 +337,9 @@
     ],
     "deps": []
   },
-  "clortho": {
+  "keyapi": {
     "repos": [
-        {"url":  "git@github.com:joyent-smartdatacenter/clortho.git" }
+        {"url":  "git@github.com:joyent-smartdatacenter/keyapi.git" }
     ],
     "deps": []
   },
@@ -367,7 +367,7 @@
         "assets",
         "ca",
         "cloudapi",
-        "clortho",
+        "keyapi",
         "cnapi",
         "dapi",
         "dcapi",

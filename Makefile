@@ -543,29 +543,29 @@ clean_cnapi:
 	(cd build/cnapi && gmake clean)
 
 
-#---- Clortho
+#---- KeyAPI
 
-_clortho_stamp=$(CLORTHO_BRANCH)-$(TIMESTAMP)-g$(CLORTHO_SHA)
-CLORTHO_BITS=$(BITS_DIR)/clortho/clortho-pkg-$(_clortho_stamp).tar.bz2
+_keyapi_stamp=$(KEYAPI_BRANCH)-$(TIMESTAMP)-g$(KEYAPI_SHA)
+KEYAPI_BITS=$(BITS_DIR)/keyapi/keyapi-pkg-$(_keyapi_stamp).tar.bz2
 
-.PHONY: clortho
-clortho: $(CLORTHO_BITS)
+.PHONY: keyapi
+keyapi: $(KEYAPI_BITS)
 
-# PATH for clortho build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# PATH for keyapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(CLORTHO_BITS): build/clortho
-	@echo "# Build clortho: branch $(CLORTHO_BRANCH), sha $(CLORTHO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(KEYAPI_BITS): build/keyapi
+	@echo "# Build keyapi: branch $(KEYAPI_BRANCH), sha $(KEYAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/clortho && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created clortho bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(CLORTHO_BITS)
+	(cd build/keyapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created keyapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(KEYAPI_BITS)
 	@echo ""
 
-# Warning: if NAPI's submodule deps change, this 'clean_clortho' is insufficient. It would
+# Warning: if NAPI's submodule deps change, this 'clean_keyapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
-clean_clortho:
-	rm -rf $(BITS_DIR)/clortho
-	(cd build/clortho && gmake clean)
+clean_keyapi:
+	rm -rf $(BITS_DIR)/keyapi
+	(cd build/keyapi && gmake clean)
 
 
 
