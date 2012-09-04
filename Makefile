@@ -1059,6 +1059,23 @@ $(UPGRADE_BIT): bits/usbheadnode/build.spec.local $(BOOT_BIT)
 	@ls -1 $(UPGRADE_BIT)
 	@echo ""
 
+IMAGE_BIT=$(BITS_DIR)/usbheadnode/usb-$(_usbheadnode_stamp).zvol.bz2
+MANIFEST_BIT=$(BITS_DIR)/usbheadnode/usb-$(_usbheadnode_stamp).dsmanifest
+
+.PHONY: image
+image: $(IMAGE_BIT)
+
+$(IMAGE_BIT): bits/usbheadnode/build.spec.local $(USB_BIT)
+	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)/usbheadnode
+	cd build/usb-headnode \
+		&& BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-dataset $(USB_BIT)
+	mv build/usb-headnode/$(shell basename $(IMAGE_BIT)) build/usb-headnode/$(shell basename $(MANIFEST_BIT)) $(BITS_DIR)/usbheadnode
+	@echo "# Created image bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(IMAGE_BIT) $(MANIFEST_BIT)
+	@echo ""
+
 
 RELEASEJSON_BIT=$(BITS_DIR)/usbheadnode/release.json
 
