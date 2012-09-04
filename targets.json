@@ -343,6 +343,12 @@
     ],
     "deps": []
   },
+  "sdc-system-tests": {
+    "repos": [
+        {"url": "git@git.joyent.com:sdc-system-tests.git"}
+    ],
+    "deps": []
+  },
 
   "platform": {
     "repos": [

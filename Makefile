@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow
+all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow
 
 
 #---- smartlogin
@@ -515,6 +515,29 @@ $(IMGAPI_BITS): build/imgapi
 clean_imgapi:
 	rm -rf $(BITS_DIR)/imgapi
 	(cd build/imgapi && gmake clean)
+
+
+
+#---- sdc-system-tests (aka systests)
+
+_sdc_system_tests_stamp=$(SDC_SYSTEM_TESTS_BRANCH)-$(TIMESTAMP)-g$(SDC_SYSTEM_TESTS_SHA)
+SDC_SYSTEM_TESTS_BITS=$(BITS_DIR)/sdc-system-tests/sdc-system-tests-$(_sdc_system_tests_stamp).tgz
+
+.PHONY: sdc-system-tests
+sdc-system-tests: $(SDC_SYSTEM_TESTS_BITS)
+
+$(SDC_SYSTEM_TESTS_BITS): build/sdc-system-tests
+	@echo "# Build sdc-system-tests: branch $(SDC_SYSTEM_TESTS_BRANCH), sha $(SDC_SYSTEM_TESTS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/sdc-system-tests && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm \
+		NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode \
+		TIMESTAMP=$(TIMESTAMP) \
+		BITS_DIR=$(BITS_DIR) \
+		gmake all release publish)
+	@echo "# Created sdc-system-tests bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(SDC_SYSTEM_TESTS_BITS)
+	@echo ""
+
 
 
 
