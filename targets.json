@@ -393,6 +393,7 @@
         "portal",
         "rabbitmq",
         "redis",
+        "sdcsso",
         "ufds",
         "usageapi",
         "vmapi",
