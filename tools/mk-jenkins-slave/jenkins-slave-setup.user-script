@@ -29,9 +29,6 @@ set -o errexit
 export PATH=/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin
 export BATCH_SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o BatchMode=yes"
 
-mkdir -p /root/.ssh
-echo "StrictHostKeyChecking=no" > /root/.ssh/config
-
 
 # Ensure can use "stuff.joyent.us" inside BH-1
 echo '' >>/etc/inet/hosts
@@ -135,9 +132,6 @@ mv /root/MG/cache/repos/smartos-live/projects/local/kvm /root/MG/cache/repos/ill
 mv /root/MG/cache/repos/smartos-live/projects/local/kvm-cmd /root/MG/cache/repos/illumos-kvm-cmd
 mv /root/MG/cache/repos/smartos-live/projects/local/sdc-platform /root/MG/cache/repos
 mv /root/MG/cache/repos/smartos-live/projects/local/ur-agent /root/MG/cache/repos
-
-# Disable the disabling of StrictHostKeyChecking
-rm /root/.ssh/config
 
 echo "ALL DONE"
 
