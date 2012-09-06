@@ -591,6 +591,31 @@ clean_keyapi:
 	(cd build/keyapi && gmake clean)
 
 
+#---- SDCSSO
+
+_sdcsso_stamp=$(SDCSSO_BRANCH)-$(TIMESTAMP)-g$(SDCSSO_SHA)
+SDCSSO_BITS=$(BITS_DIR)/sdcsso/sdcsso-pkg-$(_sdcsso_stamp).tar.bz2
+
+.PHONY: sdcsso
+sdcsso: $(SDCSSO_BITS)
+
+# PATH for sdcsso build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(SDCSSO_BITS): build/sdcsso
+	@echo "# Build sdcsso: branch $(KEYAPI_BRANCH), sha $(KEYAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/sdcsso && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created sdcsso bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(SDCSSO_BITS)
+	@echo ""
+
+# Warning: if SDCSSO's submodule deps change, this 'clean_sdcsso is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_sdcsso:
+	rm -rf $(BITS_DIR)/sdcsso
+	(cd build/sdcsso && gmake clean)
+
+
 
 #---- NAPI
 

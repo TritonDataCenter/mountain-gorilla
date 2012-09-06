@@ -343,6 +343,13 @@
     ],
     "deps": []
   },
+  "sdcsso": {
+    "repos": [
+        {"url":  "git@github.com:joyent-smartdatacenter/sdcsso.git" }
+    ],
+    "deps": []
+  },
+
   "sdc-system-tests": {
     "repos": [
         {"url": "git@git.joyent.com:sdc-system-tests.git"}

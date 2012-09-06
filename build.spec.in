@@ -25,6 +25,7 @@ cat <<HERE;
   "portal-tarball": "portal/$(ls bits/portal/portal-pkg* | xargs basename)",
   "rabbitmq-tarball": "rabbitmq/$(ls bits/rabbitmq/rabbitmq-pkg* | xargs basename)",
   "redis-tarball": "redis/$(ls bits/redis/redis-pkg* | xargs basename)",
+  "sdcsso-tarball": "sdcsso/$(ls bits/sdcsso/sdcsso-pkg* | xargs basename)",
   "ufds-tarball": "ufds/$(ls bits/ufds/ufds-pkg* | xargs basename)",
   "usageapi-tarball": "usageapi/$(ls bits/usageapi/usageapi-pkg* | xargs basename)",
   "vmapi-tarball": "vmapi/$(ls bits/vmapi/vmapi-pkg* | xargs basename)",
