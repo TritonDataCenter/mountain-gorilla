@@ -22,10 +22,18 @@ set -o errexit
 
 #---- globals, config
 
-JSON="tools/json"
+TOP=$(cd $(dirname $0)/../ >/dev/null; pwd)
+JSON=$TOP/tools/json
 
-# The host on which we build the output image/dataset.
-gzhost=""
+# The GZ host on which we build the output image.
+gzhost=$(cat gzhosts.json \
+  | $JSON $(($RANDOM % `cat gzhosts.json | $JSON length`)) \
+  | $JSON hostname)
+echo "Using gzhost ${gzhost}"
+if [[ -f $HOME/.ssh/automation.id_rsa ]]; then
+  id_opt="-o IdentityFile=$HOME/.ssh/automation.id_rsa"
+fi
+SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null $id_opt root@${gzhost}"
 
 # UUID of the created image/dataset.
 uuid=""
@@ -47,7 +55,6 @@ function fatal {
 function cleanup() {
   local exit_status=${1:-$?}
   if [[ -n $gzhost ]]; then
-    SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${gzhost}"
     if [[ -n "$uuid" ]]; then
       echo ${SSH} "vmadm stop -F ${uuid} ; vmadm destroy ${uuid}"
     fi
@@ -150,12 +157,6 @@ if [[ -n $ofbzip ]]; then
   dobzip="true"
   output=${output%.bz2}
 fi
-
-host=$(cat gzhosts.json | json  $(($RANDOM % `cat gzhosts.json | ./tools/json length`)) )
-gzhost=$(echo ${host} | json hostname)
-
-echo "Using gzhost ${gzhost}"
-SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@${gzhost}"
 
 # Mac prefix to use for short-lease DHCP
 # See https://hub.joyent.com/wiki/display/dev/Development+Lab
