@@ -1024,18 +1024,18 @@ clean_convertvm:
 
 #---- SDS Tools
 
-_sds-tools_stamp=$(SDS-TOOLS_BRANCH)-$(TIMESTAMP)-g$(SDS-TOOLS_SHA)
-SDS-TOOLS_BITS=$(BITS_DIR)/sds-tools/sds-tools-pkg-$(_sds-tools_stamp).tar.bz2
+_sds-tools_stamp=$(SDS_TOOLS_BRANCH)-$(TIMESTAMP)-g$(SDS_TOOLS_SHA)
+SDS_TOOLS_BITS=$(BITS_DIR)/sds-tools/sds-tools-pkg-$(_sds-tools_stamp).tar.bz2
 
 .PHONY: sds-tools
-sds-tools: $(SDS-TOOLS_BITS)
+sds-tools: $(SDS_TOOLS_BITS)
 
-$(SDS-TOOLS_BITS): build/sds-tools
-	@echo "# Build sds-tools: branch $(SDS-TOOLS_BRANCH), sha $(SDS-TOOLS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(SDS_TOOLS_BITS): build/sds-tools
+	@echo "# Build sds-tools: branch $(SDS_TOOLS_BRANCH), sha $(SDS_TOOLS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/sds-tools && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created sds-tools bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(SDS-TOOLS_BITS)
+	@ls -1 $(SDS_TOOLS_BITS)
 	@echo ""
 
 clean_sds-tools:
