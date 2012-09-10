@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow
+all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow sds-tools
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow sds-tools
 
 
 #---- smartlogin
@@ -1020,6 +1020,28 @@ $(CONVERTVM_BITS): build/convertvm
 clean_convertvm:
 	rm -rf $(BITS_DIR)/convertvm
 	(cd build/convertvm && gmake clean)
+
+
+#---- SDS Tools
+
+_sds-tools_stamp=$(SDS-TOOLS_BRANCH)-$(TIMESTAMP)-g$(SDS-TOOLS_SHA)
+SDS-TOOLS_BITS=$(BITS_DIR)/sds-tools/sds-tools-pkg-$(_sds-tools_stamp).tar.bz2
+
+.PHONY: sds-tools
+sds-tools: $(SDS-TOOLS_BITS)
+
+$(SDS-TOOLS_BITS): build/sds-tools
+	@echo "# Build sds-tools: branch $(SDS-TOOLS_BRANCH), sha $(SDS-TOOLS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/sds-tools && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created sds-tools bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(SDS-TOOLS_BITS)
+	@echo ""
+
+clean_sds-tools:
+	rm -rf $(BITS_DIR)/sds-tools
+	(cd build/sds-tools && gmake distclean)
+
 
 
 #---- usb-headnode

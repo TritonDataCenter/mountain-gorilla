@@ -292,7 +292,7 @@
     "tarballs": [
       {"tarball": "minnow/minnow-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "configurator/jonfigurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -346,6 +346,13 @@
   "sdcsso": {
     "repos": [
         {"url":  "git@github.com:joyent-smartdatacenter/sdcsso.git" }
+    ],
+    "deps": []
+  },
+
+  "sds-tools": {
+    "repos": [
+        {"url": "git@git.joyent.com:sds-tools.git"}
     ],
     "deps": []
   },
