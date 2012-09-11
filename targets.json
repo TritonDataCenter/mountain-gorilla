@@ -401,6 +401,7 @@
         "rabbitmq",
         "redis",
         "sdcsso",
+        "sds-tools",
         "ufds",
         "usageapi",
         "vmapi",
