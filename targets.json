@@ -96,24 +96,6 @@
     "deps": []
   },
 
-  "manatee": {
-    "appliance": "true",
-    "urn": "sdc:sds:postgres",
-    "version": "1.0.0",
-    "image_uuid": "f9e4be48-9466-11e1-bc41-9f993f5dff36",
-    "pkgsrc": [
-      "zookeeper-client-3.4.3"
-    ],
-    "repos": [
-      {"url": "git@git.joyent.com:manatee.git"}
-    ],
-    "deps": ["registrar", "amon"],
-    "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
-    ]
-  },
-
   "workflow": {
     "repos": [
         {"url": "git@git.joyent.com:workflow.git"}
@@ -190,9 +172,34 @@
     "repos": [
       {"url": "git@git.joyent.com:binder.git"}
     ],
-    "deps": ["amon"],
+    "deps": [
+      "configurator",
+      "amon"
+    ],
     "tarballs": [
         {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
+    ]
+  },
+
+  "manatee": {
+    "appliance": "true",
+    "urn": "sdc:sds:postgres",
+    "version": "1.0.0",
+    "image_uuid": "f9e4be48-9466-11e1-bc41-9f993f5dff36",
+    "pkgsrc": [
+      "zookeeper-client-3.4.3"
+    ],
+    "repos": [
+      {"url": "git@git.joyent.com:manatee.git"}
+    ],
+    "deps": [
+      "registrar",
+      "configurator",
+      "amon"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
 
@@ -208,7 +215,11 @@
     "repos": [
       {"url": "git@git.joyent.com:mahi.git"}
     ],
-    "deps": ["registrar", "amon"],
+    "deps": [
+      "registrar",
+      "configurator",
+      "amon"
+    ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
@@ -227,7 +238,11 @@
     "repos": [
         {"url": "git@git.joyent.com:moray.git"}
     ],
-    "deps": ["registrar", "amon"],
+    "deps": [
+      "registrar",
+      "configurator",
+      "amon"
+    ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
@@ -246,7 +261,11 @@
     "repos": [
       {"url": "git@git.joyent.com:muppet.git"}
     ],
-    "deps": ["registrar", "amon"],
+    "deps": [
+      "registrar",
+      "configurator",
+      "amon"
+    ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
@@ -264,7 +283,11 @@
     "repos": [
       {"url": "git@git.joyent.com:muskie.git"}
     ],
-    "deps": ["registrar", "amon"],
+    "deps": [
+      "registrar",
+      "configurator",
+      "amon"
+    ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
@@ -310,6 +333,7 @@
     ],
     "deps": [
       "registrar",
+      "configurator",
       "amon"
     ],
     "tarballs": [
