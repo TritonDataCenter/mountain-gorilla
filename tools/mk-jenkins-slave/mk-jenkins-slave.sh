@@ -99,6 +99,10 @@ Host stuff.joyent.us
     IdentityFile=/root/.ssh/automation.id_rsa
 Host 10.2.0.190
     IdentityFile=/root/.ssh/automation.id_rsa
+
+# Access to jill@download.joyent.com for sdcnode.
+Host download.joyent.com
+    IdentityFile=/root/.ssh/automation.id_rsa
 HERE
 
 
