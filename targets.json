@@ -161,7 +161,7 @@
 
   "binder": {
     "appliance": "true",
-    "urn": "sdc:sds:nameservice",
+    "urn": "sdc:manta:nameservice",
     "version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
@@ -184,7 +184,7 @@
 
   "manatee": {
     "appliance": "true",
-    "urn": "sdc:sds:postgres",
+    "urn": "sdc:manta:postgres",
     "version": "1.0.0",
     "image_uuid": "f9e4be48-9466-11e1-bc41-9f993f5dff36",
     "pkgsrc": [
@@ -207,7 +207,7 @@
 
   "mahi": {
     "appliance": "true",
-    "urn": "sdc:sds:authcache",
+    "urn": "sdc:manta:authcache",
     "version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
@@ -231,7 +231,7 @@
 
   "moray": {
     "appliance": "true",
-    "urn": "sdc:sds:moray",
+    "urn": "sdc:manta:moray",
     "version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
@@ -255,7 +255,7 @@
 
   "muppet": {
     "appliance": "true",
-    "urn": "sdc:sds:loadbalancer",
+    "urn": "sdc:manta:loadbalancer",
     "version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
@@ -279,7 +279,7 @@
 
   "muskie": {
     "appliance": "true",
-    "urn": "sdc:sds:webapi",
+    "urn": "sdc:manta:webapi",
     "version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
@@ -302,7 +302,7 @@
 
   "mako": {
     "appliance": "true",
-    "urn": "sdc:sds:storage",
+    "urn": "sdc:manta:storage",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "version": "1.0.0",
     "pkgsrc": [
@@ -328,7 +328,7 @@
 
   "marlin": {
     "appliance": "true",
-    "urn": "sdc:sds:jobworker",
+    "urn": "sdc:manta:jobworker",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "version": "1.0.0",
     "pkgsrc": [
