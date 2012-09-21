@@ -381,9 +381,9 @@
     "deps": []
   },
 
-  "sds-tools": {
+  "manta": {
     "repos": [
-        {"url": "git@git.joyent.com:sds-tools.git"}
+        {"url": "git@git.joyent.com:manta.git"}
     ],
     "deps": []
   },
@@ -432,7 +432,7 @@
         "rabbitmq",
         "redis",
         "sdcsso",
-        "sds-tools",
+        "manta",
         "ufds",
         "usageapi",
         "vmapi",
