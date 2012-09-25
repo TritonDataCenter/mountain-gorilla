@@ -36,7 +36,7 @@ echo "This will 'release' version '$VERSION_TO_RELEASE' for all devhub Jira proj
 read -p "Hit Enter to continue..."
 echo
 
-PROJECTS=$(./jira.sh `cat ~/.jiraclirc` --action getProjectList --server https://devhub.joyent.com/jira \
+PROJECTS=$($TOP/jira.sh `cat ~/.jiraclirc` --action getProjectList --server https://devhub.joyent.com/jira \
     | python -c "import sys, csv; rows = list(csv.reader(sys.stdin)); projects = ['%s  %s' % (r[0], r[2]) for r in rows[2:] if r]; print '\n'.join(projects)" \
     | grep -v Archived | cut -d' ' -f1 | xargs)
 
