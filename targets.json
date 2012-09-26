@@ -259,7 +259,6 @@
     "version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
-      "haproxy-1.4.18",
       "stud-0nb20120827",
       "zookeeper-client-3.4.3"
     ],
