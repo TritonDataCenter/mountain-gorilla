@@ -20,6 +20,7 @@ cat <<HERE;
   "dhcpd-tarball": "dhcpd/$(ls bits/dhcpd/dhcpd-pkg* | xargs basename)",
   "keyapi-tarball": "keyapi/$(ls bits/keyapi/keyapi-pkg* | xargs basename)",
   "manatee-tarball": "manatee/$(ls bits/manatee/manatee-pkg* | xargs basename)",
+  "mola-tarball": "mola/$(ls bits/mola/mola-pkg* | xargs basename)",
   "moray-tarball": "moray/$(ls bits/moray/moray-pkg* | xargs basename)",
   "napi-tarball": "napi/$(ls bits/napi/napi-pkg* | xargs basename)",
   "portal-tarball": "portal/$(ls bits/portal/portal-pkg* | xargs basename)",

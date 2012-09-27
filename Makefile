@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow manta
+all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow manta
+all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta
 
 
 #---- smartlogin
@@ -710,6 +710,42 @@ $(MAHI_IMAGE_BIT): $(MAHI_BITS)
 clean_mahi:
 	rm -rf $(BITS_DIR)/mahi
 	(cd build/mahi && gmake distclean)
+
+
+#---- Mola
+
+_mola_stamp=$(MOLA_BRANCH)-$(TIMESTAMP)-g$(MOLA_SHA)
+MOLA_BITS=$(BITS_DIR)/mola/mola-pkg-$(_mola_stamp).tar.bz2
+MOLA_IMAGE_BIT=$(BITS_DIR)/mola/mola-zfs-$(_mola_stamp).zfs.bz2
+
+.PHONY: mola
+mola: $(MOLA_BITS) mola_image
+
+# PATH for mola build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(MOLA_BITS): build/mola
+	@echo "# Build mola: branch $(MOLA_BRANCH), sha $(MOLA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/mola && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created mola bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MOLA_BITS)
+	@echo ""
+
+.PHONY: mola_image
+mola_image: $(MOLA_IMAGE_BIT)
+
+$(MOLA_IMAGE_BIT): $(MOLA_BITS)
+	@echo "# Build mola_image: branch $(MOLA_BRANCH), sha $(MOLA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(MOLA_IMAGE_UUID)" -t $(MOLA_BITS) \
+		-o "$(MOLA_IMAGE_BIT)" -p $(MOLA_PKGSRC) \
+		-t $(MOLA_EXTRA_TARBALLS) -u $(MOLA_URN) -v $(MOLA_VERSION)
+	@echo "# Created mola image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MOLA_IMAGE_BIT)
+	@echo ""
+
+clean_mola:
+	rm -rf $(BITS_DIR)/mola
+	(cd build/mola && gmake distclean)
 
 
 #---- Moray
