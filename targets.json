@@ -124,6 +124,34 @@
     "deps": []
   },
 
+  "agents_core": {
+    "repos": [
+        {"url": "git@git.joyent.com:agents_core.git"}
+    ],
+    "deps": []
+  },
+
+  "heartbeater": {
+    "repos": [
+        {"url": "git@git.joyent.com:heartbeater.git"}
+    ],
+    "deps": []
+  },
+
+  "provisioner": {
+    "repos": [
+        {"url": "git@git.joyent.com:provisioner.git"}
+    ],
+    "deps": []
+  },
+
+  "zonetracker": {
+    "repos": [
+        {"url": "git@git.joyent.com:zonetracker.git"}
+    ],
+    "deps": []
+  },
+
   "cnapi": {
     "repos": [
         {"url": "git@git.joyent.com:cnapi.git"}

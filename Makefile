@@ -539,6 +539,104 @@ $(SDC_SYSTEM_TESTS_BITS): build/sdc-system-tests
 	@echo ""
 
 
+#---- Agents core
+
+_agents_core_stamp=$(AGENTS_CORE_BRANCH)-$(TIMESTAMP)-g$(AGENTS_CORE_SHA)
+AGENTS_CORE_BITS=$(BITS_DIR)/agents_core/agents_core-pkg-$(_agents_core_stamp).tar.bz2
+
+.PHONY: agents_core
+agents_core: $(AGENTS_CORE_BITS)
+
+# PATH for agents_core build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(AGENTS_CORE_BITS): build/agents_core
+	@echo "# Build agents_core: branch $(AGENTS_CORE_BRANCH), sha $(AGENTS_CORE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/agents_core && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created agents_core bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(AGENTS_CORE_BITS)
+	@echo ""
+
+# Warning: if agents_core's submodule deps change, this 'clean_agents_core' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_agents_core:
+	rm -rf $(BITS_DIR)/agents_core
+	(cd build/agents_core && gmake clean)
+
+
+#---- Provisioner
+
+_provisioner_stamp=$(PROVISIONER_BRANCH)-$(TIMESTAMP)-g$(PROVISIONER_SHA)
+PROVISIONER_BITS=$(BITS_DIR)/provisioner/provisioner-pkg-$(_provisioner_stamp).tar.bz2
+
+.PHONY: provisioner
+provisioner: $(PROVISIONER_BITS)
+
+# PATH for provisioner build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(PROVISIONER_BITS): build/provisioner
+	@echo "# Build provisioner: branch $(PROVISIONER_BRANCH), sha $(PROVISIONER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/provisioner && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created provisioner bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(PROVISIONER_BITS)
+	@echo ""
+
+# Warning: if provisioner's submodule deps change, this 'clean_provisioner' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_provisioner:
+	rm -rf $(BITS_DIR)/provisioner
+	(cd build/provisioner && gmake clean)
+
+
+#---- Heartbeater
+
+_heartbeater_stamp=$(HEARTBEATER_BRANCH)-$(TIMESTAMP)-g$(HEARTBEATER_SHA)
+HEARTBEATER_BITS=$(BITS_DIR)/heartbeater/heartbeater-pkg-$(_heartbeater_stamp).tar.bz2
+
+.PHONY: heartbeater
+heartbeater: $(HEARTBEATER_BITS)
+
+# PATH for heartbeater build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(HEARTBEATER_BITS): build/heartbeater
+	@echo "# Build heartbeater: branch $(HEARTBEATER_BRANCH), sha $(HEARTBEATER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/heartbeater && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created heartbeater bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(HEARTBEATER_BITS)
+	@echo ""
+
+# Warning: if heartbeater's submodule deps change, this 'clean_heartbeater' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_heartbeater:
+	rm -rf $(BITS_DIR)/heartbeater
+	(cd build/heartbeater && gmake clean)
+
+
+#---- Zonetracker
+
+_zonetracker_stamp=$(ZONETRACKER_BRANCH)-$(TIMESTAMP)-g$(ZONETRACKER_SHA)
+ZONETRACKER_BITS=$(BITS_DIR)/zonetracker/zonetracker-pkg-$(_zonetracker_stamp).tar.bz2
+
+.PHONY: zonetracker
+zonetracker: $(ZONETRACKER_BITS)
+
+# PATH for zonetracker build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(ZONETRACKER_BITS): build/zonetracker
+	@echo "# Build zonetracker: branch $(ZONETRACKER_BRANCH), sha $(ZONETRACKER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/zonetracker && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created zonetracker bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(ZONETRACKER_BITS)
+	@echo ""
+
+# Warning: if zonetracker's submodule deps change, this 'clean_zonetracker' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_zonetracker:
+	rm -rf $(BITS_DIR)/zonetracker
+	(cd build/zonetracker && gmake clean)
 
 
 #---- CNAPI
