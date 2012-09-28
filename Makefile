@@ -542,7 +542,7 @@ $(SDC_SYSTEM_TESTS_BITS): build/sdc-system-tests
 #---- Agents core
 
 _agents_core_stamp=$(AGENTS_CORE_BRANCH)-$(TIMESTAMP)-g$(AGENTS_CORE_SHA)
-AGENTS_CORE_BITS=$(BITS_DIR)/agents_core/agents_core-pkg-$(_agents_core_stamp).tar.bz2
+AGENTS_CORE_BITS=$(BITS_DIR)/agents_core/agents_core-pkg-$(_agents_core_stamp).tgz
 
 .PHONY: agents_core
 agents_core: $(AGENTS_CORE_BITS)
@@ -567,7 +567,7 @@ clean_agents_core:
 #---- Provisioner
 
 _provisioner_stamp=$(PROVISIONER_BRANCH)-$(TIMESTAMP)-g$(PROVISIONER_SHA)
-PROVISIONER_BITS=$(BITS_DIR)/provisioner/provisioner-pkg-$(_provisioner_stamp).tar.bz2
+PROVISIONER_BITS=$(BITS_DIR)/provisioner/provisioner-pkg-$(_provisioner_stamp).tgz
 
 .PHONY: provisioner
 provisioner: $(PROVISIONER_BITS)
@@ -592,7 +592,7 @@ clean_provisioner:
 #---- Heartbeater
 
 _heartbeater_stamp=$(HEARTBEATER_BRANCH)-$(TIMESTAMP)-g$(HEARTBEATER_SHA)
-HEARTBEATER_BITS=$(BITS_DIR)/heartbeater/heartbeater-pkg-$(_heartbeater_stamp).tar.bz2
+HEARTBEATER_BITS=$(BITS_DIR)/heartbeater/heartbeater-pkg-$(_heartbeater_stamp).tgz
 
 .PHONY: heartbeater
 heartbeater: $(HEARTBEATER_BITS)
@@ -617,7 +617,7 @@ clean_heartbeater:
 #---- Zonetracker
 
 _zonetracker_stamp=$(ZONETRACKER_BRANCH)-$(TIMESTAMP)-g$(ZONETRACKER_SHA)
-ZONETRACKER_BITS=$(BITS_DIR)/zonetracker/zonetracker-pkg-$(_zonetracker_stamp).tar.bz2
+ZONETRACKER_BITS=$(BITS_DIR)/zonetracker/zonetracker-pkg-$(_zonetracker_stamp).tgz
 
 .PHONY: zonetracker
 zonetracker: $(ZONETRACKER_BITS)
