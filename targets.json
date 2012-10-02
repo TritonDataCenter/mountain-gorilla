@@ -70,12 +70,6 @@
     ],
     "deps": []
   },
-  "agents": {
-    "repos": [
-        {"url": "git@git.joyent.com:agents.git"}
-    ],
-    "deps": []
-  },
   "cloudapi": {
     "repos": [
         {"url": "git@git.joyent.com:cloudapi.git"}
@@ -411,7 +405,7 @@
     "repos": [
         {"url": "git@git.joyent.com:agents-installer.git"}
     ],
-    "deps": ["agents", "amon", "ca", "smartlogin"]
+    "deps": ["agents_core", "zonetracker", "provisioner", "heartbeater", "amon", "ca", "smartlogin"]
   },
   "convertvm": {
     "repos": [

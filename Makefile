@@ -31,7 +31,6 @@ JOB=16
 # that seemed to hit a gmake issue when building multiple targets: the 'ca'
 # target would be run three times at (rougly) 4 seconds apart on the time
 # stamp (guessing the 'three times' is because CA_BITS has three elements).
-# Similarly for the 'agents' target.
 ifeq ($(TIMESTAMP),)
 	TIMESTAMP=TimestampNotSet
 endif
@@ -45,10 +44,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta
 
 
 #---- smartlogin
@@ -72,32 +71,6 @@ $(SMARTLOGIN_BITS): build/smart-login
 
 clean_smartlogin:
 	rm -rf $(BITS_DIR)/smartlogin
-
-
-
-#---- agents
-
-_a_stamp=$(AGENTS_BRANCH)-$(TIMESTAMP)-g$(AGENTS_SHA)
-AGENTS_BITS=$(BITS_DIR)/agents/agents_core/agents_core-$(_a_stamp).tgz \
-	$(BITS_DIR)/agents/heartbeater/heartbeater-$(_a_stamp).tgz \
-	$(BITS_DIR)/agents/provisioner-v2/provisioner-v2-$(_a_stamp).tgz \
-	$(BITS_DIR)/agents/zonetracker-v2/zonetracker-v2-$(_a_stamp).tgz
-AGENTS_BITS_0=$(shell echo $(AGENTS_BITS) | awk '{print $$1}')
-
-agents: $(AGENTS_BITS_0)
-
-# PATH: ensure using GCC from SFW. Not sure this is necessary, but has been
-# the case for release builds pre-MG.
-$(AGENTS_BITS): build/agents
-	@echo "# Build agents: branch $(AGENTS_BRANCH), sha $(AGENTS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/agents && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) PATH=/usr/sfw/bin:$(PATH) ./build.sh -p -l $(BITS_DIR)/agents -L)
-	@echo "# Created agents bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(AGENTS_BITS)
-	@echo ""
-
-clean_agents:
-	rm -rf $(BITS_DIR)/agents
 
 
 
@@ -1105,7 +1078,7 @@ clean_dcapi:
 	(cd build/dcapi && gmake clean)
 
 
-#---- agents shar
+#---- agentsshar
 
 ifeq ($(TRY_BRANCH),)
 _as_stamp=$(AGENTS_INSTALLER_BRANCH)-$(TIMESTAMP)-g$(AGENTS_INSTALLER_SHA)
