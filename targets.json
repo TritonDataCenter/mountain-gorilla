@@ -181,6 +181,13 @@
     "deps": []
   },
 
+  "mlogpusher": {
+    "repos": [
+        {"url": "git@git.joyent.com:mlogpusher.git"}
+    ],
+    "deps": []
+  },
+
   "binder": {
     "appliance": "true",
     "urn": "sdc:manta:nameservice",
@@ -196,10 +203,12 @@
     ],
     "deps": [
       "configurator",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -218,11 +227,13 @@
     "deps": [
       "registrar",
       "configurator",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -242,11 +253,13 @@
     "deps": [
       "registrar",
       "configurator",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -266,11 +279,13 @@
     "deps": [
       "registrar",
       "configurator",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -290,11 +305,13 @@
     "deps": [
       "registrar",
       "configurator",
+      "mlogpusher"
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -313,11 +330,13 @@
     "deps": [
       "registrar",
       "configurator",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -336,11 +355,13 @@
     "deps": [
       "registrar",
       "configurator",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -361,12 +382,14 @@
       "minnow",
       "registrar",
       "configurator",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "minnow/minnow-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -385,11 +408,13 @@
     "deps": [
       "registrar",
       "configurator",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },

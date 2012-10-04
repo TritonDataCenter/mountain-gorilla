@@ -44,10 +44,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mlogpusher
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mlogpusher
 
 
 #---- smartlogin
@@ -931,6 +931,27 @@ $(CONFIGURATOR_BITS): build/configurator
 clean_configurator:
 	rm -rf $(BITS_DIR)/configurator
 	(cd build/configurator && gmake distclean)
+
+
+#---- mlogpusher
+
+_mlogpusher_stamp=$(MLOGPUSHER_BRANCH)-$(TIMESTAMP)-g$(MLOGPUSHER_SHA)
+MLOGPUSHER_BITS=$(BITS_DIR)/mlogpusher/mlogpusher-pkg-$(_mlogpusher_stamp).tar.bz2
+
+.PHONY: mlogpusher
+mlogpusher: $(MLOGPUSHER_BITS)
+
+$(MLOGPUSHER_BITS): build/mlogpusher
+	@echo "# Build mlogpusher: branch $(MLOGPUSHER_BRANCH), sha $(MLOGPUSHER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/mlogpusher && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created mlogpusher bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MLOGPUSHER_BITS)
+	@echo ""
+
+clean_mlogpusher:
+	rm -rf $(BITS_DIR)/mlogpusher
+	(cd build/mlogpusher && gmake distclean)
 
 
 #---- Binder
