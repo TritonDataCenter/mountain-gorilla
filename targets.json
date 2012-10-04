@@ -305,7 +305,7 @@
     "deps": [
       "registrar",
       "configurator",
-      "mlogpusher"
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
