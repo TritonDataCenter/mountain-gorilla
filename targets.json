@@ -350,7 +350,9 @@
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:mola.git"}
+      {"url": "git@git.joyent.com:mackerel.git"},
+      {"url": "git@git.joyent.com:mola.git"},
+      {"url": "git@git.joyent.com:node-manta.git"}
     ],
     "deps": [
       "registrar",
