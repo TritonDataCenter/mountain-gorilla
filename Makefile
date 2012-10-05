@@ -44,10 +44,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mlogpusher
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mlogpusher mackerel
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mlogpusher
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mlogpusher mackerel
 
 
 #---- smartlogin
@@ -952,6 +952,27 @@ $(MLOGPUSHER_BITS): build/mlogpusher
 clean_mlogpusher:
 	rm -rf $(BITS_DIR)/mlogpusher
 	(cd build/mlogpusher && gmake distclean)
+
+
+#---- mackerel
+
+_mackerel_stamp=$(MACKEREL_BRANCH)-$(TIMESTAMP)-g$(MACKEREL_SHA)
+MACKEREL_BITS=$(BITS_DIR)/mackerel/mackerel-pkg-$(_mackerel_stamp).tar.bz2
+
+.PHONY: mackerel
+mackerel: $(MACKEREL_BITS)
+
+$(MACKEREL_BITS): build/mackerel
+	@echo "# Build mackerel: branch $(MACKEREL_BRANCH), sha $(MACKEREL_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/mackerel && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created mackerel bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MACKEREL_BITS)
+	@echo ""
+
+clean_mackerel:
+	rm -rf $(BITS_DIR)/mackerel
+	(cd build/mackerel && gmake distclean)
 
 
 #---- Binder
