@@ -370,6 +370,7 @@
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mackerel/mackerel-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
