@@ -10,6 +10,8 @@ If you'll actually be building, see "Prerequisites" section below first.
 
     git clone git@git.joyent.com:mountain-gorilla.git
     cd mountain-gorilla.git
+    # Get auth info for stuff.joyent.us from where the build grabs bits.
+    scp stuff@stuff.joyent.us:trent/mk-jenkins-slave/.mg.json ~/.mg.json
     ./configure -h
     ./configure [OPTIONS...]    # generates bits/config.mk with all build config
     make                        # builds entire stack from source
