@@ -44,10 +44,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mlogpusher mackerel
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mlogpusher mackerel
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi dcapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mlogpusher mackerel
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mlogpusher mackerel
 
 
 #---- smartlogin
@@ -1094,30 +1094,6 @@ $(MAKO_IMAGE_BIT): $(MAKO_BITS)
 clean_mako:
 	rm -rf $(BITS_DIR)/mako
 	(cd build/mako && gmake distclean)
-
-#---- DCAPI
-
-_dcapi_stamp=$(DCAPI_BRANCH)-$(TIMESTAMP)-g$(DCAPI_SHA)
-DCAPI_BITS=$(BITS_DIR)/dcapi/dcapi-pkg-$(_dcapi_stamp).tar.bz2
-
-.PHONY: dcapi
-dcapi: $(DCAPI_BITS)
-
-# PATH for dcapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
-$(DCAPI_BITS): build/dcapi
-	@echo "# Build dcapi: branch $(DCAPI_BRANCH), sha $(DCAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/dcapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created dcapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(DCAPI_BITS)
-	@echo ""
-
-# Warning: if DCAPI's submodule deps change, this 'clean_dcapi' is insufficient. It would
-# then need to call 'gmake dist-clean'.
-clean_dcapi:
-	rm -rf $(BITS_DIR)/dcapi
-	(cd build/dcapi && gmake clean)
 
 
 #---- agentsshar
