@@ -201,7 +201,6 @@
     "version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
-      "coreutils-8.13",
       "sun-jre6-6.0.26",
       "zookeeper-client-3.4.3",
       "zookeeper-server-3.4.3"
@@ -211,12 +210,12 @@
     ],
     "deps": [
       "configurator",
-      "manta",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "manta/manta-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -227,7 +226,6 @@
     "version": "1.0.0",
     "image_uuid": "f9e4be48-9466-11e1-bc41-9f993f5dff36",
     "pkgsrc": [
-      "coreutils-8.13",
       "zookeeper-client-3.4.3"
     ],
     "repos": [
@@ -236,13 +234,13 @@
     "deps": [
       "registrar",
       "configurator",
-      "manta",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "manta/manta-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -253,7 +251,6 @@
     "version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
-      "coreutils-8.13",
       "redis-2.4.13",
       "zookeeper-client-3.4.3"
     ],
@@ -263,13 +260,13 @@
     "deps": [
       "registrar",
       "configurator",
-      "manta",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "manta/manta-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -280,7 +277,6 @@
     "version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
-      "coreutils-8.13",
       "postgresql91-client-9.1.2",
       "zookeeper-client-3.4.3"
     ],
@@ -290,13 +286,13 @@
     "deps": [
       "registrar",
       "configurator",
-      "manta",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "manta/manta-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -307,7 +303,6 @@
     "version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
-      "coreutils-8.13",
       "stud-0nb20120827",
       "zookeeper-client-3.4.3"
     ],
@@ -317,13 +312,13 @@
     "deps": [
       "registrar",
       "configurator",
-      "manta",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "manta/manta-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -334,7 +329,6 @@
     "version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
-      "coreutils-8.13",
       "zookeeper-client-3.4.3"
     ],
     "repos": [
@@ -343,13 +337,13 @@
     "deps": [
       "registrar",
       "configurator",
-      "manta",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "manta/manta-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -360,7 +354,6 @@
     "version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
-      "coreutils-8.13",
       "zookeeper-client-3.4.3"
     ],
     "repos": [
@@ -369,14 +362,14 @@
     "deps": [
       "registrar",
       "configurator",
-      "manta",
+      "mlogpusher",
       "mackerel",
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "manta/manta-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "mackerel/mackerel-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
@@ -388,7 +381,6 @@
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "version": "1.0.0",
     "pkgsrc": [
-      "coreutils-8.13",
       "pcre-8.21",
       "zookeeper-client-3.4.3"
     ],
@@ -399,14 +391,14 @@
       "minnow",
       "registrar",
       "configurator",
-      "manta",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "minnow/minnow-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "manta/manta-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
@@ -417,7 +409,6 @@
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "version": "1.0.0",
     "pkgsrc": [
-      "coreutils-8.13",
       "zookeeper-client-3.4.3"
     ],
     "repos": [
@@ -426,13 +417,13 @@
     "deps": [
       "registrar",
       "configurator",
-      "manta",
+      "mlogpusher",
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "manta/manta-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "mlogpusher/mlogpusher-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
