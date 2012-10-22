@@ -98,9 +98,10 @@ pkgin -y install binutils
 # python26: many parts of the build for javascriptlint
 # zookeeper-client: binder needs this
 # postgres client: needed by manta
+# gsharutils: needed by manta
 pkgin -y in gcc-compiler gcc-runtime cscope gmake \
     scmgit python26 png GeoIP GeoLiteCity ghostscript zookeeper-client \
-    postgresql91-client-9.1.2
+    postgresql91-client-9.1.2 gsharutils
 
 # Note: This "./configure" step is necessary to setup your system.
 # TODO: Why is this necessary?
