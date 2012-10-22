@@ -78,6 +78,11 @@ cat > /var/tmp/setup-build-zone.xml <<SETUPBUILDZONE
 SETUPBUILDZONE
 /usr/sbin/svccfg import /var/tmp/setup-build-zone.xml
 
+# With the current setup-build-zone script this has the annoying side-effect
+# of putting this svc into the maintenance on first run here, because the
+# fake-subset is already setup.
+/usr/sbin/svcadm enable setup-build-zone
+
 
 # Having git "core.autocrlf=input" will cause spurious dirty files in
 # some of our repos. Don't go there.
