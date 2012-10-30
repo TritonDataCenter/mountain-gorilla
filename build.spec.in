@@ -32,6 +32,6 @@ cat <<HERE;
   "vmapi-tarball": "vmapi/$(ls bits/vmapi/vmapi-pkg* | xargs basename)",
   "webinfo-tarball": "webinfo/$(ls bits/webinfo/webinfo-pkg* | xargs basename)",
   "workflow-tarball": "workflow/$(ls bits/workflow/workflow-pkg* | xargs basename)",
-  "zookeeper-tarball": "none"
+  "zookeeper-tarball": "binder/$(ls bits/binder/binder-pkg* | xargs basename)"
 }
 HERE
