@@ -215,10 +215,8 @@
     "appliance": "true",
     "urn": "sdc:manta:postgres",
     "version": "1.0.0",
-    "image_uuid": "f9e4be48-9466-11e1-bc41-9f993f5dff36",
-    "pkgsrc": [
-      "zookeeper-client-3.4.3"
-    ],
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
       {"url": "git@git.joyent.com:manatee.git"}
     ],
