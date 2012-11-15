@@ -44,10 +44,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi fwapi napi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi napi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mackerel
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi fwapi napi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mackerel
 
 
 #---- smartlogin
@@ -685,6 +685,32 @@ $(SDCSSO_BITS): build/sdcsso
 clean_sdcsso:
 	rm -rf $(BITS_DIR)/sdcsso
 	(cd build/sdcsso && gmake clean)
+
+
+
+#---- FWAPI
+
+_fwapi_stamp=$(FWAPI_BRANCH)-$(TIMESTAMP)-g$(FWAPI_SHA)
+FWAPI_BITS=$(BITS_DIR)/fwapi/fwapi-pkg-$(_fwapi_stamp).tar.bz2
+
+.PHONY: fwapi
+fwapi: $(FWAPI_BITS)
+
+# PATH for fwapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(FWAPI_BITS): build/fwapi
+	@echo "# Build fwapi: branch $(FWAPI_BRANCH), sha $(FWAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/fwapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	@echo "# Created fwapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(FWAPI_BITS)
+	@echo ""
+
+# Warning: if FWAPI's submodule deps change, this 'clean_fwapi' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_fwapi:
+	rm -rf $(BITS_DIR)/fwapi
+	(cd build/fwapi && gmake clean)
 
 
 

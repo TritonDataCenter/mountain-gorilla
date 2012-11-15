@@ -153,6 +153,13 @@
     "deps": []
   },
 
+  "fwapi": {
+    "repos": [
+        {"url": "git@git.joyent.com:fwapi.git"}
+    ],
+    "deps": []
+  },
+
   "napi": {
     "repos": [
         {"url": "git@git.joyent.com:napi.git"}
@@ -469,6 +476,7 @@
         "cnapi",
         "dapi",
         "dhcpd",
+        "fwapi",
         "imgapi",
         "manatee",
         "moray",
