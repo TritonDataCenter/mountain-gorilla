@@ -44,10 +44,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi fwapi napi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi sdc-system-tests cnapi vmapi dapi fwapi napi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mackerel
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mackerel
 
 
 #---- smartlogin
@@ -467,6 +467,28 @@ $(DAPI_BITS): build/dapi
 clean_dapi:
 	rm -rf $(BITS_DIR)/dapi
 	(cd build/dapi && gmake clean)
+
+
+#---- imgapi-cli
+
+_imgapi_cli_stamp=$(IMGAPI_CLI_BRANCH)-$(TIMESTAMP)-g$(IMGAPI_CLI_SHA)
+IMGAPI_CLI_BITS=$(BITS_DIR)/imgapi-cli/imgapi-cli-pkg-$(_imgapi_cli_stamp).tar.bz2
+
+.PHONY: imgapi-cli
+imgapi-cli: $(IMGAPI_CLI_BITS)
+
+$(IMGAPI_CLI_BITS): build/imgapi-cli
+	@echo "# Build imgapi-cli: branch $(IMGAPI_CLI_BRANCH), sha $(IMGAPI_CLI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/imgapi-cli && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created imgapi-cli bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(IMGAPI_CLI_BITS)
+	@echo ""
+
+clean_imgapi_cli:
+	rm -rf $(BITS_DIR)/imgapi-cli
+	(cd build/imgapi-cli && gmake clean)
+
 
 
 #---- IMGAPI

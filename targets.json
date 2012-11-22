@@ -118,6 +118,13 @@
     "deps": []
   },
 
+  "imgapi-cli": {
+    "repos": [
+        {"url": "git@git.joyent.com:imgapi-cli.git"}
+    ],
+    "deps": []
+  },
+
   "agents_core": {
     "repos": [
         {"url": "git@git.joyent.com:agents_core.git"}
@@ -477,6 +484,7 @@
         "dhcpd",
         "fwapi",
         "imgapi",
+        "imgapi-cli",
         "keyapi",
         "manatee",
         "manta",
