@@ -19,6 +19,7 @@ cat <<HERE;
   "dhcpd-tarball": "dhcpd/$(ls bits/dhcpd/dhcpd-pkg* | xargs basename)",
   "fwapi-tarball": "fwapi/$(ls bits/fwapi/fwapi-pkg* | xargs basename)",
   "imgapi-tarball": "imgapi/$(ls bits/imgapi/imgapi-pkg* | xargs basename)",
+  "imgapi-cli-tarball": "imgapi-cli/$(ls bits/imgapi-cli/imgapi-cli-pkg* | xargs basename)",
   "keyapi-tarball": "keyapi/$(ls bits/keyapi/keyapi-pkg* | xargs basename)",
   "manatee-tarball": "manatee/$(ls bits/manatee/manatee-pkg* | xargs basename)",
   "manta-tarball": "manta/$(ls bits/manta/manta-pkg* | xargs basename)",
