@@ -44,10 +44,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel manowar
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mackerel
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mackerel manowar
 
 
 #---- smartlogin
@@ -1000,6 +1000,27 @@ $(MACKEREL_BITS): build/mackerel
 clean_mackerel:
 	rm -rf $(BITS_DIR)/mackerel
 	(cd build/mackerel && gmake distclean)
+
+
+#---- manowar
+
+_manowar_stamp=$(MANOWAR_BRANCH)-$(TIMESTAMP)-g$(MANOWAR_SHA)
+MANOWAR_BITS=$(BITS_DIR)/manowar/manowar-pkg-$(_manowar_stamp).tar.bz2
+
+.PHONY: manowar
+manowar: $(MANOWAR_BITS)
+
+$(MANOWAR_BITS): build/manowar
+	@echo "# Build manowar: branch $(MANOWAR_BRANCH), sha $(MANOWAR_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/manowar && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created manowar bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MANOWAR_BITS)
+	@echo ""
+
+clean_manowar:
+	rm -rf $(BITS_DIR)/manowar
+	(cd build/manowar && gmake distclean)
 
 
 #---- Binder
