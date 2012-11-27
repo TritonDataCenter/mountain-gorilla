@@ -202,6 +202,13 @@
     "deps": []
   },
 
+  "manowar": {
+    "repos": [
+        {"url": "git@git.joyent.com:manowar.git"}
+    ],
+    "deps": []
+  },
+
   "binder": {
     "appliance": "true",
     "urn": "sdc:manta:nameservice",
@@ -356,12 +363,14 @@
       "registrar",
       "configurator",
       "mackerel",
+      "manowar",
       "amon"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "mackerel/mackerel-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "manowar/manowar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
