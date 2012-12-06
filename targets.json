@@ -211,8 +211,9 @@
 
   "binder": {
     "appliance": "true",
-    "urn": "sdc:manta:nameservice",
-    "version": "1.0.0",
+    "image_name": "manta-nameservice",
+    "image_description": "Manta nameservice",
+    "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "sun-jre6-6.0.26",
@@ -234,8 +235,9 @@
 
   "manatee": {
     "appliance": "true",
-    "urn": "sdc:manta:postgres",
-    "version": "1.0.0",
+    "image_name": "manta-postgres",
+    "image_description": "Manta postgres",
+    "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [],
     "repos": [
@@ -255,8 +257,9 @@
 
   "mahi": {
     "appliance": "true",
-    "urn": "sdc:manta:authcache",
-    "version": "1.0.0",
+    "image_name": "manta-authcache",
+    "image_description": "Manta authcache",
+    "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "redis-2.4.13",
@@ -279,8 +282,9 @@
 
   "moray": {
     "appliance": "true",
-    "urn": "sdc:manta:moray",
-    "version": "1.0.0",
+    "image_name": "manta-moray",
+    "image_description": "Manta moray",
+    "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "postgresql91-client-9.1.2",
@@ -303,8 +307,9 @@
 
   "muppet": {
     "appliance": "true",
-    "urn": "sdc:manta:loadbalancer",
-    "version": "1.0.0",
+    "image_name": "manta-loadbalancer",
+    "image_description": "Manta loadbalancer",
+    "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "stud-0nb20120827",
@@ -327,8 +332,9 @@
 
   "muskie": {
     "appliance": "true",
-    "urn": "sdc:manta:webapi",
-    "version": "1.0.0",
+    "image_name": "manta-webapi",
+    "image_description": "Manta webapi",
+    "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "zookeeper-client-3.4.3"
@@ -350,8 +356,9 @@
 
   "mola": {
     "appliance": "true",
-    "urn": "sdc:manta:ops",
-    "version": "1.0.0",
+    "image_name": "manta-ops",
+    "image_description": "Manta ops",
+    "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "redis-2.4.13",
@@ -378,9 +385,10 @@
 
   "mako": {
     "appliance": "true",
-    "urn": "sdc:manta:storage",
+    "image_name": "manta-storage",
+    "image_description": "Manta storage",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "version": "1.0.0",
+    "image_version": "1.0.0",
     "pkgsrc": [
       "pcre-8.21",
       "zookeeper-client-3.4.3"
@@ -404,9 +412,10 @@
 
   "marlin": {
     "appliance": "true",
-    "urn": "sdc:manta:jobworker",
+    "image_name": "manta-jobworker",
+    "image_description": "Manta jobworker",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "version": "1.0.0",
+    "image_version": "1.0.0",
     "pkgsrc": [
       "zookeeper-client-3.4.3"
     ],

@@ -84,10 +84,9 @@ function usage() {
     echo "                  This can be called multiple times."
     echo "  -o OUTPUT       Image output path. Should be of the form:"
     echo "                  '/path/to/name.zfs.bz2'."
-    echo "  -v VERSION      Version for produced image manifest. Default"
-    echo "                  to '0.0.0'."
-    echo "  -u URN          URN for produced image manifest. Defaults"
-    echo "                  to 'sdc:sdc:$output_basename:$version'."
+    echo "  -v VERSION      Version for produced image manifest."
+    echo "  -n NAME         NAME for the produced image manifest."
+    echo "  -d DESCRIPTION  DESCRIPTION for the produced image manifest."
     echo ""
     echo "  -s GZSERVERS    DEPRECATED. Don't see this being used."
     echo ""
@@ -101,7 +100,7 @@ function usage() {
 
 trap cleanup ERR
 
-while getopts ht:p:i:o:u:v: opt; do
+while getopts ht:p:i:o:n:v:d: opt; do
   case $opt in
   h)
     usage
@@ -122,11 +121,14 @@ while getopts ht:p:i:o:u:v: opt; do
   o)
     output=$OPTARG
     ;;
-  u)
-    urn=$OPTARG
+  n)
+    image_name=$OPTARG
     ;;
   v)
-    version=$OPTARG
+    image_version=$OPTARG
+    ;;
+  d)
+    image_description="$OPTARG"
     ;;
   \?)
     echo "Invalid flag"
@@ -138,17 +140,12 @@ if [[ -z ${output} ]]; then
   fatal "No output file specified. Use '-o' option."
 fi
 
-if [[ -z $version ]]; then
-  version="0.0.0"
-fi
+[[ -n $image_name ]] || fatal "No image name, use '-n NAME'."
+[[ -n $image_version ]] || fatal "No image version, use '-v VERSION'."
+[[ -n $image_description ]] || fatal "No image description, use '-v DESC'."
 
 if [[ -z "$image_uuid" ]]; then
   fatal "No image_uuid provided. Use the '-i' option."
-fi
-
-if [[ -z $urn ]]; then
-  urn=${output%.bz2}
-  urn="sdc:sdc:${urn%.zfs}:${version}"
 fi
 
 ofbzip=$(echo ${output} | grep ".bz2$" || /bin/true )
@@ -275,13 +272,16 @@ shasum=$(/usr/bin/sum -x sha1 ${output} | cut -d ' ' -f1)
 size=$(/usr/bin/du -ks ${output} | cut -f 1)
 
 
+# TODO (when imgadm v2): drop files, creator_uuid, creator_name, urn
+# TODO: consider changing owner to poseidon UUID
 cat <<EOF>> ${output%.bz2}.dsmanifest
   {
-    "name": "${output%.zfs}",
-    "version": "${version}",
-    "type": "zone-dataset",
-    "description": "${output}",
+    "uuid": "${uuid}",
+    "name": "${image_name}",
+    "version": "${image_version}",
+    "description": "${image_description}",
     "published_at": "${timestamp}",
+    "type": "zone-dataset",
     "os": "smartos",
     "files": [
       {
@@ -299,13 +299,12 @@ cat <<EOF>> ${output%.bz2}.dsmanifest
         }
       ]
     },
-    "uuid": "${uuid}",
     "creator_uuid": "352971aa-31ba-496c-9ade-a379feaecd52",
     "vendor_uuid": "352971aa-31ba-496c-9ade-a379feaecd52",
     "creator_name": "sdc",
     "platform_type": "smartos",
     "cloud_name": "sdc",
-    "urn": "${urn}:${version}",
+    "urn": "sdc:manta:${image_name}:${image_version}",
     "created_at": "${timestamp}",
     "updated_at": "${timestamp}"
   }

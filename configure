@@ -345,10 +345,10 @@ EOF
       targ_mk_name=$(echo $targ | tr [:lower:] [:upper:] | tr - _)
       if [[ $(cat ${ROOT}/targets.json | $JSON ${targ} | $JSON appliance) == 'true' ]]; then
         echo ${targ_mk_name}_IMAGE_UUID=$(cat ${ROOT}/targets.json | $JSON ${targ}.image_uuid) >> ${ROOT}/bits/config.mk
+        echo ${targ_mk_name}_IMAGE_NAME=\"$(cat ${ROOT}/targets.json | $JSON ${targ}.image_name)\" >> ${ROOT}/bits/config.mk
+        echo ${targ_mk_name}_IMAGE_VERSION=\"$(cat ${ROOT}/targets.json | $JSON ${targ}.image_version)\" >> ${ROOT}/bits/config.mk
+        echo ${targ_mk_name}_IMAGE_DESCRIPTION=\"$(cat ${ROOT}/targets.json | $JSON ${targ}.image_description)\" >> ${ROOT}/bits/config.mk
         echo ${targ_mk_name}_PKGSRC=\"$(cat ${ROOT}/targets.json | $JSON ${targ}.pkgsrc | $JSON -a |  xargs)\" >> ${ROOT}/bits/config.mk
-        echo ${targ_mk_name}_URN=\"$(cat ${ROOT}/targets.json | $JSON ${targ}.urn)\" >> ${ROOT}/bits/config.mk
-        echo ${targ_mk_name}_VERSION=\"$(cat ${ROOT}/targets.json | $JSON ${targ}.version)\" >> ${ROOT}/bits/config.mk
-        #echo ${targ_mk_name}_EXTRA_TARBALLS=\'$(cat ${ROOT}/targets.json | $JSON ${targ}.tarballs | $JSON -o json-0)\' >> ${ROOT}/bits/config.mk
         local num_tarballs=$(cat ${ROOT}/targets.json | $JSON ${targ}.tarballs.length)
         local tarballs=""
         local index=0
