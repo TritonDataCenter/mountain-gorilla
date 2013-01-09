@@ -44,10 +44,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel manowar
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel manowar
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mackerel manowar
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui portal redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mackerel manowar
 
 
 #---- smartlogin
@@ -760,6 +760,33 @@ $(NAPI_BITS): build/napi
 clean_napi:
 	rm -rf $(BITS_DIR)/napi
 	(cd build/napi && gmake clean)
+
+
+
+#---- SAPI
+
+_sapi_stamp=$(SAPI_BRANCH)-$(TIMESTAMP)-g$(SAPI_SHA)
+SAPI_BITS=$(BITS_DIR)/sapi/sapi-pkg-$(_sapi_stamp).tar.bz2
+
+.PHONY: sapi
+sapi: $(SAPI_BITS)
+
+# PATH for sapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(SAPI_BITS): build/sapi
+	@echo "# Build sapi: branch $(SAPI_BRANCH), sha $(SAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/sapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	@echo "# Created sapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(SAPI_BITS)
+	@echo ""
+
+# Warning: if SAPI's submodule deps change, this 'clean_sapi' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_sapi:
+	rm -rf $(BITS_DIR)/sapi
+	(cd build/sapi && gmake clean)
+
 
 
 #---- Marlin
