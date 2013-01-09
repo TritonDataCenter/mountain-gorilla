@@ -39,12 +39,6 @@
     ],
     "deps": []
   },
-  "portal": {
-    "repos": [
-        {"url": "git@git.joyent.com:public-web-client.git", "dir": "portal"}
-    ],
-    "deps": []
-  },
   "dhcpd": {
     "repos": [
         {"url": "git@git.joyent.com:booter.git", "dir": "dhcpd"}
@@ -518,7 +512,6 @@
         "moray",
         "napi",
         "platform",
-        "portal",
         "rabbitmq",
         "redis",
         "sdcsso",

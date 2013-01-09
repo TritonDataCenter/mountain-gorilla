@@ -25,7 +25,6 @@ cat <<HERE;
   "manta-tarball": "manta/$(ls bits/manta/manta-pkg* | xargs basename)",
   "moray-tarball": "moray/$(ls bits/moray/moray-pkg* | xargs basename)",
   "napi-tarball": "napi/$(ls bits/napi/napi-pkg* | xargs basename)",
-  "portal-tarball": "portal/$(ls bits/portal/portal-pkg* | xargs basename)",
   "rabbitmq-tarball": "rabbitmq/$(ls bits/rabbitmq/rabbitmq-pkg* | xargs basename)",
   "redis-tarball": "redis/$(ls bits/redis/redis-pkg* | xargs basename)",
   "sdcsso-tarball": "sdcsso/$(ls bits/sdcsso/sdcsso-pkg* | xargs basename)",
