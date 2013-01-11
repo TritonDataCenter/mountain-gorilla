@@ -514,6 +514,7 @@
         "platform",
         "rabbitmq",
         "redis",
+        "sapi",
         "sdcsso",
         "ufds",
         "usageapi",
