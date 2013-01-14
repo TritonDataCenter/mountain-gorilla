@@ -106,10 +106,17 @@
   },
 
   "imgapi": {
+    "appliance": "true",
+    "image_name": "imgapi",
+    "image_description": "SDC IMGAPI",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
-        {"url": "git@git.joyent.com:imgapi.git"}
+      {"url": "git@git.joyent.com:imgapi.git"}
     ],
-    "deps": []
+    "deps": [],
+    "tarballs": []
   },
 
   "imgapi-cli": {

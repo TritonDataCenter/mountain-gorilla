@@ -475,9 +475,10 @@ clean_imgapi_cli:
 
 _imgapi_stamp=$(IMGAPI_BRANCH)-$(TIMESTAMP)-g$(IMGAPI_SHA)
 IMGAPI_BITS=$(BITS_DIR)/imgapi/imgapi-pkg-$(_imgapi_stamp).tar.bz2
+IMGAPI_IMAGE_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_stamp).zfs.bz2
 
 .PHONY: imgapi
-imgapi: $(IMGAPI_BITS)
+imgapi: $(IMGAPI_BITS) imgapi_image
 
 $(IMGAPI_BITS): build/imgapi
 	@echo "# Build imgapi: branch $(IMGAPI_BRANCH), sha $(IMGAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
@@ -486,6 +487,20 @@ $(IMGAPI_BITS): build/imgapi
 	@echo "# Created imgapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(IMGAPI_BITS)
 	@echo ""
+
+.PHONY: imgapi_image
+imgapi_image: $(IMGAPI_IMAGE_BIT)
+
+$(IMGAPI_IMAGE_BIT): $(IMGAPI_BITS)
+	@echo "# Build imgapi_image: branch $(IMGAPI_BRANCH), sha $(IMGAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(IMGAPI_IMAGE_UUID)" -t $(IMGAPI_BITS) \
+		-o "$(IMGAPI_IMAGE_BIT)" -p $(IMGAPI_PKGSRC) \
+		-t $(IMGAPI_EXTRA_TARBALLS) -n $(IMGAPI_IMAGE_NAME) \
+		-v $(IMGAPI_IMAGE_VERSION)-g$(IMGAPI_SHA) -d $(IMGAPI_IMAGE_DESCRIPTION)
+	@echo "# Created imgapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(IMGAPI_IMAGE_BIT)
+	@echo ""
+
 
 clean_imgapi:
 	rm -rf $(BITS_DIR)/imgapi

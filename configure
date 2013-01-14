@@ -362,9 +362,7 @@ EOF
             tarballs="$tarballs $tb_tarball:$tb_sysroot"
             index=$((${index} + 1))
         done
-        if [[ -n "${tarballs}" ]]; then
-          echo ${targ_mk_name}_EXTRA_TARBALLS=\"${tarballs}\" >> ${ROOT}/bits/config.mk
-        fi
+        echo ${targ_mk_name}_EXTRA_TARBALLS=\"${tarballs}\" >> ${ROOT}/bits/config.mk
       fi
   done
 
