@@ -253,8 +253,10 @@
     "image_name": "manta-postgres",
     "image_description": "Manta postgres",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "image_uuid": "c7622518-5b36-11e2-bcca-2fdaa594b790",
+    "pkgsrc": [
+        "postgresql92-server-9.2.0"
+    ],
     "repos": [
       {"url": "git@git.joyent.com:manatee.git"}
     ],
