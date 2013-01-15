@@ -186,6 +186,9 @@ echo "{
 uuid=$(${SSH} "vmadm list -p -o uuid,alias | grep temp_image.$$ | cut -d ':' -f 1")
 echo "Created build zone ${uuid}"
 
+# setting a quota here fixes https://github.com/joyent/smartos-live/issues/137
+$SSH "vmadm update $uuid quota=100"
+
 
 # "tarballs" is a list of:
 #   TARBALL-ABSOLUTE-PATH-PATTERN[:SYSROOT]
