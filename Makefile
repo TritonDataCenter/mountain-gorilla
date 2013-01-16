@@ -44,10 +44,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel manowar
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel manowar config-agent
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mackerel manowar
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mackerel manowar config-agent
 
 
 #---- smartlogin
@@ -627,6 +627,30 @@ $(ZONETRACKER_BITS): build/zonetracker
 clean_zonetracker:
 	rm -rf $(BITS_DIR)/zonetracker
 	(cd build/zonetracker && gmake clean)
+
+
+#---- Configuration Agent
+
+_config_agent_stamp=$(CONFIG_AGENT_BRANCH)-$(TIMESTAMP)-g$(CONFIG_AGENT_SHA)
+CONFIG_AGENT_BITS=$(BITS_DIR)/config-agent/config-agent-pkg-$(_config_agent_stamp).tar.bz2
+
+.PHONY: config-agent
+config-agent: $(CONFIG_AGENT_BITS)
+
+$(CONFIG_AGENT_BITS): build/config-agent
+	@echo "# Build config-agent: branch $(CONFIG_AGENT_BRANCH), sha $(CONFIG_AGENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/config-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created config-agent bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(CONFIG_AGENT_BITS)
+	@echo ""
+
+clean_config_agent:
+	rm -rf $(BITS_DIR)/config-agent
+	(cd build/config-agent && gmake clean)
+
+
+
 
 
 #---- CNAPI

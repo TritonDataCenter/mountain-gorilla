@@ -154,6 +154,13 @@
     "deps": []
   },
 
+  "config-agent": {
+    "repos": [
+        {"url": "git@git.joyent.com:config-agent.git"}
+    ],
+    "deps": []
+  },
+
   "cnapi": {
     "repos": [
         {"url": "git@git.joyent.com:cnapi.git"}
@@ -439,8 +446,7 @@
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
-    ]
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"} ]
   },
 
   "agentsshar": {
