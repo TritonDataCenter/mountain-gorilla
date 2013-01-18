@@ -35,9 +35,13 @@ echo '' >>/etc/inet/hosts
 echo '10.2.0.190      stuff.joyent.us' >>/etc/inet/hosts
 
 
+# The following scp get Permission Denied without a little wait.
+# Don't know why. Obviously this is a gaping race bug.
+sleep 5
+
 # Encode the https://stuff.joyent.us username and password in your
 # environment for the MG build.
-\\\$BATCH_SCP stuff@stuff.joyent.us:trent/mk-jenkins-slave/.mg.json /root/.mg.json
+\$BATCH_SCP -v stuff@stuff.joyent.us:trent/mk-jenkins-slave/.mg.json /root/.mg.json
 
 
 # Add fake-subset et al to setup for building.
@@ -86,8 +90,13 @@ SETUPBUILDZONE
 
 # Having git "core.autocrlf=input" will cause spurious dirty files in
 # some of our repos. Don't go there.
-[[ \\\$(git config core.autocrlf) == "input" ]] \
+[[ \$(git config core.autocrlf) == "input" ]] \
     && echo "* * * Warning: remove 'autocrlf=input' from your ~/.gitconfig"
+
+# Recent git requires a user.name and user.email setup to do any git repo
+# actions... and a jenkins build wants to 'git tag'.
+git config --global user.name "Jenkins Slave"
+git config --global user.email jenkins-slave@joyent.com
 
 
 # Stupid Java will ask us for license otherwise.

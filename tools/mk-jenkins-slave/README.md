@@ -10,7 +10,7 @@ Usage:
 
 3. Run this:
 
-        ./mk-jenkins-slave.sh BUTLER-NAME
+        ./mk-jenkins-slave.sh BUTLER-NAME [IMAGE-UUID]
 
 4. Tail the setup log file (it takes a long time to run the user script):
 
