@@ -20,6 +20,7 @@ ifeq ($(UNAME), SunOS)
 	TAR = gtar
 endif
 JSON=$(MG_NODE) $(TOP)/tools/json
+UPDATES_IMGADM=updates-imgadm -i $(HOME)/.ssh/automation.id_rsa -u mg
 
 # Other
 # Is JOBS=16 reasonable here? The old bamboo plans used this (or higher).
@@ -476,6 +477,7 @@ clean_imgapi_cli:
 _imgapi_stamp=$(IMGAPI_BRANCH)-$(TIMESTAMP)-g$(IMGAPI_SHA)
 IMGAPI_BITS=$(BITS_DIR)/imgapi/imgapi-pkg-$(_imgapi_stamp).tar.bz2
 IMGAPI_IMAGE_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_stamp).zfs.bz2
+IMGAPI_MANIFEST_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_stamp).zfs.dsmanifest
 
 .PHONY: imgapi
 imgapi: $(IMGAPI_BITS) imgapi_image
@@ -501,6 +503,9 @@ $(IMGAPI_IMAGE_BIT): $(IMGAPI_BITS)
 	@ls -1 $(IMGAPI_IMAGE_BIT)
 	@echo ""
 
+imgapi_publish_image: $(IMGAPI_IMAGE_BIT)
+	@echo "# Publish imgapi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -m $(IMGAPI_MANIFEST_BIT) -f $(IMGAPI_IMAGE_BIT)
 
 clean_imgapi:
 	rm -rf $(BITS_DIR)/imgapi
@@ -1486,5 +1491,13 @@ upload_jenkins:
 		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
 		&& exit 1 || true
 	./tools/upload-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(UPLOAD_LOCATION)/$(JOB_NAME)
+
+# Publish the image for this Jenkins job to https://updates.joyent.us, if
+# appropriate.
+jenkins_publish_image:
+	@[[ -z "$(JOB_NAME)" ]] \
+		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
+		&& exit 1 || true
+	@make $(JOB_NAME)_publish_image
 
 include bits/config.targ.mk

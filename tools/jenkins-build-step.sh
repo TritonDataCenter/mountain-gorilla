@@ -87,6 +87,9 @@ echo "#---------------------- upload"
 
 cp $LOG bits/$JOB_NAME/
 gmake upload_jenkins
+#XXX Only targets with "${JOB_NAME}_publish_image" should call this.
+#    Eventually will stub out for all jobnames.
+gmake jenkins_publish_image
 
 now_time=$(date +%s)
 elapsed=$((${now_time} - ${last_time}))
