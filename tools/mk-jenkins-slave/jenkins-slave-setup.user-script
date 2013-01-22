@@ -99,6 +99,16 @@ git config --global user.name "Jenkins Slave"
 git config --global user.email jenkins-slave@joyent.com
 
 
+# Need 'updates-imgadm' from imgapi-cli.git on the PATH.
+mkdir -p /root/opt
+(cd /root/opt \
+    && git clone git@git.joyent.com:imgapi-cli.git \
+    && cd imgapi-cli \
+    && NODE_PREBUILT_CC_VERSION=4.6.2 make)
+echo '' >>/root/.bashrc
+echo 'export PATH=/root/opt/imgapi-cli/bin:$PATH' >>/root/.bashrc
+
+
 # Stupid Java will ask us for license otherwise.
 mkdir -p /opt/local
 touch /opt/local/.dlj_license_accepted
