@@ -148,12 +148,23 @@ if [[ -z "$image_uuid" ]]; then
   fatal "No image_uuid provided. Use the '-i' option."
 fi
 
-ofbzip=$(echo ${output} | grep ".bz2$" || /bin/true )
 
+#
+# Choose a compression algorithm for the resulting image. The output file name
+# should indicate gzip or bzip2.
+#
+ofbzip=$(echo ${output} | grep ".bz2$" || /bin/true )
 if [[ -n $ofbzip ]]; then
   dobzip="true"
   output=${output%.bz2}
 fi
+
+ofgzip=$(echo ${output} | grep ".gz$" || /bin/true )
+if [[ -n $ofgzip ]]; then
+  dogzip="true"
+  output=${output%.gz}
+fi
+
 
 # Mac prefix to use for short-lease DHCP
 # See https://hub.joyent.com/wiki/display/dev/Development+Lab
@@ -268,6 +279,11 @@ ${SSH} "vmadm destroy ${uuid}"
 if [[ -n $dobzip ]]; then
   bzip2 ${output}
   output=${output}.bz2
+fi
+
+if [[ -n $dogzip ]]; then
+  gzip ${output}
+  output=${output}.gz
 fi
 
 timestamp=$(node -e 'console.log(new Date().toISOString())')
