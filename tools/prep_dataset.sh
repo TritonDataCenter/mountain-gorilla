@@ -278,13 +278,15 @@ ${SSH} "vmadm destroy ${uuid}"
 
 if [[ -n $dobzip ]]; then
   bzip2 ${output}
-  output=${output}.bz2
+  suffix="bz2"
 fi
 
 if [[ -n $dogzip ]]; then
   gzip ${output}
-  output=${output}.gz
+  suffix="gz"
 fi
+
+output=${output}.${suffix}
 
 timestamp=$(node -e 'console.log(new Date().toISOString())')
 shasum=$(/usr/bin/sum -x sha1 ${output} | cut -d ' ' -f1)
@@ -293,7 +295,7 @@ size=$(/usr/bin/du -ks ${output} | cut -f 1)
 
 # TODO (when imgadm v2): drop files, creator_uuid, creator_name, urn
 # TODO: consider changing owner to poseidon UUID
-cat <<EOF>> ${output%.bz2}.dsmanifest
+cat <<EOF>> ${output%.$suffix}.dsmanifest
   {
     "uuid": "${uuid}",
     "name": "${image_name}",
