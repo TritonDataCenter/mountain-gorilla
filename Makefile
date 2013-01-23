@@ -1173,6 +1173,7 @@ clean_minnow:
 _mako_stamp=$(MAKO_BRANCH)-$(TIMESTAMP)-g$(MAKO_SHA)
 MAKO_BITS=$(BITS_DIR)/mako/mako-pkg-$(_mako_stamp).tar.bz2
 MAKO_IMAGE_BIT=$(BITS_DIR)/mako/mako-zfs-$(_mako_stamp).zfs.bz2
+MAKO_MANIFEST_BIT=$(BITS_DIR)/mako/mako-zfs-$(_mako_stamp).zfs.dsmanifest
 
 .PHONY: mako
 mako: $(MAKO_BITS) mako_image
@@ -1197,6 +1198,10 @@ $(MAKO_IMAGE_BIT): $(MAKO_BITS)
 	@echo "# Created mako image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MAKO_IMAGE_BIT)
 	@echo ""
+
+mako_publish_image: $(MAKO_IMAGE_BIT)
+	@echo "# Publish mako image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -m $(MAKO_MANIFEST_BIT) -f $(MAKO_IMAGE_BIT)
 
 clean_mako:
 	rm -rf $(BITS_DIR)/mako
