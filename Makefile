@@ -345,6 +345,7 @@ clean_cloudapi:
 _manatee_stamp=$(MANATEE_BRANCH)-$(TIMESTAMP)-g$(MANATEE_SHA)
 MANATEE_BITS=$(BITS_DIR)/manatee/manatee-pkg-$(_manatee_stamp).tar.bz2
 MANATEE_IMAGE_BIT=$(BITS_DIR)/manatee/manatee-zfs-$(_manatee_stamp).zfs.bz2
+MANATEE_MANIFEST_BIT=$(BITS_DIR)/manatee/manatee-zfs-$(_manatee_stamp).zfs.dsmanifest
 
 .PHONY: manatee
 manatee: $(MANATEE_BITS) manatee_image
@@ -369,6 +370,10 @@ $(MANATEE_IMAGE_BIT): $(MANATEE_BITS)
 	@echo "# Created manatee image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MANATEE_IMAGE_BIT)
 	@echo ""
+
+manatee_publish_image: $(MANATEE_IMAGE_BIT)
+	@echo "# Publish manatee image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -m $(MANATEE_MANIFEST_BIT) -f $(MANATEE_IMAGE_BIT)
 
 clean_manatee:
 	rm -rf $(BITS_DIR)/manatee
@@ -817,6 +822,7 @@ clean_sapi:
 _marlin_stamp=$(MARLIN_BRANCH)-$(TIMESTAMP)-g$(MARLIN_SHA)
 MARLIN_BITS=$(BITS_DIR)/marlin/marlin-pkg-$(_marlin_stamp).tar.bz2
 MARLIN_IMAGE_BIT=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).zfs.bz2
+MARLIN_MANIFEST_BIT=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).zfs.dsmanifest
 
 .PHONY: marlin
 marlin: $(MARLIN_BITS) marlin_image
@@ -844,6 +850,10 @@ $(MARLIN_IMAGE_BIT): $(MARLIN_BITS)
 	@ls -1 $(MARLIN_IMAGE_BIT)
 	@echo ""
 
+marlin_publish_image: $(MARLIN_IMAGE_BIT)
+	@echo "# Publish marlin image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -m $(MARLIN_MANIFEST_BIT) -f $(MARLIN_IMAGE_BIT)
+
 clean_marlin:
 	rm -rf $(BITS_DIR)/marlin
 	(cd build/marlin && gmake distclean)
@@ -854,6 +864,7 @@ clean_marlin:
 _mahi_stamp=$(MAHI_BRANCH)-$(TIMESTAMP)-g$(MAHI_SHA)
 MAHI_BITS=$(BITS_DIR)/mahi/mahi-pkg-$(_mahi_stamp).tar.bz2
 MAHI_IMAGE_BIT=$(BITS_DIR)/mahi/mahi-zfs-$(_mahi_stamp).zfs.bz2
+MAHI_MANIFEST_BIT=$(BITS_DIR)/mahi/mahi-zfs-$(_mahi_stamp).zfs.dsmanifest
 
 .PHONY: mahi
 mahi: $(MAHI_BITS) mahi_image
@@ -879,6 +890,10 @@ $(MAHI_IMAGE_BIT): $(MAHI_BITS)
 	@ls -1 $(MAHI_IMAGE_BIT)
 	@echo ""
 
+mahi_publish_image: $(MAHI_IMAGE_BIT)
+	@echo "# Publish mahi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -m $(MAHI_MANIFEST_BIT) -f $(MAHI_IMAGE_BIT)
+
 clean_mahi:
 	rm -rf $(BITS_DIR)/mahi
 	(cd build/mahi && gmake distclean)
@@ -889,6 +904,7 @@ clean_mahi:
 _mola_stamp=$(MOLA_BRANCH)-$(TIMESTAMP)-g$(MOLA_SHA)
 MOLA_BITS=$(BITS_DIR)/mola/mola-pkg-$(_mola_stamp).tar.bz2
 MOLA_IMAGE_BIT=$(BITS_DIR)/mola/mola-zfs-$(_mola_stamp).zfs.bz2
+MOLA_MANIFEST_BIT=$(BITS_DIR)/mola/mola-zfs-$(_mola_stamp).zfs.dsmanifest
 
 .PHONY: mola
 mola: $(MOLA_BITS) mola_image
@@ -916,6 +932,10 @@ $(MOLA_IMAGE_BIT): $(MOLA_BITS)
 	@ls -1 $(MOLA_IMAGE_BIT)
 	@echo ""
 
+mola_publish_image: $(MOLA_IMAGE_BIT)
+	@echo "# Publish mola image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -m $(MOLA_MANIFEST_BIT) -f $(MOLA_IMAGE_BIT)
+
 clean_mola:
 	rm -rf $(BITS_DIR)/mola
 	(cd build/mola && gmake distclean)
@@ -926,6 +946,7 @@ clean_mola:
 _moray_stamp=$(MORAY_BRANCH)-$(TIMESTAMP)-g$(MORAY_SHA)
 MORAY_BITS=$(BITS_DIR)/moray/moray-pkg-$(_moray_stamp).tar.bz2
 MORAY_IMAGE_BIT=$(BITS_DIR)/moray/moray-zfs-$(_moray_stamp).zfs.bz2
+MORAY_MANIFEST_BIT=$(BITS_DIR)/moray/moray-zfs-$(_moray_stamp).zfs.dsmanifest
 
 .PHONY: moray
 moray: $(MORAY_BITS) moray_image
@@ -953,6 +974,10 @@ $(MORAY_IMAGE_BIT): $(MORAY_BITS)
 	@ls -1 $(MORAY_IMAGE_BIT)
 	@echo ""
 
+moray_publish_image: $(MORAY_IMAGE_BIT)
+	@echo "# Publish moray image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -m $(MORAY_MANIFEST_BIT) -f $(MORAY_IMAGE_BIT)
+
 clean_moray:
 	rm -rf $(BITS_DIR)/moray
 	(cd build/moray && gmake distclean)
@@ -963,6 +988,7 @@ clean_moray:
 _muskie_stamp=$(MUSKIE_BRANCH)-$(TIMESTAMP)-g$(MUSKIE_SHA)
 MUSKIE_BITS=$(BITS_DIR)/muskie/muskie-pkg-$(_muskie_stamp).tar.bz2
 MUSKIE_IMAGE_BIT=$(BITS_DIR)/muskie/muskie-zfs-$(_muskie_stamp).zfs.bz2
+MUSKIE_MANIFEST_BIT=$(BITS_DIR)/muskie/muskie-zfs-$(_muskie_stamp).zfs.dsmanifest
 
 .PHONY: muskie
 muskie: $(MUSKIE_BITS) muskie_image
@@ -989,6 +1015,10 @@ $(MUSKIE_IMAGE_BIT): $(MUSKIE_BITS)
 	@echo "# Created muskie image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MUSKIE_IMAGE_BIT)
 	@echo ""
+
+muskie_publish_image: $(MUSKIE_IMAGE_BIT)
+	@echo "# Publish muskie image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -m $(MUSKIE_MANIFEST_BIT) -f $(MUSKIE_IMAGE_BIT)
 
 clean_muskie:
 	rm -rf $(BITS_DIR)/muskie
@@ -1084,6 +1114,7 @@ clean_manowar:
 _binder_stamp=$(BINDER_BRANCH)-$(TIMESTAMP)-g$(BINDER_SHA)
 BINDER_BITS=$(BITS_DIR)/binder/binder-pkg-$(_binder_stamp).tar.bz2
 BINDER_IMAGE_BIT=$(BITS_DIR)/binder/binder-zfs-$(_binder_stamp).zfs.bz2
+BINDER_MANIFEST_BIT=$(BITS_DIR)/binder/binder-zfs-$(_binder_stamp).zfs.dsmanifest
 
 .PHONY: binder
 binder: $(BINDER_BITS) binder_image
@@ -1109,6 +1140,10 @@ $(BINDER_IMAGE_BIT): $(BINDER_BITS)
 	@ls -1 $(BINDER_IMAGE_BIT)
 	@echo ""
 
+binder_publish_image: $(BINDER_IMAGE_BIT)
+	@echo "# Publish binder image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -m $(BINDER_MANIFEST_BIT) -f $(BINDER_IMAGE_BIT)
+
 clean_binder:
 	rm -rf $(BITS_DIR)/binder
 	(cd build/binder && gmake distclean)
@@ -1118,6 +1153,7 @@ clean_binder:
 _muppet_stamp=$(MUPPET_BRANCH)-$(TIMESTAMP)-g$(MUPPET_SHA)
 MUPPET_BITS=$(BITS_DIR)/muppet/muppet-pkg-$(_muppet_stamp).tar.bz2
 MUPPET_IMAGE_BIT=$(BITS_DIR)/muppet/muppet-zfs-$(_muppet_stamp).zfs.bz2
+MUPPET_MANIFEST_BIT=$(BITS_DIR)/muppet/muppet-zfs-$(_muppet_stamp).zfs.dsmanifest
 
 .PHONY: muppet
 muppet: $(MUPPET_BITS) muppet_image
@@ -1142,6 +1178,10 @@ $(MUPPET_IMAGE_BIT): $(MUPPET_BITS)
 	@echo "# Created muppet image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MUPPET_IMAGE_BIT)
 	@echo ""
+
+muppet_publish_image: $(MUPPET_IMAGE_BIT)
+	@echo "# Publish muppet image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -m $(MUPPET_MANIFEST_BIT) -f $(MUPPET_IMAGE_BIT)
 
 clean_muppet:
 	rm -rf $(BITS_DIR)/muppet
