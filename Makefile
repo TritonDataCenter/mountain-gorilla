@@ -373,7 +373,7 @@ $(MANATEE_IMAGE_BIT): $(MANATEE_BITS)
 
 manatee_publish_image: $(MANATEE_IMAGE_BIT)
 	@echo "# Publish manatee image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -m $(MANATEE_MANIFEST_BIT) -f $(MANATEE_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(MANATEE_MANIFEST_BIT) -f $(MANATEE_IMAGE_BIT)
 
 clean_manatee:
 	rm -rf $(BITS_DIR)/manatee
@@ -510,7 +510,7 @@ $(IMGAPI_IMAGE_BIT): $(IMGAPI_BITS)
 
 imgapi_publish_image: $(IMGAPI_IMAGE_BIT)
 	@echo "# Publish imgapi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -m $(IMGAPI_MANIFEST_BIT) -f $(IMGAPI_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(IMGAPI_MANIFEST_BIT) -f $(IMGAPI_IMAGE_BIT)
 
 clean_imgapi:
 	rm -rf $(BITS_DIR)/imgapi
@@ -852,7 +852,7 @@ $(MARLIN_IMAGE_BIT): $(MARLIN_BITS)
 
 marlin_publish_image: $(MARLIN_IMAGE_BIT)
 	@echo "# Publish marlin image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -m $(MARLIN_MANIFEST_BIT) -f $(MARLIN_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(MARLIN_MANIFEST_BIT) -f $(MARLIN_IMAGE_BIT)
 
 clean_marlin:
 	rm -rf $(BITS_DIR)/marlin
@@ -892,7 +892,7 @@ $(MAHI_IMAGE_BIT): $(MAHI_BITS)
 
 mahi_publish_image: $(MAHI_IMAGE_BIT)
 	@echo "# Publish mahi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -m $(MAHI_MANIFEST_BIT) -f $(MAHI_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(MAHI_MANIFEST_BIT) -f $(MAHI_IMAGE_BIT)
 
 clean_mahi:
 	rm -rf $(BITS_DIR)/mahi
@@ -934,7 +934,7 @@ $(MOLA_IMAGE_BIT): $(MOLA_BITS)
 
 mola_publish_image: $(MOLA_IMAGE_BIT)
 	@echo "# Publish mola image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -m $(MOLA_MANIFEST_BIT) -f $(MOLA_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(MOLA_MANIFEST_BIT) -f $(MOLA_IMAGE_BIT)
 
 clean_mola:
 	rm -rf $(BITS_DIR)/mola
@@ -976,7 +976,7 @@ $(MORAY_IMAGE_BIT): $(MORAY_BITS)
 
 moray_publish_image: $(MORAY_IMAGE_BIT)
 	@echo "# Publish moray image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -m $(MORAY_MANIFEST_BIT) -f $(MORAY_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(MORAY_MANIFEST_BIT) -f $(MORAY_IMAGE_BIT)
 
 clean_moray:
 	rm -rf $(BITS_DIR)/moray
@@ -1018,7 +1018,7 @@ $(MUSKIE_IMAGE_BIT): $(MUSKIE_BITS)
 
 muskie_publish_image: $(MUSKIE_IMAGE_BIT)
 	@echo "# Publish muskie image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -m $(MUSKIE_MANIFEST_BIT) -f $(MUSKIE_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(MUSKIE_MANIFEST_BIT) -f $(MUSKIE_IMAGE_BIT)
 
 clean_muskie:
 	rm -rf $(BITS_DIR)/muskie
@@ -1142,7 +1142,7 @@ $(BINDER_IMAGE_BIT): $(BINDER_BITS)
 
 binder_publish_image: $(BINDER_IMAGE_BIT)
 	@echo "# Publish binder image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -m $(BINDER_MANIFEST_BIT) -f $(BINDER_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(BINDER_MANIFEST_BIT) -f $(BINDER_IMAGE_BIT)
 
 clean_binder:
 	rm -rf $(BITS_DIR)/binder
@@ -1181,7 +1181,7 @@ $(MUPPET_IMAGE_BIT): $(MUPPET_BITS)
 
 muppet_publish_image: $(MUPPET_IMAGE_BIT)
 	@echo "# Publish muppet image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -m $(MUPPET_MANIFEST_BIT) -f $(MUPPET_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(MUPPET_MANIFEST_BIT) -f $(MUPPET_IMAGE_BIT)
 
 clean_muppet:
 	rm -rf $(BITS_DIR)/muppet
@@ -1241,7 +1241,7 @@ $(MAKO_IMAGE_BIT): $(MAKO_BITS)
 
 mako_publish_image: $(MAKO_IMAGE_BIT)
 	@echo "# Publish mako image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -m $(MAKO_MANIFEST_BIT) -f $(MAKO_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(MAKO_MANIFEST_BIT) -f $(MAKO_IMAGE_BIT)
 
 clean_mako:
 	rm -rf $(BITS_DIR)/mako
