@@ -429,6 +429,8 @@ function get_pkgsrc() {
 
     mkdir -p build/pkgsrc/
 
+    set -o xtrace
+
     for dataset in $(find ${ROOT}/build/usb-headnode/zones -name "dataset"); do
       local ds=$(cat ${dataset})
       local pkgsrc_url=$((${JSON} datasets | ${JSON} -a name pkgsrc_url \
@@ -445,32 +447,50 @@ function get_pkgsrc() {
       mkdir -p $cache_dir
       mkdir -p $dest_dir
 
-      if [[ ! -f $dest_dir/md5sums.txt ]]; then
+      if [[ ! -f $dest_dir/../SHA512.bz2 ]]; then
+        echo "# get ${pkgsrc_url}/../SHA512.bz2"
+        if ${CURL} -S -o $cache_dir/../SHA512.bz2 ${pkgsrc_url}/../SHA512.bz2; then
+          $CP_LINK $cache_dir/../SHA512.bz2 $dest_dir/../SHA512.bz2
+        elif [[ ! -f $dest_dir/md5sums.txt ]]; then
           echo "# get ${pkgsrc_url}md5sums.txt"
           ${CURL} -S -o $cache_dir/md5sums.txt ${pkgsrc_url}md5sums.txt
           $CP_LINK $cache_dir/md5sums.txt $dest_dir/md5sums.txt
+        fi
       fi
 
       for file in $(cat $(dirname ${dataset})/pkgsrc); do
         if [[ -f $dest_dir/$file.tgz ]]; then
-            true # pass through
+          true # pass through
         else
-            if [[ ! -f $cache_dir/${file}.tgz ]]; then
-              echo "# get ${pkgsrc_url}${file}.tgz"
-              ${CURL} -S -o $cache_dir/$file.tgz ${pkgsrc_url}/${file}.tgz
+          if [[ ! -f $cache_dir/${file}.tgz ]]; then
+            echo "# get ${pkgsrc_url}${file}.tgz"
+            ${CURL} -S -o $cache_dir/$file.tgz ${pkgsrc_url}/${file}.tgz
+
+            if [[ -f $cache_dir/../SHA512.bz2 ]]; then
+              local correct_sha512=$(bzcat ${cache_dir}/../SHA512.bz2 | grep "/${file}.tgz)" | cut -d' ' -f4)
+              local actual_sha512=$(openssl dgst -sha512 < $cache_dir/$file.tgz | awk '{print $NF}')
+              if [[ $correct_sha512 != $actual_sha512 ]]; then
+                rm $cache_dir/$file.tgz
+                fatal "SHA512 check failure on $cache_dir/$file.tgz (actual $actual_sha512, from SHA512.bz2 $correct_sha512)"
+              fi
+            elif [[ -f $cache_dir/md5sums.txt ]]; then
               local correct_md5=$(grep $file $cache_dir/md5sums.txt | cut -d ' ' -f1)
               local actual_md5=$(openssl dgst -md5 < $cache_dir/$file.tgz | awk '{print $NF}')
               if [[ $correct_md5 != $actual_md5 ]]; then
-                  rm $cache_dir/$file.tgz
-                  fatal "md5 check failure on $cache_dir/$file.tgz (actual $actual_md5, from md5sums $correct_md5)"
+                rm $cache_dir/$file.tgz
+                fatal "md5 check failure on $cache_dir/$file.tgz (actual $actual_md5, from md5sums $correct_md5)"
               fi
-            else
-                echo "# have $cache_dir/$file.tgz"
             fi
-            $CP_LINK $cache_dir/$file.tgz $dest_dir/
+          else
+            echo "# have $cache_dir/$file.tgz"
+          fi
+          $CP_LINK $cache_dir/$file.tgz $dest_dir/
         fi
       done
     done
+
+    set +o xtrace
+
   fi
 }
 
