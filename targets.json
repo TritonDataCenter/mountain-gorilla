@@ -109,7 +109,6 @@
     "appliance": "true",
     "image_name": "imgapi",
     "image_description": "SDC IMGAPI",
-    "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [],
     "repos": [
@@ -228,7 +227,6 @@
     "appliance": "true",
     "image_name": "manta-nameservice",
     "image_description": "Manta nameservice",
-    "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "sun-jre6-6.0.26",
@@ -252,7 +250,6 @@
     "appliance": "true",
     "image_name": "manta-postgres",
     "image_description": "Manta postgres",
-    "image_version": "1.0.0",
     "image_uuid": "ee1fb198-5fe1-11e2-9cce-e319fd47df7b",
     "pkgsrc": [
         "postgresql92-server-9.2.2nb1"
@@ -276,7 +273,6 @@
     "appliance": "true",
     "image_name": "manta-authcache",
     "image_description": "Manta authcache",
-    "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "redis-2.4.13",
@@ -301,7 +297,6 @@
     "appliance": "true",
     "image_name": "manta-moray",
     "image_description": "Manta moray",
-    "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "haproxy-1.4.18",
@@ -327,7 +322,6 @@
     "appliance": "true",
     "image_name": "manta-loadbalancer",
     "image_description": "Manta loadbalancer",
-    "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "stud-0nb20120827",
@@ -352,7 +346,6 @@
     "appliance": "true",
     "image_name": "manta-webapi",
     "image_description": "Manta webapi",
-    "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "zookeeper-client-3.4.3"
@@ -376,7 +369,6 @@
     "appliance": "true",
     "image_name": "manta-ops",
     "image_description": "Manta ops",
-    "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "redis-2.4.13",
@@ -406,7 +398,6 @@
     "image_name": "manta-storage",
     "image_description": "Manta storage",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "image_version": "1.0.0",
     "pkgsrc": [
       "pcre-8.21",
       "zookeeper-client-3.4.3"
@@ -433,7 +424,6 @@
     "image_name": "manta-jobworker",
     "image_description": "Manta jobworker",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "image_version": "1.0.0",
     "pkgsrc": [
       "zookeeper-client-3.4.3"
     ],
