@@ -268,7 +268,7 @@ fi
 
 #
 # import smf manifests
-${SSH} "zlogin ${uuid} '/usr/bin/find /opt/smartdc -name manifests -exec svccfg import {} \;'"
+${SSH} "zlogin ${uuid} 'test ! -d /opt/smartdc || /usr/bin/find /opt/smartdc -name manifests -exec svccfg import {} \;'"
 
 cat tools/clean-image.sh | ${SSH} "zlogin ${uuid} 'cat > /tmp/clean-image.sh; /usr/bin/bash /tmp/clean-image.sh; shutdown -i5 -g0 -y;'"
 

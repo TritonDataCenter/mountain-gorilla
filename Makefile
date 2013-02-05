@@ -82,9 +82,11 @@ AMON_BITS=$(BITS_DIR)/amon/amon-pkg-$(_amon_stamp).tar.bz2 \
 	$(BITS_DIR)/amon/amon-relay-$(_amon_stamp).tgz \
 	$(BITS_DIR)/amon/amon-agent-$(_amon_stamp).tgz
 AMON_BITS_0=$(shell echo $(AMON_BITS) | awk '{print $$1}')
+AMON_IMAGE_BIT=$(BITS_DIR)/amon/amon-zfs-$(_amon_stamp).zfs.gz
+AMON_MANIFEST_BIT=$(BITS_DIR)/amon/amon-zfs-$(_amon_stamp).zfs.dsmanifest
 
 .PHONY: amon
-amon: $(AMON_BITS_0)
+amon: $(AMON_BITS_0) amon_image
 
 $(AMON_BITS): build/amon
 	@echo "# Build amon: branch $(AMON_BRANCH), sha $(AMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
@@ -94,11 +96,26 @@ $(AMON_BITS): build/amon
 	@ls -1 $(AMON_BITS)
 	@echo ""
 
+.PHONY: amon_image
+amon_image: $(AMON_IMAGE_BIT)
+
+$(AMON_IMAGE_BIT): $(AMON_BITS_0)
+	@echo "# Build amon_image: branch $(AMON_BRANCH), sha $(AMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(AMON_IMAGE_UUID)" -t $(AMON_BITS_0) \
+		-o "$(AMON_IMAGE_BIT)" -p $(AMON_PKGSRC) \
+		-t $(AMON_EXTRA_TARBALLS) -n $(AMON_IMAGE_NAME) \
+		-v $(_amon_stamp) -d $(AMON_IMAGE_DESCRIPTION)
+	@echo "# Created amon image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(AMON_IMAGE_BIT)
+	@echo ""
+
+amon_publish_image: $(AMON_IMAGE_BIT)
+	@echo "# Publish amon image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(AMON_MANIFEST_BIT) -f $(AMON_IMAGE_BIT)
+
 clean_amon:
 	rm -rf $(BITS_DIR)/amon
 	(cd build/amon && gmake clean)
-
-
 
 #---- cloud-analytics
 #TODO:
@@ -112,9 +129,11 @@ CA_BITS=$(BITS_DIR)/ca/ca-pkg-$(_ca_stamp).tar.bz2 \
 	$(BITS_DIR)/ca/cabase-$(_ca_stamp).tar.gz \
 	$(BITS_DIR)/ca/cainstsvc-$(_ca_stamp).tar.gz
 CA_BITS_0=$(shell echo $(CA_BITS) | awk '{print $$1}')
+CA_IMAGE_BIT=$(BITS_DIR)/ca/ca-zfs-$(_ca_stamp).zfs.gz
+CA_MANIFEST_BIT=$(BITS_DIR)/ca/ca-zfs-$(_ca_stamp).zfs.dsmanifest
 
 .PHONY: ca
-ca: $(CA_BITS_0)
+ca: $(CA_BITS_0) ca_image
 
 # PATH for ca build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -126,7 +145,6 @@ config_ca_old: build/cloud-analytics
 	@ls -1 $(CA_BITS)
 	@echo ""
 
-#
 # Build CA in the new build-zone style if requested by configure.
 #
 config_ca_new: build/cloud-analytics
@@ -135,6 +153,21 @@ config_ca_new: build/cloud-analytics
 	NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BRANCH=$(BRANCH) $(TOP)/tools/build-zone build.json $(TOP)/targets.json ca $(CLOUD_ANALYTICS_SHA)
 	@ls -1 $(CA_BITS)
 	@echo ""
+
+$(CA_IMAGE_BIT): $(CA_BITS_0)
+	@echo "# Build ca_image: branch $(CA_BRANCH), sha $(CA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(CA_IMAGE_UUID)" -t $(CA_BITS) \
+		-o "$(CA_IMAGE_BIT)" -p $(CA_PKGSRC) \
+		-t $(CA_EXTRA_TARBALLS) -n $(CA_IMAGE_NAME) \
+		-v $(_ca_stamp) -d $(CA_IMAGE_DESCRIPTION)
+	@echo "# Created ca image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(CA_IMAGE_BIT)
+	@echo ""
+
+# XXX - need RELENG-353 first.
+# ca_publish_image: $(CA_IMAGE_BIT)
+#     @echo "# Publish ca image to SDC Updates repo."
+#     $(UPDATES_IMGADM) import -ddd -m $(CA_MANIFEST_BIT) -f $(CA_IMAGE_BIT)
 
 # Warning: if CA's submodule deps change, this 'clean_ca' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -146,11 +179,14 @@ clean_ca:
 
 #---- UFDS
 
+
 _ufds_stamp=$(UFDS_BRANCH)-$(TIMESTAMP)-g$(UFDS_SHA)
 UFDS_BITS=$(BITS_DIR)/ufds/ufds-pkg-$(_ufds_stamp).tar.bz2
+UFDS_IMAGE_BIT=$(BITS_DIR)/ufds/ufds-zfs-$(_ufds_stamp).zfs.gz
+UFDS_MANIFEST_BIT=$(BITS_DIR)/ufds/ufds-zfs-$(_ufds_stamp).zfs.dsmanifest
 
 .PHONY: ufds
-ufds: $(UFDS_BITS)
+ufds: $(UFDS_BITS) ufds_image
 
 # PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -161,6 +197,23 @@ $(UFDS_BITS): build/ufds
 	@echo "# Created ufds bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(UFDS_BITS)
 	@echo ""
+
+.PHONY: ufds_image
+ufds_image: $(UFDS_IMAGE_BIT)
+
+$(UFDS_IMAGE_BIT): $(UFDS_BITS)
+	@echo "# Build ufds_image: branch $(UFDS_BRANCH), sha $(UFDS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(UFDS_IMAGE_UUID)" -t $(UFDS_BITS) \
+		-o "$(UFDS_IMAGE_BIT)" -p $(UFDS_PKGSRC) \
+		-t $(UFDS_EXTRA_TARBALLS) -n $(UFDS_IMAGE_NAME) \
+		-v $(_ufds_stamp) -d $(UFDS_IMAGE_DESCRIPTION)
+	@echo "# Created ufds image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(UFDS_IMAGE_BIT)
+	@echo ""
+
+ufds_publish_image: $(UFDS_IMAGE_BIT)
+	@echo "# Publish ufds image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(UFDS_MANIFEST_BIT) -f $(UFDS_IMAGE_BIT)
 
 # Warning: if UFDS's submodule deps change, this 'clean_ufds' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -173,9 +226,11 @@ clean_ufds:
 
 _usageapi_stamp=$(USAGEAPI_BRANCH)-$(TIMESTAMP)-g$(USAGEAPI_SHA)
 USAGEAPI_BITS=$(BITS_DIR)/usageapi/usageapi-pkg-$(_usageapi_stamp).tar.bz2
+USAGEAPI_IMAGE_BIT=$(BITS_DIR)/usageapi/usageapi-zfs-$(_usageapi_stamp).zfs.gz
+USAGEAPI_MANIFEST_BIT=$(BITS_DIR)/usageapi/usageapi-zfs-$(_usageapi_stamp).zfs.dsmanifest
 
 .PHONY: usageapi
-usageapi: $(USAGEAPI_BITS)
+usageapi: $(USAGEAPI_BITS) usageapi_image
 
 # PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -186,6 +241,24 @@ $(USAGEAPI_BITS): build/usageapi
 	@echo "# Created usageapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(USAGEAPI_BITS)
 	@echo ""
+
+.PHONY: usageapi_image
+usageapi_image: $(USAGEAPI_IMAGE_BIT)
+
+$(USAGEAPI_IMAGE_BIT): $(USAGEAPI_BITS)
+	@echo "# Build usageapi_image: branch $(USAGEAPI_BRANCH), sha $(USAGEAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(USAGEAPI_IMAGE_UUID)" -t $(USAGEAPI_BITS) \
+		-o "$(USAGEAPI_IMAGE_BIT)" -p $(USAGEAPI_PKGSRC) \
+		-t $(USAGEAPI_EXTRA_TARBALLS) -n $(USAGEAPI_IMAGE_NAME) \
+		-v $(_usageapi_stamp) -d $(USAGEAPI_IMAGE_DESCRIPTION)
+	@echo "# Created usageapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(USAGEAPI_IMAGE_BIT)
+	@echo ""
+
+usageapi_publish_image: $(USAGEAPI_IMAGE_BIT)
+	@echo "# Publish usageapi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(USAGEAPI_MANIFEST_BIT) -f $(USAGEAPI_IMAGE_BIT)
+
 
 # Warning: if usageapi's submodule deps change, this 'clean_ufds' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -198,9 +271,11 @@ clean_usageapi:
 
 _assets_stamp=$(ASSETS_BRANCH)-$(TIMESTAMP)-g$(ASSETS_SHA)
 ASSETS_BITS=$(BITS_DIR)/assets/assets-pkg-$(_assets_stamp).tar.bz2
+ASSETS_IMAGE_BIT=$(BITS_DIR)/assets/assets-zfs-$(_assets_stamp).zfs.gz
+ASSETS_MANIFEST_BIT=$(BITS_DIR)/assets/assets-zfs-$(_assets_stamp).zfs.dsmanifest
 
 .PHONY: assets
-assets: $(ASSETS_BITS)
+assets: $(ASSETS_BITS) assets_image
 
 $(ASSETS_BITS): build/assets
 	@echo "# Build assets: branch $(ASSETS_BRANCH), sha $(ASSETS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
@@ -210,6 +285,23 @@ $(ASSETS_BITS): build/assets
 	@ls -1 $(ASSETS_BITS)
 	@echo ""
 
+.PHONY: assets_image
+assets_image: $(ASSETS_IMAGE_BIT)
+
+$(ASSETS_IMAGE_BIT): $(ASSETS_BITS)
+	@echo "# Build assets_image: branch $(ASSETS_BRANCH), sha $(ASSETS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(ASSETS_IMAGE_UUID)" -t $(ASSETS_BITS) \
+		-o "$(ASSETS_IMAGE_BIT)" -p $(ASSETS_PKGSRC) \
+		-t $(ASSETS_EXTRA_TARBALLS) -n $(ASSETS_IMAGE_NAME) \
+		-v $(_assets_stamp) -d $(ASSETS_IMAGE_DESCRIPTION)
+	@echo "# Created assets image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(ASSETS_IMAGE_BIT)
+	@echo ""
+
+assets_publish_image: $(ASSETS_IMAGE_BIT)
+	@echo "# Publish assets image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(ASSETS_MANIFEST_BIT) -f $(ASSETS_IMAGE_BIT)
+
 clean_assets:
 	rm -rf $(BITS_DIR)/assets
 	(cd build/assets && gmake clean)
@@ -218,9 +310,11 @@ clean_assets:
 
 _adminui_stamp=$(ADMINUI_BRANCH)-$(TIMESTAMP)-g$(ADMINUI_SHA)
 ADMINUI_BITS=$(BITS_DIR)/adminui/adminui-pkg-$(_adminui_stamp).tar.bz2
+ADMINUI_IMAGE_BIT=$(BITS_DIR)/adminui/adminui-zfs-$(_adminui_stamp).zfs.gz
+ADMINUI_MANIFEST_BIT=$(BITS_DIR)/adminui/adminui-zfs-$(_adminui_stamp).zfs.dsmanifest
 
 .PHONY: adminui
-adminui: $(ADMINUI_BITS)
+adminui: $(ADMINUI_BITS) adminui_image
 
 $(ADMINUI_BITS): build/adminui
 	@echo "# Build adminui: branch $(ADMINUI_BRANCH), sha $(ADMINUI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
@@ -230,6 +324,23 @@ $(ADMINUI_BITS): build/adminui
 	@ls -1 $(ADMINUI_BITS)
 	@echo ""
 
+.PHONY: adminui_image
+adminui_image: $(ADMINUI_IMAGE_BIT)
+
+$(ADMINUI_IMAGE_BIT): $(ADMINUI_BITS)
+	@echo "# Build adminui_image: branch $(ADMINUI_BRANCH), sha $(ADMINUI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(ADMINUI_IMAGE_UUID)" -t $(ADMINUI_BITS) \
+		-o "$(ADMINUI_IMAGE_BIT)" -p $(ADMINUI_PKGSRC) \
+		-t $(ADMINUI_EXTRA_TARBALLS) -n $(ADMINUI_IMAGE_NAME) \
+		-v $(_adminui_stamp) -d $(ADMINUI_IMAGE_DESCRIPTION)
+	@echo "# Created adminui image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(ADMINUI_IMAGE_BIT)
+	@echo ""
+
+adminui_publish_image: $(ADMINUI_IMAGE_BIT)
+	@echo "# Publish adminui image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(ADMINUI_MANIFEST_BIT) -f $(ADMINUI_IMAGE_BIT)
+
 clean_adminui:
 	rm -rf $(BITS_DIR)/adminui
 	(cd build/adminui && gmake clean)
@@ -238,9 +349,11 @@ clean_adminui:
 
 _redis_stamp=$(REDIS_BRANCH)-$(TIMESTAMP)-g$(REDIS_SHA)
 REDIS_BITS=$(BITS_DIR)/redis/redis-pkg-$(_redis_stamp).tar.bz2
+REDIS_IMAGE_BIT=$(BITS_DIR)/redis/redis-zfs-$(_redis_stamp).zfs.gz
+REDIS_MANIFEST_BIT=$(BITS_DIR)/redis/redis-zfs-$(_redis_stamp).zfs.dsmanifest
 
 .PHONY: redis
-redis: $(REDIS_BITS)
+redis: $(REDIS_BITS) redis_image
 
 $(REDIS_BITS): build/redis
 	@echo "# Build redis: branch $(REDIS_BRANCH), sha $(REDIS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
@@ -250,6 +363,23 @@ $(REDIS_BITS): build/redis
 	@ls -1 $(REDIS_BITS)
 	@echo ""
 
+.PHONY: redis_image
+redis_image: $(REDIS_IMAGE_BIT)
+
+$(REDIS_IMAGE_BIT): $(REDIS_BITS)
+	@echo "# Build redis_image: branch $(REDIS_BRANCH), sha $(REDIS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(REDIS_IMAGE_UUID)" -t $(REDIS_BITS) \
+		-o "$(REDIS_IMAGE_BIT)" -p $(REDIS_PKGSRC) \
+		-t $(REDIS_EXTRA_TARBALLS) -n $(REDIS_IMAGE_NAME) \
+		-v $(_redis_stamp) -d $(REDIS_IMAGE_DESCRIPTION)
+	@echo "# Created redis image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(REDIS_IMAGE_BIT)
+	@echo ""
+
+redis_publish_image: $(REDIS_IMAGE_BIT)
+	@echo "# Publish redis image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(REDIS_MANIFEST_BIT) -f $(REDIS_IMAGE_BIT)
+
 clean_redis:
 	rm -rf $(BITS_DIR)/redis
 	(cd build/redis && gmake clean)
@@ -258,9 +388,11 @@ clean_redis:
 
 _rabbitmq_stamp=$(RABBITMQ_BRANCH)-$(TIMESTAMP)-g$(RABBITMQ_SHA)
 RABBITMQ_BITS=$(BITS_DIR)/rabbitmq/rabbitmq-pkg-$(_rabbitmq_stamp).tar.bz2
+RABBITMQ_IMAGE_BIT=$(BITS_DIR)/rabbitmq/rabbitmq-zfs-$(_rabbitmq_stamp).zfs.gz
+RABBITMQ_MANIFEST_BIT=$(BITS_DIR)/rabbitmq/rabbitmq-zfs-$(_rabbitmq_stamp).zfs.dsmanifest
 
 .PHONY: rabbitmq
-rabbitmq: $(RABBITMQ_BITS)
+rabbitmq: $(RABBITMQ_BITS) rabbitmq_image
 
 $(RABBITMQ_BITS): build/rabbitmq
 	@echo "# Build rabbitmq: branch $(RABBITMQ_BRANCH), sha $(RABBITMQ_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
@@ -270,6 +402,23 @@ $(RABBITMQ_BITS): build/rabbitmq
 	@ls -1 $(RABBITMQ_BITS)
 	@echo ""
 
+.PHONY: rabbitmq_image
+rabbitmq_image: $(RABBITMQ_IMAGE_BIT)
+
+$(RABBITMQ_IMAGE_BIT): $(RABBITMQ_BITS)
+	@echo "# Build rabbitmq_image: branch $(RABBITMQ_BRANCH), sha $(RABBITMQ_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(RABBITMQ_IMAGE_UUID)" -t $(RABBITMQ_BITS) \
+		-o "$(RABBITMQ_IMAGE_BIT)" -p $(RABBITMQ_PKGSRC) \
+		-t $(RABBITMQ_EXTRA_TARBALLS) -n $(RABBITMQ_IMAGE_NAME) \
+		-v $(_rabbitmq_stamp) -d $(RABBITMQ_IMAGE_DESCRIPTION)
+	@echo "# Created rabbitmq image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(RABBITMQ_IMAGE_BIT)
+	@echo ""
+
+rabbitmq_publish_image: $(RABBITMQ_IMAGE_BIT)
+	@echo "# Publish rabbitmq image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(RABBITMQ_MANIFEST_BIT) -f $(RABBITMQ_IMAGE_BIT)
+
 clean_rabbitmq:
 	rm -rf $(BITS_DIR)/rabbitmq
 	(cd build/rabbitmq && gmake clean)
@@ -278,9 +427,11 @@ clean_rabbitmq:
 
 _dhcpd_stamp=$(DHCPD_BRANCH)-$(TIMESTAMP)-g$(DHCPD_SHA)
 DHCPD_BITS=$(BITS_DIR)/dhcpd/dhcpd-pkg-$(_dhcpd_stamp).tar.bz2
+DHCPD_IMAGE_BIT=$(BITS_DIR)/dhcpd/dhcpd-zfs-$(_dhcpd_stamp).zfs.gz
+DHCPD_MANIFEST_BIT=$(BITS_DIR)/dhcpd/dhcpd-zfs-$(_dhcpd_stamp).zfs.dsmanifest
 
 .PHONY: dhcpd
-dhcpd: $(DHCPD_BITS)
+dhcpd: $(DHCPD_BITS) dhcpd_image
 
 $(DHCPD_BITS): build/dhcpd
 	@echo "# Build dhcpd: branch $(DHCPD_BRANCH), sha $(DHCPD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
@@ -290,6 +441,23 @@ $(DHCPD_BITS): build/dhcpd
 	@echo "# Created dhcpd bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(DHCPD_BITS)
 	@echo ""
+
+.PHONY: dhcpd_image
+dhcpd_image: $(DHCPD_IMAGE_BIT)
+
+$(DHCPD_IMAGE_BIT): $(DHCPD_BITS)
+	@echo "# Build dhcpd_image: branch $(DHCPD_BRANCH), sha $(DHCPD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(DHCPD_IMAGE_UUID)" -t $(DHCPD_BITS) \
+		-o "$(DHCPD_IMAGE_BIT)" -p $(DHCPD_PKGSRC) \
+		-t $(DHCPD_EXTRA_TARBALLS) -n $(DHCPD_IMAGE_NAME) \
+		-v $(_dhcpd_stamp) -d $(DHCPD_IMAGE_DESCRIPTION)
+	@echo "# Created dhcpd image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(DHCPD_IMAGE_BIT)
+	@echo ""
+
+dhcpd_publish_image: $(DHCPD_IMAGE_BIT)
+	@echo "# Publish dhcpd image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(DHCPD_MANIFEST_BIT) -f $(DHCPD_IMAGE_BIT)
 
 clean_dhcpd:
 	rm -rf $(BITS_DIR)/dhcpd
@@ -319,9 +487,11 @@ clean_webinfo:
 
 _cloudapi_stamp=$(CLOUDAPI_BRANCH)-$(TIMESTAMP)-g$(CLOUDAPI_SHA)
 CLOUDAPI_BITS=$(BITS_DIR)/cloudapi/cloudapi-pkg-$(_cloudapi_stamp).tar.bz2
+CLOUDAPI_IMAGE_BIT=$(BITS_DIR)/cloudapi/cloudapi-zfs-$(_cloudapi_stamp).zfs.gz
+CLOUDAPI_MANIFEST_BIT=$(BITS_DIR)/cloudapi/cloudapi-zfs-$(_cloudapi_stamp).zfs.dsmanifest
 
 .PHONY: cloudapi
-cloudapi: $(CLOUDAPI_BITS)
+cloudapi: $(CLOUDAPI_BITS) cloudapi_image
 
 # cloudapi still uses platform node, ensure that same version is first
 # node (and npm) on the PATH.
@@ -332,6 +502,24 @@ $(CLOUDAPI_BITS): build/cloudapi
 	@echo "# Created cloudapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(CLOUDAPI_BITS)
 	@echo ""
+
+.PHONY: cloudapi_image
+cloudapi_image: $(CLOUDAPI_IMAGE_BIT)
+
+$(CLOUDAPI_IMAGE_BIT): $(CLOUDAPI_BITS)
+	@echo "# Build cloudapi_image: branch $(CLOUDAPI_BRANCH), sha $(CLOUDAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(CLOUDAPI_IMAGE_UUID)" -t $(CLOUDAPI_BITS) \
+		-o "$(CLOUDAPI_IMAGE_BIT)" -p $(CLOUDAPI_PKGSRC) \
+		-t $(CLOUDAPI_EXTRA_TARBALLS) -n $(CLOUDAPI_IMAGE_NAME) \
+		-v $(_cloudapi_stamp) -d $(CLOUDAPI_IMAGE_DESCRIPTION)
+	@echo "# Created cloudapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(CLOUDAPI_IMAGE_BIT)
+	@echo ""
+
+cloudapi_publish_image: $(CLOUDAPI_IMAGE_BIT)
+	@echo "# Publish cloudapi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(CLOUDAPI_MANIFEST_BIT) -f $(CLOUDAPI_IMAGE_BIT)
+
 
 # Warning: if cloudapi's submodule deps change, this 'clean_ufds' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -384,9 +572,11 @@ clean_manatee:
 
 _wf_stamp=$(WORKFLOW_BRANCH)-$(TIMESTAMP)-g$(WORKFLOW_SHA)
 WORKFLOW_BITS=$(BITS_DIR)/workflow/workflow-pkg-$(_wf_stamp).tar.bz2
+WORKFLOW_IMAGE_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_workflow_stamp).zfs.gz
+WORKFLOW_MANIFEST_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_workflow_stamp).zfs.dsmanifest
 
 .PHONY: workflow
-workflow: $(WORKFLOW_BITS)
+workflow: $(WORKFLOW_BITS) workflow_image
 
 # PATH for workflow build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -397,6 +587,23 @@ $(WORKFLOW_BITS): build/workflow
 	@echo "# Created workflow bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(WORKFLOW_BITS)
 	@echo ""
+
+.PHONY: workflow_image
+workflow_image: $(WORKFLOW_IMAGE_BIT)
+
+$(WORKFLOW_IMAGE_BIT): $(WORKFLOW_BITS)
+	@echo "# Build workflow_image: branch $(WORKFLOW_BRANCH), sha $(WORKFLOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(WORKFLOW_IMAGE_UUID)" -t $(WORKFLOW_BITS) \
+		-o "$(WORKFLOW_IMAGE_BIT)" -p $(WORKFLOW_PKGSRC) \
+		-t $(WORKFLOW_EXTRA_TARBALLS) -n $(WORKFLOW_IMAGE_NAME) \
+		-v $(_wf_stamp) -d $(WORKFLOW_IMAGE_DESCRIPTION)
+	@echo "# Created workflow image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(WORKFLOW_IMAGE_BIT)
+	@echo ""
+
+workflow_publish_image: $(WORKFLOW_IMAGE_BIT)
+	@echo "# Publish workflow image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(WORKFLOW_MANIFEST_BIT) -f $(WORKFLOW_IMAGE_BIT)
 
 # Warning: if workflow's submodule deps change, this 'clean_workflow' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -409,9 +616,11 @@ clean_workflow:
 
 _vmapi_stamp=$(VMAPI_BRANCH)-$(TIMESTAMP)-g$(VMAPI_SHA)
 VMAPI_BITS=$(BITS_DIR)/vmapi/vmapi-pkg-$(_vmapi_stamp).tar.bz2
+VMAPI_IMAGE_BIT=$(BITS_DIR)/vmapi/vmapi-zfs-$(_vmapi_stamp).zfs.gz
+VMAPI_MANIFEST_BIT=$(BITS_DIR)/vmapi/vmapi-zfs-$(_vmapi_stamp).zfs.dsmanifest
 
 .PHONY: vmapi
-vmapi: $(VMAPI_BITS)
+vmapi: $(VMAPI_BITS) vmapi_image
 
 # PATH for vmapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -422,6 +631,23 @@ $(VMAPI_BITS): build/vmapi
 	@echo "# Created vmapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(VMAPI_BITS)
 	@echo ""
+
+.PHONY: vmapi_image
+vmapi_image: $(VMAPI_IMAGE_BIT)
+
+$(VMAPI_IMAGE_BIT): $(VMAPI_BITS)
+	@echo "# Build vmapi_image: branch $(VMAPI_BRANCH), sha $(VMAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(VMAPI_IMAGE_UUID)" -t $(VMAPI_BITS) \
+		-o "$(VMAPI_IMAGE_BIT)" -p $(VMAPI_PKGSRC) \
+		-t $(VMAPI_EXTRA_TARBALLS) -n $(VMAPI_IMAGE_NAME) \
+		-v $(_vmapi_stamp) -d $(VMAPI_IMAGE_DESCRIPTION)
+	@echo "# Created vmapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(VMAPI_IMAGE_BIT)
+	@echo ""
+
+vmapi_publish_image: $(VMAPI_IMAGE_BIT)
+	@echo "# Publish vmapi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(VMAPI_MANIFEST_BIT) -f $(VMAPI_IMAGE_BIT)
 
 # Warning: if vmapi's submodule deps change, this 'clean_vmapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -434,9 +660,12 @@ clean_vmapi:
 
 _dapi_stamp=$(DAPI_BRANCH)-$(TIMESTAMP)-g$(DAPI_SHA)
 DAPI_BITS=$(BITS_DIR)/dapi/dapi-pkg-$(_dapi_stamp).tar.bz2
+DAPI_IMAGE_BIT=$(BITS_DIR)/dapi/dapi-zfs-$(_dapi_stamp).zfs.gz
+DAPI_MANIFEST_BIT=$(BITS_DIR)/dapi/dapi-zfs-$(_dapi_stamp).zfs.dsmanifest
+
 
 .PHONY: dapi
-dapi: $(DAPI_BITS)
+dapi: $(DAPI_BITS) dapi_image
 
 # PATH for dapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -447,6 +676,23 @@ $(DAPI_BITS): build/dapi
 	@echo "# Created dapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(DAPI_BITS)
 	@echo ""
+
+.PHONY: dapi_image
+dapi_image: $(DAPI_IMAGE_BIT)
+
+$(DAPI_IMAGE_BIT): $(DAPI_BITS)
+	@echo "# Build dapi_image: branch $(DAPI_BRANCH), sha $(DAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(DAPI_IMAGE_UUID)" -t $(DAPI_BITS) \
+		-o "$(DAPI_IMAGE_BIT)" -p $(DAPI_PKGSRC) \
+		-t $(DAPI_EXTRA_TARBALLS) -n $(DAPI_IMAGE_NAME) \
+		-v $(_dapi_stamp) -d $(DAPI_IMAGE_DESCRIPTION)
+	@echo "# Created dapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(DAPI_IMAGE_BIT)
+	@echo ""
+
+dapi_publish_image: $(DAPI_IMAGE_BIT)
+	@echo "# Publish dapi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(DAPI_MANIFEST_BIT) -f $(DAPI_IMAGE_BIT)
 
 # Warning: if dapi's submodule deps change, this 'clean_dapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -667,9 +913,11 @@ clean_config_agent:
 
 _cnapi_stamp=$(CNAPI_BRANCH)-$(TIMESTAMP)-g$(CNAPI_SHA)
 CNAPI_BITS=$(BITS_DIR)/cnapi/cnapi-pkg-$(_cnapi_stamp).tar.bz2
+CNAPI_IMAGE_BIT=$(BITS_DIR)/cnapi/cnapi-zfs-$(_cnapi_stamp).zfs.gz
+CNAPI_MANIFEST_BIT=$(BITS_DIR)/cnapi/cnapi-zfs-$(_cnapi_stamp).zfs.dsmanifest
 
 .PHONY: cnapi
-cnapi: $(CNAPI_BITS)
+cnapi: $(CNAPI_BITS) cnapi_image
 
 # PATH for cnapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -680,6 +928,23 @@ $(CNAPI_BITS): build/cnapi
 	@echo "# Created cnapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(CNAPI_BITS)
 	@echo ""
+
+.PHONY: cnapi_image
+cnapi_image: $(CNAPI_IMAGE_BIT)
+
+$(CNAPI_IMAGE_BIT): $(CNAPI_BITS)
+	@echo "# Build cnapi_image: branch $(CNAPI_BRANCH), sha $(CNAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(CNAPI_IMAGE_UUID)" -t $(CNAPI_BITS) \
+		-o "$(CNAPI_IMAGE_BIT)" -p $(CNAPI_PKGSRC) \
+		-t $(CNAPI_EXTRA_TARBALLS) -n $(CNAPI_IMAGE_NAME) \
+		-v $(_cnapi_stamp) -d $(CNAPI_IMAGE_DESCRIPTION)
+	@echo "# Created cnapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(CNAPI_IMAGE_BIT)
+	@echo ""
+
+cnapi_publish_image: $(CNAPI_IMAGE_BIT)
+	@echo "# Publish cnapi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(CNAPI_MANIFEST_BIT) -f $(CNAPI_IMAGE_BIT)
 
 # Warning: if cnapi's submodule deps change, this 'clean_cnapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -692,9 +957,11 @@ clean_cnapi:
 
 _keyapi_stamp=$(KEYAPI_BRANCH)-$(TIMESTAMP)-g$(KEYAPI_SHA)
 KEYAPI_BITS=$(BITS_DIR)/keyapi/keyapi-pkg-$(_keyapi_stamp).tar.bz2
+KEYAPI_IMAGE_BIT=$(BITS_DIR)/keyapi/keyapi-zfs-$(_keyapi_stamp).zfs.gz
+KEYAPI_MANIFEST_BIT=$(BITS_DIR)/keyapi/keyapi-zfs-$(_keyapi_stamp).zfs.dsmanifest
 
 .PHONY: keyapi
-keyapi: $(KEYAPI_BITS)
+keyapi: $(KEYAPI_BITS) keyapi_image
 
 # PATH for keyapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -705,6 +972,23 @@ $(KEYAPI_BITS): build/keyapi
 	@echo "# Created keyapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(KEYAPI_BITS)
 	@echo ""
+
+.PHONY: keyapi_image
+keyapi_image: $(KEYAPI_IMAGE_BIT)
+
+$(KEYAPI_IMAGE_BIT): $(KEYAPI_BITS)
+	@echo "# Build keyapi_image: branch $(KEYAPI_BRANCH), sha $(KEYAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(KEYAPI_IMAGE_UUID)" -t $(KEYAPI_BITS) \
+		-o "$(KEYAPI_IMAGE_BIT)" -p $(KEYAPI_PKGSRC) \
+		-t $(KEYAPI_EXTRA_TARBALLS) -n $(KEYAPI_IMAGE_NAME) \
+		-v $(_keyapi_stamp) -d $(KEYAPI_IMAGE_DESCRIPTION)
+	@echo "# Created keyapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(KEYAPI_IMAGE_BIT)
+	@echo ""
+
+keyapi_publish_image: $(KEYAPI_IMAGE_BIT)
+	@echo "# Publish keyapi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(KEYAPI_MANIFEST_BIT) -f $(KEYAPI_IMAGE_BIT)
 
 # Warning: if NAPI's submodule deps change, this 'clean_keyapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -717,9 +1001,11 @@ clean_keyapi:
 
 _sdcsso_stamp=$(SDCSSO_BRANCH)-$(TIMESTAMP)-g$(SDCSSO_SHA)
 SDCSSO_BITS=$(BITS_DIR)/sdcsso/sdcsso-pkg-$(_sdcsso_stamp).tar.bz2
+SDCSSO_IMAGE_BIT=$(BITS_DIR)/sdcsso/sdcsso-zfs-$(_sdcsso_stamp).zfs.gz
+SDCSSO_MANIFEST_BIT=$(BITS_DIR)/sdcsso/sdcsso-zfs-$(_sdcsso_stamp).zfs.dsmanifest
 
 .PHONY: sdcsso
-sdcsso: $(SDCSSO_BITS)
+sdcsso: $(SDCSSO_BITS) sdcsso_image
 
 # PATH for sdcsso build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -731,6 +1017,23 @@ $(SDCSSO_BITS): build/sdcsso
 	@ls -1 $(SDCSSO_BITS)
 	@echo ""
 
+.PHONY: sdcsso_image
+sdcsso_image: $(SDCSSO_IMAGE_BIT)
+
+$(SDCSSO_IMAGE_BIT): $(SDCSSO_BITS)
+	@echo "# Build sdcsso_image: branch $(SDCSSO_BRANCH), sha $(SDCSSO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(SDCSSO_IMAGE_UUID)" -t $(SDCSSO_BITS) \
+		-o "$(SDCSSO_IMAGE_BIT)" -p $(SDCSSO_PKGSRC) \
+		-t $(SDCSSO_EXTRA_TARBALLS) -n $(SDCSSO_IMAGE_NAME) \
+		-v $(_sdcsso_stamp) -d $(SDCSSO_IMAGE_DESCRIPTION)
+	@echo "# Created sdcsso image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(SDCSSO_IMAGE_BIT)
+	@echo ""
+
+sdcsso_publish_image: $(SDCSSO_IMAGE_BIT)
+	@echo "# Publish sdcsso image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(SDCSSO_MANIFEST_BIT) -f $(SDCSSO_IMAGE_BIT)
+
 # Warning: if SDCSSO's submodule deps change, this 'clean_sdcsso is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_sdcsso:
@@ -738,14 +1041,15 @@ clean_sdcsso:
 	(cd build/sdcsso && gmake clean)
 
 
-
 #---- FWAPI
 
 _fwapi_stamp=$(FWAPI_BRANCH)-$(TIMESTAMP)-g$(FWAPI_SHA)
 FWAPI_BITS=$(BITS_DIR)/fwapi/fwapi-pkg-$(_fwapi_stamp).tar.bz2
+FWAPI_IMAGE_BIT=$(BITS_DIR)/fwapi/fwapi-zfs-$(_fwapi_stamp).zfs.gz
+FWAPI_MANIFEST_BIT=$(BITS_DIR)/fwapi/fwapi-zfs-$(_fwapi_stamp).zfs.dsmanifest
 
 .PHONY: fwapi
-fwapi: $(FWAPI_BITS)
+fwapi: $(FWAPI_BITS) fwapi_image
 
 # PATH for fwapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -756,6 +1060,23 @@ $(FWAPI_BITS): build/fwapi
 	@echo "# Created fwapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(FWAPI_BITS)
 	@echo ""
+
+.PHONY: fwapi_image
+fwapi_image: $(FWAPI_IMAGE_BIT)
+
+$(FWAPI_IMAGE_BIT): $(FWAPI_BITS)
+	@echo "# Build fwapi_image: branch $(FWAPI_BRANCH), sha $(FWAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(FWAPI_IMAGE_UUID)" -t $(FWAPI_BITS) \
+		-o "$(FWAPI_IMAGE_BIT)" -p $(FWAPI_PKGSRC) \
+		-t $(FWAPI_EXTRA_TARBALLS) -n $(FWAPI_IMAGE_NAME) \
+		-v $(_fwapi_stamp) -d $(FWAPI_IMAGE_DESCRIPTION)
+	@echo "# Created fwapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(FWAPI_IMAGE_BIT)
+	@echo ""
+
+fwapi_publish_image: $(FWAPI_IMAGE_BIT)
+	@echo "# Publish fwapi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(FWAPI_MANIFEST_BIT) -f $(FWAPI_IMAGE_BIT)
 
 # Warning: if FWAPI's submodule deps change, this 'clean_fwapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -769,9 +1090,11 @@ clean_fwapi:
 
 _napi_stamp=$(NAPI_BRANCH)-$(TIMESTAMP)-g$(NAPI_SHA)
 NAPI_BITS=$(BITS_DIR)/napi/napi-pkg-$(_napi_stamp).tar.bz2
+NAPI_IMAGE_BIT=$(BITS_DIR)/napi/napi-zfs-$(_napi_stamp).zfs.gz
+NAPI_MANIFEST_BIT=$(BITS_DIR)/napi/napi-zfs-$(_napi_stamp).zfs.dsmanifest
 
 .PHONY: napi
-napi: $(NAPI_BITS)
+napi: $(NAPI_BITS) napi_image
 
 # PATH for napi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -782,6 +1105,23 @@ $(NAPI_BITS): build/napi
 	@echo "# Created napi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(NAPI_BITS)
 	@echo ""
+
+.PHONY: napi_image
+napi_image: $(NAPI_IMAGE_BIT)
+
+$(NAPI_IMAGE_BIT): $(NAPI_BITS)
+	@echo "# Build napi_image: branch $(NAPI_BRANCH), sha $(NAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(NAPI_IMAGE_UUID)" -t $(NAPI_BITS) \
+		-o "$(NAPI_IMAGE_BIT)" -p $(NAPI_PKGSRC) \
+		-t $(NAPI_EXTRA_TARBALLS) -n $(NAPI_IMAGE_NAME) \
+		-v $(_napi_stamp) -d $(NAPI_IMAGE_DESCRIPTION)
+	@echo "# Created napi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(NAPI_IMAGE_BIT)
+	@echo ""
+
+napi_publish_image: $(NAPI_IMAGE_BIT)
+	@echo "# Publish napi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(NAPI_MANIFEST_BIT) -f $(NAPI_IMAGE_BIT)
 
 # Warning: if NAPI's submodule deps change, this 'clean_napi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -795,9 +1135,12 @@ clean_napi:
 
 _sapi_stamp=$(SAPI_BRANCH)-$(TIMESTAMP)-g$(SAPI_SHA)
 SAPI_BITS=$(BITS_DIR)/sapi/sapi-pkg-$(_sapi_stamp).tar.bz2
+SAPI_IMAGE_BIT=$(BITS_DIR)/sapi/sapi-zfs-$(_sapi_stamp).zfs.gz
+SAPI_MANIFEST_BIT=$(BITS_DIR)/sapi/sapi-zfs-$(_sapi_stamp).zfs.dsmanifest
 
 .PHONY: sapi
-sapi: $(SAPI_BITS)
+sapi: $(SAPI_BITS) sapi_image
+
 
 # PATH for sapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -808,6 +1151,23 @@ $(SAPI_BITS): build/sapi
 	@echo "# Created sapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(SAPI_BITS)
 	@echo ""
+
+.PHONY: sapi_image
+sapi_image: $(SAPI_IMAGE_BIT)
+
+$(SAPI_IMAGE_BIT): $(SAPI_BITS)
+	@echo "# Build sapi_image: branch $(SAPI_BRANCH), sha $(SAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(SAPI_IMAGE_UUID)" -t $(SAPI_BITS) \
+		-o "$(SAPI_IMAGE_BIT)" -p $(SAPI_PKGSRC) \
+		-t $(SAPI_EXTRA_TARBALLS) -n $(SAPI_IMAGE_NAME) \
+		-v $(_sapi_stamp) -d $(SAPI_IMAGE_DESCRIPTION)
+	@echo "# Created sapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(SAPI_IMAGE_BIT)
+	@echo ""
+
+sapi_publish_image: $(SAPI_IMAGE_BIT)
+	@echo "# Publish sapi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(SAPI_MANIFEST_BIT) -f $(SAPI_IMAGE_BIT)
 
 # Warning: if SAPI's submodule deps change, this 'clean_sapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -1577,8 +1937,8 @@ $(DOC_BUILD)/%.json $(DOC_BUILD)/%.html: docs/%.restdown | $(DOC_BUILD) $(RESTDO
 
 .PHONY: docs
 docs:							\
-    $(DOC_FILES:%.restdown=$(DOC_BUILD)/%.html)		\
-    $(DOC_FILES:%.restdown=$(DOC_BUILD)/%.json)
+	$(DOC_FILES:%.restdown=$(DOC_BUILD)/%.html)		\
+	$(DOC_FILES:%.restdown=$(DOC_BUILD)/%.json)
 
 $(RESTDOWN_EXEC): | deps/restdown/.git
 
@@ -1613,11 +1973,13 @@ upload_jenkins:
 	./tools/upload-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(UPLOAD_LOCATION)/$(JOB_NAME)
 
 # Publish the image for this Jenkins job to https://updates.joyent.us, if
-# appropriate.
+# appropriate. No-op if the current JOB_NAME doesn't have a "*_publish_image"
+# target.
 jenkins_publish_image:
 	@[[ -z "$(JOB_NAME)" ]] \
 		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
 		&& exit 1 || true
-	@make $(JOB_NAME)_publish_image
+	@[[ -z "$(shell grep '^$(JOB_NAME)_publish_image\>' Makefile || true)" ]] \
+		|| make $(JOB_NAME)_publish_image
 
 include bits/config.targ.mk

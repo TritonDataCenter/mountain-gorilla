@@ -22,40 +22,82 @@
     "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
   "amon": {
+    "appliance": "true",
+    "image_name": "amon",
+    "image_description": "SDC AMON",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
-        {"url": "git@git.joyent.com:amon.git"}
+      {"url": "git@git.joyent.com:amon.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
   "assets": {
+    "appliance": "true",
+    "image_name": "assets",
+    "image_description": "SDC Assets",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
-        {"url": "git@git.joyent.com:assets.git"}
+      {"url": "git@git.joyent.com:assets.git"}
     ],
-    "deps": []
+    "deps": [],
+    "tarballs": []
   },
   "adminui": {
+    "appliance": "true",
+    "image_name": "adminui",
+    "image_description": "SDC AdminUI",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
         {"url": "git@git.joyent.com:adminui.git", "dir": "adminui"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
   "dhcpd": {
+    "appliance": "true",
+    "image_name": "dhcpd",
+    "image_description": "SDC DHCPD",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
         {"url": "git@git.joyent.com:booter.git", "dir": "dhcpd"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
   "redis": {
+    "appliance": "true",
+    "image_name": "redis",
+    "image_description": "SDC Redis",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
-        {"url": "git@git.joyent.com:redis.git"}
+      {"url": "git@git.joyent.com:redis.git"}
     ],
-    "deps": []
+    "deps": [],
+    "tarballs": []
   },
   "rabbitmq": {
+    "appliance": "true",
+    "image_name": "rabbitmq",
+    "image_description": "SDC RabbitMQ",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
-        {"url": "git@git.joyent.com:rabbitmq.git"}
+      {"url": "git@git.joyent.com:rabbitmq.git"}
     ],
-    "deps": []
+    "deps": [],
+    "tarballs": []
   },
   "webinfo": {
     "repos": [
@@ -65,44 +107,85 @@
     "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
   "cloudapi": {
+    "appliance": "true",
+    "image_name": "cloudapi",
+    "image_description": "SDC CloudAPI",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "repos": [
-        {"url": "git@git.joyent.com:cloudapi.git"}
+      {"url": "git@git.joyent.com:cloudapi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
   "usageapi": {
+    "appliance": "true",
+    "image_name": "usageapi",
+    "image_description": "SDC UsageAPI",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
-        {"url": "git@git.joyent.com:usageapi.git"}
+      {"url": "git@git.joyent.com:usageapi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
 
   "ufds": {
+    "appliance": "true",
+    "image_name": "ufds",
+    "image_description": "SDC UFDS",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
-        {"url": "git@git.joyent.com:ufds.git"}
+      {"url": "git@git.joyent.com:ufds.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
 
   "workflow": {
+    "appliance": "true",
+    "image_name": "workflow",
+    "image_description": "SDC Workflow",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
-        {"url": "git@git.joyent.com:workflow.git"}
+      {"url": "git@git.joyent.com:workflow.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
 
   "vmapi": {
+    "appliance": "true",
+    "image_name": "vampi",
+    "image_description": "SDC VMAPI",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
         {"url": "git@git.joyent.com:vmapi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
 
   "dapi": {
+    "appliance": "true",
+    "image_name": "dapi",
+    "image_description": "SDC DAPI",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
         {"url": "git@git.joyent.com:dapi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
 
   "imgapi": {
@@ -168,31 +251,58 @@
   },
 
   "cnapi": {
+    "appliance": "true",
+    "image_name": "cnapi",
+    "image_description": "SDC CNAPI",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
         {"url": "git@git.joyent.com:cnapi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
 
   "fwapi": {
+    "appliance": "true",
+    "image_name": "fwapi",
+    "image_description": "SDC FWAPI",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
         {"url": "git@git.joyent.com:fwapi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
 
   "napi": {
+    "appliance": "true",
+    "image_name": "napi",
+    "image_description": "SDC NAPI",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
-        {"url": "git@git.joyent.com:napi.git"}
+      {"url": "git@git.joyent.com:napi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
 
   "sapi": {
+    "appliance": "true",
+    "image_name": "sapi",
+    "image_description": "SDC SAPI",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
         {"url": "git@git.joyent.com:sapi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
 
   "registrar": {
@@ -531,17 +641,33 @@
     ],
     "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
+
   "keyapi": {
+    "appliance": "true",
+    "image_name": "keyapi",
+    "image_description": "SDC KeyAPI",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
         {"url":  "git@github.com:joyent-smartdatacenter/keyapi.git" }
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
+
   "sdcsso": {
+    "appliance": "true",
+    "image_name": "sdcssc",
+    "image_description": "SDC SSO",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
     "repos": [
         {"url":  "git@github.com:joyent-smartdatacenter/sdcsso.git" }
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
 
   "manta": {
