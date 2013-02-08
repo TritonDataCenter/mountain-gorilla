@@ -1454,10 +1454,18 @@ PLATFORM_BITS_0=$(shell echo $(PLATFORM_BITS) | awk '{print $$1}')
 platform: $(PLATFORM_BITS_0)
 
 build/smartos-live/configure.mg:
-	sed -e "s/BRANCH/$(SMARTOS_LIVE_BRANCH)/" -e "s:GITCLONESOURCE:$(shell pwd)/build/:" <illumos-configure.tmpl >build/smartos-live/configure.mg
+	sed -e "s:GITCLONESOURCE:$(shell pwd)/build/:" \
+		<smartos-live-configure.mg.in >build/smartos-live/configure.mg
 
 build/smartos-live/configure-branches:
-	sed -e "s/BRANCH/$(SMARTOS_LIVE_BRANCH)/" <illumos-configure-branches.tmpl >build/smartos-live/configure-branches
+	sed \
+		-e "s:ILLUMOS_EXTRA_BRANCH:$(ILLUMOS_EXTRA_BRANCH):" \
+		-e "s:ILLUMOS_JOYENT_BRANCH:$(ILLUMOS_JOYENT_BRANCH):" \
+		-e "s:UR_AGENT_BRANCH:$(UR_AGENT_BRANCH):" \
+		-e "s:KVM_BRANCH:$(KVM_BRANCH):" \
+		-e "s:KVM_CMD_BRANCH:$(KVM_CMD_BRANCH):" \
+		-e "s:SDC_PLATFORM_BRANCH:$(SDC_PLATFORM_BRANCH):" \
+		<smartos-live-configure-branches.in >build/smartos-live/configure-branches
 
 # PATH: Ensure using GCC from SFW as require for platform build.
 $(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-branches
