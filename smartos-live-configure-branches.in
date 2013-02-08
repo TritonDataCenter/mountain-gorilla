@@ -1,6 +1,6 @@
 illumos-extra: ILLUMOS_EXTRA_BRANCH
 illumos-joyent: ILLUMOS_JOYENT_BRANCH
 ur-agent: UR_AGENT_BRANCH
-kvm: KVM_BRANCH
-kvm-cmd: KVM_CMD_BRANCH
+kvm: ILLUMOS_KVM_BRANCH
+kvm-cmd: ILLUMOS_KVM_CMD_BRANCH
 sdc-platform: SDC_PLATFORM_BRANCH

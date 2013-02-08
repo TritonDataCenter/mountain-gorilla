@@ -1462,8 +1462,8 @@ build/smartos-live/configure-branches:
 		-e "s:ILLUMOS_EXTRA_BRANCH:$(ILLUMOS_EXTRA_BRANCH):" \
 		-e "s:ILLUMOS_JOYENT_BRANCH:$(ILLUMOS_JOYENT_BRANCH):" \
 		-e "s:UR_AGENT_BRANCH:$(UR_AGENT_BRANCH):" \
-		-e "s:KVM_BRANCH:$(KVM_BRANCH):" \
-		-e "s:KVM_CMD_BRANCH:$(KVM_CMD_BRANCH):" \
+		-e "s:ILLUMOS_KVM_BRANCH:$(KVM_BRANCH):" \
+		-e "s:ILLUMOS_KVM_CMD_BRANCH:$(KVM_CMD_BRANCH):" \
 		-e "s:SDC_PLATFORM_BRANCH:$(SDC_PLATFORM_BRANCH):" \
 		<smartos-live-configure-branches.in >build/smartos-live/configure-branches
 
