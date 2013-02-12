@@ -238,11 +238,13 @@
     ],
     "deps": [
       "configurator",
-      "amon"
+      "amon",
+      "sapi"
     ],
     "tarballs": [
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
   },
 
