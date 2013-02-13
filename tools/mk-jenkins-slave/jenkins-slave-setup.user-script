@@ -95,18 +95,9 @@ SETUPBUILDZONE
 
 # Recent git requires a user.name and user.email setup to do any git repo
 # actions... and a jenkins build wants to 'git tag'.
+export HOME=/root
 git config --global user.name "Jenkins Slave"
 git config --global user.email jenkins-slave@joyent.com
-
-
-# Need 'updates-imgadm' from imgapi-cli.git on the PATH.
-mkdir -p /root/opt
-(cd /root/opt \
-    && git clone git@git.joyent.com:imgapi-cli.git \
-    && cd imgapi-cli \
-    && NODE_PREBUILT_CC_VERSION=4.6.2 make)
-echo '' >>/root/.bashrc
-echo 'export PATH=/root/opt/imgapi-cli/bin:$PATH' >>/root/.bashrc
 
 
 # Stupid Java will ask us for license otherwise.
@@ -123,9 +114,21 @@ pkgin -y install binutils
 # zookeeper-client: binder needs this
 # postgres client: needed by manta
 # gsharutils: needed by manta
-pkgin -y in gcc-compiler gcc-runtime cscope gmake \
+pkgin -y in gcc47 cscope gmake \
     scmgit python26 png GeoIP GeoLiteCity ghostscript zookeeper-client \
     postgresql91-client-9.1.2 gsharutils
+
+
+# Need 'updates-imgadm' from imgapi-cli.git on the PATH (this is used
+# by the MG builds to publish build images to updates.joyent.us).
+mkdir -p /root/opt
+(cd /root/opt \
+    && git clone git@git.joyent.com:imgapi-cli.git \
+    && cd imgapi-cli \
+    && NODE_PREBUILT_CC_VERSION=4.6.2 PATH=/opt/local/bin:/opt/local/gnu/bin:$PATH gmake)
+echo '' >>/root/.bashrc
+echo 'export PATH=/root/opt/imgapi-cli/bin:$PATH' >>/root/.bashrc
+
 
 # Note: This "./configure" step is necessary to setup your system.
 # TODO: Why is this necessary?
