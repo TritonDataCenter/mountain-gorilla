@@ -19,13 +19,13 @@
      "repos": [
         {"url": "git@git.joyent.com:cloud-analytics.git", "submodule-recursive": false}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
   "amon": {
     "repos": [
         {"url": "git@git.joyent.com:amon.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
   "assets": {
     "repos": [
@@ -37,13 +37,13 @@
     "repos": [
         {"url": "git@git.joyent.com:adminui.git", "dir": "adminui"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
   "dhcpd": {
     "repos": [
         {"url": "git@git.joyent.com:booter.git", "dir": "dhcpd"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
   "redis": {
     "repos": [
@@ -62,47 +62,47 @@
         {"url": "git@git.joyent.com:sdc-webinfo.git",
          "dir": "webinfo"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
   "cloudapi": {
     "repos": [
         {"url": "git@git.joyent.com:cloudapi.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
   "usageapi": {
     "repos": [
         {"url": "git@git.joyent.com:usageapi.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "ufds": {
     "repos": [
         {"url": "git@git.joyent.com:ufds.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "workflow": {
     "repos": [
         {"url": "git@git.joyent.com:workflow.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "vmapi": {
     "repos": [
         {"url": "git@git.joyent.com:vmapi.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "dapi": {
     "repos": [
         {"url": "git@git.joyent.com:dapi.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "imgapi": {
@@ -114,41 +114,48 @@
     "repos": [
       {"url": "git@git.joyent.com:imgapi.git"}
     ],
-    "deps": [],
-    "tarballs": []
+    "tarballs": [],
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "imgapi-cli": {
     "repos": [
         {"url": "git@git.joyent.com:imgapi-cli.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "agents_core": {
     "repos": [
         {"url": "git@git.joyent.com:agents_core.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "heartbeater": {
     "repos": [
         {"url": "git@git.joyent.com:heartbeater.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "provisioner": {
     "repos": [
         {"url": "git@git.joyent.com:provisioner.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "zonetracker": {
     "repos": [
         {"url": "git@git.joyent.com:zonetracker.git"}
+    ],
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+  },
+
+  "agents-upgrade": {
+    "repos": [
+        {"url": "git@git.joyent.com:agents.git"}
     ],
     "deps": []
   },
@@ -157,70 +164,70 @@
     "repos": [
         {"url": "git@git.joyent.com:config-agent.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "cnapi": {
     "repos": [
         {"url": "git@git.joyent.com:cnapi.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "fwapi": {
     "repos": [
         {"url": "git@git.joyent.com:fwapi.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "napi": {
     "repos": [
         {"url": "git@git.joyent.com:napi.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "sapi": {
     "repos": [
         {"url": "git@git.joyent.com:sapi.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "registrar": {
     "repos": [
         {"url": "git@git.joyent.com:registrar.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "minnow": {
     "repos": [
         {"url": "git@git.joyent.com:minnow.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "configurator": {
     "repos": [
         {"url": "git@git.joyent.com:configurator.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "mackerel": {
     "repos": [
         {"url": "git@git.joyent.com:mackerel.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "manowar": {
     "repos": [
         {"url": "git@git.joyent.com:manowar.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "binder": {
@@ -237,6 +244,7 @@
       {"url": "git@git.joyent.com:binder.git"}
     ],
     "deps": [
+      "https://download.joyent.com/pub/build/sdcnode",
       "configurator",
       "amon",
       "sapi"
@@ -260,6 +268,7 @@
       {"url": "git@git.joyent.com:manatee.git"}
     ],
     "deps": [
+      "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
       "configurator",
       "amon",
@@ -286,6 +295,7 @@
       {"url": "git@git.joyent.com:mahi.git"}
     ],
     "deps": [
+      "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
       "configurator",
       "amon",
@@ -313,6 +323,7 @@
         {"url": "git@git.joyent.com:moray.git"}
     ],
     "deps": [
+      "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
       "configurator",
       "amon",
@@ -339,6 +350,7 @@
       {"url": "git@git.joyent.com:muppet.git"}
     ],
     "deps": [
+      "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
       "configurator",
       "amon",
@@ -364,6 +376,7 @@
       {"url": "git@git.joyent.com:muskie.git"}
     ],
     "deps": [
+      "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
       "configurator",
       "amon",
@@ -390,6 +403,7 @@
       {"url": "git@git.joyent.com:mola.git"}
     ],
     "deps": [
+      "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
       "configurator",
       "mackerel",
@@ -420,6 +434,7 @@
       {"url": "git@git.joyent.com:mako.git"}
     ],
     "deps": [
+      "https://download.joyent.com/pub/build/sdcnode",
       "minnow",
       "registrar",
       "configurator",
@@ -447,6 +462,7 @@
       {"url": "git@git.joyent.com:marlin.git"}
     ],
     "deps": [
+      "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
       "configurator",
       "amon",
@@ -464,39 +480,48 @@
     "repos": [
         {"url": "git@git.joyent.com:agents-installer.git"}
     ],
-    "deps": ["agents_core", "zonetracker", "provisioner", "heartbeater", "amon", "ca", "smartlogin", "marlin"]
+    "deps": [
+      "agents_core",
+      "zonetracker",
+      "provisioner",
+      "heartbeater",
+      "amon",
+      "ca",
+      "smartlogin",
+      "marlin"
+    ]
   },
   "convertvm": {
     "repos": [
         {"url":  "git@github.com:joyent/convertvm.git" }
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
   "keyapi": {
     "repos": [
         {"url":  "git@github.com:joyent-smartdatacenter/keyapi.git" }
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
   "sdcsso": {
     "repos": [
         {"url":  "git@github.com:joyent-smartdatacenter/sdcsso.git" }
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "manta": {
     "repos": [
         {"url": "git@git.joyent.com:manta.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "sdc-system-tests": {
     "repos": [
         {"url": "git@git.joyent.com:sdc-system-tests.git"}
     ],
-    "deps": []
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
   "platform": {
@@ -549,8 +574,6 @@
   },
 
   "all": {
-    "deps": [
-      "https://download.joyent.com/pub/build/sdcnode"
-    ]
+    "deps": []
   }
 }
