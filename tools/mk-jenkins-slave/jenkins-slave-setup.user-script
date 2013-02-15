@@ -114,7 +114,7 @@ pkgin -y install binutils
 # zookeeper-client: binder needs this
 # postgres client: needed by manta
 # gsharutils: needed by manta
-pkgin -y in gcc47 cscope gmake \
+pkgin -y in gcc47 gcc-compiler gcc-runtime gcc-tools cscope gmake \
     scmgit python26 png GeoIP GeoLiteCity ghostscript zookeeper-client \
     postgresql91-client-9.1.2 gsharutils
 
@@ -127,7 +127,7 @@ mkdir -p /root/opt
     && cd imgapi-cli \
     && NODE_PREBUILT_CC_VERSION=4.6.2 PATH=/opt/local/bin:/opt/local/gnu/bin:$PATH gmake)
 echo '' >>/root/.bashrc
-echo 'export PATH=/root/opt/imgapi-cli/bin:$PATH' >>/root/.bashrc
+echo 'export PATH=/root/opt/imgapi-cli/bin:\$PATH' >>/root/.bashrc
 
 
 # Note: This "./configure" step is necessary to setup your system.
