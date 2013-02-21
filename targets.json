@@ -370,6 +370,7 @@
     "image_description": "Manta webapi",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
+      "sqlite3-3.7.9",
       "zookeeper-client-3.4.3"
     ],
     "repos": [
