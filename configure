@@ -110,12 +110,17 @@ function flush_bits_cache() {
 # Usage:
 #   preload_bits TARGET BRANCH TRY_BRANCH
 # where:
-#   TARGET is a string subdir of the https://stuff.joyent.com/stuff/builds
-#       builds repo OR a full path to such a dir. This must be a URL dir
-#       that serves Apache/Nginx-index-style directories.
+#   TARGET is one of:
+#       (a) a string subdir of the https://stuff.joyent.com/stuff/builds
+#           builds repo;
+#       (b) a "$target_branch/$subdir" that specifies an alternative branch
+#           just for this target ; or
+#       (b) a full path to such a dir. This must be a URL dir
+#           that serves Apache/Nginx-index-style directories.
 #
 # Example:
 #   preload_bits smartlogin master ""
+#   preload_bits release-20110901-upgrade/agents-upgrade master ""
 #   preload_bits http://download.joyent.com/pub/build/sdcnode master ""
 #
 function preload_bits() {
@@ -143,6 +148,12 @@ function preload_bits() {
         fi
         target_url_censor=$target_url
     else
+        # If a "target_branch" is specified, switch to that.
+        local target_branch=$(dirname $target)
+        if [[ "$target_branch" != "." ]]; then
+            branch=$target_branch
+        fi
+
         local bits_url=$BITS_PROTO://$BITS_USERNAME:$BITS_PASSWORD@$BITS_HOST$BITS_BASE_PATH
         local bits_url_censor=$BITS_PROTO://$BITS_USERNAME:*password*@$BITS_HOST$BITS_BASE_PATH
         if [[ "${bits_url:(-1)}" != "/" ]]; then

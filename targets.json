@@ -543,6 +543,7 @@
     "deps": [
         "adminui",
         "agentsshar",
+        "release-20110901-upgrade/agents-upgrade",
         "amon",
         "assets",
         "registrar",
