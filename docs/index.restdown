@@ -6,11 +6,387 @@ apisections:
 
 # Mountain Gorilla
 
-A single repo to build SDC. This is just a *driver* repo, all the components
-are still in their existing separate repos.
 
-Links:
+||Repository||git@git.joyent.com:mountain-gorilla.git, <https://mo.joyent.com/mountain-gorilla>||
+||Who||Trent Mick, John Sonnenschein||
+||Docs||<https://mo.joyent.com/docs/mg>||
+||Bugs||<https://devhub.joyent.com/jira/browse/RELENG>||
+||Builds||<https://jenkins.joyent.us>, <https://stuff.joyent.us/stuff/builds>||
 
-- [README](https://mo.joyent.com/mountain-gorilla/blob/master/README.md)
-- [design notes](https://mo.joyent.com/docs/mg/master/design.html)
+A single repo to build all the parts of SDC. This is just a *build driver*
+repo, all the components are still in their respective repos.
+
+
+# tl;dr
+
+    push to vmapi.git
+        -> triggers a <https://jenkins.joyent.us/job/vmapi> build in Jenkins
+        -> uses **MG's 'vmapi' target** to build and upload
+           new vmapi bits to <https://stuff.joyent.us/stuff/builds/vmapi/master-latest/>
+        -> triggers a <https://jenkins.joyent.us/job/usbheadnodetar> build
+        -> uses MG's usb-headnode-related targets to build and upload
+           <https://stuff.joyent.us/stuff/builds/usbheadnodetar/master-latest/>
+
+Then you can reflash your headnode using usb-headnode.git/bin/reflash, which
+will grab the latest tarball from that stuff directory.
+
+        -> triggers a <https://jenkins.joyent.us/job/usbheadnode> build
+        -> uses MG's usb-headnode-related targets to build and upload
+           <https://stuff.joyent.us/stuff/builds/usbheadnode/master-latest/>
+
+The "usbheadnode" and "usbheadnodetar" builds are separated to get that
+"time from push to reflash" down. For reflash you only need the usb-headnode
+"tar" (aka "boot") tarball. For SDC releases we need the other usb-headnode
+build products.
+
+Roughly the same process happens in appropriate dep order for all other
+SDC repos. See <https://jenkins.joyent.us/view/sdc/> for a (hopefully
+up-to-date) list of all SDC jobs.  There isn't a reliable list of
+SDC-related repos. The best attempt is
+<https://mo.joyent.com/carnie/blob/master/repos.json> repos tagged with
+"sdc7".
+
+
+# Overview
+
+SDC (SmartDataCenter) has lots of components: the platform, agents, the
+sdc-role zones like vmapi & napi, components that build both like amon
+and ca, and the usb-headnode.git build that puts together the final
+shipping products. MG is the meta-repo that knows how to fetch and build each
+of them.
+
+An MG build generally works like this:
+
+1. Clone mountain-gorilla.git
+2. Configure to build one component. This pre-fetches the relevant repo(s)
+   and dependencies (pre-built bits, dependent SDC component bits, pkgsrc,
+   images).
+3. Build it
+4. Upload its built "bits" to a structured layout of bits at
+   <https://stuff.joyent.us/stuff/builds>
+
+Using amon as an example (see "Prerequisites" section below):
+
+    git clone git@git.joyent.com:mountain-gorilla.git   # 1.
+    cd mountain-gorilla
+    ./configure -t amon                                 # 2.
+    make amon                                           # 3.
+    JOB_NAME=amon make upload_jenkins                   # 4. see "Jenkins" below
+
+This results in a new set of amon bits for the "master" branch here:
+<https://stuff.joyent.us/stuff/builds/amon/master-latest/amon/> including
+the build configuration and build log. That "master-latest" is a symlink to
+multiple back builds: <https://stuff.joyent.us/stuff/builds/amon/>. Branches
+are also supported (see "Branches" below).
+
+The full set of targets that MG supports is both in
+[targets.json](https://mo.joyent.com/mountain-gorilla/blob/master/targets.json)
+(nice and clean) and
+[Makefile](https://mo.joyent.com/mountain-gorilla/blob/master/Makefile)
+(ugly boilerplate that should be templatized away).
+
+
+# Jenkins
+
+We use [Jenkins](https://jenkins.joyent.us)
+([docs](https://hub.joyent.com/wiki/display/dev/Jenkins)] for continuous
+builds of all of SDC. Almost every relevant git repo is setup to trigger
+a build of the relevant jobs in Jenkins. See the "tl;dr" above for
+what happens after a push to a repo.
+
+The guts of a Jenkins job (the "Build" step) for SDC components is mostly
+identical for all of them. Basically this:
+
+    git clone git@git.joyent.com:mountain-gorilla.git MG
+    cd MG
+    ./configure -t amon -b "$BRANCH" -B "$TRY_BRANCH"
+    make amon
+    make upload_jenkins
+
+The full script, with logging and error checking is:
+<https://mo.joyent.com/mountain-gorilla/blob/master/tools/jenkins-build-step.sh>
+cut 'n pasted into each Jenkins job configuration, e.g.
+[for amon](https://jenkins.joyent.us/view/sdc/job/amon/configure).
+Note how similar this is to the above example. For 99% of cases,
+BRANCH=master and TRY_BRANCH="". See "Branches" below for the 1%.
+
+
+# Prerequisites
+
+There are a lot of prerequisites to build the SDC components. For all
+but the platform you will need:
+
+- a SmartOS zone (smartos-1.6.3 image is the current base, but that will
+  move to multiarch eventually)
+- [python, gcc, gmake, et al from
+  pkgsrc](https://mo.joyent.com/mountain-gorilla/blob/master/tools/mk-jenkins-slave/jenkins-slave-setup.user-script#L107-119)
+- [an imgapi-cli.git install to get
+  "updates-imgadm"](https://mo.joyent.com/mountain-gorilla/blob/master/tools/mk-jenkins-slave/jenkins-slave-setup.user-script#L122-130)
+
+The platform build requires more setup. The best authority is the
+[jenkins-slave-setup.user-script](https://mo.joyent.com/mountain-gorilla/blob/master/tools/mk-jenkins-slave/jenkins-slave-setup.user-script).
+If you are creating a new dev zone, consider using the
+[mk-jenkins-slave](https://mo.joyent.com/mountain-gorilla/blob/master/tools/mk-jenkins-slave/README.md)
+script to build and set it up.
+
+
+# Branches
+
+99% of the time MG builds just use (and default to) the "master" branch
+and that'll be all you need to know. However, MG supports building branches
+other than just "master". This is useful for our bi-weekly sprint release
+builds:
+
+    ./configure -t amon -b release-YYYYMMDD
+
+but can also be used to make a build of a pushed feature branch:
+
+    ./configure -t usbheadnode -b HEAD-1234
+
+MG has the concept of a "-B TRY_BRANCH" separate from "-b BRANCH". This
+allows you to build a target that uses multiple repos (e.g. the platform
+build uses about 7 repos) where only a subset of them has your feature
+branch:
+
+    ./configure -t platform -b master -B OS-1234
+
+Unfortunately, MG doesn't have a convenient way to build a target using
+**an uncommited working clone**. That could be added if people needed it.
+However, MG is just a wrapper build repo. Each repo knows how to build itself
+so using MG is *typically* unnecessary. MG just brings (a) strict control
+of dependent bits and (b) upload to the structured layout of bits on
+stuff.joyent.us.
+
+
+# Bits directory structure
+
+MG uploads build bits to a controlled directory structure at
+<https://stuff.joyent.us/stuff/builds>. The MG `./configure ...` step handles
+downloading pre-built dependencies from this structure. The usb-headnode and
+agents-installer builds also rely on this structure.
+
+    https://stuff.joyent.us/stuff/builds/
+        $job/               # Typically $job === MG $target name
+            $branch-latest -> $branch-$latest_timestamp
+            ...
+            $branch-$timestamp/
+                $target/
+                    ...the target's built bits...
+                ...all dependent bits and MG configuration...
+
+For example:
+
+    https://stuff.joyent.us/stuff/builds/
+        amon/
+            master-latest -> master-20130226T191921Z
+            master-20130208T215745Z/
+            master-20130214T184711Z/
+            master-20130215T210716Z/
+            master-20130218T215536Z/
+            master-20130226T191921Z/
+                sdcnode/...
+                config.mk
+                md5sums.txt
+                amon/
+                    amon-agent-master-20130226T191921Z-g7cd3e28.tgz
+                    amon-pkg-master-20130226T191921Z-g7cd3e28.tar.bz2
+                    amon-relay-master-20130226T191921Z-g7cd3e28.tgz
+                    build.log
+        usbheadnodetar
+            master-latest -> master-20130301T004335Z
+            ...
+            master-20130301T004335Z/
+                ...lots of stuff because usb-headnode deps on everything...
+                config.mk
+                md5sums.txt
+                usbheadnode/
+                    boot-master-20130301T004335Z-gad6dfc4.tgz
+                    build.log
+                    build.spec.local
+
+All those "extra" pieces (build log, md5sums.txt, config.mk and the dependent
+bits) are there to be able to debug and theoretically reproduce builds.
+The "md5sums.txt" is used by the usb-headnode build to ensure uncorrupted
+downloads from stuff.
+
+
+# Versioning
+
+No excuses. The [JEG](https://mo.joyent.com/docs/eng/master/) makes this
+easy for you.
+
+Thou shalt name thy SDC constituent build bits as follows:
+
+    NAME-BRANCH-TIMESTAMP[-GITDESCRIBE].TGZ
+
+Where:
+
+- NAME is the package name, e.g. "smartlogin", "ca-pkg".
+- BRANCH is the git branch, e.g. "master", "release-20110714". Use:
+
+        BRANCH=$(shell git symbolic-ref HEAD | awk -F / '{print $$3}')  # Makefile
+        BRANCH=$(git symbolic-ref HEAD | awk -F / '{print $3}')         # Bash script
+
+- TIMESTAMP is an ISO timestamp like "20110729T063329Z". Use:
+
+        TIMESTAMP=$(shell TZ=UTC date "+%Y%m%dT%H%M%SZ")    # Makefile
+        TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")          # Bash script
+
+  Good. A timestamp is helpful (and in this position in the package name)
+  because: (a) it often helps to know approx. when a package was built when
+  debugging; and (b) it ensures that simple lexographical sorting of
+  "NAME-BRANCH-*" packages in a directory (as done by agents-installer and
+  usb-headnode) will make choosing "the latest" possible.
+
+  Bad. A timestamp *sucks* because successive builds in a dev tree will get a
+  new timestamp: defeating Makefile dependency attempts to avoid rebuilding.
+  Note that the TIMESTAMP is only necessary for released/published packages,
+  so for projects that care (e.g. ca), the TIMESTAMP can just be added for
+  release.
+
+- GITDESCRIBE gives the git sha for the repo and whether the repo was dirty
+  (had local changes) when it was built, e.g. "gfa1afe1-dirty", "gbadf00d".
+  Use:
+
+        # Need GNU awk for multi-char arg to "-F".
+        AWK=$((which gawk 2>/dev/null | grep -v "^no ") || which awk)
+        # In Bash:
+        GITDESCRIBE=g$(git describe --all --long --dirty | ${AWK} -F'-g' '{print $NF}')
+        # In a Makefile:
+        GITDESCRIBE=g$(shell git describe --all --long --dirty | $(AWK) -F'-g' '{print $$NF}')
+
+  Notes: "--all" allows this to work on a repo with no tags. "--long"
+  ensures we always get the "sha" part even if on a tag. We strip off the
+  head/tag part because we don't reliably use release tags in all our
+  repos, so the results can be misleading in package names. E.g., this
+  was the smartlogin package for the Lime release:
+
+        smartlogin-release-20110714-20110714T170222Z-20110414-2-g07e9e4f.tgz
+
+  The "20110414" there is an old old tag because tags aren't being added
+  to smart-login.git anymore.
+
+  "GITDESCRIBE" is *optional*. However, the only reason I currently see to
+  exclude it is if the downstream user of the package cannot handle it in
+  the package name. The "--dirty" flag is *optional* (though strongly
+  suggested) to allow repos to deal with possibly intractable issues (e.g. a
+  git submodule that has local changes as part of the build that can't be
+  resolved, at least not resolved quickly).
+
+- TGZ is a catch-all for whatever the package format is. E.g.: ".tgz",
+  ".sh" (shar), ".md5sum", ".tar.bz2".
+
+
+
+# Adding a repository quickstart
+
+*(Warning: This section is a little out of date.)*
+
+Add it as a top-lever property in targets.json, as an object with properties
+"repos" and "deps" minimally, both are arrays.
+
+- "repos" is an array of objects, with the property "url", pointing at a git url
+- "deps" is an array of strings, where the string is another top-level target in targets.json
+
+For example:
+
+    {
+      ...
+      mynewrepo: {
+        "repos": [ {"url": "git://github.com/joyent/mynewrepo.git" } ],
+        "deps": [ "platform" ]
+      },
+      ...
+    }
+
+Then you'll add the target to Makefile. MG's configure will automatically
+populate some Makefile values for you, noteably: xxx_BRANCH , xxx_SHA, but
+you will need to fill in the build stamp yourself. Configure will also git
+checkout your repo in build/
+
+    #---- MYNEWREPO
+
+    _mynewrepo_stamp=$(MYNEWREPO_BRANCH)-$(TIMESTAMP)-g$(MYNEWREPO_SHA)
+    MYNEWREPO_BITS=$(BITS_DIR)/mynewrepo/mynewrepo-pkg-$(_mynewrepo_stamp).tar.bz2
+
+    .PHONY: mynewrepo
+    mynewrepo: $(MYNEWREPO_BITS)
+
+    $(mynewrepo_BITS): build/mynewrepo
+      mkdir -p $(BITS_DIR)
+      (cd build/mynewrepo && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+      @echo "# Created mynewrepo bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+      @ls -1 $(MYNEWREPO_BITS)
+      @echo ""
+
+    clean_mynewrepo:
+      rm -rf $(BITS_DIR)/mynewrepo
+      (cd build/mynewrepo && gmake clean)
+
+if you wish to build an application zone image, the process is roughly
+similar except you will need to add the "appliance":"true" property, the
+"pkgsrc" property and "dataset_uuid"
+
+    {
+      ...
+      "mynewrepo": {
+        "repos" : [ {"url":"git://github.com/joyent/mynewrepo.git"} ],
+        "appliance": "true",
+        "dataset_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+        "pkgsrc": [
+          "sun-jre6-6.0.26",
+          "zookeeper-client-3.4.3",
+          "zookeeper-server-3.4.3"
+        ],
+        deps: []
+      },
+      ...
+    }
+
+where dataset\_uuid is the uuid of the source image you wish to build off
+pkgsrc is an array of strings of package names to install.
+
+Your Makefile target will look as above, with the addition of the xxx\_dataset target:
+
+
+    ...
+    MYNEWREPO_DATASET=$(BITS_DIR)/mynewrepo/mynewrepo-zfs-$(_mynewrepo_stamp).zfs.bz2
+
+    .PHONY: mynewrepo_dataset
+
+    mynewrepo_dataset: $(MYNEWREPO_DATASET)
+
+    $(MYNEWREPO_DATASET): $(MYNEWREPO_BITS)
+            @echo "# Build mynewrepo dataset: branch $(MYNEWREPO_BRANCH), sha $(MYNEWREPO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+            ./tools/prep_dataset.sh -t $(MYNEWREPO_BITS) -o $(MYNEWREPO_DATASET) -p $(MYNEWREPO_PKGSRC)
+            @echo "# Created mynewrepo dataset (time `date -u +%Y%m%dT%H%M%SZ`):"
+            @ls -1 $(MYNEWREPO_DATASET)
+            @echo ""
+    ...
+
+prep\_dataset.sh is a script that generates images out of tarballs and lists
+of packages.
+
+It takes arguments of the form -t <tarball> where <tarball> is a .tar.gz
+file, containing a directory "root", which is unpacked to / -p "list of
+pkgsrc packages" where list of pkgsrc packages is a list of the pkgsrc
+packages to be installed in the zone.
+
+Configure will populate xxx\_DATASET and xxx\_PKGSRC based on targets.json.
+
+Additionally, you can set the dsadm URN for the target by adding the "urn"
+and "version" properties to targets.json, as properties of the target you
+wish to manipulate. These will show up as urn:version ( sdc:sdc:mynewrepo:0.1
+for instance ). To use them, configure will populate xxx\_URN and xxx\_VERSION
+for you in the Makefile.
+
+Note that these images can only be provisioned with the joyent-minimal brand.
+If one is provisioned with the joyent brand, that zone's networking may not be
+working.  Normally, the networking setup is done through zoneinit, but since
+that script has already run and had its effects undone (as part of the MG
+build), there's no mechanism to automatically bring that zone's VNIC up.  You
+can recover by manually enabling network/physical:default, but you should just
+be provisioning with the joyent-minimal brand instead.  See RELENG-337 for
+details.
+
 

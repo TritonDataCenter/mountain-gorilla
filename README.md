@@ -1,20 +1,36 @@
-# Moutain Gorilla
+# Mountain Gorilla
 
-A single repo to build SDC. This is just a *driver* repo, all the components
-are still in their existing separate repos.
+- Repository: git@git.joyent.com:mountain-gorilla.git, <https://mo.joyent.com/mountain-gorilla>
+- Who: Trent Mick, John Sonnenschein
+- Docs: <https://mo.joyent.com/docs/mg>
+- Bugs: <https://devhub.joyent.com/jira/browse/RELENG>
+- Builds: <https://jenkins.joyent.us>, <https://stuff.joyent.us/stuff/builds>
+
+A single repo to build all the parts of SDC. This is just a *build driver*
+repo, all the components are still in their respective repos.
+See <https://mo.joyent.com/docs/mg> for a more complete introduction.
 
 
-# Usage
+# Quick start
+
+While MG theoretically knows how to "build the world", i.e all of SDC,
+the typical usage is to build one piece at a time. There is a make target
+(or targets) for each SDC component. So, for example, here is how you
+build VMAPI:
+
+    git clone git@git.joyent.com:mountain-gorilla.git
+    cd mountain-gorilla
+    # Get auth info for stuff.joyent.us from where the build grabs bits.
+    scp stuff@stuff.joyent.us:trent/mk-jenkins-slave/.mg.json ~/.mg.json
+    ./configure -t vmapi        # generates bits/config.mk and fetches repo and deps
+    make vmapi                  # builds in build/vmapi
+
+If that fails for you, you might be missing prerequisites. See
+<https://mo.joyent.com/docs/mg/master/#prerequisites>.
+
 
 If you'll actually be building, see "Prerequisites" section below first.
 
-    git clone git@git.joyent.com:mountain-gorilla.git
-    cd mountain-gorilla.git
-    # Get auth info for stuff.joyent.us from where the build grabs bits.
-    scp stuff@stuff.joyent.us:trent/mk-jenkins-slave/.mg.json ~/.mg.json
-    ./configure -h
-    ./configure [OPTIONS...]    # generates bits/config.mk with all build config
-    make                        # builds entire stack from source
 
 The "bits/config.mk" contains all config information necessary to fully
 reproduce the build. There will be configure options to use some prebuilt
