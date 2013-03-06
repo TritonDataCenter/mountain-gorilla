@@ -570,6 +570,9 @@ if [[ ! -z "$TARGET" ]]; then
         for targ in $TARGETS; do
             check_usezone $targ
             get_target_repos $targ
+            for dep in `cat targets.json | $JSON $targ.deps | $JSON -a`; do
+                preload_bits $dep "$BRANCH" "$TRY_BRANCH"
+            done
         done
     else
         # Validate target.
