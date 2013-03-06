@@ -209,6 +209,13 @@
     "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
+  "wrasse": {
+    "repos": [
+        {"url": "git@git.joyent.com:wrasse.git"}
+    ],
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+  },
+
   "configurator": {
     "repos": [
         {"url": "git@git.joyent.com:configurator.git"}
@@ -461,6 +468,32 @@
     ],
     "repos": [
       {"url": "git@git.joyent.com:marlin.git"}
+    ],
+    "deps": [
+      "https://download.joyent.com/pub/build/sdcnode",
+      "registrar",
+      "configurator",
+      "amon",
+      "sapi"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
+  },
+
+  "wrasse": {
+    "appliance": "true",
+    "image_name": "manta-jobpuller",
+    "image_description": "Manta Job Puller",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [
+      "zookeeper-client-3.4.3"
+    ],
+    "repos": [
+      {"url": "git@git.joyent.com:wrasse.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",

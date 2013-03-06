@@ -1025,6 +1025,48 @@ clean_muskie:
 	(cd build/muskie && gmake distclean)
 
 
+#---- Wrasse
+
+_wrasse_stamp=$(WRASSE_BRANCH)-$(TIMESTAMP)-g$(WRASSE_SHA)
+WRASSE_BITS=$(BITS_DIR)/wrasse/wrasse-pkg-$(_wrasse_stamp).tar.bz2
+WRASSE_IMAGE_BIT=$(BITS_DIR)/wrasse/wrasse-zfs-$(_wrasse_stamp).zfs.gz
+WRASSE_MANIFEST_BIT=$(BITS_DIR)/wrasse/wrasse-zfs-$(_wrasse_stamp).zfs.dsmanifest
+
+.PHONY: wrasse
+wrasse: $(WRASSE_BITS) wrasse_image
+
+# PATH for wrasse build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(WRASSE_BITS): build/wrasse
+	@echo "# Build wrasse: branch $(WRASSE_BRANCH), sha $(WRASSE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/wrasse && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created wrasse bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(WRASSE_BITS)
+	@echo ""
+
+.PHONY: wrasse_image
+wrasse_image: $(WRASSE_IMAGE_BIT)
+
+$(WRASSE_IMAGE_BIT): $(WRASSE_BITS)
+	@echo "# Build wrasse_image: branch $(WRASSE_BRANCH), sha $(WRASSE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(WRASSE_IMAGE_UUID)" -t $(WRASSE_BITS) \
+		-o "$(WRASSE_IMAGE_BIT)" -p $(WRASSE_PKGSRC) \
+		-t $(WRASSE_EXTRA_TARBALLS) -n $(WRASSE_IMAGE_NAME) \
+		-v $(_wrasse_stamp) -d $(WRASSE_IMAGE_DESCRIPTION)
+	@echo "# Created wrasse image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(WRASSE_IMAGE_BIT)
+	@echo ""
+
+wrasse_publish_image: $(WRASSE_IMAGE_BIT)
+	@echo "# Publish wrasse image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(WRASSE_MANIFEST_BIT) -f $(WRASSE_IMAGE_BIT)
+
+clean_wrasse:
+	rm -rf $(BITS_DIR)/wrasse
+	(cd build/wrasse && gmake distclean)
+
+
 #---- Registrar
 
 _registrar_stamp=$(REGISTRAR_BRANCH)-$(TIMESTAMP)-g$(REGISTRAR_SHA)
