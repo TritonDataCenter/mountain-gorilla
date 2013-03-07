@@ -319,13 +319,6 @@
     "deps": ["https://download.joyent.com/pub/build/sdcnode"]
   },
 
-  "wrasse": {
-    "repos": [
-        {"url": "git@git.joyent.com:wrasse.git"}
-    ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
-  },
-
   "configurator": {
     "repos": [
         {"url": "git@git.joyent.com:configurator.git"}
