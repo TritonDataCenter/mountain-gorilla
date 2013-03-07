@@ -6,20 +6,17 @@
     "deps": []
   },
   "ca": {
-    "usezone": false,
-    "branch": {
-        "master": {
-            "dataset": "smartos",
-            "version": "1.3.18",
-            "package": "regular_256",
-            "pkgsrc": "gcc-compiler gcc-runtime binutils cscope pkg-config gmake scmgit python24 python26 png npm-1.0.94 GeoIP GeoLitCity ghostscript",
-            "rname": "cloud-analytics"
-        }
-    },
-     "repos": [
-        {"url": "git@git.joyent.com:cloud-analytics.git", "submodule-recursive": false}
+    "appliance": "true",
+    "image_name": "ca",
+    "image_description": "SDC Cloud Analytics",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
+    "repos": [
+      {"url": "git@git.joyent.com:cloud-analytics.git", "submodule-recursive": false}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
+    "tarballs": []
   },
   "amon": {
     "appliance": "true",

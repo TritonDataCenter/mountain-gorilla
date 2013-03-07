@@ -137,7 +137,7 @@ ca: $(CA_BITS_0) ca_image
 
 # PATH for ca build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-config_ca_old: build/cloud-analytics
+$(CA_BITS): build/cloud-analytics
 	@echo "# Build ca: branch $(CLOUD_ANALYTICS_BRANCH), sha $(CLOUD_ANALYTICS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/cloud-analytics && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
@@ -145,18 +145,12 @@ config_ca_old: build/cloud-analytics
 	@ls -1 $(CA_BITS)
 	@echo ""
 
-# Build CA in the new build-zone style if requested by configure.
-#
-config_ca_new: build/cloud-analytics
-	@echo "# Build ca: branch $(CLOUD_ANALYTICS_BRANCH), sha $(CLOUD_ANALYTICS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BRANCH=$(BRANCH) $(TOP)/tools/build-zone build.json $(TOP)/targets.json ca $(CLOUD_ANALYTICS_SHA)
-	@ls -1 $(CA_BITS)
-	@echo ""
+.PHONY: ca_image
+ca_image: $(CA_IMAGE_BIT)
 
 $(CA_IMAGE_BIT): $(CA_BITS_0)
 	@echo "# Build ca_image: branch $(CA_BRANCH), sha $(CA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset.sh -i "$(CA_IMAGE_UUID)" -t $(CA_BITS) \
+	./tools/prep_dataset.sh -i "$(CA_IMAGE_UUID)" -t $(CA_BITS_0) \
 		-o "$(CA_IMAGE_BIT)" -p $(CA_PKGSRC) \
 		-t $(CA_EXTRA_TARBALLS) -n $(CA_IMAGE_NAME) \
 		-v $(_ca_stamp) -d $(CA_IMAGE_DESCRIPTION)
@@ -164,10 +158,9 @@ $(CA_IMAGE_BIT): $(CA_BITS_0)
 	@ls -1 $(CA_IMAGE_BIT)
 	@echo ""
 
-# XXX - need RELENG-353 first.
-# ca_publish_image: $(CA_IMAGE_BIT)
-#     @echo "# Publish ca image to SDC Updates repo."
-#     $(UPDATES_IMGADM) import -ddd -m $(CA_MANIFEST_BIT) -f $(CA_IMAGE_BIT)
+ca_publish_image: $(CA_IMAGE_BIT)
+	@echo "# Publish ca image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(CA_MANIFEST_BIT) -f $(CA_IMAGE_BIT)
 
 # Warning: if CA's submodule deps change, this 'clean_ca' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -1982,4 +1975,4 @@ jenkins_publish_image:
 	@[[ -z "$(shell grep '^$(JOB_NAME)_publish_image\>' Makefile || true)" ]] \
 		|| make $(JOB_NAME)_publish_image
 
-include bits/config.targ.mk
+# include bits/config.targ.mk
