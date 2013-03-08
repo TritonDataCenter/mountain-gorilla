@@ -1975,4 +1975,3 @@ jenkins_publish_image:
 	@[[ -z "$(shell grep '^$(JOB_NAME)_publish_image\>' Makefile || true)" ]] \
 		|| make $(JOB_NAME)_publish_image
 
-# include bits/config.targ.mk
