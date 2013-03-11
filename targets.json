@@ -159,7 +159,7 @@
 
   "vmapi": {
     "appliance": "true",
-    "image_name": "vampi",
+    "image_name": "vmapi",
     "image_description": "SDC VMAPI",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
