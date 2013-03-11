@@ -155,12 +155,13 @@ for target in $TARGETS; do
     continue
   fi
   repos=$(cat targets.json | ./tools/json ${target}.repos  | ./tools/json -a url | cut -f 2 -d ':' | xargs -I {} basename {} .git)
+  repos+=" git@git.joyent.com:mountain-gorilla.git"
   for repo in $repos; do
     hit=$(curl -sS https://mo.joyent.com/api/repos/$repo/refs -u $CREDS | $TOP/tools/json branches | grep "\"$BRANCH\"" || true)
     if [[ -z "$hit" ]]; then
       if [[ $APPLY -eq 1 ]]; then
         echo "$repo: missing '$BRANCH' branch"
-        apply_missing $target "$TAG" "$BRANCH" 
+        apply_missing $target "$TAG" "$BRANCH"
       else
         echo "$repo: FAIL (no '$BRANCH' branch, use -a to apply)"
       fi
