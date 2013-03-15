@@ -565,8 +565,8 @@ clean_manatee:
 
 _wf_stamp=$(WORKFLOW_BRANCH)-$(TIMESTAMP)-g$(WORKFLOW_SHA)
 WORKFLOW_BITS=$(BITS_DIR)/workflow/workflow-pkg-$(_wf_stamp).tar.bz2
-WORKFLOW_IMAGE_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_workflow_stamp).zfs.gz
-WORKFLOW_MANIFEST_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_workflow_stamp).zfs.dsmanifest
+WORKFLOW_IMAGE_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).zfs.gz
+WORKFLOW_MANIFEST_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).zfs.dsmanifest
 
 .PHONY: workflow
 workflow: $(WORKFLOW_BITS) workflow_image
