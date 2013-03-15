@@ -640,7 +640,7 @@
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [],
     "repos": [
-        {"url":  "git@github.com:joyent-smartdatacenter/keyapi.git" }
+        {"url":  "git@github.com:joyent/keyapi.git" }
     ],
     "deps": ["https://download.joyent.com/pub/build/sdcnode"],
     "tarballs": []
@@ -654,7 +654,7 @@
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [],
     "repos": [
-        {"url":  "git@github.com:joyent-smartdatacenter/sdcsso.git" }
+        {"url":  "git@github.com:joyent/sdcsso.git" }
     ],
     "deps": ["https://download.joyent.com/pub/build/sdcnode"],
     "tarballs": []
