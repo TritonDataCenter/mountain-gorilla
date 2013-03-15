@@ -290,7 +290,7 @@ output=${output}.${suffix}
 
 timestamp=$(node -e 'console.log(new Date().toISOString())')
 shasum=$(/usr/bin/sum -x sha1 ${output} | cut -d ' ' -f1)
-size=$(/usr/bin/du -ks ${output} | cut -f 1)
+size=$(/usr/bin/stat --format=%s ${output})
 
 
 # TODO (when imgadm v2): drop files, creator_uuid, creator_name, urn
