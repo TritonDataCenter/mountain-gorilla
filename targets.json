@@ -11,12 +11,27 @@
     "image_description": "SDC Cloud Analytics",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "zlib-1.2.3",
+      "png-1.5.9",
+      "openssl-0.9.8w",
+      "GeoIP-1.4.8",
+      "GeoLiteCity-201203"
+    ],
     "repos": [
       {"url": "git@git.joyent.com:cloud-analytics.git", "submodule-recursive": false}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
   "amon": {
     "appliance": "true",
@@ -28,8 +43,15 @@
     "repos": [
       {"url": "git@git.joyent.com:amon.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
   "assets": {
     "appliance": "true",
@@ -37,12 +59,22 @@
     "image_description": "SDC Assets",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "nginx-1.0.10"
+    ],
     "repos": [
       {"url": "git@git.joyent.com:assets.git"}
     ],
-    "deps": [],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
   "adminui": {
     "appliance": "true",
@@ -54,8 +86,17 @@
     "repos": [
         {"url": "git@git.joyent.com:adminui.git", "dir": "adminui"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
   "dhcpd": {
     "appliance": "true",
@@ -63,12 +104,23 @@
     "image_description": "SDC DHCPD",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "tftp-hpa-5.2"
+    ],
     "repos": [
         {"url": "git@git.joyent.com:booter.git", "dir": "dhcpd"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
   "redis": {
     "appliance": "true",
@@ -80,8 +132,16 @@
     "repos": [
       {"url": "git@git.joyent.com:redis.git"}
     ],
-    "deps": [],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
   "rabbitmq": {
     "appliance": "true",
@@ -89,19 +149,37 @@
     "image_description": "SDC RabbitMQ",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "perl-5.14.2nb3",
+      "iodbc-3.52.7",
+      "libffi-3.0.9nb1",
+      "python27-2.7.2nb2",
+      "py27-setuptools-0.6c11nb1",
+      "py27-simplejson-2.1.1",
+      "erlang-14.1.4nb1",
+      "rabbitmq-2.7.1"
+    ],
     "repos": [
       {"url": "git@git.joyent.com:rabbitmq.git"}
     ],
     "deps": [],
-    "tarballs": []
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
   "webinfo": {
     "repos": [
         {"url": "git@git.joyent.com:sdc-webinfo.git",
          "dir": "webinfo"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
   "cloudapi": {
     "appliance": "true",
@@ -112,8 +190,21 @@
     "repos": [
       {"url": "git@git.joyent.com:cloudapi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "pkgsrc": [
+      "openldap-client-2.4.24",
+      "pkg_alternatives-1.5"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
   "usageapi": {
     "appliance": "true",
@@ -121,12 +212,37 @@
     "image_description": "SDC UsageAPI",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "perl-5.14.2nb3",
+      "iodbc-3.52.7",
+      "libffi-3.0.9nb1",
+      "gettext-lib-0.18.1.1",
+      "pcre-8.21",
+      "expat-2.0.1nb2",
+      "libgetopt-1.4.4",
+      "libidn-1.23",
+      "libssh2-1.2.2nb1",
+      "p5-Error-0.17016nb2",
+      "postgresql91-client-9.1.2",
+      "postgresql91-server-9.1.2",
+      "pkg_alternatives-1.5",
+      "curl-7.23.1nb1",
+      "python26-2.6.7nb2"
+    ],
     "repos": [
       {"url": "git@git.joyent.com:usageapi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "ufds": {
@@ -135,12 +251,24 @@
     "image_description": "SDC UFDS",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "openldap-client-2.4.24",
+      "pkg_alternatives-1.5"
+    ],
     "repos": [
       {"url": "git@git.joyent.com:ufds.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "workflow": {
@@ -149,12 +277,25 @@
     "image_description": "SDC Workflow",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "curl-7.23.1nb1",
+      "pkg_alternatives-1.5",
+      "python26-2.6.7nb2"
+    ],
     "repos": [
       {"url": "git@git.joyent.com:workflow.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "vmapi": {
@@ -163,12 +304,27 @@
     "image_description": "SDC VMAPI",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "gcc-runtime-4.6.2",
+      "curl-7.23.1nb1",
+      "openldap-client-2.4.24",
+      "pkg_alternatives-1.5",
+      "python26-2.6.7nb2"
+    ],
     "repos": [
         {"url": "git@git.joyent.com:vmapi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "dapi": {
@@ -177,12 +333,26 @@
     "image_description": "SDC DAPI",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "gcc-runtime-4.6.2",
+      "curl-7.23.1nb1",
+      "pkg_alternatives-1.5",
+      "python26-2.6.7nb2"
+    ],
     "repos": [
         {"url": "git@git.joyent.com:dapi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "imgapi": {
@@ -194,43 +364,77 @@
     "repos": [
       {"url": "git@git.joyent.com:imgapi.git"}
     ],
-    "tarballs": [],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "imgapi-cli": {
     "repos": [
         {"url": "git@git.joyent.com:imgapi-cli.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
 
   "agents_core": {
     "repos": [
         {"url": "git@git.joyent.com:agents_core.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
 
   "heartbeater": {
     "repos": [
         {"url": "git@git.joyent.com:heartbeater.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
 
   "provisioner": {
     "repos": [
         {"url": "git@git.joyent.com:provisioner.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
 
   "zonetracker": {
     "repos": [
         {"url": "git@git.joyent.com:zonetracker.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
 
   "agents-upgrade": {
@@ -244,7 +448,12 @@
     "repos": [
         {"url": "git@git.joyent.com:config-agent.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
 
   "cnapi": {
@@ -253,12 +462,28 @@
     "image_description": "SDC CNAPI",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "gcc-runtime-4.6.2",
+      "curl-7.23.1nb1",
+      "openldap-client-2.4.24",
+      "pkg_alternatives-1.5",
+      "python26-2.6.7nb2",
+      "gsharutils-4.11.1"
+    ],
     "repos": [
         {"url": "git@git.joyent.com:cnapi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "fwapi": {
@@ -267,12 +492,23 @@
     "image_description": "SDC FWAPI",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "openldap-client-2.4.24"
+    ],
     "repos": [
         {"url": "git@git.joyent.com:fwapi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "napi": {
@@ -280,12 +516,23 @@
     "image_name": "napi",
     "image_description": "SDC NAPI",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "openldap-client-2.4.24"
+    ],
     "repos": [
       {"url": "git@git.joyent.com:napi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "sapi": {
@@ -294,47 +541,87 @@
     "image_description": "SDC SAPI",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "gcc-runtime-4.6.2",
+      "curl-7.23.1nb1",
+      "openldap-client-2.4.24",
+      "pkg_alternatives-1.5",
+      "python26-2.6.7nb2"
+    ],
     "repos": [
         {"url": "git@git.joyent.com:sapi.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "registrar": {
     "repos": [
         {"url": "git@git.joyent.com:registrar.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
 
   "minnow": {
     "repos": [
         {"url": "git@git.joyent.com:minnow.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
 
   "configurator": {
     "repos": [
         {"url": "git@git.joyent.com:configurator.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
 
   "mackerel": {
     "repos": [
         {"url": "git@git.joyent.com:mackerel.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
 
   "manowar": {
     "repos": [
         {"url": "git@git.joyent.com:manowar.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
 
   "binder": {
@@ -353,10 +640,12 @@
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
       "configurator",
+      "registrar",
       "amon",
       "sapi"
     ],
     "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
@@ -629,7 +918,12 @@
     "repos": [
         {"url":  "git@github.com:joyent/convertvm.git" }
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
 
   "keyapi": {
@@ -638,12 +932,27 @@
     "image_description": "SDC KeyAPI",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "gcc-runtime-4.6.2",
+      "curl-7.23.1nb1",
+      "openldap-client-2.4.24",
+      "pkg_alternatives-1.5",
+      "python26-2.6.7nb2"
+    ],
     "repos": [
         {"url":  "git@github.com:joyent/keyapi.git" }
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "sdcsso": {
@@ -652,26 +961,51 @@
     "image_description": "SDC SSO",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "gcc-runtime-4.6.2",
+      "curl-7.23.1nb1",
+      "openldap-client-2.4.24",
+      "pkg_alternatives-1.5",
+      "python26-2.6.7nb2"
+    ],
     "repos": [
         {"url":  "git@github.com:joyent/sdcsso.git" }
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"],
-    "tarballs": []
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "manta": {
     "repos": [
         {"url": "git@git.joyent.com:manta.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
 
   "sdc-system-tests": {
     "repos": [
         {"url": "git@git.joyent.com:sdc-system-tests.git"}
     ],
-    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
   },
 
   "sdcboot": {
