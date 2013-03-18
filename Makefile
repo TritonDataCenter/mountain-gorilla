@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel manowar config-agent
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel manowar config-agent sdcboot
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mackerel manowar config-agent
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mackerel manowar config-agent sdcboot
 
 
 #---- smartlogin
@@ -1740,6 +1740,25 @@ clean_manta:
 	(cd build/manta && gmake distclean)
 
 
+#---- sdcboot (boot utilities for usb-headnode)
+
+_sdcboot_stamp=$(SDCBOOT_BRANCH)-$(TIMESTAMP)-g$(SDCBOOT_SHA)
+SDCBOOT_BITS=$(BITS_DIR)/sdcboot/sdcboot-$(_sdcboot_stamp).tgz
+
+.PHONY: sdcboot
+sdcboot: $(SDCBOOT_BITS)
+
+$(SDCBOOT_BITS): build/sdcboot
+	mkdir -p $(BITS_DIR)
+	(cd build/sdcboot && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) \
+	    gmake pkg release publish)
+	@echo "# Created sdcboot bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(SDCBOOT_BITS)
+	@echo ""
+
+clean_sdcboot:
+	rm -rf $(BITS_DIR)/sdcboot
+	(cd build/sdcboot && gmake clean)
 
 #---- usb-headnode
 # We are using the '-s STAGE-DIR' option to the usb-headnode build to

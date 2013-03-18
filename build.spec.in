@@ -7,6 +7,7 @@ cat <<HERE;
   "bits-branch": "(unused because build uses a local dir BITS_URL)",
 
   "platform-release": "$(ls bits/platform/platform*.tgz | xargs basename | cut -d- -f2)",
+  "sdcboot-release": "$(ls bits/sdcboot/sdcboot*.tgz | xargs basename | cut -d -f2)",
   "agents-shar": "$(ls bits/agentsshar/agents-*.sh | xargs basename | cut -d- -f2)",
 
   "adminui-tarball": "adminui/$(ls bits/adminui/adminui-pkg* | xargs basename)",
