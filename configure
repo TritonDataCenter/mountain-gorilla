@@ -399,10 +399,12 @@ function get_pkgsrc() {
 
     set -o xtrace
 
+    shopt -s extglob
+
     for dataset in $(find ${ROOT}/build/usb-headnode/zones -name "dataset"); do
       local ds=$(cat ${dataset})
       local pkgsrc_url=$((${JSON} datasets | ${JSON} -a name pkgsrc_url \
-          | grep "$(basename ${ds})" \
+          | grep "$(basename ${ds%\.dsmanifest})" \
           | cut -d ' ' -f2) < ${ROOT}/build/usb-headnode/build.spec)
       if [[ ${pkgsrc_url:(-1)} != "/" ]]; then
         pkgsrc_url=$pkgsrc_url/

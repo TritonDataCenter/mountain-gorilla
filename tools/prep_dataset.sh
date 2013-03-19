@@ -295,7 +295,7 @@ size=$(/usr/bin/stat --format=%s ${output})
 
 # TODO (when imgadm v2): drop files, creator_uuid, creator_name, urn
 # TODO: consider changing owner to poseidon UUID
-cat <<EOF>> ${output%.$suffix}.imgmanifest
+cat <<EOF>> ${output%.$suffix}.dsmanifest
   {
     "uuid": "${uuid}",
     "name": "${image_name}",
