@@ -1741,7 +1741,7 @@ clean_manta:
 
 
 _manta_deployment_stamp=$(MANTA_DEPLOYMENT_BRANCH)-$(TIMESTAMP)-g$(MANTA_DEPLOYMENT_SHA)
-MANTA_DEPLOYMENT_BITS=$(BITS_DIR)/manta/manta-pkg-$(_manta_deployment_stamp).tar.bz2
+MANTA_DEPLOYMENT_BITS=$(BITS_DIR)/manta-deployment/manta-deployment-pkg-$(_manta_deployment_stamp).tar.bz2
 
 .PHONY: manta-deployment
 manta-deployment: $(MANTA_DEPLOYMENT_BITS)
