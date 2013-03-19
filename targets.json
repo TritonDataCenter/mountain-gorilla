@@ -996,6 +996,13 @@
     ]
   },
 
+  "manta-deployment": {
+    "repos": [
+        {"url": "git@git.joyent.com:manta-deployment.git"}
+    ],
+    "deps": ["https://download.joyent.com/pub/build/sdcnode"]
+  },
+
   "sdc-system-tests": {
     "repos": [
         {"url": "git@git.joyent.com:sdc-system-tests.git"}
