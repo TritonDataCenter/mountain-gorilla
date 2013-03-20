@@ -162,7 +162,11 @@
     "repos": [
       {"url": "git@git.joyent.com:rabbitmq.git"}
     ],
-    "deps": [],
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar"
+    ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
