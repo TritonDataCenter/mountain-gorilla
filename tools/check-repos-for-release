@@ -72,23 +72,22 @@ function apply_missing_to_repo {
     local branch=$3
 
     echo "Prep repo $repo_url for release: branch '$branch', tag '$tag'."
-    #XXX
-    #mkdir -p $WORKDIR
-    #repo_name=$(get_repo_name_from_url $repo_url)
-    #cd $WORKDIR;
-    #git clone $repo_url $repo_name;
-    #cd $repo_name;
-    #git checkout master;
-    #if [[ ! -z "$tag" ]]; then
-    #  # Consider '-B' to force reset of branch if already exists.
-    #  git tag -a "$tag" -m "$tag release"
-    #  git push -q --tags
-    #fi
-    #if [[ ! -z "$branch" ]]; then
-    #  # Consider '-B' to force reset of branch if already exists.
-    #  git checkout -b $branch
-    #  git push -q origin $branch
-    #fi
+    mkdir -p $WORKDIR
+    repo_name=$(get_repo_name_from_url $repo_url)
+    cd $WORKDIR;
+    git clone $repo_url $repo_name;
+    cd $repo_name;
+    git checkout master;
+    if [[ ! -z "$tag" ]]; then
+      # Consider '-B' to force reset of branch if already exists.
+      git tag -a "$tag" -m "$tag release"
+      git push -q --tags
+    fi
+    if [[ ! -z "$branch" ]]; then
+      # Consider '-B' to force reset of branch if already exists.
+      git checkout -b $branch
+      git push -q origin $branch
+    fi
 }
 
 function check_repo_url {
