@@ -35,13 +35,13 @@ function usage() {
     echo "  -a              *Apply* missing branch and/or tag (as appropriate)"
     echo "                  The 'illumos-extra' repo is just tagged, all"
     echo "                  others are just branched."
-    echo "  -r REPO         Just run for the given repository. If not given"
-    echo "                  then all repos in 'targets.json' are used. Can be"
+    echo "  -t TARGET       Just run for the given MG target. If not given"
+    echo "                  then all targets in 'targets.json' are used. Can be"
     echo "                  specified multiple times."
     echo ""
     echo "Examples:"
     echo "  check-repos-for-release 20111020"
-    echo "  check-repos-for-release -r usb-headnode 20111020"
+    echo "  check-repos-for-release -t usbheadnode 20111020"
     echo "  check-repos-for-release -a 20111020"
     exit 1
 }
@@ -66,33 +66,58 @@ function get_repo_name_from_url {
   echo $targ | cut -d ':' -f2 | xargs -I {} basename {} .git
 }
 
-function apply_missing {
-    local repo_targ=$1
+function apply_missing_to_repo {
+    local repo_url=$1
     local tag=$2
     local branch=$3
-    local repo_urls="$(get_repo_url_from_targ $repo_targ)"
-    #local repo_name=$(get_repo_name_from_targ $repo_targ)
 
-    echo "Prep $repo ($repo_url) for release: branch '$branch', tag '$tag'."
-    mkdir -p $WORKDIR
+    echo "Prep repo $repo_url for release: branch '$branch', tag '$tag'."
+    #XXX
+    #mkdir -p $WORKDIR
+    #repo_name=$(get_repo_name_from_url $repo_url)
+    #cd $WORKDIR;
+    #git clone $repo_url $repo_name;
+    #cd $repo_name;
+    #git checkout master;
+    #if [[ ! -z "$tag" ]]; then
+    #  # Consider '-B' to force reset of branch if already exists.
+    #  git tag -a "$tag" -m "$tag release"
+    #  git push -q --tags
+    #fi
+    #if [[ ! -z "$branch" ]]; then
+    #  # Consider '-B' to force reset of branch if already exists.
+    #  git checkout -b $branch
+    #  git push -q origin $branch
+    #fi
+}
+
+function check_repo_url {
+    local repo_url=$1
+    local targ=$2   # optional
+
+    repo_name=$(get_repo_name_from_url $repo_url)
+    local hit=$(curl -sS https://mo.joyent.com/api/repos/$repo_name/refs -u $CREDS \
+        | $TOP/tools/json branches \
+        | grep "\"$BRANCH\"" \
+        || true)
+    if [[ -z "$hit" ]]; then
+      if [[ $APPLY -eq 1 ]]; then
+        echo "Repo $repo_url ('$targ' target): missing '$BRANCH' branch"
+        apply_missing_to_repo $repo_url "$TAG" "$BRANCH"
+      else
+        echo "Repo $repo_url ('$targ' target): FAIL (no '$BRANCH' branch, use -a to apply)"
+      fi
+    else
+      echo "Repo $repo_url ('$targ' target): OK"
+    fi
+}
+
+function check_targ {
+    local targ=$1
+    local repo_urls="$(get_repo_url_from_targ $targ)"
     for repo_url in $repo_urls; do
-      repo_name=$(get_repo_name_from_url $repo_url)
-      cd $WORKDIR;
-      git clone $repo_url $repo_name;
-      cd $repo_name;
-      git checkout master;
-      if [[ ! -z "$tag" ]]; then
-        # Consider '-B' to force reset of branch if already exists.
-        git tag -a "$tag" -m "$tag release"
-        git push -q --tags
-      fi
-      if [[ ! -z "$branch" ]]; then
-        # Consider '-B' to force reset of branch if already exists.
-        git checkout -b $branch
-        git push -q origin $branch
-      fi
+        check_repo_url $repo_url $targ
     done
-    cd $TOP
 }
 
 
@@ -102,8 +127,8 @@ trap cleanup EXIT
 
 APPLY=0   # whether to apply a branch/tag to repo
 CREDS=
-REPOS=
-while getopts "hac:r:" c; do
+TARGETS=
+while getopts "hac:t:" c; do
     case "$c" in
     h)
         usage
@@ -114,8 +139,8 @@ while getopts "hac:r:" c; do
     c)
         CREDS=$OPTARG
         ;;
-    r)
-        REPOS="$REPOS $OPTARG"
+    t)
+        TARGETS="$TARGETS $OPTARG"
         ;;
     *)
         usage "illegal option -- $OPTARG"
@@ -144,29 +169,17 @@ if [[ -z "$CREDS" ]]; then
 fi
 
 
-if [[ -z "$REPOS" ]]; then
-  TARGETS=$(node -e "var fs = require('fs');
-      var targets = JSON.parse(fs.readFileSync('targets.json'));
-      Object.keys(targets).forEach( function(targ) { console.log(targ) });" | xargs)
+if [[ -z "$TARGETS" ]]; then
+    TARGETS=$(node -e "var fs = require('fs');
+        var targets = JSON.parse(fs.readFileSync('targets.json'));
+        Object.keys(targets).forEach( function(targ) { console.log(targ) });" | xargs)
 fi
 
-for target in $TARGETS; do
-  if [[ $target == 'all' ]]; then
+for targ in $TARGETS; do
+  if [[ $targ == 'all' ]]; then
     continue
   fi
-  repos=$(cat targets.json | ./tools/json ${target}.repos  | ./tools/json -a url | cut -f 2 -d ':' | xargs -I {} basename {} .git)
-  repos+=" git@git.joyent.com:mountain-gorilla.git"
-  for repo in $repos; do
-    hit=$(curl -sS https://mo.joyent.com/api/repos/$repo/refs -u $CREDS | $TOP/tools/json branches | grep "\"$BRANCH\"" || true)
-    if [[ -z "$hit" ]]; then
-      if [[ $APPLY -eq 1 ]]; then
-        echo "$repo: missing '$BRANCH' branch"
-        apply_missing $target "$TAG" "$BRANCH"
-      else
-        echo "$repo: FAIL (no '$BRANCH' branch, use -a to apply)"
-      fi
-    else
-      echo "$repo: OK"
-    fi
-  done
+  check_targ $targ
 done
+check_repo_url git@git.joyent.com:mountain-gorilla.git '(none)'
+
