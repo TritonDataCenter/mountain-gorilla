@@ -1061,6 +1061,7 @@
         "keyapi",
         "manatee",
         "manta",
+        "manta-deployment",
         "moray",
         "napi",
         "platform",
