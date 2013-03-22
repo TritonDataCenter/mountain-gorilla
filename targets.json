@@ -173,18 +173,6 @@
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
   },
-  "webinfo": {
-    "repos": [
-        {"url": "git@git.joyent.com:sdc-webinfo.git",
-         "dir": "webinfo"}
-    ],
-    "deps": [
-      "amon",
-      "sapi",
-      "registrar",
-      "https://download.joyent.com/pub/build/sdcnode"
-    ]
-  },
   "cloudapi": {
     "appliance": "true",
     "image_name": "cloudapi",
@@ -1073,7 +1061,6 @@
         "ufds",
         "usageapi",
         "vmapi",
-        "webinfo",
         "workflow"
     ]
   },

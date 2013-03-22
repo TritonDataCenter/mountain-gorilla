@@ -45,10 +45,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd webinfo usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar configurator moray ufds usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment
 
 
 #---- smartlogin
@@ -456,25 +456,6 @@ clean_dhcpd:
 	rm -rf $(BITS_DIR)/dhcpd
 	(cd build/dhcpd && gmake clean)
 
-#---- WEBINFO
-
-_webinfo_stamp=$(WEBINFO_BRANCH)-$(TIMESTAMP)-g$(WEBINFO_SHA)
-WEBINFO_BITS=$(BITS_DIR)/webinfo/webinfo-pkg-$(_webinfo_stamp).tar.bz2
-
-.PHONY: webinfo
-webinfo: $(WEBINFO_BITS)
-
-$(WEBINFO_BITS): build/webinfo
-	@echo "# Build webinfo: branch $(WEBINFO_BRANCH), sha $(WEBINFO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/webinfo && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
-	@echo "# Created webinfo bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(WEBINFO_BITS)
-	@echo ""
-
-clean_webinfo:
-	rm -rf $(BITS_DIR)/webinfo
-	(cd build/webinfo && gmake clean)
 
 #---- CLOUDAPI
 
