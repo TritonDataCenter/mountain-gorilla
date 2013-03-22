@@ -23,6 +23,7 @@ cat <<HERE;
   "imgapi-cli-tarball": "imgapi-cli/$(ls bits/imgapi-cli/imgapi-cli-pkg* | xargs basename)",
   "keyapi-tarball": "keyapi/$(ls bits/keyapi/keyapi-pkg* | xargs basename)",
   "manatee-tarball": "manatee/$(ls bits/manatee/manatee-pkg* | xargs basename)",
+  "manta-tools": "manta/$(ls bits/manta/manta-pkg* | xargs basename)",
   "manta-tarball": "manta-deployment/$(ls bits/manta-deployment/manta-deployment-pkg* | xargs basename)",
   "moray-tarball": "moray/$(ls bits/moray/moray-pkg* | xargs basename)",
   "napi-tarball": "napi/$(ls bits/napi/napi-pkg* | xargs basename)",
