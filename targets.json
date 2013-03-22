@@ -545,7 +545,6 @@
     ],
     "deps": [
       "amon",
-      "sapi",
       "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ],
