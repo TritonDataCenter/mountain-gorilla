@@ -374,9 +374,6 @@
         {"url": "git@git.joyent.com:imgapi-cli.git"}
     ],
     "deps": [
-      "amon",
-      "sapi",
-      "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ]
   },
@@ -386,9 +383,6 @@
         {"url": "git@git.joyent.com:agents_core.git"}
     ],
     "deps": [
-      "amon",
-      "sapi",
-      "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ]
   },
@@ -398,9 +392,6 @@
         {"url": "git@git.joyent.com:heartbeater.git"}
     ],
     "deps": [
-      "amon",
-      "sapi",
-      "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ]
   },
@@ -410,9 +401,6 @@
         {"url": "git@git.joyent.com:provisioner.git"}
     ],
     "deps": [
-      "amon",
-      "sapi",
-      "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ]
   },
@@ -422,9 +410,6 @@
         {"url": "git@git.joyent.com:zonetracker.git"}
     ],
     "deps": [
-      "amon",
-      "sapi",
-      "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ]
   },
@@ -441,9 +426,6 @@
         {"url": "git@git.joyent.com:config-agent.git"}
     ],
     "deps": [
-      "amon",
-      "sapi",
-      "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ]
   },
@@ -560,9 +542,6 @@
         {"url": "git@git.joyent.com:registrar.git"}
     ],
     "deps": [
-      "amon",
-      "sapi",
-      "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ]
   },
@@ -572,9 +551,6 @@
         {"url": "git@git.joyent.com:minnow.git"}
     ],
     "deps": [
-      "amon",
-      "sapi",
-      "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ]
   },
@@ -584,9 +560,6 @@
         {"url": "git@git.joyent.com:configurator.git"}
     ],
     "deps": [
-      "amon",
-      "sapi",
-      "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ]
   },
@@ -596,9 +569,6 @@
         {"url": "git@git.joyent.com:mackerel.git"}
     ],
     "deps": [
-      "amon",
-      "sapi",
-      "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ]
   },
@@ -608,9 +578,6 @@
         {"url": "git@git.joyent.com:manowar.git"}
     ],
     "deps": [
-      "amon",
-      "sapi",
-      "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ]
   },
@@ -910,9 +877,6 @@
         {"url":  "git@github.com:joyent/convertvm.git" }
     ],
     "deps": [
-      "amon",
-      "sapi",
-      "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ]
   },
@@ -980,9 +944,6 @@
         {"url": "git@git.joyent.com:manta.git"}
     ],
     "deps": [
-      "amon",
-      "sapi",
-      "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ]
   },
@@ -999,9 +960,6 @@
         {"url": "git@git.joyent.com:sdc-system-tests.git"}
     ],
     "deps": [
-      "amon",
-      "sapi",
-      "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ]
   },
