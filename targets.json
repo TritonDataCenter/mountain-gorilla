@@ -693,6 +693,33 @@
     ]
   },
 
+  "electric-moray": {
+    "appliance": "true",
+    "image_name": "manta-electric-moray",
+    "image_description": "Manta moray proxy",
+    "image_uuid": "ee1fb198-5fe1-11e2-9cce-e319fd47df7b",
+    "pkgsrc": [
+      "haproxy-1.4.18"
+    ],
+    "repos": [
+        {"url": "git@git.joyent.com:electric-moray.git"}
+    ],
+    "deps": [
+      "https://download.joyent.com/pub/build/sdcnode",
+      "registrar",
+      "configurator",
+      "moray",
+      "amon",
+      "sapi"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
+  },
+
   "muppet": {
     "appliance": "true",
     "image_name": "manta-loadbalancer",
