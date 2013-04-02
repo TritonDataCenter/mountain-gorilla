@@ -1319,40 +1319,40 @@ clean_moray:
 
 #---- Electric-Moray
 
-_electric-moray_stamp=$(ELECTRIC-MORAY_BRANCH)-$(TIMESTAMP)-g$(ELECTRIC-MORAY_SHA)
-ELECTRIC-MORAY_BITS=$(BITS_DIR)/electric-moray/electric-moray-pkg-$(_electric-moray_stamp).tar.bz2
-ELECTRIC-MORAY_IMAGE_BIT=$(BITS_DIR)/electric-moray/electric-moray-zfs-$(_electric-moray_stamp).zfs.gz
-ELECTRIC-MORAY_MANIFEST_BIT=$(BITS_DIR)/electric-moray/electric-moray-zfs-$(_electric-moray_stamp).zfs.dsmanifest
+_electric-moray_stamp=$(ELECTRIC_MORAY_BRANCH)-$(TIMESTAMP)-g$(ELECTRIC_MORAY_SHA)
+ELECTRIC_MORAY_BITS=$(BITS_DIR)/electric-moray/electric-moray-pkg-$(_electric-moray_stamp).tar.bz2
+ELECTRIC_MORAY_IMAGE_BIT=$(BITS_DIR)/electric-moray/electric-moray-zfs-$(_electric-moray_stamp).zfs.gz
+ELECTRIC_MORAY_MANIFEST_BIT=$(BITS_DIR)/electric-moray/electric-moray-zfs-$(_electric-moray_stamp).zfs.dsmanifest
 
 .PHONY: electric-moray
-electric-moray: $(ELECTRIC-MORAY_BITS) electric-moray_image
+electric-moray: $(ELECTRIC_MORAY_BITS) electric-moray_image
 
 # PATH for electric-moray build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(ELECTRIC-MORAY_BITS): build/electric-moray
-	@echo "# Build electric-moray: branch $(ELECTRIC-MORAY_BRANCH), sha $(ELECTRIC-MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(ELECTRIC_MORAY_BITS): build/electric-moray
+	@echo "# Build electric-moray: branch $(ELECTRIC_MORAY_BRANCH), sha $(ELECTRIC_MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/electric-moray && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created electric-moray bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(ELECTRIC-MORAY_BITS)
+	@ls -1 $(ELECTRIC_MORAY_BITS)
 	@echo ""
 
 .PHONY: electric-moray_image
-electric-moray_image: $(ELECTRIC-MORAY_IMAGE_BIT)
+electric-moray_image: $(ELECTRIC_MORAY_IMAGE_BIT)
 
-$(ELECTRIC-MORAY_IMAGE_BIT): $(ELECTRIC-MORAY_BITS)
-	@echo "# Build electric-moray_image: branch $(ELECTRIC-MORAY_BRANCH), sha $(ELECTRIC-MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset.sh -i "$(ELECTRIC-MORAY_IMAGE_UUID)" -t $(ELECTRIC-MORAY_BITS) \
-		-o "$(ELECTRIC-MORAY_IMAGE_BIT)" -p $(ELECTRIC-MORAY_PKGSRC) \
-		-t $(ELECTRIC-MORAY_EXTRA_TARBALLS) -n $(ELECTRIC-MORAY_IMAGE_NAME) \
-		-v $(_electric-moray_stamp) -d $(ELECTRIC-MORAY_IMAGE_DESCRIPTION)
+$(ELECTRIC_MORAY_IMAGE_BIT): $(ELECTRIC_MORAY_BITS)
+	@echo "# Build electric-moray_image: branch $(ELECTRIC_MORAY_BRANCH), sha $(ELECTRIC_MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(ELECTRIC_MORAY_IMAGE_UUID)" -t $(ELECTRIC_MORAY_BITS) \
+		-o "$(ELECTRIC_MORAY_IMAGE_BIT)" -p $(ELECTRIC_MORAY_PKGSRC) \
+		-t $(ELECTRIC_MORAY_EXTRA_TARBALLS) -n $(ELECTRIC_MORAY_IMAGE_NAME) \
+		-v $(_electric-moray_stamp) -d $(ELECTRIC_MORAY_IMAGE_DESCRIPTION)
 	@echo "# Created electric-moray image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(ELECTRIC-MORAY_IMAGE_BIT)
+	@ls -1 $(ELECTRIC_MORAY_IMAGE_BIT)
 	@echo ""
 
-electric-moray_publish_image: $(ELECTRIC-MORAY_IMAGE_BIT)
+electric-moray_publish_image: $(ELECTRIC_MORAY_IMAGE_BIT)
 	@echo "# Publish electric-moray image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(ELECTRIC-MORAY_MANIFEST_BIT) -f $(ELECTRIC-MORAY_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(ELECTRIC_MORAY_MANIFEST_BIT) -f $(ELECTRIC_MORAY_IMAGE_BIT)
 
 clean_electric-moray:
 	rm -rf $(BITS_DIR)/electric-moray
