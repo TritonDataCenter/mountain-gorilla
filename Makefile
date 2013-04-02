@@ -1712,7 +1712,7 @@ $(AGENTS_UPGRADE_BITS): build/agents/build.sh
 	@ls -1 $(AGENTS_UPGRADE_BITS)
 	@echo ""
 
-clean_agentsshar-upgrade:
+clean_agents-upgrade:
 	rm -rf $(BITS_DIR)/agents-upgrade
 	(if [[ -d build/agents-installer ]]; then cd build/agents-installer && gmake clean; fi )
 
@@ -2039,4 +2039,3 @@ jenkins_publish_image:
 		&& exit 1 || true
 	@[[ -z "$(shell grep '^$(JOB_NAME)_publish_image\>' Makefile || true)" ]] \
 		|| make $(JOB_NAME)_publish_image
-
