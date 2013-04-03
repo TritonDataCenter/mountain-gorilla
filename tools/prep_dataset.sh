@@ -153,16 +153,14 @@ fi
 # Choose a compression algorithm for the resulting image. The output file name
 # should indicate gzip or bzip2.
 #
-ofbzip=$(echo ${output} | grep ".bz2$" || /bin/true )
-if [[ -n $ofbzip ]]; then
-  dobzip="true"
-  output=${output%.bz2}
-fi
-
-ofgzip=$(echo ${output} | grep ".gz$" || /bin/true )
-if [[ -n $ofgzip ]]; then
-  dogzip="true"
-  output=${output%.gz}
+output_ext=${output##*.}
+output_sans_ext=${output%.*}
+if [[ "$output_ext" == "gz" ]]; then
+  compression="gzip"
+elif [[ "$output_ext" == "bz2" ]]; then
+  compression="bzip2"
+else
+  fatal "could not determine compression from output file ext: '$output_ext'"
 fi
 
 
@@ -270,47 +268,40 @@ fi
 # import smf manifests
 ${SSH} "zlogin ${uuid} 'test ! -d /opt/smartdc || /usr/bin/find /opt/smartdc -name manifests -exec svccfg import {} \;'"
 
-cat tools/clean-image.sh | ${SSH} "zlogin ${uuid} 'cat > /tmp/clean-image.sh; /usr/bin/bash /tmp/clean-image.sh; shutdown -i5 -g0 -y;'"
+cat tools/clean-image.sh \
+  | ${SSH} "zlogin ${uuid} 'cat > /tmp/clean-image.sh; /usr/bin/bash /tmp/clean-image.sh; shutdown -i5 -g0 -y;'"
 
-${SSH} "zfs snapshot zones/${uuid}@prep_dataset.$$ ; zfs send zones/${uuid}@prep_dataset.$$" | cat > ${output}
+${SSH} "zfs snapshot zones/${uuid}@prep_dataset.$$ ; zfs send zones/${uuid}@prep_dataset.$$" \
+  | cat > ${output_sans_ext}
 
 ${SSH} "vmadm destroy ${uuid}"
 
-if [[ -n $dobzip ]]; then
-  bzip2 ${output}
-  suffix="bz2"
+if [[ "$compression" == "bzip2" ]]; then
+  bzip2 ${output_sans_ext}
+elif [[ "$compression" == "gzip" ]]; then
+  gzip ${output_sans_ext}
 fi
 
-if [[ -n $dogzip ]]; then
-  gzip ${output}
-  suffix="gz"
-fi
-
-output=${output}.${suffix}
 
 timestamp=$(node -e 'console.log(new Date().toISOString())')
 shasum=$(/usr/bin/sum -x sha1 ${output} | cut -d ' ' -f1)
 size=$(/usr/bin/stat --format=%s ${output})
 
-
-# TODO (when imgadm v2): drop files, creator_uuid, creator_name, urn
-# TODO: consider changing owner to poseidon UUID
-cat <<EOF>> ${output%.$suffix}.dsmanifest
+cat <<EOF>> ${output_sans_ext}.imgmanifest
   {
+    "v": 2,
     "uuid": "${uuid}",
     "name": "${image_name}",
     "version": "${image_version}",
     "description": "${image_description}",
     "published_at": "${timestamp}",
+    "owner": "00000000-0000-0000-0000-000000000000",
     "type": "zone-dataset",
     "os": "smartos",
     "files": [
-      {
-        "path": "${output}",
         "sha1": "${shasum}",
         "size": ${size},
-        "url": "${output}"
-      }
+        "compression": "${compression}"
     ],
     "requirements": {
       "networks": [
@@ -319,14 +310,6 @@ cat <<EOF>> ${output%.$suffix}.dsmanifest
           "description": "admin"
         }
       ]
-    },
-    "creator_uuid": "352971aa-31ba-496c-9ade-a379feaecd52",
-    "vendor_uuid": "352971aa-31ba-496c-9ade-a379feaecd52",
-    "creator_name": "sdc",
-    "platform_type": "smartos",
-    "cloud_name": "sdc",
-    "urn": "sdc:manta:${image_name}:${image_version}",
-    "created_at": "${timestamp}",
-    "updated_at": "${timestamp}"
+    }
   }
 EOF

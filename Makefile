@@ -83,7 +83,7 @@ AMON_BITS=$(BITS_DIR)/amon/amon-pkg-$(_amon_stamp).tar.bz2 \
 	$(BITS_DIR)/amon/amon-agent-$(_amon_stamp).tgz
 AMON_BITS_0=$(shell echo $(AMON_BITS) | awk '{print $$1}')
 AMON_IMAGE_BIT=$(BITS_DIR)/amon/amon-zfs-$(_amon_stamp).zfs.gz
-AMON_MANIFEST_BIT=$(BITS_DIR)/amon/amon-zfs-$(_amon_stamp).zfs.dsmanifest
+AMON_MANIFEST_BIT=$(BITS_DIR)/amon/amon-zfs-$(_amon_stamp).zfs.imgmanifest
 
 .PHONY: amon
 amon: $(AMON_BITS_0) amon_image
@@ -106,7 +106,7 @@ $(AMON_IMAGE_BIT): $(AMON_BITS_0)
 		-t $(AMON_EXTRA_TARBALLS) -n $(AMON_IMAGE_NAME) \
 		-v $(_amon_stamp) -d $(AMON_IMAGE_DESCRIPTION)
 	@echo "# Created amon image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(AMON_IMAGE_BIT)
+	@ls -1 $(AMON_MANIFEST_BIT) $(AMON_IMAGE_BIT)
 	@echo ""
 
 amon_publish_image: $(AMON_IMAGE_BIT)
@@ -130,7 +130,7 @@ CA_BITS=$(BITS_DIR)/ca/ca-pkg-$(_ca_stamp).tar.bz2 \
 	$(BITS_DIR)/ca/cainstsvc-$(_ca_stamp).tar.gz
 CA_BITS_0=$(shell echo $(CA_BITS) | awk '{print $$1}')
 CA_IMAGE_BIT=$(BITS_DIR)/ca/ca-zfs-$(_ca_stamp).zfs.gz
-CA_MANIFEST_BIT=$(BITS_DIR)/ca/ca-zfs-$(_ca_stamp).zfs.dsmanifest
+CA_MANIFEST_BIT=$(BITS_DIR)/ca/ca-zfs-$(_ca_stamp).zfs.imgmanifest
 
 .PHONY: ca
 ca: $(CA_BITS_0) ca_image
@@ -155,7 +155,7 @@ $(CA_IMAGE_BIT): $(CA_BITS_0)
 		-t $(CA_EXTRA_TARBALLS) -n $(CA_IMAGE_NAME) \
 		-v $(_ca_stamp) -d $(CA_IMAGE_DESCRIPTION)
 	@echo "# Created ca image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(CA_IMAGE_BIT)
+	@ls -1 $(CA_MANIFEST_BIT) $(CA_IMAGE_BIT)
 	@echo ""
 
 ca_publish_image: $(CA_IMAGE_BIT)
@@ -176,7 +176,7 @@ clean_ca:
 _ufds_stamp=$(UFDS_BRANCH)-$(TIMESTAMP)-g$(UFDS_SHA)
 UFDS_BITS=$(BITS_DIR)/ufds/ufds-pkg-$(_ufds_stamp).tar.bz2
 UFDS_IMAGE_BIT=$(BITS_DIR)/ufds/ufds-zfs-$(_ufds_stamp).zfs.gz
-UFDS_MANIFEST_BIT=$(BITS_DIR)/ufds/ufds-zfs-$(_ufds_stamp).zfs.dsmanifest
+UFDS_MANIFEST_BIT=$(BITS_DIR)/ufds/ufds-zfs-$(_ufds_stamp).zfs.imgmanifest
 
 .PHONY: ufds
 ufds: $(UFDS_BITS) ufds_image
@@ -201,7 +201,7 @@ $(UFDS_IMAGE_BIT): $(UFDS_BITS)
 		-t $(UFDS_EXTRA_TARBALLS) -n $(UFDS_IMAGE_NAME) \
 		-v $(_ufds_stamp) -d $(UFDS_IMAGE_DESCRIPTION)
 	@echo "# Created ufds image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(UFDS_IMAGE_BIT)
+	@ls -1 $(UFDS_MANIFEST_BIT) $(UFDS_IMAGE_BIT)
 	@echo ""
 
 ufds_publish_image: $(UFDS_IMAGE_BIT)
@@ -220,7 +220,7 @@ clean_ufds:
 _usageapi_stamp=$(USAGEAPI_BRANCH)-$(TIMESTAMP)-g$(USAGEAPI_SHA)
 USAGEAPI_BITS=$(BITS_DIR)/usageapi/usageapi-pkg-$(_usageapi_stamp).tar.bz2
 USAGEAPI_IMAGE_BIT=$(BITS_DIR)/usageapi/usageapi-zfs-$(_usageapi_stamp).zfs.gz
-USAGEAPI_MANIFEST_BIT=$(BITS_DIR)/usageapi/usageapi-zfs-$(_usageapi_stamp).zfs.dsmanifest
+USAGEAPI_MANIFEST_BIT=$(BITS_DIR)/usageapi/usageapi-zfs-$(_usageapi_stamp).zfs.imgmanifest
 
 .PHONY: usageapi
 usageapi: $(USAGEAPI_BITS) usageapi_image
@@ -245,7 +245,7 @@ $(USAGEAPI_IMAGE_BIT): $(USAGEAPI_BITS)
 		-t $(USAGEAPI_EXTRA_TARBALLS) -n $(USAGEAPI_IMAGE_NAME) \
 		-v $(_usageapi_stamp) -d $(USAGEAPI_IMAGE_DESCRIPTION)
 	@echo "# Created usageapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(USAGEAPI_IMAGE_BIT)
+	@ls -1 $(USAGEAPI_MANIFEST_BIT) $(USAGEAPI_IMAGE_BIT)
 	@echo ""
 
 usageapi_publish_image: $(USAGEAPI_IMAGE_BIT)
@@ -265,7 +265,7 @@ clean_usageapi:
 _assets_stamp=$(ASSETS_BRANCH)-$(TIMESTAMP)-g$(ASSETS_SHA)
 ASSETS_BITS=$(BITS_DIR)/assets/assets-pkg-$(_assets_stamp).tar.bz2
 ASSETS_IMAGE_BIT=$(BITS_DIR)/assets/assets-zfs-$(_assets_stamp).zfs.gz
-ASSETS_MANIFEST_BIT=$(BITS_DIR)/assets/assets-zfs-$(_assets_stamp).zfs.dsmanifest
+ASSETS_MANIFEST_BIT=$(BITS_DIR)/assets/assets-zfs-$(_assets_stamp).zfs.imgmanifest
 
 .PHONY: assets
 assets: $(ASSETS_BITS) assets_image
@@ -288,7 +288,7 @@ $(ASSETS_IMAGE_BIT): $(ASSETS_BITS)
 		-t $(ASSETS_EXTRA_TARBALLS) -n $(ASSETS_IMAGE_NAME) \
 		-v $(_assets_stamp) -d $(ASSETS_IMAGE_DESCRIPTION)
 	@echo "# Created assets image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(ASSETS_IMAGE_BIT)
+	@ls -1 $(ASSETS_MANIFEST_BIT) $(ASSETS_IMAGE_BIT)
 	@echo ""
 
 assets_publish_image: $(ASSETS_IMAGE_BIT)
@@ -304,7 +304,7 @@ clean_assets:
 _adminui_stamp=$(ADMINUI_BRANCH)-$(TIMESTAMP)-g$(ADMINUI_SHA)
 ADMINUI_BITS=$(BITS_DIR)/adminui/adminui-pkg-$(_adminui_stamp).tar.bz2
 ADMINUI_IMAGE_BIT=$(BITS_DIR)/adminui/adminui-zfs-$(_adminui_stamp).zfs.gz
-ADMINUI_MANIFEST_BIT=$(BITS_DIR)/adminui/adminui-zfs-$(_adminui_stamp).zfs.dsmanifest
+ADMINUI_MANIFEST_BIT=$(BITS_DIR)/adminui/adminui-zfs-$(_adminui_stamp).zfs.imgmanifest
 
 .PHONY: adminui
 adminui: $(ADMINUI_BITS) adminui_image
@@ -327,7 +327,7 @@ $(ADMINUI_IMAGE_BIT): $(ADMINUI_BITS)
 		-t $(ADMINUI_EXTRA_TARBALLS) -n $(ADMINUI_IMAGE_NAME) \
 		-v $(_adminui_stamp) -d $(ADMINUI_IMAGE_DESCRIPTION)
 	@echo "# Created adminui image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(ADMINUI_IMAGE_BIT)
+	@ls -1 $(ADMINUI_MANIFEST_BIT) $(ADMINUI_IMAGE_BIT)
 	@echo ""
 
 adminui_publish_image: $(ADMINUI_IMAGE_BIT)
@@ -343,7 +343,7 @@ clean_adminui:
 _redis_stamp=$(REDIS_BRANCH)-$(TIMESTAMP)-g$(REDIS_SHA)
 REDIS_BITS=$(BITS_DIR)/redis/redis-pkg-$(_redis_stamp).tar.bz2
 REDIS_IMAGE_BIT=$(BITS_DIR)/redis/redis-zfs-$(_redis_stamp).zfs.gz
-REDIS_MANIFEST_BIT=$(BITS_DIR)/redis/redis-zfs-$(_redis_stamp).zfs.dsmanifest
+REDIS_MANIFEST_BIT=$(BITS_DIR)/redis/redis-zfs-$(_redis_stamp).zfs.imgmanifest
 
 .PHONY: redis
 redis: $(REDIS_BITS) redis_image
@@ -366,7 +366,7 @@ $(REDIS_IMAGE_BIT): $(REDIS_BITS)
 		-t $(REDIS_EXTRA_TARBALLS) -n $(REDIS_IMAGE_NAME) \
 		-v $(_redis_stamp) -d $(REDIS_IMAGE_DESCRIPTION)
 	@echo "# Created redis image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(REDIS_IMAGE_BIT)
+	@ls -1 $(REDIS_MANIFEST_BIT) $(REDIS_IMAGE_BIT)
 	@echo ""
 
 redis_publish_image: $(REDIS_IMAGE_BIT)
@@ -382,7 +382,7 @@ clean_redis:
 _rabbitmq_stamp=$(RABBITMQ_BRANCH)-$(TIMESTAMP)-g$(RABBITMQ_SHA)
 RABBITMQ_BITS=$(BITS_DIR)/rabbitmq/rabbitmq-pkg-$(_rabbitmq_stamp).tar.bz2
 RABBITMQ_IMAGE_BIT=$(BITS_DIR)/rabbitmq/rabbitmq-zfs-$(_rabbitmq_stamp).zfs.gz
-RABBITMQ_MANIFEST_BIT=$(BITS_DIR)/rabbitmq/rabbitmq-zfs-$(_rabbitmq_stamp).zfs.dsmanifest
+RABBITMQ_MANIFEST_BIT=$(BITS_DIR)/rabbitmq/rabbitmq-zfs-$(_rabbitmq_stamp).zfs.imgmanifest
 
 .PHONY: rabbitmq
 rabbitmq: $(RABBITMQ_BITS) rabbitmq_image
@@ -405,7 +405,7 @@ $(RABBITMQ_IMAGE_BIT): $(RABBITMQ_BITS)
 		-t $(RABBITMQ_EXTRA_TARBALLS) -n $(RABBITMQ_IMAGE_NAME) \
 		-v $(_rabbitmq_stamp) -d $(RABBITMQ_IMAGE_DESCRIPTION)
 	@echo "# Created rabbitmq image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(RABBITMQ_IMAGE_BIT)
+	@ls -1 $(RABBITMQ_MANIFEST_BIT) $(RABBITMQ_IMAGE_BIT)
 	@echo ""
 
 rabbitmq_publish_image: $(RABBITMQ_IMAGE_BIT)
@@ -421,7 +421,7 @@ clean_rabbitmq:
 _dhcpd_stamp=$(DHCPD_BRANCH)-$(TIMESTAMP)-g$(DHCPD_SHA)
 DHCPD_BITS=$(BITS_DIR)/dhcpd/dhcpd-pkg-$(_dhcpd_stamp).tar.bz2
 DHCPD_IMAGE_BIT=$(BITS_DIR)/dhcpd/dhcpd-zfs-$(_dhcpd_stamp).zfs.gz
-DHCPD_MANIFEST_BIT=$(BITS_DIR)/dhcpd/dhcpd-zfs-$(_dhcpd_stamp).zfs.dsmanifest
+DHCPD_MANIFEST_BIT=$(BITS_DIR)/dhcpd/dhcpd-zfs-$(_dhcpd_stamp).zfs.imgmanifest
 
 .PHONY: dhcpd
 dhcpd: $(DHCPD_BITS) dhcpd_image
@@ -445,7 +445,7 @@ $(DHCPD_IMAGE_BIT): $(DHCPD_BITS)
 		-t $(DHCPD_EXTRA_TARBALLS) -n $(DHCPD_IMAGE_NAME) \
 		-v $(_dhcpd_stamp) -d $(DHCPD_IMAGE_DESCRIPTION)
 	@echo "# Created dhcpd image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(DHCPD_IMAGE_BIT)
+	@ls -1 $(DHCPD_MANIFEST_BIT) $(DHCPD_IMAGE_BIT)
 	@echo ""
 
 dhcpd_publish_image: $(DHCPD_IMAGE_BIT)
@@ -462,7 +462,7 @@ clean_dhcpd:
 _cloudapi_stamp=$(CLOUDAPI_BRANCH)-$(TIMESTAMP)-g$(CLOUDAPI_SHA)
 CLOUDAPI_BITS=$(BITS_DIR)/cloudapi/cloudapi-pkg-$(_cloudapi_stamp).tar.bz2
 CLOUDAPI_IMAGE_BIT=$(BITS_DIR)/cloudapi/cloudapi-zfs-$(_cloudapi_stamp).zfs.gz
-CLOUDAPI_MANIFEST_BIT=$(BITS_DIR)/cloudapi/cloudapi-zfs-$(_cloudapi_stamp).zfs.dsmanifest
+CLOUDAPI_MANIFEST_BIT=$(BITS_DIR)/cloudapi/cloudapi-zfs-$(_cloudapi_stamp).zfs.imgmanifest
 
 .PHONY: cloudapi
 cloudapi: $(CLOUDAPI_BITS) cloudapi_image
@@ -487,7 +487,7 @@ $(CLOUDAPI_IMAGE_BIT): $(CLOUDAPI_BITS)
 		-t $(CLOUDAPI_EXTRA_TARBALLS) -n $(CLOUDAPI_IMAGE_NAME) \
 		-v $(_cloudapi_stamp) -d $(CLOUDAPI_IMAGE_DESCRIPTION)
 	@echo "# Created cloudapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(CLOUDAPI_IMAGE_BIT)
+	@ls -1 $(CLOUDAPI_MANIFEST_BIT) $(CLOUDAPI_IMAGE_BIT)
 	@echo ""
 
 cloudapi_publish_image: $(CLOUDAPI_IMAGE_BIT)
@@ -507,7 +507,7 @@ clean_cloudapi:
 _manatee_stamp=$(MANATEE_BRANCH)-$(TIMESTAMP)-g$(MANATEE_SHA)
 MANATEE_BITS=$(BITS_DIR)/manatee/manatee-pkg-$(_manatee_stamp).tar.bz2
 MANATEE_IMAGE_BIT=$(BITS_DIR)/manatee/manatee-zfs-$(_manatee_stamp).zfs.gz
-MANATEE_MANIFEST_BIT=$(BITS_DIR)/manatee/manatee-zfs-$(_manatee_stamp).zfs.dsmanifest
+MANATEE_MANIFEST_BIT=$(BITS_DIR)/manatee/manatee-zfs-$(_manatee_stamp).zfs.imgmanifest
 
 .PHONY: manatee
 manatee: $(MANATEE_BITS) manatee_image
@@ -530,7 +530,7 @@ $(MANATEE_IMAGE_BIT): $(MANATEE_BITS)
 		-t $(MANATEE_EXTRA_TARBALLS) -n $(MANATEE_IMAGE_NAME) \
 		-v $(_manatee_stamp) -d $(MANATEE_IMAGE_DESCRIPTION)
 	@echo "# Created manatee image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MANATEE_IMAGE_BIT)
+	@ls -1 $(MANATEE_MANIFEST_BIT) $(MANATEE_IMAGE_BIT)
 	@echo ""
 
 manatee_publish_image: $(MANATEE_IMAGE_BIT)
@@ -547,7 +547,7 @@ clean_manatee:
 _wf_stamp=$(WORKFLOW_BRANCH)-$(TIMESTAMP)-g$(WORKFLOW_SHA)
 WORKFLOW_BITS=$(BITS_DIR)/workflow/workflow-pkg-$(_wf_stamp).tar.bz2
 WORKFLOW_IMAGE_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).zfs.gz
-WORKFLOW_MANIFEST_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).zfs.dsmanifest
+WORKFLOW_MANIFEST_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).zfs.imgmanifest
 
 .PHONY: workflow
 workflow: $(WORKFLOW_BITS) workflow_image
@@ -572,7 +572,7 @@ $(WORKFLOW_IMAGE_BIT): $(WORKFLOW_BITS)
 		-t $(WORKFLOW_EXTRA_TARBALLS) -n $(WORKFLOW_IMAGE_NAME) \
 		-v $(_wf_stamp) -d $(WORKFLOW_IMAGE_DESCRIPTION)
 	@echo "# Created workflow image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(WORKFLOW_IMAGE_BIT)
+	@ls -1 $(WORKFLOW_MANIFEST_BIT) $(WORKFLOW_IMAGE_BIT)
 	@echo ""
 
 workflow_publish_image: $(WORKFLOW_IMAGE_BIT)
@@ -591,7 +591,7 @@ clean_workflow:
 _vmapi_stamp=$(VMAPI_BRANCH)-$(TIMESTAMP)-g$(VMAPI_SHA)
 VMAPI_BITS=$(BITS_DIR)/vmapi/vmapi-pkg-$(_vmapi_stamp).tar.bz2
 VMAPI_IMAGE_BIT=$(BITS_DIR)/vmapi/vmapi-zfs-$(_vmapi_stamp).zfs.gz
-VMAPI_MANIFEST_BIT=$(BITS_DIR)/vmapi/vmapi-zfs-$(_vmapi_stamp).zfs.dsmanifest
+VMAPI_MANIFEST_BIT=$(BITS_DIR)/vmapi/vmapi-zfs-$(_vmapi_stamp).zfs.imgmanifest
 
 .PHONY: vmapi
 vmapi: $(VMAPI_BITS) vmapi_image
@@ -616,7 +616,7 @@ $(VMAPI_IMAGE_BIT): $(VMAPI_BITS)
 		-t $(VMAPI_EXTRA_TARBALLS) -n $(VMAPI_IMAGE_NAME) \
 		-v $(_vmapi_stamp) -d $(VMAPI_IMAGE_DESCRIPTION)
 	@echo "# Created vmapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(VMAPI_IMAGE_BIT)
+	@ls -1 $(VMAPI_MANIFEST_BIT) $(VMAPI_IMAGE_BIT)
 	@echo ""
 
 vmapi_publish_image: $(VMAPI_IMAGE_BIT)
@@ -635,7 +635,7 @@ clean_vmapi:
 _dapi_stamp=$(DAPI_BRANCH)-$(TIMESTAMP)-g$(DAPI_SHA)
 DAPI_BITS=$(BITS_DIR)/dapi/dapi-pkg-$(_dapi_stamp).tar.bz2
 DAPI_IMAGE_BIT=$(BITS_DIR)/dapi/dapi-zfs-$(_dapi_stamp).zfs.gz
-DAPI_MANIFEST_BIT=$(BITS_DIR)/dapi/dapi-zfs-$(_dapi_stamp).zfs.dsmanifest
+DAPI_MANIFEST_BIT=$(BITS_DIR)/dapi/dapi-zfs-$(_dapi_stamp).zfs.imgmanifest
 
 
 .PHONY: dapi
@@ -661,7 +661,7 @@ $(DAPI_IMAGE_BIT): $(DAPI_BITS)
 		-t $(DAPI_EXTRA_TARBALLS) -n $(DAPI_IMAGE_NAME) \
 		-v $(_dapi_stamp) -d $(DAPI_IMAGE_DESCRIPTION)
 	@echo "# Created dapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(DAPI_IMAGE_BIT)
+	@ls -1 $(DAPI_MANIFEST_BIT) $(DAPI_IMAGE_BIT)
 	@echo ""
 
 dapi_publish_image: $(DAPI_IMAGE_BIT)
@@ -702,7 +702,7 @@ clean_imgapi_cli:
 _imgapi_stamp=$(IMGAPI_BRANCH)-$(TIMESTAMP)-g$(IMGAPI_SHA)
 IMGAPI_BITS=$(BITS_DIR)/imgapi/imgapi-pkg-$(_imgapi_stamp).tar.bz2
 IMGAPI_IMAGE_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_stamp).zfs.gz
-IMGAPI_MANIFEST_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_stamp).zfs.dsmanifest
+IMGAPI_MANIFEST_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_stamp).zfs.imgmanifest
 
 .PHONY: imgapi
 imgapi: $(IMGAPI_BITS) imgapi_image
@@ -725,7 +725,7 @@ $(IMGAPI_IMAGE_BIT): $(IMGAPI_BITS)
 		-t $(IMGAPI_EXTRA_TARBALLS) -n $(IMGAPI_IMAGE_NAME) \
 		-v $(_imgapi_stamp) -d $(IMGAPI_IMAGE_DESCRIPTION)
 	@echo "# Created imgapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(IMGAPI_IMAGE_BIT)
+	@ls -1 $(IMGAPI_MANIFEST_BIT) $(IMGAPI_IMAGE_BIT)
 	@echo ""
 
 imgapi_publish_image: $(IMGAPI_IMAGE_BIT)
@@ -888,7 +888,7 @@ clean_config_agent:
 _cnapi_stamp=$(CNAPI_BRANCH)-$(TIMESTAMP)-g$(CNAPI_SHA)
 CNAPI_BITS=$(BITS_DIR)/cnapi/cnapi-pkg-$(_cnapi_stamp).tar.bz2
 CNAPI_IMAGE_BIT=$(BITS_DIR)/cnapi/cnapi-zfs-$(_cnapi_stamp).zfs.gz
-CNAPI_MANIFEST_BIT=$(BITS_DIR)/cnapi/cnapi-zfs-$(_cnapi_stamp).zfs.dsmanifest
+CNAPI_MANIFEST_BIT=$(BITS_DIR)/cnapi/cnapi-zfs-$(_cnapi_stamp).zfs.imgmanifest
 
 .PHONY: cnapi
 cnapi: $(CNAPI_BITS) cnapi_image
@@ -913,7 +913,7 @@ $(CNAPI_IMAGE_BIT): $(CNAPI_BITS)
 		-t $(CNAPI_EXTRA_TARBALLS) -n $(CNAPI_IMAGE_NAME) \
 		-v $(_cnapi_stamp) -d $(CNAPI_IMAGE_DESCRIPTION)
 	@echo "# Created cnapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(CNAPI_IMAGE_BIT)
+	@ls -1 $(CNAPI_MANIFEST_BIT) $(CNAPI_IMAGE_BIT)
 	@echo ""
 
 cnapi_publish_image: $(CNAPI_IMAGE_BIT)
@@ -932,7 +932,7 @@ clean_cnapi:
 _keyapi_stamp=$(KEYAPI_BRANCH)-$(TIMESTAMP)-g$(KEYAPI_SHA)
 KEYAPI_BITS=$(BITS_DIR)/keyapi/keyapi-pkg-$(_keyapi_stamp).tar.bz2
 KEYAPI_IMAGE_BIT=$(BITS_DIR)/keyapi/keyapi-zfs-$(_keyapi_stamp).zfs.gz
-KEYAPI_MANIFEST_BIT=$(BITS_DIR)/keyapi/keyapi-zfs-$(_keyapi_stamp).zfs.dsmanifest
+KEYAPI_MANIFEST_BIT=$(BITS_DIR)/keyapi/keyapi-zfs-$(_keyapi_stamp).zfs.imgmanifest
 
 .PHONY: keyapi
 keyapi: $(KEYAPI_BITS) keyapi_image
@@ -957,7 +957,7 @@ $(KEYAPI_IMAGE_BIT): $(KEYAPI_BITS)
 		-t $(KEYAPI_EXTRA_TARBALLS) -n $(KEYAPI_IMAGE_NAME) \
 		-v $(_keyapi_stamp) -d $(KEYAPI_IMAGE_DESCRIPTION)
 	@echo "# Created keyapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(KEYAPI_IMAGE_BIT)
+	@ls -1 $(KEYAPI_MANIFEST_BIT) $(KEYAPI_IMAGE_BIT)
 	@echo ""
 
 keyapi_publish_image: $(KEYAPI_IMAGE_BIT)
@@ -976,7 +976,7 @@ clean_keyapi:
 _sdcsso_stamp=$(SDCSSO_BRANCH)-$(TIMESTAMP)-g$(SDCSSO_SHA)
 SDCSSO_BITS=$(BITS_DIR)/sdcsso/sdcsso-pkg-$(_sdcsso_stamp).tar.bz2
 SDCSSO_IMAGE_BIT=$(BITS_DIR)/sdcsso/sdcsso-zfs-$(_sdcsso_stamp).zfs.gz
-SDCSSO_MANIFEST_BIT=$(BITS_DIR)/sdcsso/sdcsso-zfs-$(_sdcsso_stamp).zfs.dsmanifest
+SDCSSO_MANIFEST_BIT=$(BITS_DIR)/sdcsso/sdcsso-zfs-$(_sdcsso_stamp).zfs.imgmanifest
 
 .PHONY: sdcsso
 sdcsso: $(SDCSSO_BITS) sdcsso_image
@@ -1001,7 +1001,7 @@ $(SDCSSO_IMAGE_BIT): $(SDCSSO_BITS)
 		-t $(SDCSSO_EXTRA_TARBALLS) -n $(SDCSSO_IMAGE_NAME) \
 		-v $(_sdcsso_stamp) -d $(SDCSSO_IMAGE_DESCRIPTION)
 	@echo "# Created sdcsso image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(SDCSSO_IMAGE_BIT)
+	@ls -1 $(SDCSSO_MANIFEST_BIT) $(SDCSSO_IMAGE_BIT)
 	@echo ""
 
 sdcsso_publish_image: $(SDCSSO_IMAGE_BIT)
@@ -1020,7 +1020,7 @@ clean_sdcsso:
 _fwapi_stamp=$(FWAPI_BRANCH)-$(TIMESTAMP)-g$(FWAPI_SHA)
 FWAPI_BITS=$(BITS_DIR)/fwapi/fwapi-pkg-$(_fwapi_stamp).tar.bz2
 FWAPI_IMAGE_BIT=$(BITS_DIR)/fwapi/fwapi-zfs-$(_fwapi_stamp).zfs.gz
-FWAPI_MANIFEST_BIT=$(BITS_DIR)/fwapi/fwapi-zfs-$(_fwapi_stamp).zfs.dsmanifest
+FWAPI_MANIFEST_BIT=$(BITS_DIR)/fwapi/fwapi-zfs-$(_fwapi_stamp).zfs.imgmanifest
 
 .PHONY: fwapi
 fwapi: $(FWAPI_BITS) fwapi_image
@@ -1045,7 +1045,7 @@ $(FWAPI_IMAGE_BIT): $(FWAPI_BITS)
 		-t $(FWAPI_EXTRA_TARBALLS) -n $(FWAPI_IMAGE_NAME) \
 		-v $(_fwapi_stamp) -d $(FWAPI_IMAGE_DESCRIPTION)
 	@echo "# Created fwapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(FWAPI_IMAGE_BIT)
+	@ls -1 $(FWAPI_MANIFEST_BIT) $(FWAPI_IMAGE_BIT)
 	@echo ""
 
 fwapi_publish_image: $(FWAPI_IMAGE_BIT)
@@ -1065,7 +1065,7 @@ clean_fwapi:
 _napi_stamp=$(NAPI_BRANCH)-$(TIMESTAMP)-g$(NAPI_SHA)
 NAPI_BITS=$(BITS_DIR)/napi/napi-pkg-$(_napi_stamp).tar.bz2
 NAPI_IMAGE_BIT=$(BITS_DIR)/napi/napi-zfs-$(_napi_stamp).zfs.gz
-NAPI_MANIFEST_BIT=$(BITS_DIR)/napi/napi-zfs-$(_napi_stamp).zfs.dsmanifest
+NAPI_MANIFEST_BIT=$(BITS_DIR)/napi/napi-zfs-$(_napi_stamp).zfs.imgmanifest
 
 .PHONY: napi
 napi: $(NAPI_BITS) napi_image
@@ -1090,7 +1090,7 @@ $(NAPI_IMAGE_BIT): $(NAPI_BITS)
 		-t $(NAPI_EXTRA_TARBALLS) -n $(NAPI_IMAGE_NAME) \
 		-v $(_napi_stamp) -d $(NAPI_IMAGE_DESCRIPTION)
 	@echo "# Created napi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(NAPI_IMAGE_BIT)
+	@ls -1 $(NAPI_MANIFEST_BIT) $(NAPI_IMAGE_BIT)
 	@echo ""
 
 napi_publish_image: $(NAPI_IMAGE_BIT)
@@ -1110,7 +1110,7 @@ clean_napi:
 _sapi_stamp=$(SAPI_BRANCH)-$(TIMESTAMP)-g$(SAPI_SHA)
 SAPI_BITS=$(BITS_DIR)/sapi/sapi-pkg-$(_sapi_stamp).tar.bz2
 SAPI_IMAGE_BIT=$(BITS_DIR)/sapi/sapi-zfs-$(_sapi_stamp).zfs.gz
-SAPI_MANIFEST_BIT=$(BITS_DIR)/sapi/sapi-zfs-$(_sapi_stamp).zfs.dsmanifest
+SAPI_MANIFEST_BIT=$(BITS_DIR)/sapi/sapi-zfs-$(_sapi_stamp).zfs.imgmanifest
 
 .PHONY: sapi
 sapi: $(SAPI_BITS) sapi_image
@@ -1136,7 +1136,7 @@ $(SAPI_IMAGE_BIT): $(SAPI_BITS)
 		-t $(SAPI_EXTRA_TARBALLS) -n $(SAPI_IMAGE_NAME) \
 		-v $(_sapi_stamp) -d $(SAPI_IMAGE_DESCRIPTION)
 	@echo "# Created sapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(SAPI_IMAGE_BIT)
+	@ls -1 $(SAPI_MANIFEST_BIT) $(SAPI_IMAGE_BIT)
 	@echo ""
 
 sapi_publish_image: $(SAPI_IMAGE_BIT)
@@ -1156,7 +1156,7 @@ clean_sapi:
 _marlin_stamp=$(MARLIN_BRANCH)-$(TIMESTAMP)-g$(MARLIN_SHA)
 MARLIN_BITS=$(BITS_DIR)/marlin/marlin-pkg-$(_marlin_stamp).tar.bz2
 MARLIN_IMAGE_BIT=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).zfs.gz
-MARLIN_MANIFEST_BIT=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).zfs.dsmanifest
+MARLIN_MANIFEST_BIT=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).zfs.imgmanifest
 
 .PHONY: marlin
 marlin: $(MARLIN_BITS) marlin_image
@@ -1181,7 +1181,7 @@ $(MARLIN_IMAGE_BIT): $(MARLIN_BITS)
 		-t $(MARLIN_EXTRA_TARBALLS) -n $(MARLIN_IMAGE_NAME) \
 		-v $(_marlin_stamp) -d $(MARLIN_IMAGE_DESCRIPTION)
 	@echo "# Created marlin image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MARLIN_IMAGE_BIT)
+	@ls -1 $(MARLIN_MANIFEST_BIT) $(MARLIN_IMAGE_BIT)
 	@echo ""
 
 marlin_publish_image: $(MARLIN_IMAGE_BIT)
@@ -1198,7 +1198,7 @@ clean_marlin:
 _mahi_stamp=$(MAHI_BRANCH)-$(TIMESTAMP)-g$(MAHI_SHA)
 MAHI_BITS=$(BITS_DIR)/mahi/mahi-pkg-$(_mahi_stamp).tar.bz2
 MAHI_IMAGE_BIT=$(BITS_DIR)/mahi/mahi-zfs-$(_mahi_stamp).zfs.gz
-MAHI_MANIFEST_BIT=$(BITS_DIR)/mahi/mahi-zfs-$(_mahi_stamp).zfs.dsmanifest
+MAHI_MANIFEST_BIT=$(BITS_DIR)/mahi/mahi-zfs-$(_mahi_stamp).zfs.imgmanifest
 
 .PHONY: mahi
 mahi: $(MAHI_BITS) mahi_image
@@ -1221,7 +1221,7 @@ $(MAHI_IMAGE_BIT): $(MAHI_BITS)
 		-t $(MAHI_EXTRA_TARBALLS) -n $(MAHI_IMAGE_NAME) \
 		-v $(_mahi_stamp) -d $(MAHI_IMAGE_DESCRIPTION)
 	@echo "# Created mahi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MAHI_IMAGE_BIT)
+	@ls -1 $(MAHI_MANIFEST_BIT) $(MAHI_IMAGE_BIT)
 	@echo ""
 
 mahi_publish_image: $(MAHI_IMAGE_BIT)
@@ -1238,7 +1238,7 @@ clean_mahi:
 _mola_stamp=$(MOLA_BRANCH)-$(TIMESTAMP)-g$(MOLA_SHA)
 MOLA_BITS=$(BITS_DIR)/mola/mola-pkg-$(_mola_stamp).tar.bz2
 MOLA_IMAGE_BIT=$(BITS_DIR)/mola/mola-zfs-$(_mola_stamp).zfs.gz
-MOLA_MANIFEST_BIT=$(BITS_DIR)/mola/mola-zfs-$(_mola_stamp).zfs.dsmanifest
+MOLA_MANIFEST_BIT=$(BITS_DIR)/mola/mola-zfs-$(_mola_stamp).zfs.imgmanifest
 
 .PHONY: mola
 mola: $(MOLA_BITS) mola_image
@@ -1263,7 +1263,7 @@ $(MOLA_IMAGE_BIT): $(MOLA_BITS)
 		-t $(MOLA_EXTRA_TARBALLS) -n $(MOLA_IMAGE_NAME) \
 		-v $(_mola_stamp) -d $(MOLA_IMAGE_DESCRIPTION)
 	@echo "# Created mola image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MOLA_IMAGE_BIT)
+	@ls -1 $(MOLA_MANIFEST_BIT) $(MOLA_IMAGE_BIT)
 	@echo ""
 
 mola_publish_image: $(MOLA_IMAGE_BIT)
@@ -1280,7 +1280,7 @@ clean_mola:
 _moray_stamp=$(MORAY_BRANCH)-$(TIMESTAMP)-g$(MORAY_SHA)
 MORAY_BITS=$(BITS_DIR)/moray/moray-pkg-$(_moray_stamp).tar.bz2
 MORAY_IMAGE_BIT=$(BITS_DIR)/moray/moray-zfs-$(_moray_stamp).zfs.gz
-MORAY_MANIFEST_BIT=$(BITS_DIR)/moray/moray-zfs-$(_moray_stamp).zfs.dsmanifest
+MORAY_MANIFEST_BIT=$(BITS_DIR)/moray/moray-zfs-$(_moray_stamp).zfs.imgmanifest
 
 .PHONY: moray
 moray: $(MORAY_BITS) moray_image
@@ -1305,7 +1305,7 @@ $(MORAY_IMAGE_BIT): $(MORAY_BITS)
 		-t $(MORAY_EXTRA_TARBALLS) -n $(MORAY_IMAGE_NAME) \
 		-v $(_moray_stamp) -d $(MORAY_IMAGE_DESCRIPTION)
 	@echo "# Created moray image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MORAY_IMAGE_BIT)
+	@ls -1 $(MORAY_MANIFEST_BIT) $(MORAY_IMAGE_BIT)
 	@echo ""
 
 moray_publish_image: $(MORAY_IMAGE_BIT)
@@ -1322,7 +1322,7 @@ clean_moray:
 _electric-moray_stamp=$(ELECTRIC_MORAY_BRANCH)-$(TIMESTAMP)-g$(ELECTRIC_MORAY_SHA)
 ELECTRIC_MORAY_BITS=$(BITS_DIR)/electric-moray/electric-moray-pkg-$(_electric-moray_stamp).tar.bz2
 ELECTRIC_MORAY_IMAGE_BIT=$(BITS_DIR)/electric-moray/electric-moray-zfs-$(_electric-moray_stamp).zfs.gz
-ELECTRIC_MORAY_MANIFEST_BIT=$(BITS_DIR)/electric-moray/electric-moray-zfs-$(_electric-moray_stamp).zfs.dsmanifest
+ELECTRIC_MORAY_MANIFEST_BIT=$(BITS_DIR)/electric-moray/electric-moray-zfs-$(_electric-moray_stamp).zfs.imgmanifest
 
 .PHONY: electric-moray
 electric-moray: $(ELECTRIC_MORAY_BITS) electric-moray_image
@@ -1347,7 +1347,7 @@ $(ELECTRIC_MORAY_IMAGE_BIT): $(ELECTRIC_MORAY_BITS)
 		-t $(ELECTRIC_MORAY_EXTRA_TARBALLS) -n $(ELECTRIC_MORAY_IMAGE_NAME) \
 		-v $(_electric-moray_stamp) -d $(ELECTRIC_MORAY_IMAGE_DESCRIPTION)
 	@echo "# Created electric-moray image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(ELECTRIC_MORAY_IMAGE_BIT)
+	@ls -1 $(ELECTRIC_MORAY_MANIFEST_BIT) $(ELECTRIC_MORAY_IMAGE_BIT)
 	@echo ""
 
 electric-moray_publish_image: $(ELECTRIC_MORAY_IMAGE_BIT)
@@ -1364,7 +1364,7 @@ clean_electric-moray:
 _muskie_stamp=$(MUSKIE_BRANCH)-$(TIMESTAMP)-g$(MUSKIE_SHA)
 MUSKIE_BITS=$(BITS_DIR)/muskie/muskie-pkg-$(_muskie_stamp).tar.bz2
 MUSKIE_IMAGE_BIT=$(BITS_DIR)/muskie/muskie-zfs-$(_muskie_stamp).zfs.gz
-MUSKIE_MANIFEST_BIT=$(BITS_DIR)/muskie/muskie-zfs-$(_muskie_stamp).zfs.dsmanifest
+MUSKIE_MANIFEST_BIT=$(BITS_DIR)/muskie/muskie-zfs-$(_muskie_stamp).zfs.imgmanifest
 
 .PHONY: muskie
 muskie: $(MUSKIE_BITS) muskie_image
@@ -1389,7 +1389,7 @@ $(MUSKIE_IMAGE_BIT): $(MUSKIE_BITS)
 		-t $(MUSKIE_EXTRA_TARBALLS) -n $(MUSKIE_IMAGE_NAME) \
 		-v $(_muskie_stamp) -d $(MUSKIE_IMAGE_DESCRIPTION)
 	@echo "# Created muskie image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MUSKIE_IMAGE_BIT)
+	@ls -1 $(MUSKIE_MANIFEST_BIT) $(MUSKIE_IMAGE_BIT)
 	@echo ""
 
 muskie_publish_image: $(MUSKIE_IMAGE_BIT)
@@ -1406,7 +1406,7 @@ clean_muskie:
 _wrasse_stamp=$(WRASSE_BRANCH)-$(TIMESTAMP)-g$(WRASSE_SHA)
 WRASSE_BITS=$(BITS_DIR)/wrasse/wrasse-pkg-$(_wrasse_stamp).tar.bz2
 WRASSE_IMAGE_BIT=$(BITS_DIR)/wrasse/wrasse-zfs-$(_wrasse_stamp).zfs.gz
-WRASSE_MANIFEST_BIT=$(BITS_DIR)/wrasse/wrasse-zfs-$(_wrasse_stamp).zfs.dsmanifest
+WRASSE_MANIFEST_BIT=$(BITS_DIR)/wrasse/wrasse-zfs-$(_wrasse_stamp).zfs.imgmanifest
 
 .PHONY: wrasse
 wrasse: $(WRASSE_BITS) wrasse_image
@@ -1431,7 +1431,7 @@ $(WRASSE_IMAGE_BIT): $(WRASSE_BITS)
 		-t $(WRASSE_EXTRA_TARBALLS) -n $(WRASSE_IMAGE_NAME) \
 		-v $(_wrasse_stamp) -d $(WRASSE_IMAGE_DESCRIPTION)
 	@echo "# Created wrasse image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(WRASSE_IMAGE_BIT)
+	@ls -1 $(WRASSE_MANIFEST_BIT) $(WRASSE_IMAGE_BIT)
 	@echo ""
 
 wrasse_publish_image: $(WRASSE_IMAGE_BIT)
@@ -1532,7 +1532,7 @@ clean_manowar:
 _binder_stamp=$(BINDER_BRANCH)-$(TIMESTAMP)-g$(BINDER_SHA)
 BINDER_BITS=$(BITS_DIR)/binder/binder-pkg-$(_binder_stamp).tar.bz2
 BINDER_IMAGE_BIT=$(BITS_DIR)/binder/binder-zfs-$(_binder_stamp).zfs.gz
-BINDER_MANIFEST_BIT=$(BITS_DIR)/binder/binder-zfs-$(_binder_stamp).zfs.dsmanifest
+BINDER_MANIFEST_BIT=$(BITS_DIR)/binder/binder-zfs-$(_binder_stamp).zfs.imgmanifest
 
 .PHONY: binder
 binder: $(BINDER_BITS) binder_image
@@ -1555,7 +1555,7 @@ $(BINDER_IMAGE_BIT): $(BINDER_BITS)
 		-t $(BINDER_EXTRA_TARBALLS) -n $(BINDER_IMAGE_NAME) \
 		-v $(_binder_stamp) -d $(BINDER_IMAGE_DESCRIPTION)
 	@echo "# Created binder image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(BINDER_IMAGE_BIT)
+	@ls -1 $(BINDER_MANIFEST_BIT) $(BINDER_IMAGE_BIT)
 	@echo ""
 
 binder_publish_image: $(BINDER_IMAGE_BIT)
@@ -1571,7 +1571,7 @@ clean_binder:
 _muppet_stamp=$(MUPPET_BRANCH)-$(TIMESTAMP)-g$(MUPPET_SHA)
 MUPPET_BITS=$(BITS_DIR)/muppet/muppet-pkg-$(_muppet_stamp).tar.bz2
 MUPPET_IMAGE_BIT=$(BITS_DIR)/muppet/muppet-zfs-$(_muppet_stamp).zfs.gz
-MUPPET_MANIFEST_BIT=$(BITS_DIR)/muppet/muppet-zfs-$(_muppet_stamp).zfs.dsmanifest
+MUPPET_MANIFEST_BIT=$(BITS_DIR)/muppet/muppet-zfs-$(_muppet_stamp).zfs.imgmanifest
 
 .PHONY: muppet
 muppet: $(MUPPET_BITS) muppet_image
@@ -1594,7 +1594,7 @@ $(MUPPET_IMAGE_BIT): $(MUPPET_BITS)
 		-t $(MUPPET_EXTRA_TARBALLS) -n $(MUPPET_IMAGE_NAME) \
 		-v $(_muppet_stamp) -d $(MUPPET_IMAGE_DESCRIPTION)
 	@echo "# Created muppet image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MUPPET_IMAGE_BIT)
+	@ls -1 $(MUPPET_MANIFEST_BIT) $(MUPPET_IMAGE_BIT)
 	@echo ""
 
 muppet_publish_image: $(MUPPET_IMAGE_BIT)
@@ -1631,7 +1631,7 @@ clean_minnow:
 _mako_stamp=$(MAKO_BRANCH)-$(TIMESTAMP)-g$(MAKO_SHA)
 MAKO_BITS=$(BITS_DIR)/mako/mako-pkg-$(_mako_stamp).tar.bz2
 MAKO_IMAGE_BIT=$(BITS_DIR)/mako/mako-zfs-$(_mako_stamp).zfs.gz
-MAKO_MANIFEST_BIT=$(BITS_DIR)/mako/mako-zfs-$(_mako_stamp).zfs.dsmanifest
+MAKO_MANIFEST_BIT=$(BITS_DIR)/mako/mako-zfs-$(_mako_stamp).zfs.imgmanifest
 
 .PHONY: mako
 mako: $(MAKO_BITS) mako_image
@@ -1654,7 +1654,7 @@ $(MAKO_IMAGE_BIT): $(MAKO_BITS)
 		-t $(MAKO_EXTRA_TARBALLS) -n $(MAKO_IMAGE_NAME) \
 		-v $(_mako_stamp) -d $(MAKO_IMAGE_DESCRIPTION)
 	@echo "# Created mako image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MAKO_IMAGE_BIT)
+	@ls -1 $(MAKO_MANIFEST_BIT) $(MAKO_IMAGE_BIT)
 	@echo ""
 
 mako_publish_image: $(MAKO_IMAGE_BIT)
