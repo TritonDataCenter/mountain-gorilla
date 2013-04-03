@@ -288,7 +288,7 @@ shasum=$(/usr/bin/sum -x sha1 ${output} | cut -d ' ' -f1)
 size=$(/usr/bin/stat --format=%s ${output})
 
 cat <<EOF>> ${output_sans_ext}.imgmanifest
-  {
+{
     "v": 2,
     "uuid": "${uuid}",
     "name": "${image_name}",
@@ -299,17 +299,19 @@ cat <<EOF>> ${output_sans_ext}.imgmanifest
     "type": "zone-dataset",
     "os": "smartos",
     "files": [
-        "sha1": "${shasum}",
-        "size": ${size},
-        "compression": "${compression}"
+        {
+            "sha1": "${shasum}",
+            "size": ${size},
+            "compression": "${compression}"
+        }
     ],
     "requirements": {
-      "networks": [
-        {
-          "name": "net0",
-          "description": "admin"
-        }
-      ]
+        "networks": [
+            {
+                "name": "net0",
+                "description": "admin"
+            }
+        ]
     }
-  }
+}
 EOF
