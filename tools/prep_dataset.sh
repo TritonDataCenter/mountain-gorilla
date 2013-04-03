@@ -298,6 +298,7 @@ cat <<EOF>> ${output_sans_ext}.imgmanifest
     "owner": "00000000-0000-0000-0000-000000000000",
     "type": "zone-dataset",
     "os": "smartos",
+    "public": true,
     "files": [
         {
             "sha1": "${shasum}",
