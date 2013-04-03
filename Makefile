@@ -1765,9 +1765,11 @@ clean_manta:
 
 _manta_deployment_stamp=$(MANTA_DEPLOYMENT_BRANCH)-$(TIMESTAMP)-g$(MANTA_DEPLOYMENT_SHA)
 MANTA_DEPLOYMENT_BITS=$(BITS_DIR)/manta-deployment/manta-deployment-pkg-$(_manta_deployment_stamp).tar.bz2
+MANTA_DEPLOYMENT_IMAGE_BIT=$(BITS_DIR)/manta-deployment/manta-deployment-zfs-$(_manta_deployment_stamp).zfs.gz
+MANTA_DEPLOYMENT_MANIFEST_BIT=$(BITS_DIR)/manta-deployment/manta-deployment-zfs-$(_manta_deployment_stamp).zfs.imgmanifest
 
 .PHONY: manta-deployment
-manta-deployment: $(MANTA_DEPLOYMENT_BITS)
+manta-deployment: $(MANTA_DEPLOYMENT_BITS) manta-deployment_image
 
 $(MANTA_DEPLOYMENT_BITS): build/manta-deployment
 	@echo "# Build manta-deployment: branch $(MANTA_DEPLOYMENT_BRANCH), sha $(MANTA_DEPLOYMENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
@@ -1777,7 +1779,20 @@ $(MANTA_DEPLOYMENT_BITS): build/manta-deployment
 	@ls -1 $(MANTA_DEPLOYMENT_BITS)
 	@echo ""
 
-clean_manta_deployment:
+.PHONY: manta-deployment_image
+manta-deployment_image: $(MANTA_DEPLOYMENT_IMAGE_BIT)
+
+$(MANTA_DEPLOYMENT_IMAGE_BIT): $(MANTA_DEPLOYMENT_BITS)
+	@echo "# Build manta-deployment_image: branch $(MANTA_DEPLOYMENT_BRANCH), sha $(MANTA_DEPLOYMENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(MANTA_DEPLOYMENT_IMAGE_UUID)" -t $(MANTA_DEPLOYMENT_BITS) \
+		-o "$(MANTA_DEPLOYMENT_IMAGE_BIT)" -p $(MANTA_DEPLOYMENT_PKGSRC) \
+		-t $(MANTA_DEPLOYMENT_EXTRA_TARBALLS) -n $(MANTA_DEPLOYMENT_IMAGE_NAME) \
+		-v $(_manta_deployment_stamp) -d $(MANTA_DEPLOYMENT_IMAGE_DESCRIPTION)
+	@echo "# Created manta-deployment image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MANTA_DEPLOYMENT_MANIFEST_BIT) $(MANTA_DEPLOYMENT_IMAGE_BIT)
+	@echo ""
+
+clean_manta-deployment:
 	rm -rf $(BITS_DIR)/manta-deployment
 	(cd build/manta-deployment && gmake distclean)
 
