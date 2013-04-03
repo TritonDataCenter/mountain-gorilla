@@ -56,7 +56,7 @@ function cleanup() {
   local exit_status=${1:-$?}
   if [[ -n $gzhost ]]; then
     if [[ -n "$uuid" ]]; then
-      echo ${SSH} "vmadm stop -F ${uuid} ; vmadm destroy ${uuid}"
+      ${SSH} "vmadm stop -F ${uuid} ; vmadm destroy ${uuid}"
     fi
   fi
   exit $exit_status
