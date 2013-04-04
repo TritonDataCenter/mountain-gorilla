@@ -1048,7 +1048,6 @@
         "cnapi",
         "dapi",
         "dhcpd",
-        "firmware-tools",
         "fwapi",
         "imgapi",
         "imgapi-cli",
