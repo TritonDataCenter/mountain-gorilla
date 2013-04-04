@@ -1903,6 +1903,10 @@ $(UPGRADE_BIT): bits/usbheadnode/build.spec.local $(BOOT_BIT)
 	@ls -1 $(UPGRADE_BIT)
 	@echo ""
 
+
+# A usbheadnode image that can be imported to an IMGAPI and used for
+# sdc-on-sdc.
+
 IMAGE_BIT=$(BITS_DIR)/usbheadnode/usb-$(_usbheadnode_stamp).zvol.bz2
 MANIFEST_BIT=$(BITS_DIR)/usbheadnode/usb-$(_usbheadnode_stamp).dsmanifest
 
