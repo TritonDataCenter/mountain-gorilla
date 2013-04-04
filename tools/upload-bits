@@ -100,10 +100,12 @@ else
 fi
 
 # Upload to '.'-prefixed dir to hide it until fully uploaded.
+start_time=$(date +%s)
 echo "Uploading bits to <$UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/$upload_subdir/>."
 (cd ${BITS_DIR}/ && md5sum $(find ./ -type f) > md5sums.txt)
 ($SSH $UPLOAD_SERVER "mkdir -p ${UPLOAD_BASE_LOCALDIR}/.${upload_subdir}/" || /bin/true)
-rsync -e "$SSH" -av $BITS_DIR/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/
+rsync -e "$SSH" -av $BITS_DIR/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/ \
+    --exclude sdcnode/
 
 # Unhide and add a "$UPLOAD_BRANCH-$latest" symlink.
 $SSH $UPLOAD_SERVER mv $UPLOAD_BASE_LOCALDIR/.$upload_subdir/ $UPLOAD_BASE_LOCALDIR/$upload_subdir/
@@ -113,4 +115,11 @@ $SSH $UPLOAD_SERVER "(cd $UPLOAD_BASE_LOCALDIR && rm -f $UPLOAD_BRANCH-latest &&
 if [[ "$UPLOAD_SERVER" == "stuff@stuff.joyent.us" ]]; then
     echo "Uploaded to <https://stuff.joyent.us/stuff/$UPLOAD_BASE_LOCALDIR/$upload_subdir/>."
 fi
+if [[ "$UPLOAD_SERVER" == "bits@bits.joyent.us" ]]; then
+    echo "Uploaded to <https://bits.joyent.us/$UPLOAD_BASE_LOCALDIR/$upload_subdir/>."
+fi
+
+end_time=$(date +%s)
+elapsed=$((${end_time} - ${start_time}))
+echo "Upload took ${elapsed} seconds."
 
