@@ -44,67 +44,12 @@ sleep 5
 \$BATCH_SCP -v stuff@stuff.joyent.us:trent/mk-jenkins-slave/.mg.json /root/.mg.json
 
 
-# Add fake-subset et al to setup for building.
-cd /root
-curl -k -O https://download.joyent.com/pub/build/setup-build-zone
-curl -k -O https://download.joyent.com/pub/build/fake-subset.tbz2
-chmod 755 setup-build-zone
-./setup-build-zone
-
-cat > /var/tmp/setup-build-zone.xml <<SETUPBUILDZONE
-<?xml version='1.0'?>
-<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
-<service_bundle type='manifest' name='export'>
-  <service name='smartdc/setup-build-zone' type='service' version='0'>
-    <dependency name='network' grouping='require_all' restart_on='error' type='service'>
-      <service_fmri value='svc:/milestone/multi-user:default'/>
-    </dependency>
-    <dependency name='filesystem' grouping='require_all' restart_on='error' type='service'>
-      <service_fmri value='svc:/system/filesystem/local'/>
-    </dependency>
-    <instance name='default' enabled='true'>
-      <exec_method name='start' type='method' exec='/root/setup-build-zone -e' timeout_seconds='60'>
-        <method_context working_directory='/root'/>
-      </exec_method>
-      <exec_method name='stop' type='method' exec=':true' timeout_seconds='3'/>
-      <property_group name='startd' type='framework'>
-        <propval name='duration' type='astring' value='transient'/>
-      </property_group>
-    </instance>
-    <stability value='Evolving'/>
-    <template>
-      <common_name>
-        <loctext xml:lang='C'>Setup build zone (-e)</loctext>
-      </common_name>
-    </template>
-  </service>
-</service_bundle>
-SETUPBUILDZONE
-/usr/sbin/svccfg import /var/tmp/setup-build-zone.xml
-
-# With the current setup-build-zone script this has the annoying side-effect
-# of putting this svc into the maintenance on first run here, because the
-# fake-subset is already setup.
-/usr/sbin/svcadm enable setup-build-zone
-
-
-# Having git "core.autocrlf=input" will cause spurious dirty files in
-# some of our repos. Don't go there.
-[[ \$(git config core.autocrlf) == "input" ]] \
-    && echo "* * * Warning: remove 'autocrlf=input' from your ~/.gitconfig"
-
-# Recent git requires a user.name and user.email setup to do any git repo
-# actions... and a jenkins build wants to 'git tag'.
-export HOME=/root
-git config --global user.name "Jenkins Slave"
-git config --global user.email jenkins-slave@joyent.com
-
-
 # Stupid Java will ask us for license otherwise.
 mkdir -p /opt/local
 touch /opt/local/.dlj_license_accepted
 
-# install binutils first since otherwise somehow we can't install it.
+# Install binutils first since otherwise somehow we can't install it.
+# Note: Not sure this is true anymore (Trent, 3 Apr 2013).
 pkgin -y install binutils
 
 # scmgit, gcc-*, gmake: needed by most parts of sdc build
@@ -119,6 +64,19 @@ pkgin -y in gcc47 gcc-compiler gcc-runtime gcc-tools cscope gmake \
     postgresql91-client-9.1.2 gsharutils
 
 
+# Having git "core.autocrlf=input" will cause spurious dirty files in
+# some of our repos. Don't go there.
+[[ \$(git config core.autocrlf) == "input" ]] \
+    && echo "* * * Warning: remove 'autocrlf=input' from your ~/.gitconfig"
+
+# Recent git requires a user.name and user.email setup to do any git repo
+# actions... and a jenkins build wants to 'git tag'.
+export HOME=/root
+git config --global user.name "Jenkins Slave"
+git config --global user.email jenkins-slave@joyent.com
+
+
+
 # Need 'updates-imgadm' from imgapi-cli.git on the PATH (this is used
 # by the MG builds to publish build images to updates.joyent.us).
 mkdir -p /root/opt
@@ -131,35 +89,10 @@ echo 'export PATH=/root/opt/imgapi-cli/bin:\$PATH' >>/root/.bashrc
 
 
 # Note: This "./configure" step is necessary to setup your system.
-# TODO: Why is this necessary?
-# TODO: Pull out the requisite system setup steps. Shouldn't really
-#       be tucked away in smartos-live.git and configure.joyent.
 git clone https://github.com/joyent/smartos-live.git
 cd smartos-live
 curl -k -O https://download.joyent.com/pub/build/configure.joyent
 GIT_SSL_NO_VERIFY=true ./configure
-
-
-# The MG build requires that a node 0.6 first on your PATH. If you are building
-# on smartos recent enough that `/usr/bin/json --version` is 0.6.x then you
-# should be good.
-# TODO : make this happen
-
-# Finally clone MG
-cd /root
-git clone git@git.joyent.com:mountain-gorilla.git MG
-
-# smartos-live's configure was used to setup some things, move the repos it created into the
-# MG cache dir to warm the cache.
-mkdir -p /root/MG/cache/repos
-mv /root/smartos-live /root/MG/cache/repos
-mv /root/MG/cache/repos/smartos-live/configure.joyent /root
-mv /root/MG/cache/repos/smartos-live/projects/illumos /root/MG/cache/repos/illumos-joyent
-mv /root/MG/cache/repos/smartos-live/projects/illumos-extra /root/MG/cache/repos
-mv /root/MG/cache/repos/smartos-live/projects/local/kvm /root/MG/cache/repos/illumos-kvm
-mv /root/MG/cache/repos/smartos-live/projects/local/kvm-cmd /root/MG/cache/repos/illumos-kvm-cmd
-mv /root/MG/cache/repos/smartos-live/projects/local/sdc-platform /root/MG/cache/repos
-mv /root/MG/cache/repos/smartos-live/projects/local/ur-agent /root/MG/cache/repos
 
 echo "ALL DONE"
 
