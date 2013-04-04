@@ -1012,6 +1012,13 @@
     "deps": []
   },
 
+  "firmware-tools": {
+    "repos": [
+	{"url": "git@git.joyent.com:firmware-tools.git"}
+    ],
+    "deps": []
+  },
+
   "platform": {
     "repos": [
         {"url": "git@github.com:joyent/smartos-live.git"},
@@ -1041,6 +1048,7 @@
         "cnapi",
         "dapi",
         "dhcpd",
+        "firmware-tools",
         "fwapi",
         "imgapi",
         "imgapi-cli",

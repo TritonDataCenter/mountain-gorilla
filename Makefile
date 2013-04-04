@@ -48,10 +48,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray electric-moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray electric-moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar configurator moray electric-moray ufds usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar configurator moray electric-moray ufds usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools
 
 
 #---- smartlogin
@@ -1820,6 +1820,26 @@ $(SDCBOOT_BITS): build/sdcboot
 clean_sdcboot:
 	rm -rf $(BITS_DIR)/sdcboot
 	(cd build/sdcboot && gmake clean)
+
+#---- firmware-tools (Legacy-mode FDUM facilities and firmware for Joyent HW)
+
+_firmware_tools_stamp=$(FIRMWARE_TOOLS_BRANCH)-$(TIMESTAMP)-g$(FIRMWARE_TOOLS_SHA)
+FIRMWARE_TOOLS_BITS=$(BITS_DIR)/firmware-tools/firmware-tools-$(_firmware_tools_stamp).tgz
+
+.PHONY: firmware-tools
+firmware-tools: $(FIRMWARE_TOOLS_BITS)
+
+$(FIRMWARE_TOOLS_BITS): build/firmware-tools
+	mkdir -p $(BITS_DIR)
+	(cd build/firmware-tools && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) \
+	    gmake pkg release publish)
+	@echo "# Created firmware-tools bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(FIRMWARE_TOOLS_BITS)
+	@echo ""
+
+clean_firmware-tools:
+	rm -rf $(BITS_DIR)/firmware-tools
+	(cd build/firmware-tools && gmake clean)
 
 #---- usb-headnode
 # We are using the '-s STAGE-DIR' option to the usb-headnode build to

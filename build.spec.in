@@ -12,6 +12,7 @@ cat <<HERE;
 
   "platform-release": "$(ls bits/platform/platform*.tgz | xargs basename | cut -d- -f2)",
   "sdcboot-release": "$(ls bits/sdcboot/sdcboot*.tgz | xargs basename | cut -d- -f2)",
+  "firmware-tools-release": "$(ls bits/firmware-tools/firmware-tools*.tgz | xargs basename | cut -d- -f3)",
   "agents-shar": "$(ls bits/agentsshar/agents-*.sh | xargs basename | cut -d- -f2)",
 
   "adminui-tarball": "adminui/$(ls bits/adminui/adminui-pkg* | xargs basename)",
