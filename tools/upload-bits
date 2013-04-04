@@ -39,7 +39,7 @@ function errexit {
 
 function print_help() {
     echo "Usage:"
-    echo "  ./tools/upload-bits BRANCH TRY-BRANCH TIMESTAMP UPLOAD-BASE-DIR"
+    echo "  ./tools/upload-bits BRANCH TRY-BRANCH TIMESTAMP UPLOAD-BASE-DIR [SUBDIRS...]"
     echo ""
     echo "Upload bits. The UPLOAD-BASE-DIR is presumed to be a remote dir "
     echo "(i.e. user@host:path). 'TRY-BRANCH' is often empty. An MG build"
@@ -47,6 +47,10 @@ function print_help() {
     echo "for those constituent repos that have that branch. If there is"
     echo "'TRY-BRANCH', this will be used as the upload dir in favour of"
     echo "'BRANCH'."
+    echo ""
+    echo "If 'SUBDIRS' are given, then only those subdirs of the bits dir are"
+    echo "uploaded (plus the always uploaded config.mk and md5sums.txt)."
+    echo ""
     echo ""
     echo "Options:"
     echo "  -h           Print this help and exit."
@@ -72,9 +76,14 @@ while getopts "hrf:" opt; do
 done
 
 BRANCH=$1
-TRY_BRANCH=$2
-TIMESTAMP=$3
-UPLOAD_BASE_DIR=$4
+shift
+TRY_BRANCH=$1
+shift
+TIMESTAMP=$1
+shift
+UPLOAD_BASE_DIR=$1
+shift
+SUBDIRS=$*
 
 UPLOAD_SERVER=$(echo "$UPLOAD_BASE_DIR" | awk -F: '{print $1}')
 UPLOAD_BASE_LOCALDIR=$(echo "$UPLOAD_BASE_DIR" | awk -F: '{print $2}')
@@ -104,8 +113,21 @@ start_time=$(date +%s)
 echo "Uploading bits to <$UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/$upload_subdir/>."
 (cd ${BITS_DIR}/ && md5sum $(find ./ -type f) > md5sums.txt)
 ($SSH $UPLOAD_SERVER "mkdir -p ${UPLOAD_BASE_LOCALDIR}/.${upload_subdir}/" || /bin/true)
-rsync -e "$SSH" -av $BITS_DIR/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/ \
-    --exclude sdcnode/
+if [[ -z "$SUBDIRS" ]]; then
+    rsync -e "$SSH" -av $BITS_DIR/ $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/ \
+        --exclude sdcnode/
+else
+    for subdir in $SUBDIRS; do
+        if [[ -d $BITS_DIR/$subdir ]]; then
+            rsync -e "$SSH" -av $BITS_DIR/$subdir/ \
+                $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/$subdir/
+        fi
+    done
+    rsync -e "$SSH" -av $BITS_DIR/config.mk \
+        $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/
+    rsync -e "$SSH" -av $BITS_DIR/md5sums.txt \
+        $UPLOAD_SERVER:$UPLOAD_BASE_LOCALDIR/.$upload_subdir/
+fi
 
 # Unhide and add a "$UPLOAD_BRANCH-$latest" symlink.
 $SSH $UPLOAD_SERVER mv $UPLOAD_BASE_LOCALDIR/.$upload_subdir/ $UPLOAD_BASE_LOCALDIR/$upload_subdir/

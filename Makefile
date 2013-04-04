@@ -2,6 +2,14 @@
 #
 # Mountain Gorilla Makefile. See "README.md".
 #
+# Environment variables used:
+#
+# - JOB_NAME (typically set by the Jenkins jobs that run this) is used for
+#   some targets.
+# - UPLOAD_SUBDIRS can be used to specify extra bits subdirs to upload
+#   in the "upload_jenkins" target.
+# ...
+#
 
 #---- Config
 
@@ -2070,9 +2078,9 @@ upload_jenkins:
 	@[[ -z "$(JOB_NAME)" ]] \
 		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
 		&& exit 1 || true
-	./tools/upload-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(UPLOAD_LOCATION)/$(JOB_NAME)
+	./tools/upload-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(UPLOAD_LOCATION)/$(JOB_NAME) $(JOB_NAME) $(UPLOAD_SUBDIRS)
 	# RELENG-462: also upload to bits.joyent.us during transition
-	./tools/upload-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(UPLOAD_LOCATION_BITS)/$(JOB_NAME)
+	./tools/upload-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(UPLOAD_LOCATION_BITS)/$(JOB_NAME) $(JOB_NAME) $(UPLOAD_SUBDIRS)
 
 # Publish the image for this Jenkins job to https://updates.joyent.us, if
 # appropriate. No-op if the current JOB_NAME doesn't have a "*_publish_image"
