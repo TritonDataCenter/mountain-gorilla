@@ -203,23 +203,10 @@
     "image_name": "usageapi",
     "image_description": "SDC UsageAPI",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "60ed3a3e-92c7-11e2-ba4a-9b6d5feaa0c4",
     "pkgsrc": [
-      "perl-5.14.2nb3",
-      "iodbc-3.52.7",
-      "libffi-3.0.9nb1",
-      "gettext-lib-0.18.1.1",
-      "pcre-8.21",
-      "expat-2.0.1nb2",
-      "libgetopt-1.4.4",
-      "libidn-1.23",
-      "libssh2-1.2.2nb1",
-      "p5-Error-0.17016nb2",
-      "postgresql91-client-9.1.2",
-      "postgresql91-server-9.1.2",
-      "pkg_alternatives-1.5",
-      "curl-7.23.1nb1",
-      "python26-2.6.7nb2"
+      "postgresql91-client-9.1.7",
+      "postgresql91-server-9.1.7"
     ],
     "repos": [
       {"url": "git@git.joyent.com:usageapi.git"}

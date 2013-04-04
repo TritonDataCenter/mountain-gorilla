@@ -8,13 +8,13 @@ cleanup() {
   # clean up old log files
   echo "==> removing tmp and log files"
   rm -rf /var/svc/log/*
-  find /var/log -type f | xargs rm -f
+  find /var/log -type f | xargs -n1 cp /dev/null
   find /var/adm -type f | xargs rm -f
-  find /var/db/pkgin -type f | xargs rm -f
+  # find /var/db/pkgin -type f | grep -v pkgin.db | xargs rm -f
   find /var/cron -type f | xargs rm -f
   rm -f /var/spool/postfix/deferred/*
 
-  # touch necessary log files 
+  # touch necessary log files
   touch /var/adm/wtmpx
 
   # unset passwords that may have been mistakenly left
@@ -28,12 +28,12 @@ cleanup() {
 
   echo "==> cleaning up old network configuration"
   # remove old network configuration files
-  echo "::1        localhost"          > /etc/hosts 
-  echo "127.0.0.1  localhost loghost" >> /etc/hosts 
+  echo "::1        localhost"          > /etc/hosts
+  echo "127.0.0.1  localhost loghost" >> /etc/hosts
 
   # interface configuration files
   find /etc/hostname.net* | xargs rm -f
-  
+
   # remove zoneconfig
   rm /root/zoneconfig
 }
