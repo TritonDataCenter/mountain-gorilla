@@ -32,11 +32,11 @@ USERSCRIPT=$TOP/jenkins-slave-setup.user-script
 uuid=$(uuid)
 
 # "longleasenodes" MAC prefix configuration in the BH-1 lab (see TOOLS-132).
-#mac_prefix="12:22:32"
+mac_prefix="12:22:32"
 # HACK try short lease range
 #mac_prefix="32:22:12"
 # HACK try 'tmpfix' range
-mac_prefix="c0:ff:ee"
+#mac_prefix="c0:ff:ee"
 mac="$mac_prefix:$(openssl rand -hex 1):$(openssl rand -hex 1):$(openssl rand -hex 1)"
 
 (cat | /usr/vm/sbin/add-userscript $USERSCRIPT | vmadm create)<<EOF
@@ -86,7 +86,7 @@ $BATCH_SCP stuff@$STUFF_IP:trent/mk-jenkins-slave/automation.id_rsa.pub \
 chmod 644 /zones/${uuid}/root/root/.ssh/automation.id_rsa.pub
 
 cat > /zones/${uuid}/root/root/.ssh/config <<HERE
-ServerAliveInterval 60
+ServerAliveInterval 90
 StrictHostKeyChecking no
 
 # TODO: Might also want this:
@@ -102,6 +102,11 @@ Host github.com
 Host stuff.joyent.us
     IdentityFile=/root/.ssh/automation.id_rsa
 Host 10.2.0.190
+    IdentityFile=/root/.ssh/automation.id_rsa
+# Access to bits.joyent.us (10.2.172.96)
+Host bits.joyent.us
+    IdentityFile=/root/.ssh/automation.id_rsa
+Host 10.2.172.96
     IdentityFile=/root/.ssh/automation.id_rsa
 
 # Access to jill@download.joyent.com for sdcnode.
