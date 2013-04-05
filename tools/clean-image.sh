@@ -10,7 +10,7 @@ cleanup() {
   rm -rf /var/svc/log/*
   find /var/log -type f | xargs -n1 cp /dev/null
   find /var/adm -type f | xargs rm -f
-  # find /var/db/pkgin -type f | grep -v pkgin.db | xargs rm -f
+  find /var/db/pkgin -type f | grep -v pkgin.db | xargs rm -f
   find /var/cron -type f | xargs rm -f
   rm -f /var/spool/postfix/deferred/*
 
