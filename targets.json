@@ -250,6 +250,35 @@
     ]
   },
 
+  "manta-workflow": {
+    "appliance": "true",
+    "image_name": "manta-workflow",
+    "image_description": "Manta Workflow",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [
+      "curl-7.23.1nb1",
+      "pkg_alternatives-1.5",
+      "python26-2.6.7nb2"
+    ],
+    "repos": [
+      {"url": "git@git.joyent.com:manta-workflow.git"}
+    ],
+    "deps": [
+      "amon",
+      "sapi",
+      "configurator",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
+  },
+
   "workflow": {
     "appliance": "true",
     "image_name": "workflow",
