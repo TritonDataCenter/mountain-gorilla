@@ -30,18 +30,19 @@ export PATH=/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin
 export BATCH_SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o BatchMode=yes"
 
 
-# Ensure can use "stuff.joyent.us" inside BH-1
+# Ensure can use "bits.joyent.us" and "stuff.joyent.us" inside BH-1.
 echo '' >>/etc/inet/hosts
 echo '10.2.0.190      stuff.joyent.us' >>/etc/inet/hosts
+echo '10.2.172.96     bits.joyent.us' >>/etc/inet/hosts
 
 
 # The following scp get Permission Denied without a little wait.
 # Don't know why. Obviously this is a gaping race bug.
 sleep 5
 
-# Encode the https://stuff.joyent.us username and password in your
+# Encode the bits.joyent.us username and password in your
 # environment for the MG build.
-\$BATCH_SCP -v stuff@stuff.joyent.us:trent/mk-jenkins-slave/.mg.json /root/.mg.json
+\$BATCH_SCP -v bits@bits.joyent.us:etc/.mg.json /root/.mg.json
 
 
 # Stupid Java will ask us for license otherwise.
