@@ -43,7 +43,7 @@ if [[ $(uname -s) == "SunOS" && \
         | cut -d "'" -f2 | grep 10\.2\. | wc -l | tr -d ' ') -gt 0 ]]; then
     # Assume we're in the BH-1 lab.
     echo "# Looks like we're in the BH-1 lab."
-    BITS_HOST=10.2.0.190
+    BITS_HOST=10.2.172.96
 fi
 
 # GNU cp has '--link'.
