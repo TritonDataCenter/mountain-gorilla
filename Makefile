@@ -1283,7 +1283,7 @@ manta-workflow_publish_image: $(MANTA_WORKFLOW_IMAGE_BIT)
 
 # Warning: if workflow's submodule deps change, this 'clean_workflow' is insufficient. It would
 # then need to call 'gmake dist-clean'.
-clean_workflow:
+clean_manta-workflow:
 	rm -rf $(BITS_DIR)/manta-workflow
 	(cd build/manta-workflow && gmake clean)
 
