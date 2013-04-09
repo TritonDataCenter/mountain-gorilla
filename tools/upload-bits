@@ -56,7 +56,7 @@ function print_help() {
     echo "  -h           Print this help and exit."
     echo ""
     echo "Examples:"
-    echo "  ./tool/upload-bits release-20110922 \"\" 20110927T143319Z stuff@stuff.joyent.us:builds/nightly"
+    echo "  ./tool/upload-bits release-20110922 \"\" 20110927T143319Z bits@bits.joyent.us:builds"
     exit 0
 }
 
@@ -133,7 +133,7 @@ fi
 $SSH $UPLOAD_SERVER mv $UPLOAD_BASE_LOCALDIR/.$upload_subdir/ $UPLOAD_BASE_LOCALDIR/$upload_subdir/
 $SSH $UPLOAD_SERVER "(cd $UPLOAD_BASE_LOCALDIR && rm -f $UPLOAD_BRANCH-latest && ln -s $upload_subdir $UPLOAD_BRANCH-latest)"
 
-# Special note for stuff.joyent.us.
+# Special note for bits.joyent.us and stuff.joyent.us.
 if [[ "$UPLOAD_SERVER" == "stuff@stuff.joyent.us" ]]; then
     echo "Uploaded to <https://stuff.joyent.us/stuff/$UPLOAD_BASE_LOCALDIR/$upload_subdir/>."
 fi

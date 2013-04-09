@@ -32,11 +32,11 @@ MG_CACHE_DIR=${ROOT}/cache
 BITS_USERNAME=
 BITS_PASSWORD=
 BITS_PROTO=https
-BITS_HOST=stuff.joyent.us
-BITS_BASE_PATH=/stuff/builds
+BITS_HOST=bits.joyent.us
+BITS_BASE_PATH=/builds
 
 # This is a HACK to figure out if we're in the bh1 lab (assume we are if
-# the IP is 10.2.X.X) so that we can switch the stuff url to an IP because
+# the IP is 10.2.X.X) so that we can switch the Bits url to an IP because
 # the URL doesn't work in the lab.
 if [[ $(uname -s) == "SunOS" && \
       $(sysinfo -p | grep "Network_Interface.*IPv4_Address=" \
@@ -106,7 +106,7 @@ function flush_bits_cache() {
 #   preload_bits TARGET BRANCH TRY_BRANCH
 # where:
 #   TARGET is one of:
-#       (a) a string subdir of the https://stuff.joyent.com/stuff/builds
+#       (a) a string subdir of the https://bits.joyent.com/builds
 #           builds repo;
 #       (b) a "$target_branch/$subdir" that specifies an alternative branch
 #           just for this target ; or

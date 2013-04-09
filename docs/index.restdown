@@ -11,7 +11,7 @@ apisections:
 ||Who||Trent Mick, John Sonnenschein||
 ||Docs||<https://mo.joyent.com/docs/mg>||
 ||Bugs||<https://devhub.joyent.com/jira/browse/RELENG>||
-||Builds||<https://jenkins.joyent.us>, <https://stuff.joyent.us/stuff/builds>||
+||Builds||<https://jenkins.joyent.us>, <https://bits.joyent.us/builds>||
 
 A single repo to build all the parts of SDC. This is just a *build driver*
 repo, all the components are still in their respective repos.
@@ -22,17 +22,17 @@ repo, all the components are still in their respective repos.
     push to vmapi.git
         -> triggers a <https://jenkins.joyent.us/job/vmapi> build in Jenkins
         -> uses **MG's 'vmapi' target** to build and upload
-           new vmapi bits to <https://stuff.joyent.us/stuff/builds/vmapi/master-latest/>
+           new vmapi bits to <https://bits.joyent.us/builds/vmapi/master-latest/>
         -> triggers a <https://jenkins.joyent.us/job/usbheadnodetar> build
         -> uses MG's usb-headnode-related targets to build and upload
-           <https://stuff.joyent.us/stuff/builds/usbheadnodetar/master-latest/>
+           <https://bits.joyent.us/builds/usbheadnodetar/master-latest/>
 
 Then you can reflash your headnode using usb-headnode.git/bin/reflash, which
-will grab the latest tarball from that stuff directory.
+will grab the latest tarball from that Bits directory.
 
         -> triggers a <https://jenkins.joyent.us/job/usbheadnode> build
         -> uses MG's usb-headnode-related targets to build and upload
-           <https://stuff.joyent.us/stuff/builds/usbheadnode/master-latest/>
+           <https://bits.joyent.us/builds/usbheadnode/master-latest/>
 
 The "usbheadnode" and "usbheadnodetar" builds are separated to get that
 "time from push to reflash" down. For reflash you only need the usb-headnode
@@ -63,7 +63,7 @@ An MG build generally works like this:
    images).
 3. Build it
 4. Upload its built "bits" to a structured layout of bits at
-   <https://stuff.joyent.us/stuff/builds>
+   <https://bits.joyent.us/builds>
 
 Using amon as an example (see "Prerequisites" section below):
 
@@ -74,9 +74,9 @@ Using amon as an example (see "Prerequisites" section below):
     JOB_NAME=amon make upload_jenkins                   # 4. see "Jenkins" below
 
 This results in a new set of amon bits for the "master" branch here:
-<https://stuff.joyent.us/stuff/builds/amon/master-latest/amon/> including
+<https://bits.joyent.us/builds/amon/master-latest/amon/> including
 the build configuration and build log. That "master-latest" is a symlink to
-multiple back builds: <https://stuff.joyent.us/stuff/builds/amon/>. Branches
+multiple back builds: <https://bits.joyent.us/builds/amon/>. Branches
 are also supported (see "Branches" below).
 
 The full set of targets that MG supports is both in
@@ -155,17 +155,17 @@ Unfortunately, MG doesn't have a convenient way to build a target using
 However, MG is just a wrapper build repo. Each repo knows how to build itself
 so using MG is *typically* unnecessary. MG just brings (a) strict control
 of dependent bits and (b) upload to the structured layout of bits on
-stuff.joyent.us.
+bits.joyent.us.
 
 
 # Bits directory structure
 
 MG uploads build bits to a controlled directory structure at
-<https://stuff.joyent.us/stuff/builds>. The MG `./configure ...` step handles
+<https://bits.joyent.us/builds>. The MG `./configure ...` step handles
 downloading pre-built dependencies from this structure. The usb-headnode and
 agents-installer builds also rely on this structure.
 
-    https://stuff.joyent.us/stuff/builds/
+    https://bits.joyent.us/builds/
         $job/               # Typically $job === MG $target name
             $branch-latest -> $branch-$latest_timestamp
             ...
@@ -176,7 +176,7 @@ agents-installer builds also rely on this structure.
 
 For example:
 
-    https://stuff.joyent.us/stuff/builds/
+    https://bits.joyent.us/builds/
         amon/
             master-latest -> master-20130226T191921Z
             master-20130208T215745Z/
@@ -207,7 +207,7 @@ For example:
 All those "extra" pieces (build log, md5sums.txt, config.mk and the dependent
 bits) are there to be able to debug and theoretically reproduce builds.
 The "md5sums.txt" is used by the usb-headnode build to ensure uncorrupted
-downloads from stuff.
+downloads from Bits.
 
 
 # Versioning
@@ -388,5 +388,3 @@ build), there's no mechanism to automatically bring that zone's VNIC up.  You
 can recover by manually enabling network/physical:default, but you should just
 be provisioning with the joyent-minimal brand instead.  See RELENG-337 for
 details.
-
-

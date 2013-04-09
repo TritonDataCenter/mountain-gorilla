@@ -4,7 +4,7 @@
 - Who: Trent Mick, John Sonnenschein
 - Docs: <https://mo.joyent.com/docs/mg>
 - Bugs: <https://devhub.joyent.com/jira/browse/RELENG>
-- Builds: <https://jenkins.joyent.us>, <https://stuff.joyent.us/stuff/builds>
+- Builds: <https://jenkins.joyent.us>, <https://bits.joyent.us/builds>
 
 A single repo to build all the parts of SDC. This is just a *build driver*
 repo, all the components are still in their respective repos.
@@ -20,8 +20,8 @@ build VMAPI:
 
     git clone git@git.joyent.com:mountain-gorilla.git
     cd mountain-gorilla
-    # Get auth info for stuff.joyent.us from where the build grabs bits.
-    scp stuff@stuff.joyent.us:trent/mk-jenkins-slave/.mg.json ~/.mg.json
+    # Get auth info for bits.joyent.us from where the build grabs bits.
+    scp bits@bits.joyent.us:etc/.mg.json ~/.mg.json
     ./configure -t vmapi        # generates bits/config.mk and fetches repo and deps
     make vmapi                  # builds in build/vmapi
 
