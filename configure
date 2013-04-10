@@ -32,8 +32,8 @@ MG_CACHE_DIR=${ROOT}/cache
 BITS_USERNAME=
 BITS_PASSWORD=
 BITS_PROTO=https
-BITS_HOST=bits.joyent.us
-BITS_BASE_PATH=/builds
+BITS_HOST=stuff.joyent.us
+BITS_BASE_PATH=/stuff/builds
 
 # This is a HACK to figure out if we're in the bh1 lab (assume we are if
 # the IP is 10.2.X.X) so that we can switch the Bits url to an IP because
