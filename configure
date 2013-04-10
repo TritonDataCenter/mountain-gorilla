@@ -287,7 +287,7 @@ function get_repo2() {
         (cd build/$repo_dir ; git checkout $try_branch && git pull || true)
     fi
     if [[ "$submodule_update" == "true" ]]; then
-        (cd build/$repo_dir; git submodule update --init --update)
+        (cd build/$repo_dir; git submodule update --init --recursive)
     fi
 }
 
