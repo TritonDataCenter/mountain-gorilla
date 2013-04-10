@@ -255,9 +255,9 @@ if [[ -n "${packages}" ]]; then
   for p in ${packages}
   do
     echo "Checking for $p"
-    PKG_OK=$(${SSH} "zlogin ${uuid} '/opt/local/bin/pkgin -y list | grep ${p}'")
+    PKG_OK=$(${SSH} "zlogin ${uuid} '/opt/local/bin/pkgin -y list | grep ${p} || true'")
     if [[ -z "${PKG_OK}" ]]; then
-      echo "pkgin install failed (${p})"
+      echo "error: pkgin install failed (${p})"
       exit 1
     fi
   done
