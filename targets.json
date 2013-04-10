@@ -715,7 +715,7 @@
     "image_description": "Manta moray proxy",
     "image_uuid": "ee1fb198-5fe1-11e2-9cce-e319fd47df7b",
     "pkgsrc": [
-      "haproxy-1.4.18"
+      "haproxy-1.4.22"
     ],
     "repos": [
         {"url": "git@git.joyent.com:electric-moray.git"}
