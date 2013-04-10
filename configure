@@ -3,13 +3,7 @@
 #
 # Configure the mountain gorilla (aka SDC) build.
 #
-# "targets.json" is a mapping of Makefile target to info about that target:
-# - repos: A list of repos to clone to the "build/" directory for building it.
-#   Each repo entry is an object like this:
-#       {"url": "git@git.joyent.com:cloud-analytics.git",
-#        "submodule-recursive": false,      # optional
-#        "dir": "good-ole-ca"}              # optional
-# - deps: A list of dependent targets.
+# "targets.json" is a mapping of Makefile target to info about that target.
 
 if [ "$TRACE" != "" ]; then
     export PS4='${BASH_SOURCE}:${LINENO}: '
@@ -229,7 +223,7 @@ function preload_bits() {
 
 # Clone/update the given git repo in the repo cache.
 # Usage:
-#   get_repo_cache REPO-URL REPO-DIR SUBMODULE-RECURSIVE
+#   get_repo_cache REPO-URL REPO-DIR SUBMODULE-UPDATE
 # Example:
 #   get_repo_cache git@git.joyent.com:smart-login.git smart-login true
 function get_repo_cache() {
@@ -246,10 +240,8 @@ function get_repo_cache() {
     else
         (cd $MG_CACHE_DIR/repos/$repo_dir; git pull)
     fi
-    if [[ "$submodule_recursive" == "true" ]]; then
+    if [[ "$submodule_update" == "true" ]]; then
         (cd $MG_CACHE_DIR/repos/$repo_dir; git submodule update --init --recursive)
-    else
-        (cd $MG_CACHE_DIR/repos/$repo_dir; git submodule update --init)
     fi
 
     # Error out if the cached repo is dirty. These thigns should always
@@ -262,10 +254,10 @@ function get_repo_cache() {
 
 # Get the requested repo.
 # Usage:
-#   get_repo2 REPO-URL BRANCH SUBMODULE-RECURSIVE [NAME] [TRY-BRANCH]
+#   get_repo2 REPO-URL BRANCH SUBMODULE-UPDATE [NAME] [TRY-BRANCH]
 #
-# If "SUBMODULE-RECURSIVE" is "true", then "--recursive" is used on
-# on the "git submodule update ..." call.
+# If "SUBMODULE-UPDATE" is "true", then "git submodule update ..." is
+# used on the repo.
 #
 # If "NAME" is given, that subdir under "build/" will be used as the
 # clone dir. Else it is inferred from the REPO-URL.
@@ -273,7 +265,7 @@ function get_repo_cache() {
 function get_repo2() {
     local repo_url=$1
     local branch=$2
-    local submodule_recursive=$3
+    local submodule_update=$3
     local repo_dir=$4
     local try_branch=$5
 
@@ -284,7 +276,7 @@ function get_repo2() {
     fi
 
     echo "# get '$repo_url' to repo cache ($MG_CACHE_DIR/repos)"
-    get_repo_cache ${repo_url} ${repo_dir} ${submodule_recursive}
+    get_repo_cache ${repo_url} ${repo_dir} ${submodule_update}
 
     echo "# copy '$MG_CACHE_DIR/repos/$repo_dir' to 'build/$repo_dir'"
     mkdir -p build
@@ -294,10 +286,8 @@ function get_repo2() {
     if [[ ! -z "$try_branch" ]]; then
         (cd build/$repo_dir ; git checkout $try_branch && git pull || true)
     fi
-    if [[ "$submodule_recursive" == "true" ]]; then
-        (cd build/$repo_dir; git submodule update --init --recursive)
-    else
-        (cd build/$repo_dir; git submodule update --init)
+    if [[ "$submodule_update" == "true" ]]; then
+        (cd build/$repo_dir; git submodule update --init --update)
     fi
 }
 
@@ -383,12 +373,12 @@ function print_help() {
 function get_target_repos() {
     local target=$1
     local info
-    for info in `cat targets.json | $JSON $target.repos | $JSON -a -d, url dir submodule-recursive`; do
+    for info in `cat targets.json | $JSON $target.repos | $JSON -a -d, url dir submodule-update`; do
         local repo_url=$(echo "$info" | cut -d, -f 1)
         local repo_dir=$(echo "$info" | cut -d, -f 2)
-        local submodule_recursive=$(echo "$info" | cut -d, -f 3)
-        [[ -z "$submodule_recursive" ]] && submodule_recursive=true
-        get_repo2 $repo_url $BRANCH "$submodule_recursive" "$repo_dir" "$TRY_BRANCH"
+        local submodule_update=$(echo "$info" | cut -d, -f 3)
+        [[ -z "$submodule_update" ]] && submodule_update=true
+        get_repo2 $repo_url $BRANCH "$submodule_update" "$repo_dir" "$TRY_BRANCH"
     done
 }
 

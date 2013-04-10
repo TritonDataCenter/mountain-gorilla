@@ -19,7 +19,7 @@
       "GeoLiteCity-201203"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:cloud-analytics.git", "submodule-recursive": false}
+      {"url": "git@git.joyent.com:cloud-analytics.git", "submodule-update": false}
     ],
     "deps": [
       "amon",
