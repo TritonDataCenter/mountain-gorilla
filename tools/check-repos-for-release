@@ -18,6 +18,7 @@ WORKDIR="/var/tmp/check-repos-for-release.$$"
 #---- functions
 
 function cleanup() {
+    cd /var/tmp
     rm -rf $WORKDIR
 }
 
@@ -38,6 +39,7 @@ function usage() {
     echo "  -t TARGET       Just run for the given MG target. If not given"
     echo "                  then all targets in 'targets.json' are used. Can be"
     echo "                  specified multiple times."
+    echo "  -T              no tagging, just branch"
     echo ""
     echo "Examples:"
     echo "  check-repos-for-release 20111020"
@@ -78,8 +80,8 @@ function apply_missing_to_repo {
     git clone $repo_url $repo_name;
     cd $repo_name;
     git checkout master;
-    if [[ ! -z "$tag" ]]; then
-      # Consider '-B' to force reset of branch if already exists.
+    if [[ ! -z "$tag" && -z "$NO_TAG" ]]; then
+      # consider '-b' to force reset of branch if already exists.
       git tag -a "$tag" -m "$tag release"
       git push -q --tags
     fi
@@ -127,7 +129,8 @@ trap cleanup EXIT
 APPLY=0   # whether to apply a branch/tag to repo
 CREDS=
 TARGETS=
-while getopts "hac:t:" c; do
+NO_TAG=
+while getopts "hac:t:T" c; do
     case "$c" in
     h)
         usage
@@ -140,6 +143,9 @@ while getopts "hac:t:" c; do
         ;;
     t)
         TARGETS="$TARGETS $OPTARG"
+        ;;
+    T)
+        NO_TAG=1
         ;;
     *)
         usage "illegal option -- $OPTARG"
@@ -155,10 +161,20 @@ if [[ -z "$RELEASE" ]]; then
 fi
 is_date=$(echo $RELEASE | grep '^[0-9]\{8\}$' || true)
 if [[ -z "$is_date" ]]; then
-    usage "given RELEASE, '$RELEASE', is not an 8-digit date"
+    echo "* * *"
+    echo "* WARNING: given RELEASE, '$RELEASE', is not an 8-digit date"
+    echo "* * *"
+    echo ""
+    echo "Continue? (Hit Ctrl+C to abort.)"
+    read
+    echo "Continuing..."
+    echo ""
+    BRANCH=$RELEASE
+    TAG=$RELEASE
+else
+    BRANCH=release-$RELEASE
+    TAG=$RELEASE
 fi
-BRANCH=release-$RELEASE
-TAG=$RELEASE
 
 if [[ -z "$CREDS" ]]; then
     CREDS=$MOLYBDENUM_CREDENTIALS
@@ -170,7 +186,7 @@ fi
 
 if [[ -z "$TARGETS" ]]; then
     TARGETS=$(node -e "var fs = require('fs');
-        var targets = JSON.parse(fs.readFileSync('targets.json'));
+        var targets = JSON.parse(fs.readFileSync('$TOP/targets.json'));
         Object.keys(targets).forEach( function(targ) { console.log(targ) });" | xargs)
 fi
 
@@ -181,4 +197,3 @@ for targ in $TARGETS; do
   check_targ $targ
 done
 check_repo_url git@git.joyent.com:mountain-gorilla.git '(none)'
-
