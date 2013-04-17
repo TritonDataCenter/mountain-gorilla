@@ -33,7 +33,15 @@ export BATCH_SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=n
 # Ensure can use "bits.joyent.us" and "stuff.joyent.us" inside BH-1.
 echo '' >>/etc/inet/hosts
 echo '10.2.0.190      stuff.joyent.us' >>/etc/inet/hosts
-echo '10.2.172.96     bits.joyent.us' >>/etc/inet/hosts
+# For bits.joyent.us, ensure we use the IP that avoids going through the
+# gateway... which in lab can mysterious cause TCP connections to blackhole.
+network=\$(sysinfo | json "Virtual Network Interfaces".net0.ip4addr | cut -d '.' -f1-3)
+if [[ \${network} == "10.2.172" ]]; then
+    target=10.2.172.96
+else
+    target=10.2.0.21
+fi
+echo "\$target     bits.joyent.us" >>/etc/inet/hosts
 
 
 # The following scp get Permission Denied without a little wait.

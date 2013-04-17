@@ -101,13 +101,27 @@ Host github.com
 # Access to stuff.joyent.us (10.2.0.190)
 Host stuff.joyent.us
     IdentityFile=/root/.ssh/automation.id_rsa
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
 Host 10.2.0.190
     IdentityFile=/root/.ssh/automation.id_rsa
-# Access to bits.joyent.us (10.2.172.96)
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+# Access to bits.joyent.us (10.2.172.96 or 10.2.0.21). Two IPs because
+# if you are on the 10.2.172 network you can get to it via the former IP
+# without going through the network.
 Host bits.joyent.us
     IdentityFile=/root/.ssh/automation.id_rsa
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
 Host 10.2.172.96
     IdentityFile=/root/.ssh/automation.id_rsa
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
+Host 10.2.0.21
+    IdentityFile=/root/.ssh/automation.id_rsa
+    StrictHostKeyChecking no
+    UserKnownHostsFile /dev/null
 
 # Access to jill@download.joyent.com for sdcnode.
 Host download.joyent.com
