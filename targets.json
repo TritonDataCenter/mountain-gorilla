@@ -1005,6 +1005,7 @@
     ],
     "deps": [
       "amon",
+      "sapi",
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
