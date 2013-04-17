@@ -1008,7 +1008,8 @@
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
   },
 
