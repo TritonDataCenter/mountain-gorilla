@@ -18,8 +18,8 @@ TOP=$(cd $(dirname $0)/../; pwd)
 BITS_DIR=bits
 
 SSH_OPTIONS="-q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-SCP="scp $SSH_OPTIONS" 
-SSH="ssh $SSH_OPTIONS" 
+SCP="scp $SSH_OPTIONS"
+SSH="ssh $SSH_OPTIONS"
 
 
 
@@ -143,5 +143,4 @@ fi
 
 end_time=$(date +%s)
 elapsed=$((${end_time} - ${start_time}))
-echo "Upload took ${elapsed} seconds."
-
+echo "Upload took ${elapsed} seconds (server=$UPLOAD_SERVER dir=$UPLOAD_BASE_LOCALDIR/$upload_subdir)."
