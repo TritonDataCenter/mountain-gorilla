@@ -130,6 +130,7 @@ APPLY=0   # whether to apply a branch/tag to repo
 CREDS=
 TARGETS=
 NO_TAG=
+DO_SMARTOS_OVERLAY=
 while getopts "hac:t:T" c; do
     case "$c" in
     h)
@@ -172,6 +173,10 @@ if [[ -z "$is_date" ]]; then
     BRANCH=$RELEASE
     TAG=$RELEASE
 else
+    if [[ -z "$TARGETS" || "$TARGETS" == " smartos-overlay" ]]; then
+        DO_SMARTOS_OVERLAY=1
+        TARGETS=" "
+    fi
     BRANCH=release-$RELEASE
     TAG=$RELEASE
 fi
@@ -196,4 +201,7 @@ for targ in $TARGETS; do
   fi
   check_targ $targ
 done
+if [[ -n "$DO_SMARTOS_OVERLAY" ]]; then
+    check_repo_url git@github.com:joyent/smartos-overlay.git '(none)'
+fi
 check_repo_url git@git.joyent.com:mountain-gorilla.git '(none)'
