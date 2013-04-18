@@ -47,10 +47,7 @@ ifeq ($(TIMESTAMP),)
 endif
 
 ifeq ($(UPLOAD_LOCATION),)
-	UPLOAD_LOCATION=stuff@stuff.joyent.us:builds
-endif
-ifeq ($(UPLOAD_LOCATION_BITS),)
-	UPLOAD_LOCATION_BITS=bits@bits.joyent.us:builds
+	UPLOAD_LOCATION=bits@bits.joyent.us:builds
 endif
 
 
@@ -2125,8 +2122,6 @@ upload_jenkins:
 		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
 		&& exit 1 || true
 	./tools/upload-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(UPLOAD_LOCATION)/$(JOB_NAME) $(JOB_NAME) $(UPLOAD_SUBDIRS)
-	# RELENG-462: also upload to bits.joyent.us during transition
-	./tools/upload-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(UPLOAD_LOCATION_BITS)/$(JOB_NAME) $(JOB_NAME) $(UPLOAD_SUBDIRS)
 
 # Publish the image for this Jenkins job to https://updates.joyent.us, if
 # appropriate. No-op if the current JOB_NAME doesn't have a "*_publish_image"
