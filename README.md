@@ -21,7 +21,7 @@ build VMAPI:
     git clone git@git.joyent.com:mountain-gorilla.git
     cd mountain-gorilla
     # Get auth info for bits/stuff.joyent.us from where the build grabs bits.
-    scp stuff@stuff.joyent.us:builds-etc/.mg.json ~/.mg.json
+    scp stuff@stuff.joyent.us:builds-etc/.sdcbuild.json ~/.sdcbuild.json
     ./configure -t vmapi        # generates bits/config.mk and fetches repo and deps
     make vmapi                  # builds in build/vmapi
 

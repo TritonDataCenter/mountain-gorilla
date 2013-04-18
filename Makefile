@@ -23,9 +23,11 @@ BITS_DIR=$(TOP)/bits
 MAKE = make
 TAR = tar
 UNAME := $(shell uname)
+PFEXEC =
 ifeq ($(UNAME), SunOS)
 	MAKE = gmake
 	TAR = gtar
+	PFEXEC = pfexec
 endif
 JSON=$(MG_NODE) $(TOP)/tools/json
 UPDATES_IMGADM=$(HOME)/opt/imgapi-cli/bin/updates-imgadm -i $(HOME)/.ssh/automation.id_rsa -u mg
@@ -2109,11 +2111,11 @@ clean_null:
 
 .PHONY: distclean
 distclean:
-	pfexec rm -rf bits build
+	$(PFEXEC) rm -rf bits build
 
 .PHONY: cacheclean
 cacheclean: distclean
-	pfexec rm -rf cache
+	$(PFEXEC) rm -rf cache
 
 
 

@@ -26,8 +26,8 @@ MG_CACHE_DIR=${ROOT}/cache
 BITS_USERNAME=
 BITS_PASSWORD=
 BITS_PROTO=https
-BITS_HOST=stuff.joyent.us
-BITS_BASE_PATH=/stuff/builds
+BITS_HOST=bits.joyent.us
+BITS_BASE_PATH=/builds
 
 # This is a HACK to figure out if we're in the bh1 lab (assume we are if
 # the IP is 10.2.X.X) so that we can switch the Bits url to an IP because
@@ -36,9 +36,23 @@ if [[ $(uname -s) == "SunOS" && \
       $(sysinfo -p | grep "Network_Interface.*IPv4_Address=" \
         | cut -d "'" -f2 | grep 10\.2\. | wc -l | tr -d ' ') -gt 0 ]]; then
     # Assume we're in the BH-1 lab.
-    echo "# Looks like we're in the BH-1 lab."
-    BITS_HOST=10.2.0.190
-    #BITS_HOST=10.2.172.96
+    echo "# Looks like we're in the BH-1 lab, use internal IPs for BITS_HOST."
+    if [[ "$(echo $BITS_HOST | cut -d. -f1)" == "stuff" ]]; then
+        BITS_HOST=10.2.0.190
+    elif [[ "$(echo $BITS_HOST | cut -d. -f1)" == "bits" ]]; then
+        network=$(sysinfo | json "Virtual Network Interfaces".net0.ip4addr | cut -d '.' -f1-3)
+        if [[ "$network" == "10.2.172" ]]; then
+            BITS_HOST=10.2.172.96
+        else
+            BITS_HOST=10.2.0.21
+        fi
+    fi
+fi
+
+if [[ $(uname -s) == "SunOS" ]]; then
+    MTIME='stat -c %Z'
+else
+    MTIME='stat -f %m'
 fi
 
 # GNU cp has '--link'.
@@ -64,18 +78,18 @@ function errexit {
 }
 
 function ensure_bits_credentials {
-    MG_CONFIG_PATH=~/.mg.json
+    MG_CONFIG_PATH=~/.sdcbuild.json
     if [[ -z "$BITS_USERNAME" ]]; then
-        BITS_USERNAME=$(cat $MG_CONFIG_PATH | $JSON bits_username)
+        BITS_USERNAME=$(cat $MG_CONFIG_PATH | $JSON username)
     fi
     if [[ -z "$BITS_USERNAME" ]]; then
-        fatal "Could not get 'bits_username' from '$MG_CONFIG_PATH'."
+        fatal "Could not get 'username' from '$MG_CONFIG_PATH'."
     fi
     if [[ -z "$BITS_PASSWORD" ]]; then
-        BITS_PASSWORD=$(cat $MG_CONFIG_PATH | $JSON bits_password)
+        BITS_PASSWORD=$(cat $MG_CONFIG_PATH | $JSON password)
     fi
     if [[ -z "$BITS_PASSWORD" ]]; then
-        fatal "Could not get 'bits_password' from '$MG_CONFIG_PATH'."
+        fatal "Could not get 'password' from '$MG_CONFIG_PATH'."
     fi
 }
 
@@ -84,7 +98,7 @@ function ensure_bits_credentials {
 # would be to put a size limit on it.
 function flush_bits_cache() {
     if [[ -f $MG_CACHE_DIR/bits/created ]]; then
-        local bits_cache_age=$((`date "+%s"` - `stat -c %X $MG_CACHE_DIR/bits/created`))
+        local bits_cache_age=$((`date "+%s"` - `$MTIME $MG_CACHE_DIR/bits/created`))
         # One day in 86400. We use a bit more to avoid harmonics with
         # once-per-day builds.
         if [[ $bits_cache_age -gt 100000 ]]; then
