@@ -2124,7 +2124,7 @@ upload_jenkins:
 		&& exit 1 || true
 	./tools/upload-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(UPLOAD_LOCATION)/$(JOB_NAME) $(JOB_NAME) $(UPLOAD_SUBDIRS)
 
-# Publish the image for this Jenkins job to https://updates.joyent.us, if
+# Publish the image for this Jenkins job to https://updates.joyent.com, if
 # appropriate. No-op if the current JOB_NAME doesn't have a "*_publish_image"
 # target.
 jenkins_publish_image:

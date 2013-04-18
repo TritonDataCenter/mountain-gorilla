@@ -87,7 +87,7 @@ git config --global user.email jenkins-slave@joyent.com
 
 
 # Need 'updates-imgadm' from imgapi-cli.git on the PATH (this is used
-# by the MG builds to publish build images to updates.joyent.us).
+# by the MG builds to publish build images to updates.joyent.com).
 mkdir -p /root/opt
 (cd /root/opt \
     && git clone git@git.joyent.com:imgapi-cli.git \
