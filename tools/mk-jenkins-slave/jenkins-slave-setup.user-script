@@ -50,7 +50,7 @@ sleep 5
 
 # Encode the stuff/bits.joyent.us username and password in your
 # environment for the MG build.
-\$BATCH_SCP -v stuff@stuff.joyent.us:builds-etc/.mg.json /root/.mg.json
+\$BATCH_SCP -v stuff@stuff.joyent.us:builds-etc/.sdcbuild.json /root/.sdcbuild.json
 
 
 # Stupid Java will ask us for license otherwise.
