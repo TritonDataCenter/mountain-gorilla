@@ -14,6 +14,9 @@ cleanup() {
   find /var/cron -type f | xargs rm -f
   rm -f /var/spool/postfix/deferred/*
 
+  echo "==> removing /var/svc/provision* from image"
+  rm -f /var/svc/provision*
+
   # touch necessary log files
   touch /var/adm/wtmpx
 
