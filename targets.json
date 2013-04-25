@@ -267,13 +267,11 @@
     "deps": [
       "amon",
       "sapi",
-      "configurator",
       "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
@@ -296,13 +294,11 @@
     "deps": [
       "amon",
       "sapi",
-      "configurator",
       "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
@@ -615,14 +611,12 @@
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
-      "configurator",
       "registrar",
       "amon",
       "sapi"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
@@ -642,13 +636,11 @@
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
-      "configurator",
       "amon",
       "sapi"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
@@ -669,13 +661,11 @@
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
-      "configurator",
       "amon",
       "sapi"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
@@ -697,13 +687,11 @@
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
-      "configurator",
       "amon",
       "sapi"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
@@ -723,14 +711,12 @@
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
-      "configurator",
       "moray",
       "amon",
       "sapi"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
@@ -751,13 +737,11 @@
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
-      "configurator",
       "amon",
       "sapi"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
@@ -778,13 +762,11 @@
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
-      "configurator",
       "amon",
       "sapi"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
@@ -805,7 +787,6 @@
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
-      "configurator",
       "mackerel",
       "manowar",
       "amon",
@@ -813,7 +794,6 @@
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "mackerel/mackerel-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "manowar/manowar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
@@ -837,14 +817,12 @@
       "https://download.joyent.com/pub/build/sdcnode",
       "minnow",
       "registrar",
-      "configurator",
       "amon",
       "sapi"
     ],
     "tarballs": [
       {"tarball": "minnow/minnow-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
@@ -864,13 +842,11 @@
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
-      "configurator",
       "amon",
       "sapi"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
@@ -890,13 +866,11 @@
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
-      "configurator",
       "amon",
       "sapi"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "configurator/configurator-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
