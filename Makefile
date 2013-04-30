@@ -1847,6 +1847,11 @@ $(MANTA_DEPLOYMENT_IMAGE_BIT): $(MANTA_DEPLOYMENT_BITS)
 	@ls -1 $(MANTA_DEPLOYMENT_MANIFEST_BIT) $(MANTA_DEPLOYMENT_IMAGE_BIT)
 	@echo ""
 
+manta-deployment_publish_image: $(MANTA_DEPLOYMENT_IMAGE_BIT)
+	@echo "# Publish manta-deployment image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(MANTA_DEPLOYMENT_MANIFEST_BIT) -f $(MANTA_DEPLOYMENT_IMAGE_BIT)
+
+
 clean_manta-deployment:
 	rm -rf $(BITS_DIR)/manta-deployment
 	(cd build/manta-deployment && gmake distclean)
