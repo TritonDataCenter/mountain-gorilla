@@ -173,7 +173,9 @@ if [[ -z "$is_date" ]]; then
     BRANCH=$RELEASE
     TAG=$RELEASE
 else
-    if [[ -z "$TARGETS" || "$TARGETS" == " smartos-overlay" ]]; then
+    if [[ -z "$TARGETS" ]]; then
+        DO_SMARTOS_OVERLAY=1
+    elif [[ "$TARGETS" == " smartos-overlay" ]]; then
         DO_SMARTOS_OVERLAY=1
         TARGETS=" "
     fi
