@@ -55,10 +55,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray electric-moray registrar configurator ufds platform usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar configurator moray electric-moray ufds usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow
 
 
 #---- smartlogin
@@ -1516,27 +1516,6 @@ $(REGISTRAR_BITS): build/registrar
 clean_registrar:
 	rm -rf $(BITS_DIR)/registrar
 	(cd build/registrar && gmake distclean)
-
-
-#---- Configurator
-
-_configurator_stamp=$(CONFIGURATOR_BRANCH)-$(TIMESTAMP)-g$(CONFIGURATOR_SHA)
-CONFIGURATOR_BITS=$(BITS_DIR)/configurator/configurator-pkg-$(_configurator_stamp).tar.bz2
-
-.PHONY: configurator
-configurator: $(CONFIGURATOR_BITS)
-
-$(CONFIGURATOR_BITS): build/configurator
-	@echo "# Build configurator: branch $(CONFIGURATOR_BRANCH), sha $(CONFIGURATOR_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/configurator && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created configurator bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(CONFIGURATOR_BITS)
-	@echo ""
-
-clean_configurator:
-	rm -rf $(BITS_DIR)/configurator
-	(cd build/configurator && gmake distclean)
 
 
 #---- mackerel

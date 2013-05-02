@@ -569,15 +569,6 @@
     ]
   },
 
-  "configurator": {
-    "repos": [
-        {"url": "git@git.joyent.com:configurator.git"}
-    ],
-    "deps": [
-      "https://download.joyent.com/pub/build/sdcnode"
-    ]
-  },
-
   "mackerel": {
     "repos": [
         {"url": "git@git.joyent.com:mackerel.git"}
