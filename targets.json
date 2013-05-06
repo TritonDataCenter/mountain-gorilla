@@ -964,7 +964,9 @@
     "image_description": "Manta deployment tools",
     "image_version": "1.0.0",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "openldap-client-2.4.24"
+    ],
     "repos": [
         {"url": "git@git.joyent.com:manta-deployment.git"}
     ],
