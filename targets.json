@@ -822,8 +822,8 @@
 
   "marlin": {
     "appliance": "true",
-    "image_name": "manta-jobworker",
-    "image_description": "Manta jobworker",
+    "image_name": "manta-jobsupervisor",
+    "image_description": "Manta jobsupervisor",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "zookeeper-client-3.4.3"
