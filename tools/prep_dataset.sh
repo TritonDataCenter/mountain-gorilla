@@ -309,6 +309,9 @@ cat <<EOF>> ${output_sans_ext}.imgmanifest
                 "description": "admin"
             }
         ]
+    },
+    "tags": {
+        "smartdc_service": true
     }
 }
 EOF
