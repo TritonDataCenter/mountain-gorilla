@@ -561,6 +561,6 @@ for dep in `cat targets.json | $JSON all.deps | $JSON -a`; do
     preload_bits $dep "$BRANCH" "$TRY_BRANCH"
 done
 
-get_pkgsrc
+#get_pkgsrc
 
 gen_config
