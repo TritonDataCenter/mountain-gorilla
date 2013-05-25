@@ -383,6 +383,21 @@
     ]
   },
 
+  "sdc": {
+    "appliance": "true",
+    "image_name": "sdc",
+    "image_description": "SDC tools/ops zone",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
+    "repos": [
+      {"url": "git@git.joyent.com:sdc.git"}
+    ],
+    "deps": [
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": []
+  },
+
   "imgapi-cli": {
     "repos": [
         {"url": "git@git.joyent.com:imgapi-cli.git"}

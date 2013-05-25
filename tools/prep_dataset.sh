@@ -238,8 +238,7 @@ if [[ -n "${packages}" ]]; then
   do
     if [[ $count -gt 10 ]];  then
       echo "**Could not acquire IP address**"
-      cleanup
-      exit 1
+      cleanup 1
     fi
       sleep 5
       IP_ADDR=$(${SSH} "zlogin ${uuid} 'ipadm show-addr -p -o addrobj,addr | grep net0 | cut -d : -f 2 | xargs dirname'")

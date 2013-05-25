@@ -55,10 +55,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow
 
 
 #---- smartlogin
@@ -745,6 +745,46 @@ imgapi_publish_image: $(IMGAPI_IMAGE_BIT)
 clean_imgapi:
 	rm -rf $(BITS_DIR)/imgapi
 	(cd build/imgapi && gmake clean)
+
+
+#---- sdc
+
+_sdc_stamp=$(SDC_BRANCH)-$(TIMESTAMP)-g$(SDC_SHA)
+SDC_BITS=$(BITS_DIR)/sdc/sdc-pkg-$(_sdc_stamp).tar.bz2
+SDC_IMAGE_BIT=$(BITS_DIR)/sdc/sdc-zfs-$(_sdc_stamp).zfs.gz
+SDC_MANIFEST_BIT=$(BITS_DIR)/sdc/sdc-zfs-$(_sdc_stamp).zfs.imgmanifest
+
+.PHONY: sdc
+sdc: $(SDC_BITS) sdc_image
+
+$(SDC_BITS): build/sdc
+	@echo "# Build sdc: branch $(SDC_BRANCH), sha $(SDC_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/sdc && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created sdc bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(SDC_BITS)
+	@echo ""
+
+.PHONY: sdc_image
+sdc_image: $(SDC_IMAGE_BIT)
+
+$(SDC_IMAGE_BIT): $(SDC_BITS)
+	@echo "# Build sdc_image: branch $(SDC_BRANCH), sha $(SDC_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(SDC_IMAGE_UUID)" -t $(SDC_BITS) \
+		-o "$(SDC_IMAGE_BIT)" -p $(SDC_PKGSRC) \
+		-t $(SDC_EXTRA_TARBALLS) -n $(SDC_IMAGE_NAME) \
+		-v $(_sdc_stamp) -d $(SDC_IMAGE_DESCRIPTION)
+	@echo "# Created sdc image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(SDC_MANIFEST_BIT) $(SDC_IMAGE_BIT)
+	@echo ""
+
+sdc_publish_image: $(SDC_IMAGE_BIT)
+	@echo "# Publish sdc image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(SDC_MANIFEST_BIT) -f $(SDC_IMAGE_BIT)
+
+clean_sdc:
+	rm -rf $(BITS_DIR)/sdc
+	(cd build/sdc && gmake clean)
 
 
 
