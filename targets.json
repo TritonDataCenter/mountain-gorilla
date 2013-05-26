@@ -393,9 +393,12 @@
       {"url": "git@git.joyent.com:sdc.git"}
     ],
     "deps": [
+      "sapi",
       "https://download.joyent.com/pub/build/sdcnode"
     ],
-    "tarballs": []
+    "tarballs": [
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
   },
 
   "imgapi-cli": {
