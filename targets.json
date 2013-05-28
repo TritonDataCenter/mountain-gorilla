@@ -1066,6 +1066,7 @@
         "rabbitmq",
         "redis",
         "sapi",
+        "sdc",
         "sdcboot",
         "sdcsso",
         "ufds",
