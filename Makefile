@@ -1781,7 +1781,11 @@ $(AGENTS_UPGRADE_BITS): build/agents/build.sh
 	@echo "# Build agents-upgrade: branch $(AGENTS_BRANCH), sha $(AGENTS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)/agents-upgrade
 	(cd build/agents && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) ./build.sh -n)
-	cp build/agents/build/zonetracker-v2*.tgz build/agents/build/provisioner-v2*.tgz build/agents/build/heartbeater-*.tgz $(BITS_DIR)/agents-upgrade
+	cp build/agents/build/zonetracker-v2*.tgz \
+		build/agents/build/provisioner-v2*.tgz \
+		build/agents/build/heartbeater-*.tgz \
+		build/agents/build/metadata-*.tgz \
+		$(BITS_DIR)/agents-upgrade
 	@echo "# Created agents-upgrade bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(AGENTS_UPGRADE_BITS)
 	@echo ""
