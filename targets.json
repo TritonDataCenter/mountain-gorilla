@@ -453,6 +453,15 @@
     "deps": []
   },
 
+  "agentsshar-upgrade": {
+    "repos": [
+        {"url": "git@git.joyent.com:agents-installer.git"}
+    ],
+    "deps": [
+        "release-20110901-upgrade/agents-upgrade"
+    ]
+  },
+
   "config-agent": {
     "repos": [
         {"url": "git@git.joyent.com:config-agent.git"}

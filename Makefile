@@ -55,10 +55,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
 
 
 #---- smartlogin
@@ -1793,6 +1793,40 @@ $(AGENTS_UPGRADE_BITS): build/agents/build.sh
 clean_agents-upgrade:
 	rm -rf $(BITS_DIR)/agents-upgrade
 	(if [[ -d build/agents-installer ]]; then cd build/agents-installer && gmake clean; fi )
+
+
+#---- agentsshar-upgrade
+# This is a build of an agents shar of the *agents-upgrade* agents.
+# Perhaps a little confusingly: the agents-upgrade are built out of
+# the "release-20110901-upgrade" branch of agents.git, but
+# agentsshar-upgrade is built out of the *master* branch of
+# agents-installer.git.
+
+_agentsshar_upgrade_stamp=release-20110901-upgrade-$(TIMESTAMP)-g$(AGENTS_INSTALLER_SHA)
+AGENTSSHAR_UPGRADE_BITS=$(BITS_DIR)/agentsshar-upgrade/agents-$(_agentsshar_upgrade_stamp).sh \
+	$(BITS_DIR)/agentsshar-upgrade/agents-$(_agentsshar_upgrade_stamp).md5sum
+AGENTSSHAR_UPGRADE_BITS_0=$(shell echo $(AGENTSSHAR_UPGRADE_BITS) | awk '{print $$1}')
+
+.PHONY: agentsshar-upgrade
+agentsshar-upgrade: $(AGENTSSHAR_UPGRADE_BITS_0)
+
+$(AGENTSSHAR_UPGRADE_BITS): build/agents-installer/Makefile
+	@echo "# Build agentsshar-upgrade: branch $(AGENTSSHAR_BRANCH), sha $(AGENTSSHAR_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)/agentsshar-upgrade
+	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar \
+		-d $(BITS_DIR) -b release-20110901-upgrade \
+		-o $(BITS_DIR)/agentsshar-upgrade \
+		agents-upgrade/provisioner-v2 \
+		agents-upgrade/zonetracker-v2 \
+		agents-upgrade/heartbeater \
+		agents-upgrade/metadata)
+	@echo "# Created agentsshar-upgrade bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(AGENTSSHAR_UPGRADE_BITS)
+	@echo ""
+
+clean_agentsshar-upgrade:
+	rm -rf $(BITS_DIR)/agentsshar-upgrade
+	(if [[ -d build/agents-installer ]]; then cd build/agents-installer && gmake distclean; fi )
 
 
 #---- convertvm
