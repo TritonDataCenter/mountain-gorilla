@@ -1051,7 +1051,8 @@
     "deps": [
         "adminui",
         "agentsshar",
-        "release-20110901-upgrade/agents-upgrade",
+        "release-20110901-upgrade/agents-upgrade"
+        "agentsshar-upgrade",
         "amon",
         "assets",
         "registrar",
