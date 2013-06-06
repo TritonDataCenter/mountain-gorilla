@@ -649,7 +649,6 @@
         "postgresql92-server-9.2.4",
         "postgresql92-adminpack",
         "postgresql92-datatypes",
-        "postgresql92-dblinkfuzzystrmatch",
         "postgresql92-pgcrypto",
         "postgresql92-replicationtools",
         "postgresql92-upgrade"
