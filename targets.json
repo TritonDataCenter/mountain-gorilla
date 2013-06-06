@@ -646,7 +646,13 @@
     "image_description": "Manta postgres",
     "image_uuid": "ee1fb198-5fe1-11e2-9cce-e319fd47df7b",
     "pkgsrc": [
-        "postgresql92-server-9.2.4"
+        "postgresql92-server-9.2.4",
+        "postgresql92-adminpack",
+        "postgresql92-datatypes",
+        "postgresql92-dblinkfuzzystrmatch",
+        "postgresql92-pgcrypto",
+        "postgresql92-replicationtools",
+        "postgresql92-upgrade"
     ],
     "repos": [
       {"url": "git@git.joyent.com:manatee.git"}
