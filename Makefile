@@ -685,6 +685,52 @@ clean_dapi:
 	(cd build/dapi && gmake clean)
 
 
+#---- PAPI
+
+_papi_stamp=$(PAPI_BRANCH)-$(TIMESTAMP)-g$(PAPI_SHA)
+PAPI_BITS=$(BITS_DIR)/papi/papi-pkg-$(_papi_stamp).tar.bz2
+PAPI_IMAGE_BIT=$(BITS_DIR)/papi/papi-zfs-$(_papi_stamp).zfs.gz
+PAPI_MANIFEST_BIT=$(BITS_DIR)/papi/papi-zfs-$(_papi_stamp).zfs.imgmanifest
+
+
+.PHONY: papi
+papi: $(PAPI_BITS) papi_image
+
+# PATH for papi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(PAPI_BITS): build/papi
+	@echo "# Build papi: branch $(PAPI_BRANCH), sha $(PAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/papi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created papi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(PAPI_BITS)
+	@echo ""
+
+.PHONY: papi_image
+papi_image: $(PAPI_IMAGE_BIT)
+
+$(PAPI_IMAGE_BIT): $(PAPI_BITS)
+	@echo "# Build papi_image: branch $(PAPI_BRANCH), sha $(PAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(PAPI_IMAGE_UUID)" -t $(PAPI_BITS) \
+		-o "$(PAPI_IMAGE_BIT)" -p $(PAPI_PKGSRC) \
+		-t $(PAPI_EXTRA_TARBALLS) -n $(PAPI_IMAGE_NAME) \
+		-v $(_papi_stamp) -d $(PAPI_IMAGE_DESCRIPTION)
+	@echo "# Created papi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(PAPI_MANIFEST_BIT) $(PAPI_IMAGE_BIT)
+	@echo ""
+
+papi_publish_image: $(PAPI_IMAGE_BIT)
+	@echo "# Publish papi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(PAPI_MANIFEST_BIT) -f $(PAPI_IMAGE_BIT)
+
+# Warning: if papi's submodule deps change, this 'clean_dapi' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_papi:
+	rm -rf $(BITS_DIR)/papi
+	(cd build/papi && gmake clean)
+
+
+
 #---- imgapi-cli
 
 _imgapi_cli_stamp=$(IMGAPI_CLI_BRANCH)-$(TIMESTAMP)-g$(IMGAPI_CLI_SHA)
