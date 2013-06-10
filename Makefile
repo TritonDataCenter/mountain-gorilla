@@ -1288,6 +1288,41 @@ clean_marlin:
 	rm -rf $(BITS_DIR)/marlin
 	(cd build/marlin && gmake distclean)
 
+#---- MEDUSA
+
+_medusa_stamp=$(MEDUSA_BRANCH)-$(TIMESTAMP)-g$(MEDUSA_SHA)
+MEDUSA_BITS=$(BITS_DIR)/medusa/medusa-pkg-$(_medusa_stamp).tar.bz2
+MEDUSA_IMAGE_BIT=$(BITS_DIR)/medusa/medusa-zfs-$(_medusa_stamp).zfs.gz
+MEDUSA_MANIFEST_BIT=$(BITS_DIR)/medusa/medusa-zfs-$(_medusa_stamp).zfs.imgmanifest
+
+.PHONY: medusa
+medusa: $(MEDUSA_BITS) medusa_image
+
+$(MEDUSA_BITS): build/medusa
+	@echo "# Build medusa: branch $(MEDUSA_BRANCH), sha $(MEDUSA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/medusa && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created medusa bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MEDUSA_BITS)
+	@echo ""
+
+
+.PHONY: medusa_image
+medusa_image: $(MEDUSA_IMAGE_BIT)
+
+$(MEDUSA_IMAGE_BIT): $(MEDUSA_BITS)
+	@echo "# Build medusa_image: branch $(MEDUSA_BRANCH), sha $(MEDUSA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(MEDUSA_IMAGE_UUID)" -t $(MEDUSA_BITS) \
+		-o "$(MEDUSA_IMAGE_BIT)" -p $(MEDUSA_PKGSRC) \
+		-t $(MEDUSA_EXTRA_TARBALLS) -n $(MEDUSA_IMAGE_NAME) \
+		-v $(_medusa_stamp) -d $(MEDUSA_IMAGE_DESCRIPTION)
+	@echo "# Created medusa image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MEDUSA_MANIFEST_BIT) $(MEDUSA_IMAGE_BIT)
+	@echo ""
+
+clean_medusa:
+	rm -rf $(BITS_DIR)/medusa
+	(cd build/medusa && gmake distclean)
 
 #---- MAHI
 

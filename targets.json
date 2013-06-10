@@ -697,6 +697,30 @@
     ]
   },
 
+  "medusa": {
+    "appliance": "true",
+    "image_name": "manta-medusa",
+    "image_description": "Manta medusa",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [
+      "zookeeper-client-3.4.3"
+    ],
+    "repos": [
+      {"url": "git@git.joyent.com:medusa.git"}
+    ],
+    "deps": [
+      "https://download.joyent.com/pub/build/sdcnode",
+      "registrar",
+      "amon",
+      "sapi"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
+  },
+
   "mahi": {
     "appliance": "true",
     "image_name": "manta-authcache",
