@@ -1320,6 +1320,11 @@ $(MEDUSA_IMAGE_BIT): $(MEDUSA_BITS)
 	@ls -1 $(MEDUSA_MANIFEST_BIT) $(MEDUSA_IMAGE_BIT)
 	@echo ""
 
+.PHONY: medusa_publish_image
+medusa_publish_image: $(MEDUSA_IMAGE_BIT)
+	@echo "# Publish medusa image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(MEDUSA_MANIFEST_BIT) -f $(MEDUSA_IMAGE_BIT)
+
 clean_medusa:
 	rm -rf $(BITS_DIR)/medusa
 	(cd build/medusa && gmake distclean)
