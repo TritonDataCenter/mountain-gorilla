@@ -803,6 +803,7 @@
     "image_description": "Manta loadbalancer",
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
+      "py27-curses",
       "stud-0nb20120827",
       "zookeeper-client-3.4.3"
     ],
