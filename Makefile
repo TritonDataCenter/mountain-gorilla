@@ -55,10 +55,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola manta mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
 
 
 #---- smartlogin
@@ -1940,26 +1940,7 @@ clean_convertvm:
 	(cd build/convertvm && gmake clean)
 
 
-#---- Manta utilites
-
-_manta_stamp=$(MANTA_BRANCH)-$(TIMESTAMP)-g$(MANTA_SHA)
-MANTA_BITS=$(BITS_DIR)/manta/manta-pkg-$(_manta_stamp).tar.bz2
-
-.PHONY: manta
-manta: $(MANTA_BITS)
-
-$(MANTA_BITS): build/manta
-	@echo "# Build manta: branch $(MANTA_BRANCH), sha $(MANTA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/manta && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created manta bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(MANTA_BITS)
-	@echo ""
-
-clean_manta:
-	rm -rf $(BITS_DIR)/manta
-	(cd build/manta && gmake distclean)
-
+#---- Manta deployment (the manta zone)
 
 _manta_deployment_stamp=$(MANTA_DEPLOYMENT_BRANCH)-$(TIMESTAMP)-g$(MANTA_DEPLOYMENT_SHA)
 MANTA_DEPLOYMENT_BITS=$(BITS_DIR)/manta-deployment/manta-deployment-pkg-$(_manta_deployment_stamp).tar.bz2

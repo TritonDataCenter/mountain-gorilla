@@ -1035,15 +1035,6 @@
     ]
   },
 
-  "manta": {
-    "repos": [
-        {"url": "git@git.joyent.com:manta.git"}
-    ],
-    "deps": [
-      "https://download.joyent.com/pub/build/sdcnode"
-    ]
-  },
-
   "manta-deployment": {
     "appliance": "true",
     "image_name": "manta-deployment",
@@ -1125,7 +1116,6 @@
         "imgapi-cli",
         "keyapi",
         "manatee",
-        "manta",
         "manta-deployment",
         "moray",
         "napi",
