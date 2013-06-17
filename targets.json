@@ -1119,6 +1119,7 @@
         "manta-deployment",
         "moray",
         "napi",
+        "papi",
         "platform",
         "rabbitmq",
         "redis",

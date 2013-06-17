@@ -55,10 +55,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
+all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
+all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
 
 
 #---- smartlogin

@@ -35,6 +35,7 @@ cat <<HERE;
   "manta-image": "manta-deployment/$(ls bits/manta-deployment/manta-deployment-zfs-*manifest | xargs basename)",
   "moray-image": "moray/$(ls bits/moray/moray-zfs-*manifest | xargs basename)",
   "napi-image": "napi/$(ls bits/napi/napi-zfs-*manifest | xargs basename)",
+  "papi-image": "papi/$(ls bits/papi/papi-zfs-*manifest | xargs basename)",
   "rabbitmq-image": "rabbitmq/$(ls bits/rabbitmq/rabbitmq-zfs-*manifest | xargs basename)",
   "redis-image": "redis/$(ls bits/redis/redis-zfs-*manifest | xargs basename)",
   "sapi-image": "sapi/$(ls bits/sapi/sapi-zfs-*manifest | xargs basename)",
