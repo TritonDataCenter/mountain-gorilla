@@ -21,6 +21,7 @@ cat <<HERE;
   "// *-image": "This should be kept in sync with usb-headnode.git/build.spec",
   "adminui-image": "adminui/$(ls bits/adminui/adminui-zfs-*manifest | xargs basename)",
   "amon-image": "amon/$(ls bits/amon/amon-zfs-*manifest | xargs basename)",
+  "amonredis-image": "amonredis/$(ls bits/amonredis/amonredis-zfs-*manifest | xargs basename)",
   "assets-image": "assets/$(ls bits/assets/assets-zfs-*manifest | xargs basename)",
   "binder-image": "binder/$(ls bits/binder/binder-zfs-*manifest | xargs basename)",
   "ca-image": "ca/$(ls bits/ca/ca-zfs-*manifest | xargs basename)",
