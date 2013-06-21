@@ -143,6 +143,27 @@
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
   },
+  "amonredis": {
+    "appliance": "true",
+    "image_name": "amonredis",
+    "image_description": "SDC Amon Redis",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
+    "repos": [
+      {"url": "git@git.joyent.com:amonredis.git"}
+    ],
+    "deps": [
+      "amon",
+      "sapi",
+      "registrar"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+    ]
+  },
   "rabbitmq": {
     "appliance": "true",
     "image_name": "rabbitmq",
@@ -1102,6 +1123,7 @@
         "agentsshar",
         "agentsshar-upgrade",
         "amon",
+        "amonredis",
         "assets",
         "registrar",
         "binder",

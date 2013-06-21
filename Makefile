@@ -55,10 +55,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
+all: smartlogin amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
+all-except-platform: smartlogin amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
 
 
 #---- smartlogin
@@ -348,6 +348,7 @@ clean_adminui:
 	rm -rf $(BITS_DIR)/adminui
 	(cd build/adminui && gmake clean)
 
+
 #---- REDIS
 
 _redis_stamp=$(REDIS_BRANCH)-$(TIMESTAMP)-g$(REDIS_SHA)
@@ -386,6 +387,47 @@ redis_publish_image: $(REDIS_IMAGE_BIT)
 clean_redis:
 	rm -rf $(BITS_DIR)/redis
 	(cd build/redis && gmake clean)
+
+
+#---- amonredis
+
+_amonredis_stamp=$(AMONREDIS_BRANCH)-$(TIMESTAMP)-g$(AMONREDIS_SHA)
+AMONREDIS_BITS=$(BITS_DIR)/amonredis/amonredis-pkg-$(_amonredis_stamp).tar.bz2
+AMONREDIS_IMAGE_BIT=$(BITS_DIR)/amonredis/amonredis-zfs-$(_amonredis_stamp).zfs.gz
+AMONREDIS_MANIFEST_BIT=$(BITS_DIR)/amonredis/amonredis-zfs-$(_amonredis_stamp).zfs.imgmanifest
+
+.PHONY: amonredis
+amonredis: $(AMONREDIS_BITS) amonredis_image
+
+$(AMONREDIS_BITS): build/amonredis
+	@echo "# Build amonredis: branch $(AMONREDIS_BRANCH), sha $(AMONREDIS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/amonredis && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	@echo "# Created amonredis bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(AMONREDIS_BITS)
+	@echo ""
+
+.PHONY: amonredis_image
+amonredis_image: $(AMONREDIS_IMAGE_BIT)
+
+$(AMONREDIS_IMAGE_BIT): $(AMONREDIS_BITS)
+	@echo "# Build amonredis_image: branch $(AMONREDIS_BRANCH), sha $(AMONREDIS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(AMONREDIS_IMAGE_UUID)" -t $(AMONREDIS_BITS) \
+		-o "$(AMONREDIS_IMAGE_BIT)" -p $(AMONREDIS_PKGSRC) \
+		-t $(AMONREDIS_EXTRA_TARBALLS) -n $(AMONREDIS_IMAGE_NAME) \
+		-v $(_amonredis_stamp) -d $(AMONREDIS_IMAGE_DESCRIPTION)
+	@echo "# Created amonredis image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(AMONREDIS_MANIFEST_BIT) $(AMONREDIS_IMAGE_BIT)
+	@echo ""
+
+amonredis_publish_image: $(AMONREDIS_IMAGE_BIT)
+	@echo "# Publish amonredis image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(AMONREDIS_MANIFEST_BIT) -f $(AMONREDIS_IMAGE_BIT)
+
+clean_amonredis:
+	rm -rf $(BITS_DIR)/amonredis
+	(cd build/amonredis && gmake clean)
+
 
 #---- RABBITMQ
 
