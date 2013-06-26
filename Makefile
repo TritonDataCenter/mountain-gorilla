@@ -2192,15 +2192,21 @@ clean_usbheadnode:
 
 
 
-#---- platform
+#---- platform and debug platform
 
 PLATFORM_BITS= \
-	$(BITS_DIR)/platform/platform-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz \
-	$(BITS_DIR)/platform/boot-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz
+	$(BITS_DIR)/platform$(PLAT_SUFFIX)/platform$(PLAT_SUFFIX)-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz \
+	$(BITS_DIR)/platform$(PLAT_SUFFIX)/boot$(PLAT_SUFFIX)-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz
 PLATFORM_BITS_0=$(shell echo $(PLATFORM_BITS) | awk '{print $$1}')
 
-.PHONY: platform
-platform: $(PLATFORM_BITS_0)
+platform : PLAT_SUFFIX += ""
+platform : PLAT_CONF_ARGS += "no"
+platform-debug : PLAT_SUFFIX += "-debug"
+platform-debug : PLAT_CONF_ARGS += "exclusive"
+
+
+.PHONY: platform platform-debug
+platform platform-debug: $(PLATFORM_BITS_0)
 
 build/smartos-live/configure.mg:
 	sed -e "s:GITCLONESOURCE:$(shell pwd)/build/:" \
@@ -2221,16 +2227,16 @@ $(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-b
 	@echo "# Build platform: branch $(SMARTOS_LIVE_BRANCH), sha $(SMARTOS_LIVE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	(cd build/smartos-live \
 		&& PATH=/usr/sfw/bin:$(PATH) \
-			./configure \
+			ILLUMOS_ENABLE_DEBUG=$(PLAT_CONF_ARGS) ./configure \
 		&& PATH=/usr/sfw/bin:$(PATH) \
 			BUILDSTAMP=$(TIMESTAMP) \
 			gmake world \
 		&& PATH=/usr/sfw/bin:$(PATH) \
 			BUILDSTAMP=$(TIMESTAMP) \
 			gmake live)
-	(mkdir -p $(BITS_DIR)/platform)
-	(cp build/smartos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/platform/platform-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz)
-	(cp build/smartos-live/output/boot-$(TIMESTAMP).tgz $(BITS_DIR)/platform/boot-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz)
+	(mkdir -p $(BITS_DIR)/platform$(PLAT_SUFFIX))
+	(cp build/smartos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/platform$(PLAT_SUFFIX)/platform$(PLAT_SUFFIX)-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz)
+	(cp build/smartos-live/output/boot-$(TIMESTAMP).tgz $(BITS_DIR)/platform$(PLAT_SUFFIX)/boot$(PLAT_SUFFIX)-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz)
 	@echo "# Created platform bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(PLATFORM_BITS)
 	@echo ""
