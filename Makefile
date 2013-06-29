@@ -55,10 +55,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
+all: smartlogin amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
+all-except-platform: smartlogin amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade
 
 
 #---- smartlogin
@@ -1495,6 +1495,48 @@ mola_publish_image: $(MOLA_IMAGE_BIT)
 clean_mola:
 	rm -rf $(BITS_DIR)/mola
 	(cd build/mola && gmake distclean)
+
+
+#---- Madtom
+
+_madtom_stamp=$(MADTOM_BRANCH)-$(TIMESTAMP)-g$(MADTOM_SHA)
+MADTOM_BITS=$(BITS_DIR)/madtom/madtom-pkg-$(_madtom_stamp).tar.bz2
+MADTOM_IMAGE_BIT=$(BITS_DIR)/madtom/madtom-zfs-$(_madtom_stamp).zfs.gz
+MADTOM_MANIFEST_BIT=$(BITS_DIR)/madtom/madtom-zfs-$(_madtom_stamp).zfs.imgmanifest
+
+.PHONY: madtom
+madtom: $(MADTOM_BITS) madtom_image
+
+# PATH for madtom build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(MADTOM_BITS): build/madtom
+	@echo "# Build madtom: branch $(MADTOM_BRANCH), sha $(MADTOM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/madtom && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created madtom bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MADTOM_BITS)
+	@echo ""
+
+.PHONY: madtom_image
+madtom_image: $(MADTOM_IMAGE_BIT)
+
+$(MADTOM_IMAGE_BIT): $(MADTOM_BITS)
+	@echo "# Build madtom_image: branch $(MADTOM_BRANCH), sha $(MADTOM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(MADTOM_IMAGE_UUID)" -t $(MADTOM_BITS) \
+		-o "$(MADTOM_IMAGE_BIT)" -p $(MADTOM_PKGSRC) \
+		-t $(MADTOM_EXTRA_TARBALLS) -n $(MADTOM_IMAGE_NAME) \
+		-v $(_madtom_stamp) -d $(MADTOM_IMAGE_DESCRIPTION)
+	@echo "# Created madtom image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MADTOM_MANIFEST_BIT) $(MADTOM_IMAGE_BIT)
+	@echo ""
+
+madtom_publish_image: $(MADTOM_IMAGE_BIT)
+	@echo "# Publish madtom image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(MADTOM_MANIFEST_BIT) -f $(MADTOM_IMAGE_BIT)
+
+clean_madtom:
+	rm -rf $(BITS_DIR)/madtom
+	(cd build/madtom && gmake distclean)
 
 
 #---- Moray
