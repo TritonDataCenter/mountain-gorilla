@@ -1,0 +1,101 @@
+#!/bin/bash
+# Upload the bits dir to Manta
+
+if [ "$TRACE" != "" ]; then
+    export PS4='${BASH_SOURCE}:${LINENO}: '
+    set -o xtrace
+fi
+set -o errexit
+
+# --- Manta config
+export MANTA_KEY_ID=`ssh-keygen -l -f ~/.ssh/id_rsa.pub | awk '{print $2}' | tr -d '\n'`
+export MANTA_URL=https://us-east.manta.joyent.com
+if [[ -z "$MANTA_USER" ]]; then
+    export MANTA_USER="Joyent_Dev";
+fi
+
+TOP=$(cd $(dirname $0)/../; pwd)
+BITS_DIR=bits/
+
+function fatal {
+    echo "$(basename $0): error: $1"
+    exit 1
+}
+
+function errexit {
+    [[ $1 -ne 0 ]] || exit 0
+    fatal "error exit status $1 at line $2"
+}
+
+function print_help() {
+    echo "Usage:"
+    echo "  ./tools/mantaput-bits BRANCH TRY-BRANCH TIMESTAMP UPLOAD-BASE-DIR [SUBDIRS...]"
+    echo ""
+    echo "Upload bits to Manta. The UPLOAD-BASE-DIR is presumed to be a subdir of"
+    echo "/stor/\${MANTA_USER}"
+}
+
+trap 'errexit $? $LINENO' EXIT
+
+BRANCH=$1
+shift
+TRY_BRANCH=$1
+shift
+TIMESTAMP=$1
+shift
+UPLOAD_BASE_DIR=$1
+shift
+SUBDIRS=$*
+
+UPLOAD_BRANCH=$TRY_BRANCH
+if [[ -z "$UPLOAD_BRANCH" ]]; then
+    UPLOAD_BRANCH=$BRANCH
+fi
+
+upload_dirs=$(mfind -t d /${MANTA_USER}/stor/${UPLOAD_BASE_DIR} -n "$UPLOAD_BRANCH-$TIMESTAMP.*" 2>/dev/null || /bin/true)
+last_upload_dir=$(echo ${upload_dirs} | tr ' ' '\n' | tail -n 1)
+
+if [[ -z "$last_upload_dir" ]]; then
+    upload_subdir=$UPLOAD_BRANCH-$TIMESTAMP
+else
+    serial=$(echo $last_upload_dir | awk -F- '{print $NF}')
+    if [[ "$serial:(-1)}" == "Z" ]]; then
+        next_serial=2
+    else
+        next_serial=$(( $serial + 1 ))
+    fi
+    upload_subdir=$UPLOAD_BRANCH-$TIMESTAMP-$next_serial
+fi
+
+start_time=$(date +%s)
+echo "Uploading bits to /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}"
+
+# need to create the directory structure first
+if [[ -z "$SUBDIRS" ]]; then
+    subs=$(find $BITS_DIR -type d)
+    files=$(find $BITS_DIR -type f)
+else
+    for subdir in $SUBDIRS; do
+        subs="$subs $(find $BITS_DIR/$subdir -type d)"
+        files="$files $(find $BITS_DIR/$subdir -type f)"
+    done
+fi
+
+for sub in $subs; do
+    mmkdir -p /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/${sub#${BITS_DIR}}
+done
+
+# now we can upload the files
+for file in $files; do
+    mput -f $file /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/${file#$BITS_DIR}
+done
+
+# now update the latest link
+
+echo "/${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}" | mput -H 'content-type: text/plain' /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${UPLOAD_BRANCH}-latest
+
+echo "Uploaded to /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}"
+
+end_time=$(date +%s)
+elapsed=$((${end_time} - ${start_time}))
+echo "Upload took ${elapsed} seconds (Manta path=/${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/$upload_subdir)."
