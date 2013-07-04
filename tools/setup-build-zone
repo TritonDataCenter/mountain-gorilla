@@ -127,6 +127,10 @@ if [[ $sbz_env_flag -ne 1 ]]; then
 	echo "Installing necessary packages ... \c "
 	install_packages || fail "failed"
 	echo "done."
+
+  echo "Installing node-manta ... \c "
+  npm install -g node-manta
+  echo "done."
 fi
 
 echo "Setting up environment ... \c "
