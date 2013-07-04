@@ -129,7 +129,7 @@ if [[ $sbz_env_flag -ne 1 ]]; then
 	echo "done."
 
   echo "Installing node-manta ... \c "
-  npm install -g node-manta
+  npm install -g manta
   echo "done."
 fi
 
