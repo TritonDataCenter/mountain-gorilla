@@ -80,8 +80,10 @@ if [[ -z "$SUBDIRS" ]]; then
     files=$(find $BITS_DIR -type f)
 else
     for subdir in $SUBDIRS; do
-        subs="$subs $(find $BITS_DIR/$subdir -type d)"
-        files="$files $(find $BITS_DIR/$subdir -type f)"
+        if [[ -d $BITS_DIR/$subdir ]]; then
+          subs="$subs $(find $BITS_DIR/$subdir -type d)"
+          files="$files $(find $BITS_DIR/$subdir -type f)"
+        fi
     done
 fi
 
