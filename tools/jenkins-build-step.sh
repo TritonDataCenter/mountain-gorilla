@@ -10,7 +10,6 @@
 set -o errexit
 unset LD_LIBRARY_PATH   # ensure don't get Java's libs (see OS-703)
 
-
 echo ""
 echo "#----------------------"
 start_time=$(date +%s)
@@ -87,8 +86,7 @@ echo "#---------------------- upload"
 
 cp $LOG bits/$JOB_NAME/
 gmake upload_jenkins
-#XXX Only targets with "${JOB_NAME}_publish_image" should call this.
-#    Eventually will stub out for all jobnames.
+gmake manta_upload_jenkins
 gmake jenkins_publish_image
 
 now_time=$(date +%s)
