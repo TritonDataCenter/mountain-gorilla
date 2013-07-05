@@ -15,9 +15,6 @@ cat <<HERE;
   "firmware-tools-release": "$(ls bits/firmware-tools/firmware-tools*.tgz | xargs basename | cut -d- -f3)",
   "agents-shar": "$(ls bits/agentsshar/agents-*.sh | xargs basename | cut -d- -f2)",
 
-  "// *-tarball": "This should be kept in sync with usb-headnode.git/build.spec",
-  "imgapi-cli-tarball": "imgapi-cli/$(ls bits/imgapi-cli/imgapi-cli-pkg* | xargs basename)",
-
   "// *-image": "This should be kept in sync with usb-headnode.git/build.spec",
   "adminui-image": "adminui/$(ls bits/adminui/adminui-zfs-*manifest | xargs basename)",
   "amon-image": "amon/$(ls bits/amon/amon-zfs-*manifest | xargs basename)",
