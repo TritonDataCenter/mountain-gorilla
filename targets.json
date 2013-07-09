@@ -700,7 +700,8 @@
         "postgresql92-datatypes",
         "postgresql92-pgcrypto",
         "postgresql92-replicationtools",
-        "postgresql92-upgrade"
+        "postgresql92-upgrade",
+        "zookeeper-server-3.4.4"
     ],
     "repos": [
       {"url": "git@git.joyent.com:manatee.git"}
