@@ -91,11 +91,16 @@ for sub in $subs; do
     mmkdir -p /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/${sub#${BITS_DIR}}
 done
 
+md5sums=""
 # now we can upload the files
 for file in $files; do
     mput -f $file /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/${file#$BITS_DIR}
+    md5sums="${md5sums}$(md5sum $file)\n"
 done
 
+# upload the md5sums and config.mk
+echo -e $md5sums | mput -H 'content-type: text/plain' /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/md5sums.txt
+mput -f $BITS_DIR/config.mk /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/config.mk 
 # now update the latest link
 
 echo "/${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}" | mput -H 'content-type: text/plain' /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${UPLOAD_BRANCH}-latest
