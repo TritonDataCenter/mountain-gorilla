@@ -307,7 +307,8 @@
     "pkgsrc": [
       "curl-7.23.1nb1",
       "pkg_alternatives-1.5",
-      "python26-2.6.7nb2"
+      "python26-2.6.7nb2",
+      "apg-2.2.3"
     ],
     "repos": [
       {"url": "git@git.joyent.com:workflow.git"}
