@@ -12,8 +12,6 @@ fi
 set -o errexit
 set -o pipefail
 
-
-
 #---- config, globals
 
 BRANCH=master
@@ -77,6 +75,17 @@ function errexit {
     fatal "error exit status $1 at line $2"
 }
 
+function ensure_manta_credentials {
+    if [[ -z "$MANTA_KEY_ID" ]]; then
+        export MANTA_KEY_ID=`ssh-keygen -l -f ~/.ssh/id_rsa.pub | awk '{print $2}' | tr -d '\n'`
+    fi
+    export MANTA_URL=https://us-east.manta.joyent.com
+    if [[ -z "$MANTA_USER" ]]; then
+        export MANTA_USER="Joyent_Dev";
+    fi
+    export manta_base_path="/Joyent_Dev/stor/builds"
+}
+
 function ensure_bits_credentials {
     MG_CONFIG_PATH=~/.sdcbuild.json
     if [[ -z "$BITS_USERNAME" ]]; then
@@ -108,6 +117,87 @@ function flush_bits_cache() {
     fi
 }
 
+
+# Preload $MG_CACHE_DIR/bits/ with the latest built and uploaded bits for
+# the given target and branch.
+#
+# Usage:
+#   preload_bits_from_manta TARGET BRANCH TRY_BRANCH
+
+# Example:
+#   preload_bits smartlogin master ""
+#   preload_bits release-20110901-upgrade/agents-upgrade master ""
+#
+function preload_bits_from_manta() {
+    local target=$1
+    local branch=$2
+    local try_branch=$3
+    local target_base=$(basename $target)
+    # Don't bork if this was already preloaded by another target.
+    if [[ -d bits/$target_base ]]; then
+        return;
+    fi
+
+    echo ""
+    echo "# preload 'bits/$target_base from Manta'"
+
+    ensure_manta_credentials
+
+    local target_mpath
+    local target_branch=$(dirname $target)
+    if [[ "$target_branch" != "." ]]; then
+        branch=$target_branch
+    fi
+    target_mpath=${manta_base_path}/${target_base}/
+    local best_branch=$try_branch
+    if [[ -z $best_branch ]]; then
+        best_branch="master"
+    fi
+    local latest_mpath=${target_mpath}/${best_branch}-latest
+    local latest_dir=$(mget $latest_mpath 2> /dev/null)
+    if [[ -z "$latest_dir" ]]; then
+        best_branch="master"
+        latest_mpath=${target_mpath}/${best_branch}-latest
+        latest_dir=$(mget $latest_mpath 2> /dev/null)
+    fi
+    if [[ -z "$latest_dir" ]]; then
+        fatal "Could not get latest dir for target $target"
+    fi
+    local dirs=$(mfind -t d $latest_dir)
+    mkdir -p $MG_CACHE_DIR/bits/
+    for dir in $dirs; do
+        mkdir -p ${MG_CACHE_DIR}/bits/${dir#$manta_base_path}
+    done
+    local files=$(mfind -t o $latest_dir)
+    for file in $files; do
+        dir=$(dirname $file)
+        (cd ${MG_CACHE_DIR}/bits/${dir#$manta_base_path};
+            mget -O $file)
+    done
+
+	for dir in ${dirs#$manta_base_path/}; do
+	    (cd ${MG_CACHE_DIR}/bits/$dir;
+        local md5sum_file=${MG_CACHE_DIR}/bits/$dir/../md5sums.txt;
+        for bit in $(find . -type f | grep -v md5sums.txt); do
+            local correct_md5=$(grep $bit $md5sum_file | cut -d ' ' -f1)
+            local actual_md5=$(openssl dgst -md5 < $bit | awk '{print $NF}')
+            if [[ $correct_md5 != $actual_md5 ]]; then
+                cd ..
+                rm ${MG_CACHE_DIR}/bits/$dir
+                fatal "md5 check failure on ${MG_CACHE_DIR}/bits/$bit (actual '$actual_md5', from md5sums '$correct_md5')"
+                break
+            fi
+        done)
+    done
+
+    # Copy over to bits dir.
+    mkdir -p bits
+    [[ -d "bits/$target_base" ]] && fatal "'bits/$target_base' already exists"
+    $CP_LINK -PR ${MG_CACHE_DIR}/bits/${latest_dir#$manta_base_path}/$target_base bits/$(basename $target)
+
+}
+
+
 # Preload $MG_CACHE_DIR/bits/ with the latest built and uploaded bits for
 # the given target and branch.
 #
@@ -128,6 +218,10 @@ function flush_bits_cache() {
 #   preload_bits http://download.joyent.com/pub/build/sdcnode master ""
 #
 function preload_bits() {
+    if [[ -n $USE_MANTA ]]; then
+        preload_bits_from_manta $@
+        return 0
+    fi
     local target=$1
     local branch=$2
     local try_branch=$3
