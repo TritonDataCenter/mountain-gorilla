@@ -7,9 +7,6 @@
 # a new zone of a given image, (b) drop in an fs tarball and
 # optionally some other tarballs, and (c) make an image out of this.
 #
-# This uses a "gzhost" on which to create a new zone for the image
-# build. One of the hosts in "gzhosts.json" is chosen at random.
-#
 
 export PS4='${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 if [[ -z "$(echo "$*" | grep -- '-h' || /bin/true)" ]]; then
@@ -48,6 +45,16 @@ output=""
 
 #---- functions
 
+# Because sdc-cloudapi doesn't exist
+function sdc-cloudapi {
+  url="${SDC_URL}$1"
+  shift
+  local now=`date -u "+%a, %d %h %Y %H:%M:%S GMT"` ;
+  local signature=`echo ${now} | tr -d '\n' | openssl dgst -sha256 -sign ~/.ssh/id_rsa | openssl enc -e -a | tr -d '\n'` ;
+  curl -k -is -H "Content-Type: application/json" -H "Accept: application/json" -H "x-api-version: 7.0.0" -H "Date: ${now}" -H "Authorization: Signature keyId=\"/${SDC_ACCOUNT}/keys/${SDC_KEY_ID}\",algorithm=\"rsa-sha256\" ${signature}" --url ${url} $@ ;
+  echo "";
+}
+
 function fatal {
   echo "$(basename $0): error: $1"
   exit 1
@@ -83,6 +90,8 @@ function usage() {
     echo "                  more tarballs."
     echo "  -p PACKAGES     Space-separated list of pkgsrc package to install."
     echo "                  This can be called multiple times."
+
+    echo "  -P PACKAGES     Package (instance / limit) name to use (eg sdc_256)"
     echo "  -o OUTPUT       Image output path. Should be of the form:"
     echo "                  '/path/to/name.zfs.bz2'."
     echo "  -v VERSION      Version for produced image manifest."
@@ -101,7 +110,7 @@ function usage() {
 
 trap cleanup ERR
 
-while getopts ht:p:i:o:n:v:d: opt; do
+while getopts ht:p:P:i:o:n:v:d: opt; do
   case $opt in
   h)
     usage
@@ -114,6 +123,11 @@ while getopts ht:p:i:o:n:v:d: opt; do
   p)
     if [[ -n "${OPTARG}" ]]; then
       packages="${packages} ${OPTARG}"
+    fi
+    ;;
+  P)
+    if [[ -n "${OPTARG}" ]]; then
+      image_package="${OPTARG}"
     fi
     ;;
   i)
@@ -165,8 +179,15 @@ else
 fi
 
 # Create the machine in the specified DC
+package="$(sdc-listpackages | json 0.id)"
+instance_type_list="$(sdc-listpackages | json -H -a name id -d, | xargs)"
+for use_package in $instance_type_list; do
+  if [[ $(echo $use_package | cut -d, -f1) == $image_package ]]; then
+    package=$(echo $use_package | cut -d, -f2 | tr -d '\n')
+  fi
+done
 
-machine=$(sdc-createmachine -e $image_uuid | json 'id')
+machine=$(sdc-createmachine -e $image_uuid -p $package | json 'id')
 
 state=$(sdc-getmachine $machine | json 'state')
 while [[ $state == 'provisioning' ]]; do
@@ -191,7 +212,7 @@ for tb_info in $tarballs; do
   tb_sysroot=$(echo "$tb_info" | awk -F':' '{print $2}')
   [[ -z "$tb_sysroot" ]] && tb_sysroot=/
 
-  bzip=$(echo $tb_tarball | grep "bz2$" || /bin/true)
+  bzip=$(echo $tb_tarball | grep "bz2$" || true)
   if [[ -n ${bzip} ]]; then
     uncompress=bzcat
   else
@@ -234,43 +255,28 @@ fi
 cat tools/clean-image.sh \
   | ${SSH} "cat > /tmp/clean-image.sh; /usr/bin/bash /tmp/clean-image.sh; shutdown -i5 -g0 -y;"
 
-# XXX And then somehow turn it in to an image XXX
+# And then turn it in to an image
 
-echo $machine_json
+sdc-stopmachine $machine
 
-sdc-stopimage $machine
-sleep 2
-sdc-deleteimage $machine
-
-cat <<EOF>> ${output_sans_ext}.imgmanifest
+image=$(cat <<EOM | sdc-cloudapi /my/images -X POST -d@- | json -H
 {
-    "v": 2,
-    "uuid": "${uuid}",
-    "name": "${image_name}",
-    "version": "${image_version}",
-    "description": "${image_description}",
-    "published_at": "${timestamp}",
-    "owner": "00000000-0000-0000-0000-000000000000",
-    "type": "zone-dataset",
-    "os": "smartos",
-    "public": false,
-    "files": [
-        {
-            "sha1": "${shasum}",
-            "size": ${size},
-            "compression": "${compression}"
-        }
-    ],
-    "requirements": {
-        "networks": [
-            {
-                "name": "net0",
-                "description": "admin"
-            }
-        ]
-    },
-    "tags": {
-        "smartdc_service": true
-    }
+  "machine": "$machine",
+  "name": "$image_name",
+  "version": "$image_version",
+  "description": "$image_description"
 }
-EOF
+EOM
+)
+
+image_id=$(echo $image | json -H 'id')
+
+for i in {40..1}; do
+    sleep 3
+    if [[ -n "$(sdc-cloudapi /my/images/$image_id | json -H 'published_at')" ]]; then
+        break
+    fi
+done
+
+sdc-deletemachine $machine
+
