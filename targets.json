@@ -521,6 +521,15 @@
     ]
   },
 
+  "hagfish-watcher": {
+    "repos": [
+        {"url": "git@git.joyent.com:hagfish-watcher.git"}
+    ],
+    "deps": [
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
+  },
+
   "cnapi": {
     "appliance": "true",
     "image_name": "cnapi",
