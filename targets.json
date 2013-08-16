@@ -1018,6 +1018,7 @@
       "agents_core",
       "zonetracker",
       "provisioner",
+      "hagfish-watcher",
       "heartbeater",
       "amon",
       "ca",
