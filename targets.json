@@ -443,10 +443,12 @@
       {"url": "git@git.joyent.com:sdc.git"}
     ],
     "deps": [
-      "sapi",
-      "https://download.joyent.com/pub/build/sdcnode"
+      "https://download.joyent.com/pub/build/sdcnode",
+      "amon",
+      "sapi"
     ],
     "tarballs": [
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
   },
