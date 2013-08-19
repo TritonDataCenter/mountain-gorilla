@@ -53,6 +53,7 @@ mac="$mac_prefix:$(openssl rand -hex 1):$(openssl rand -hex 1):$(openssl rand -h
     "delegate_dataset": true,
     "dataset_uuid": "${image_uuid}",
     "fs_allowed": ["ufs", "pcfs", "tmpfs"],
+    "resolvers": ["8.8.8.8", "8.8.4.4"],
     "nics": [
       {
         "nic_tag": "admin",
