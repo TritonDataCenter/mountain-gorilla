@@ -1038,7 +1038,7 @@ $(HAGFISH_WATCHER_BITS): build/hagfish-watcher
 	@ls -1 $(HAGFISH_WATCHER_BITS)
 	@echo ""
 
-clean_hagfish_watcher:
+clean_hagfish-watcher:
 	rm -rf $(BITS_DIR)/hagfish-watcher
 	(cd build/hagfish-watcher && gmake clean)
 
