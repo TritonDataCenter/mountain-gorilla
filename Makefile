@@ -59,10 +59,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher
 
 
 #---- smartlogin
@@ -86,6 +86,29 @@ $(SMARTLOGIN_BITS): build/smart-login
 
 clean_smartlogin:
 	rm -rf $(BITS_DIR)/smartlogin
+
+
+
+#---- incr-upgrade
+
+_incr_upgrade_stamp=$(AMON_BRANCH)-$(TIMESTAMP)-g$(AMON_SHA)
+INCR_UPGRADE_BITS=$(BITS_DIR)/incr-upgrade/incr-upgrade-$(_incr_upgrade_stamp).tgz
+
+.PHONY: incr-upgrade
+incr-upgrade: $(INCR_UPGRADE_BITS)
+
+$(INCR_UPGRADE_BITS): build/usb-headnode
+	@echo "# Build incr-upgrade: branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/usb-headnode && BITS_DIR=$(BITS_DIR) gmake incr-upgrade)
+	mkdir -p $(BITS_DIR)/incr-upgrade
+	cp build/usb-headnode/incr-upgrade-$(_incr_upgrade_stamp).tgz $(BITS_DIR)/incr-upgrade
+	@echo "# Created incr-upgrade bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(INCR_UPGRADE_BITS)
+	@echo ""
+
+clean_incr-upgrade:
+	rm -rf $(BITS_DIR)/incr-upgrade
 
 
 

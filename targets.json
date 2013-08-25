@@ -5,6 +5,12 @@
     ],
     "deps": []
   },
+  "incr-upgrade": {
+    "repos": [
+        {"url": "git@git.joyent.com:usb-headnode.git"}
+    ],
+    "deps": []
+  },
   "ca": {
     "appliance": "true",
     "image_name": "ca",
