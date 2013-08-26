@@ -100,7 +100,7 @@ incr-upgrade: $(INCR_UPGRADE_BITS)
 $(INCR_UPGRADE_BITS): build/usb-headnode
 	@echo "# Build incr-upgrade: branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/usb-headnode && BITS_DIR=$(BITS_DIR) gmake incr-upgrade)
+	(cd build/usb-headnode && TIMESTAMP=$(TIMESTAMP) gmake incr-upgrade)
 	mkdir -p $(BITS_DIR)/incr-upgrade
 	cp build/usb-headnode/incr-upgrade-$(_incr_upgrade_stamp).tgz $(BITS_DIR)/incr-upgrade
 	@echo "# Created incr-upgrade bits (time `date -u +%Y%m%dT%H%M%SZ`):"
