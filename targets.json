@@ -538,6 +538,15 @@
     ]
   },
 
+  "firewaller": {
+    "repos": [
+        {"url": "git@git.joyent.com:firewaller.git"}
+    ],
+    "deps": [
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
+  },
+
   "cnapi": {
     "appliance": "true",
     "image_name": "cnapi",

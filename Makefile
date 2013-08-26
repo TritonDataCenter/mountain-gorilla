@@ -59,10 +59,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
 
 
 #---- smartlogin
@@ -1065,6 +1065,26 @@ clean_hagfish-watcher:
 	rm -rf $(BITS_DIR)/hagfish-watcher
 	(cd build/hagfish-watcher && gmake clean)
 
+
+#---- Firewaller
+
+_firewaller_stamp=$(FIREWALLER_BRANCH)-$(TIMESTAMP)-g$(FIREWALLER_SHA)
+FIREWALLER_BITS=$(BITS_DIR)/firewaller/firewaller-$(_firewaller_stamp).tgz
+
+.PHONY: firewaller
+firewaller: $(FIREWALLER_BITS)
+
+$(FIREWALLER_BITS): build/firewaller
+	@echo "# Build firewaller: branch $(FIREWALLER_BRANCH), sha $(FIREWALLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/firewaller && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created firewaller bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(FIREWALLER_BITS)
+	@echo ""
+
+clean_firewaller:
+	rm -rf $(BITS_DIR)/firewaller
+	(cd build/firewaller && gmake clean)
 
 
 
