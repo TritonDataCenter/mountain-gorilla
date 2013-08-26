@@ -91,7 +91,7 @@ clean_smartlogin:
 
 #---- incr-upgrade
 
-_incr_upgrade_stamp=$(AMON_BRANCH)-$(TIMESTAMP)-g$(AMON_SHA)
+_incr_upgrade_stamp=$(USB_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(USB_HEADNODE_SHA)
 INCR_UPGRADE_BITS=$(BITS_DIR)/incr-upgrade/incr-upgrade-$(_incr_upgrade_stamp).tgz
 
 .PHONY: incr-upgrade
