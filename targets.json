@@ -1040,7 +1040,8 @@
       "amon",
       "ca",
       "smartlogin",
-      "marlin"
+      "marlin",
+      "firewaller"
     ]
   },
   "convertvm": {
