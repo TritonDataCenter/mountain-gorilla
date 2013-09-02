@@ -41,6 +41,7 @@ cat <<HERE;
   "sdcsso-image": "sdcsso/$(ls bits/sdcsso/sdcsso-zfs-*manifest | xargs basename)",
   "ufds-image": "ufds/$(ls bits/ufds/ufds-zfs-*manifest | xargs basename)",
   "usageapi-image": "usageapi/$(ls bits/usageapi/usageapi-zfs-*manifest | xargs basename)",
+  "vcapi-image": "vcapi/$(ls bits/vcapi/vcapi-zfs-*manifest | xargs basename)",
   "vmapi-image": "vmapi/$(ls bits/vmapi/vmapi-zfs-*manifest | xargs basename)",
   "workflow-image": "workflow/$(ls bits/workflow/workflow-zfs-*manifest | xargs basename)"
 }

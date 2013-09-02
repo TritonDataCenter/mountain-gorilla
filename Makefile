@@ -59,10 +59,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi vcapi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi vcapi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
 
 
 #---- smartlogin
@@ -901,6 +901,50 @@ clean_sdc:
 	rm -rf $(BITS_DIR)/sdc
 	(cd build/sdc && gmake clean)
 
+
+#---- VCAPI
+
+_vcapi_stamp=$(VCAPI_BRANCH)-$(TIMESTAMP)-g$(VCAPI_SHA)
+VCAPI_BITS=$(BITS_DIR)/vcapi/vcapi-pkg-$(_vcapi_stamp).tar.bz2
+VCAPI_IMAGE_BIT=$(BITS_DIR)/vcapi/vcapi-zfs-$(_vcapi_stamp).zfs.gz
+VCAPI_MANIFEST_BIT=$(BITS_DIR)/vcapi/vcapi-zfs-$(_vcapi_stamp).zfs.imgmanifest
+
+
+.PHONY: vcapi
+vcapi: $(VCAPI_BITS) vcapi_image
+
+# PATH for vcapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(VCAPI_BITS): build/vcapi
+	@echo "# Build vcapi: branch $(VCAPI_BRANCH), sha $(VCAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/vcapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created vcapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(VCAPI_BITS)
+	@echo ""
+
+.PHONY: vcapi_image
+vcapi_image: $(VCAPI_IMAGE_BIT)
+
+$(VCAPI_IMAGE_BIT): $(VCAPI_BITS)
+	@echo "# Build vcapi_image: branch $(VCAPI_BRANCH), sha $(VCAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(VCAPI_IMAGE_UUID)" -t $(VCAPI_BITS) \
+		-o "$(VCAPI_IMAGE_BIT)" -p $(VCAPI_PKGSRC) \
+		-t $(VCAPI_EXTRA_TARBALLS) -n $(VCAPI_IMAGE_NAME) \
+		-v $(_vcapi_stamp) -d $(VCAPI_IMAGE_DESCRIPTION)
+	@echo "# Created vcapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(VCAPI_MANIFEST_BIT) $(VCAPI_IMAGE_BIT)
+	@echo ""
+
+vcapi_publish_image: $(VCAPI_IMAGE_BIT)
+	@echo "# Publish vcapi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(VCAPI_MANIFEST_BIT) -f $(VCAPI_IMAGE_BIT)
+
+# Warning: if vcapi's submodule deps change, this 'clean_dapi' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_vcapi:
+	rm -rf $(BITS_DIR)/vcapi
+	(cd build/vcapi && gmake clean)
 
 
 #---- sdc-system-tests (aka systests)
