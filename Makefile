@@ -146,6 +146,21 @@ $(AMON_IMAGE_BIT): $(AMON_BITS_0)
 	@ls -1 $(AMON_MANIFEST_BIT) $(AMON_IMAGE_BIT)
 	@echo ""
 
+AMON_MANTA_BIT=$(BITS_DIR)/amon/amon-zfs-$(_amon_stamp).manta
+
+.PHONY: amon_manta_image
+amon_manta_image: $(AMON_MANTA_BIT)
+
+$(AMON_MANTA_BIT): $(AMON_BITS)
+	@echo "# Build amon_image: branch $(AMON_BRANCH), sha $(AMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(AMON_IMAGE_UUID)" -t $(AMON_BITS) \
+		-o "$(AMON_MANTA_BIT)" -p $(AMON_PKGSRC) \
+		-t $(AMON_EXTRA_TARBALLS) -n $(AMON_IMAGE_NAME) \
+		-v $(_amon_stamp) -d $(AMON_IMAGE_DESCRIPTION)
+	@echo "# Created amon image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(AMON_MANTA_BIT)
+	@echo ""
+
 amon_publish_image: $(AMON_IMAGE_BIT)
 	@echo "# Publish amon image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(AMON_MANIFEST_BIT) -f $(AMON_IMAGE_BIT)
@@ -195,6 +210,22 @@ $(CA_IMAGE_BIT): $(CA_BITS_0)
 	@ls -1 $(CA_MANIFEST_BIT) $(CA_IMAGE_BIT)
 	@echo ""
 
+CA_MANTA_BIT=$(BITS_DIR)/ca/ca-zfs-$(_ca_stamp).manta
+
+.PHONY: ca_manta_image
+ca_manta_image: $(CA_MANTA_BIT)
+
+$(CA_MANTA_BIT): $(CA_BITS)
+	@echo "# Build ca_image: branch $(CA_BRANCH), sha $(CA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(CA_IMAGE_UUID)" -t $(CA_BITS) \
+		-o "$(CA_MANTA_BIT)" -p $(CA_PKGSRC) \
+		-t $(CA_EXTRA_TARBALLS) -n $(CA_IMAGE_NAME) \
+		-v $(_ca_stamp) -d $(CA_IMAGE_DESCRIPTION)
+	@echo "# Created ca image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(CA_MANTA_BIT)
+	@echo ""
+
+
 ca_publish_image: $(CA_IMAGE_BIT)
 	@echo "# Publish ca image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(CA_MANIFEST_BIT) -f $(CA_IMAGE_BIT)
@@ -241,6 +272,22 @@ $(UFDS_IMAGE_BIT): $(UFDS_BITS)
 	@ls -1 $(UFDS_MANIFEST_BIT) $(UFDS_IMAGE_BIT)
 	@echo ""
 
+UFDS_MANTA_BIT=$(BITS_DIR)/ufds/ufds-zfs-$(_ufds_stamp).manta
+
+.PHONY: ufds_manta_image
+ufds_manta_image: $(UFDS_MANTA_BIT)
+
+$(UFDS_MANTA_BIT): $(UFDS_BITS)
+	@echo "# Build ufds_image: branch $(UFDS_BRANCH), sha $(UFDS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(UFDS_IMAGE_UUID)" -t $(UFDS_BITS) \
+		-o "$(UFDS_MANTA_BIT)" -p $(UFDS_PKGSRC) \
+		-t $(UFDS_EXTRA_TARBALLS) -n $(UFDS_IMAGE_NAME) \
+		-v $(_ufds_stamp) -d $(UFDS_IMAGE_DESCRIPTION)
+	@echo "# Created ufds image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(UFDS_MANTA_BIT)
+	@echo ""
+
+
 ufds_publish_image: $(UFDS_IMAGE_BIT)
 	@echo "# Publish ufds image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(UFDS_MANIFEST_BIT) -f $(UFDS_IMAGE_BIT)
@@ -285,6 +332,22 @@ $(USAGEAPI_IMAGE_BIT): $(USAGEAPI_BITS)
 	@ls -1 $(USAGEAPI_MANIFEST_BIT) $(USAGEAPI_IMAGE_BIT)
 	@echo ""
 
+USAGEAPI_MANTA_BIT=$(BITS_DIR)/usageapi/usageapi-zfs-$(_usageapi_stamp).manta
+
+.PHONY: usageapi_manta_image
+usageapi_manta_image: $(USAGEAPI_MANTA_BIT)
+
+$(USAGEAPI_MANTA_BIT): $(USAGEAPI_BITS)
+	@echo "# Build usageapi_image: branch $(USAGEAPI_BRANCH), sha $(USAGEAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(USAGEAPI_IMAGE_UUID)" -t $(USAGEAPI_BITS) \
+		-o "$(USAGEAPI_MANTA_BIT)" -p $(USAGEAPI_PKGSRC) \
+		-t $(USAGEAPI_EXTRA_TARBALLS) -n $(USAGEAPI_IMAGE_NAME) \
+		-v $(_usageapi_stamp) -d $(USAGEAPI_IMAGE_DESCRIPTION)
+	@echo "# Created usageapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(USAGEAPI_MANTA_BIT)
+	@echo ""
+
+
 usageapi_publish_image: $(USAGEAPI_IMAGE_BIT)
 	@echo "# Publish usageapi image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(USAGEAPI_MANIFEST_BIT) -f $(USAGEAPI_IMAGE_BIT)
@@ -328,6 +391,22 @@ $(ASSETS_IMAGE_BIT): $(ASSETS_BITS)
 	@ls -1 $(ASSETS_MANIFEST_BIT) $(ASSETS_IMAGE_BIT)
 	@echo ""
 
+ASSETS_MANTA_BIT=$(BITS_DIR)/assets/assets-zfs-$(_assets_stamp).manta
+
+.PHONY: assets_manta_image
+assets_manta_image: $(ASSETS_MANTA_BIT)
+
+$(ASSETS_MANTA_BIT): $(ASSETS_BITS)
+	@echo "# Build assets_image: branch $(ASSETS_BRANCH), sha $(ASSETS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(ASSETS_IMAGE_UUID)" -t $(ASSETS_BITS) \
+		-o "$(ASSETS_MANTA_BIT)" -p $(ASSETS_PKGSRC) \
+		-t $(ASSETS_EXTRA_TARBALLS) -n $(ASSETS_IMAGE_NAME) \
+		-v $(_assets_stamp) -d $(ASSETS_IMAGE_DESCRIPTION)
+	@echo "# Created assets image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(ASSETS_MANTA_BIT)
+	@echo ""
+
+
 assets_publish_image: $(ASSETS_IMAGE_BIT)
 	@echo "# Publish assets image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(ASSETS_MANIFEST_BIT) -f $(ASSETS_IMAGE_BIT)
@@ -342,6 +421,7 @@ _adminui_stamp=$(ADMINUI_BRANCH)-$(TIMESTAMP)-g$(ADMINUI_SHA)
 ADMINUI_BITS=$(BITS_DIR)/adminui/adminui-pkg-$(_adminui_stamp).tar.bz2
 ADMINUI_IMAGE_BIT=$(BITS_DIR)/adminui/adminui-zfs-$(_adminui_stamp).zfs.gz
 ADMINUI_MANIFEST_BIT=$(BITS_DIR)/adminui/adminui-zfs-$(_adminui_stamp).zfs.imgmanifest
+ADMINUI_MANTA_BIT=$(BITS_DIR)/adminui/adminui-zfs-$(_adminui_stamp).manta
 
 .PHONY: adminui
 adminui: $(ADMINUI_BITS) adminui_image
@@ -365,6 +445,19 @@ $(ADMINUI_IMAGE_BIT): $(ADMINUI_BITS)
 		-v $(_adminui_stamp) -d $(ADMINUI_IMAGE_DESCRIPTION)
 	@echo "# Created adminui image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(ADMINUI_MANIFEST_BIT) $(ADMINUI_IMAGE_BIT)
+	@echo ""
+
+.PHONY: adminui_manta_image
+adminui_manta_image: $(ADMINUI_MANTA_BIT)
+
+$(ADMINUI_MANTA_BIT): $(ADMINUI_BITS)
+	@echo "# Build adminui_image: branch $(ADMINUI_BRANCH), sha $(ADMINUI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(ADMINUI_IMAGE_UUID)" -t $(ADMINUI_BITS) \
+		-o "$(ADMINUI_MANTA_BIT)" -p $(ADMINUI_PKGSRC) \
+		-t $(ADMINUI_EXTRA_TARBALLS) -n $(ADMINUI_IMAGE_NAME) \
+		-v $(_adminui_stamp) -d $(ADMINUI_IMAGE_DESCRIPTION)
+	@echo "# Created adminui image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(ADMINUI_MANTA_BIT)
 	@echo ""
 
 adminui_publish_image: $(ADMINUI_IMAGE_BIT)
@@ -407,6 +500,22 @@ $(REDIS_IMAGE_BIT): $(REDIS_BITS)
 	@ls -1 $(REDIS_MANIFEST_BIT) $(REDIS_IMAGE_BIT)
 	@echo ""
 
+REDIS_MANTA_BIT=$(BITS_DIR)/redis/redis-zfs-$(_redis_stamp).manta
+
+.PHONY: redis_manta_image
+redis_manta_image: $(REDIS_MANTA_BIT)
+
+$(REDIS_MANTA_BIT): $(REDIS_BITS)
+	@echo "# Build redis_image: branch $(REDIS_BRANCH), sha $(REDIS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(REDIS_IMAGE_UUID)" -t $(REDIS_BITS) \
+		-o "$(REDIS_MANTA_BIT)" -p $(REDIS_PKGSRC) \
+		-t $(REDIS_EXTRA_TARBALLS) -n $(REDIS_IMAGE_NAME) \
+		-v $(_redis_stamp) -d $(REDIS_IMAGE_DESCRIPTION)
+	@echo "# Created redis image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(REDIS_MANTA_BIT)
+	@echo ""
+
+
 redis_publish_image: $(REDIS_IMAGE_BIT)
 	@echo "# Publish redis image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(REDIS_MANIFEST_BIT) -f $(REDIS_IMAGE_BIT)
@@ -446,6 +555,22 @@ $(AMONREDIS_IMAGE_BIT): $(AMONREDIS_BITS)
 	@echo "# Created amonredis image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(AMONREDIS_MANIFEST_BIT) $(AMONREDIS_IMAGE_BIT)
 	@echo ""
+
+AMONREDIS_MANTA_BIT=$(BITS_DIR)/amonredis/amonredis-zfs-$(_amonredis_stamp).manta
+
+.PHONY: amonredis_manta_image
+amonredis_manta_image: $(AMONREDIS_MANTA_BIT)
+
+$(AMONREDIS_MANTA_BIT): $(AMONREDIS_BITS)
+	@echo "# Build amonredis_image: branch $(AMONREDIS_BRANCH), sha $(AMONREDIS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(AMONREDIS_IMAGE_UUID)" -t $(AMONREDIS_BITS) \
+		-o "$(AMONREDIS_MANTA_BIT)" -p $(AMONREDIS_PKGSRC) \
+		-t $(AMONREDIS_EXTRA_TARBALLS) -n $(AMONREDIS_IMAGE_NAME) \
+		-v $(_amonredis_stamp) -d $(AMONREDIS_IMAGE_DESCRIPTION)
+	@echo "# Created amonredis image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(AMONREDIS_MANTA_BIT)
+	@echo ""
+
 
 amonredis_publish_image: $(AMONREDIS_IMAGE_BIT)
 	@echo "# Publish amonredis image to SDC Updates repo."
@@ -487,6 +612,22 @@ $(RABBITMQ_IMAGE_BIT): $(RABBITMQ_BITS)
 	@ls -1 $(RABBITMQ_MANIFEST_BIT) $(RABBITMQ_IMAGE_BIT)
 	@echo ""
 
+RABBITMQ_MANTA_BIT=$(BITS_DIR)/rabbitmq/rabbitmq-zfs-$(_rabbitmq_stamp).manta
+
+.PHONY: rabbitmq_manta_image
+rabbitmq_manta_image: $(RABBITMQ_MANTA_BIT)
+
+$(RABBITMQ_MANTA_BIT): $(RABBITMQ_BITS)
+	@echo "# Build rabbitmq_image: branch $(RABBITMQ_BRANCH), sha $(RABBITMQ_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(RABBITMQ_IMAGE_UUID)" -t $(RABBITMQ_BITS) \
+		-o "$(RABBITMQ_MANTA_BIT)" -p $(RABBITMQ_PKGSRC) \
+		-t $(RABBITMQ_EXTRA_TARBALLS) -n $(RABBITMQ_IMAGE_NAME) \
+		-v $(_rabbitmq_stamp) -d $(RABBITMQ_IMAGE_DESCRIPTION)
+	@echo "# Created rabbitmq image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(RABBITMQ_MANTA_BIT)
+	@echo ""
+
+
 rabbitmq_publish_image: $(RABBITMQ_IMAGE_BIT)
 	@echo "# Publish rabbitmq image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(RABBITMQ_MANIFEST_BIT) -f $(RABBITMQ_IMAGE_BIT)
@@ -526,6 +667,22 @@ $(DHCPD_IMAGE_BIT): $(DHCPD_BITS)
 	@echo "# Created dhcpd image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(DHCPD_MANIFEST_BIT) $(DHCPD_IMAGE_BIT)
 	@echo ""
+
+DHCPD_MANTA_BIT=$(BITS_DIR)/dhcpd/dhcpd-zfs-$(_dhcpd_stamp).manta
+
+.PHONY: dhcpd_manta_image
+dhcpd_manta_image: $(DHCPD_MANTA_BIT)
+
+$(DHCPD_MANTA_BIT): $(DHCPD_BITS)
+	@echo "# Build dhcpd_image: branch $(DHCPD_BRANCH), sha $(DHCPD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(DHCPD_IMAGE_UUID)" -t $(DHCPD_BITS) \
+		-o "$(DHCPD_MANTA_BIT)" -p $(DHCPD_PKGSRC) \
+		-t $(DHCPD_EXTRA_TARBALLS) -n $(DHCPD_IMAGE_NAME) \
+		-v $(_dhcpd_stamp) -d $(DHCPD_IMAGE_DESCRIPTION)
+	@echo "# Created dhcpd image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(DHCPD_MANTA_BIT)
+	@echo ""
+
 
 dhcpd_publish_image: $(DHCPD_IMAGE_BIT)
 	@echo "# Publish dhcpd image to SDC Updates repo."
@@ -568,6 +725,22 @@ $(CLOUDAPI_IMAGE_BIT): $(CLOUDAPI_BITS)
 	@echo "# Created cloudapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(CLOUDAPI_MANIFEST_BIT) $(CLOUDAPI_IMAGE_BIT)
 	@echo ""
+
+CLOUDAPI_MANTA_BIT=$(BITS_DIR)/cloudapi/cloudapi-zfs-$(_cloudapi_stamp).manta
+
+.PHONY: cloudapi_manta_image
+cloudapi_manta_image: $(CLOUDAPI_MANTA_BIT)
+
+$(CLOUDAPI_MANTA_BIT): $(CLOUDAPI_BITS)
+	@echo "# Build cloudapi_image: branch $(CLOUDAPI_BRANCH), sha $(CLOUDAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(CLOUDAPI_IMAGE_UUID)" -t $(CLOUDAPI_BITS) \
+		-o "$(CLOUDAPI_MANTA_BIT)" -p $(CLOUDAPI_PKGSRC) \
+		-t $(CLOUDAPI_EXTRA_TARBALLS) -n $(CLOUDAPI_IMAGE_NAME) \
+		-v $(_cloudapi_stamp) -d $(CLOUDAPI_IMAGE_DESCRIPTION)
+	@echo "# Created cloudapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(CLOUDAPI_MANTA_BIT)
+	@echo ""
+
 
 cloudapi_publish_image: $(CLOUDAPI_IMAGE_BIT)
 	@echo "# Publish cloudapi image to SDC Updates repo."
@@ -612,6 +785,22 @@ $(MANATEE_IMAGE_BIT): $(MANATEE_BITS)
 	@ls -1 $(MANATEE_MANIFEST_BIT) $(MANATEE_IMAGE_BIT)
 	@echo ""
 
+MANATEE_MANTA_BIT=$(BITS_DIR)/manatee/manatee-zfs-$(_manatee_stamp).manta
+
+.PHONY: manatee_manta_image
+manatee_manta_image: $(MANATEE_MANTA_BIT)
+
+$(MANATEE_MANTA_BIT): $(MANATEE_BITS)
+	@echo "# Build manatee_image: branch $(MANATEE_BRANCH), sha $(MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MANATEE_IMAGE_UUID)" -t $(MANATEE_BITS) \
+		-o "$(MANATEE_MANTA_BIT)" -p $(MANATEE_PKGSRC) \
+		-t $(MANATEE_EXTRA_TARBALLS) -n $(MANATEE_IMAGE_NAME) \
+		-v $(_manatee_stamp) -d $(MANATEE_IMAGE_DESCRIPTION)
+	@echo "# Created manatee image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MANATEE_MANTA_BIT)
+	@echo ""
+
+
 manatee_publish_image: $(MANATEE_IMAGE_BIT)
 	@echo "# Publish manatee image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(MANATEE_MANIFEST_BIT) -f $(MANATEE_IMAGE_BIT)
@@ -653,6 +842,22 @@ $(WORKFLOW_IMAGE_BIT): $(WORKFLOW_BITS)
 	@echo "# Created workflow image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(WORKFLOW_MANIFEST_BIT) $(WORKFLOW_IMAGE_BIT)
 	@echo ""
+
+WORKFLOW_MANTA_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_workflow_stamp).manta
+
+.PHONY: workflow_manta_image
+workflow_manta_image: $(WORKFLOW_MANTA_BIT)
+
+$(WORKFLOW_MANTA_BIT): $(WORKFLOW_BITS)
+	@echo "# Build workflow_image: branch $(WORKFLOW_BRANCH), sha $(WORKFLOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(WORKFLOW_IMAGE_UUID)" -t $(WORKFLOW_BITS) \
+		-o "$(WORKFLOW_MANTA_BIT)" -p $(WORKFLOW_PKGSRC) \
+		-t $(WORKFLOW_EXTRA_TARBALLS) -n $(WORKFLOW_IMAGE_NAME) \
+		-v $(_workflow_stamp) -d $(WORKFLOW_IMAGE_DESCRIPTION)
+	@echo "# Created workflow image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(WORKFLOW_MANTA_BIT)
+	@echo ""
+
 
 workflow_publish_image: $(WORKFLOW_IMAGE_BIT)
 	@echo "# Publish workflow image to SDC Updates repo."
@@ -697,6 +902,22 @@ $(VMAPI_IMAGE_BIT): $(VMAPI_BITS)
 	@echo "# Created vmapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(VMAPI_MANIFEST_BIT) $(VMAPI_IMAGE_BIT)
 	@echo ""
+
+VMAPI_MANTA_BIT=$(BITS_DIR)/vmapi/vmapi-zfs-$(_vmapi_stamp).manta
+
+.PHONY: vmapi_manta_image
+vmapi_manta_image: $(VMAPI_MANTA_BIT)
+
+$(VMAPI_MANTA_BIT): $(VMAPI_BITS)
+	@echo "# Build vmapi_image: branch $(VMAPI_BRANCH), sha $(VMAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(VMAPI_IMAGE_UUID)" -t $(VMAPI_BITS) \
+		-o "$(VMAPI_MANTA_BIT)" -p $(VMAPI_PKGSRC) \
+		-t $(VMAPI_EXTRA_TARBALLS) -n $(VMAPI_IMAGE_NAME) \
+		-v $(_vmapi_stamp) -d $(VMAPI_IMAGE_DESCRIPTION)
+	@echo "# Created vmapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(VMAPI_MANTA_BIT)
+	@echo ""
+
 
 vmapi_publish_image: $(VMAPI_IMAGE_BIT)
 	@echo "# Publish vmapi image to SDC Updates repo."
@@ -743,6 +964,22 @@ $(DAPI_IMAGE_BIT): $(DAPI_BITS)
 	@ls -1 $(DAPI_MANIFEST_BIT) $(DAPI_IMAGE_BIT)
 	@echo ""
 
+DAPI_MANTA_BIT=$(BITS_DIR)/dapi/dapi-zfs-$(_dapi_stamp).manta
+
+.PHONY: dapi_manta_image
+dapi_manta_image: $(DAPI_MANTA_BIT)
+
+$(DAPI_MANTA_BIT): $(DAPI_BITS)
+	@echo "# Build dapi_image: branch $(DAPI_BRANCH), sha $(DAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(DAPI_IMAGE_UUID)" -t $(DAPI_BITS) \
+		-o "$(DAPI_MANTA_BIT)" -p $(DAPI_PKGSRC) \
+		-t $(DAPI_EXTRA_TARBALLS) -n $(DAPI_IMAGE_NAME) \
+		-v $(_dapi_stamp) -d $(DAPI_IMAGE_DESCRIPTION)
+	@echo "# Created dapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(DAPI_MANTA_BIT)
+	@echo ""
+
+
 dapi_publish_image: $(DAPI_IMAGE_BIT)
 	@echo "# Publish dapi image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(DAPI_MANIFEST_BIT) -f $(DAPI_IMAGE_BIT)
@@ -787,6 +1024,22 @@ $(PAPI_IMAGE_BIT): $(PAPI_BITS)
 	@echo "# Created papi image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(PAPI_MANIFEST_BIT) $(PAPI_IMAGE_BIT)
 	@echo ""
+
+PAPI_MANTA_BIT=$(BITS_DIR)/papi/papi-zfs-$(_papi_stamp).manta
+
+.PHONY: papi_manta_image
+papi_manta_image: $(PAPI_MANTA_BIT)
+
+$(PAPI_MANTA_BIT): $(PAPI_BITS)
+	@echo "# Build papi_image: branch $(PAPI_BRANCH), sha $(PAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(PAPI_IMAGE_UUID)" -t $(PAPI_BITS) \
+		-o "$(PAPI_MANTA_BIT)" -p $(PAPI_PKGSRC) \
+		-t $(PAPI_EXTRA_TARBALLS) -n $(PAPI_IMAGE_NAME) \
+		-v $(_papi_stamp) -d $(PAPI_IMAGE_DESCRIPTION)
+	@echo "# Created papi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(PAPI_MANTA_BIT)
+	@echo ""
+
 
 papi_publish_image: $(PAPI_IMAGE_BIT)
 	@echo "# Publish papi image to SDC Updates repo."
@@ -853,6 +1106,22 @@ $(IMGAPI_IMAGE_BIT): $(IMGAPI_BITS)
 	@ls -1 $(IMGAPI_MANIFEST_BIT) $(IMGAPI_IMAGE_BIT)
 	@echo ""
 
+IMGAPI_MANTA_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_stamp).manta
+
+.PHONY: imgapi_manta_image
+imgapi_manta_image: $(IMGAPI_MANTA_BIT)
+
+$(IMGAPI_MANTA_BIT): $(IMGAPI_BITS)
+	@echo "# Build imgapi_image: branch $(IMGAPI_BRANCH), sha $(IMGAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(IMGAPI_IMAGE_UUID)" -t $(IMGAPI_BITS) \
+		-o "$(IMGAPI_MANTA_BIT)" -p $(IMGAPI_PKGSRC) \
+		-t $(IMGAPI_EXTRA_TARBALLS) -n $(IMGAPI_IMAGE_NAME) \
+		-v $(_imgapi_stamp) -d $(IMGAPI_IMAGE_DESCRIPTION)
+	@echo "# Created imgapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(IMGAPI_MANTA_BIT)
+	@echo ""
+
+
 imgapi_publish_image: $(IMGAPI_IMAGE_BIT)
 	@echo "# Publish imgapi image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(IMGAPI_MANIFEST_BIT) -f $(IMGAPI_IMAGE_BIT)
@@ -892,6 +1161,22 @@ $(SDC_IMAGE_BIT): $(SDC_BITS)
 	@echo "# Created sdc image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(SDC_MANIFEST_BIT) $(SDC_IMAGE_BIT)
 	@echo ""
+
+SDC_MANTA_BIT=$(BITS_DIR)/sdc/sdc-zfs-$(_sdc_stamp).manta
+
+.PHONY: sdc_manta_image
+sdc_manta_image: $(SDC_MANTA_BIT)
+
+$(SDC_MANTA_BIT): $(SDC_BITS)
+	@echo "# Build sdc_image: branch $(SDC_BRANCH), sha $(SDC_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(SDC_IMAGE_UUID)" -t $(SDC_BITS) \
+		-o "$(SDC_MANTA_BIT)" -p $(SDC_PKGSRC) \
+		-t $(SDC_EXTRA_TARBALLS) -n $(SDC_IMAGE_NAME) \
+		-v $(_sdc_stamp) -d $(SDC_IMAGE_DESCRIPTION)
+	@echo "# Created sdc image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(SDC_MANTA_BIT)
+	@echo ""
+
 
 sdc_publish_image: $(SDC_IMAGE_BIT)
 	@echo "# Publish sdc image to SDC Updates repo."
@@ -935,6 +1220,22 @@ $(VCAPI_IMAGE_BIT): $(VCAPI_BITS)
 	@echo "# Created vcapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(VCAPI_MANIFEST_BIT) $(VCAPI_IMAGE_BIT)
 	@echo ""
+
+VCAPI_MANTA_BIT=$(BITS_DIR)/vcapi/vcapi-zfs-$(_vcapi_stamp).manta
+
+.PHONY: vcapi_manta_image
+vcapi_manta_image: $(VCAPI_MANTA_BIT)
+
+$(VCAPI_MANTA_BIT): $(VCAPI_BITS)
+	@echo "# Build vcapi_image: branch $(VCAPI_BRANCH), sha $(VCAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(VCAPI_IMAGE_UUID)" -t $(VCAPI_BITS) \
+		-o "$(VCAPI_MANTA_BIT)" -p $(VCAPI_PKGSRC) \
+		-t $(VCAPI_EXTRA_TARBALLS) -n $(VCAPI_IMAGE_NAME) \
+		-v $(_vcapi_stamp) -d $(VCAPI_IMAGE_DESCRIPTION)
+	@echo "# Created vcapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(VCAPI_MANTA_BIT)
+	@echo ""
+
 
 vcapi_publish_image: $(VCAPI_IMAGE_BIT)
 	@echo "# Publish vcapi image to SDC Updates repo."
@@ -1165,6 +1466,22 @@ $(CNAPI_IMAGE_BIT): $(CNAPI_BITS)
 	@ls -1 $(CNAPI_MANIFEST_BIT) $(CNAPI_IMAGE_BIT)
 	@echo ""
 
+CNAPI_MANTA_BIT=$(BITS_DIR)/cnapi/cnapi-zfs-$(_cnapi_stamp).manta
+
+.PHONY: cnapi_manta_image
+cnapi_manta_image: $(CNAPI_MANTA_BIT)
+
+$(CNAPI_MANTA_BIT): $(CNAPI_BITS)
+	@echo "# Build cnapi_image: branch $(CNAPI_BRANCH), sha $(CNAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(CNAPI_IMAGE_UUID)" -t $(CNAPI_BITS) \
+		-o "$(CNAPI_MANTA_BIT)" -p $(CNAPI_PKGSRC) \
+		-t $(CNAPI_EXTRA_TARBALLS) -n $(CNAPI_IMAGE_NAME) \
+		-v $(_cnapi_stamp) -d $(CNAPI_IMAGE_DESCRIPTION)
+	@echo "# Created cnapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(CNAPI_MANTA_BIT)
+	@echo ""
+
+
 cnapi_publish_image: $(CNAPI_IMAGE_BIT)
 	@echo "# Publish cnapi image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(CNAPI_MANIFEST_BIT) -f $(CNAPI_IMAGE_BIT)
@@ -1208,6 +1525,22 @@ $(KEYAPI_IMAGE_BIT): $(KEYAPI_BITS)
 	@echo "# Created keyapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(KEYAPI_MANIFEST_BIT) $(KEYAPI_IMAGE_BIT)
 	@echo ""
+
+KEYAPI_MANTA_BIT=$(BITS_DIR)/keyapi/keyapi-zfs-$(_keyapi_stamp).manta
+
+.PHONY: keyapi_manta_image
+keyapi_manta_image: $(KEYAPI_MANTA_BIT)
+
+$(KEYAPI_MANTA_BIT): $(KEYAPI_BITS)
+	@echo "# Build keyapi_image: branch $(KEYAPI_BRANCH), sha $(KEYAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(KEYAPI_IMAGE_UUID)" -t $(KEYAPI_BITS) \
+		-o "$(KEYAPI_MANTA_BIT)" -p $(KEYAPI_PKGSRC) \
+		-t $(KEYAPI_EXTRA_TARBALLS) -n $(KEYAPI_IMAGE_NAME) \
+		-v $(_keyapi_stamp) -d $(KEYAPI_IMAGE_DESCRIPTION)
+	@echo "# Created keyapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(KEYAPI_MANTA_BIT)
+	@echo ""
+
 
 keyapi_publish_image: $(KEYAPI_IMAGE_BIT)
 	@echo "# Publish keyapi image to SDC Updates repo."
@@ -1253,6 +1586,22 @@ $(SDCSSO_IMAGE_BIT): $(SDCSSO_BITS)
 	@ls -1 $(SDCSSO_MANIFEST_BIT) $(SDCSSO_IMAGE_BIT)
 	@echo ""
 
+SDCSSO_MANTA_BIT=$(BITS_DIR)/sdcsso/sdcsso-zfs-$(_sdcsso_stamp).manta
+
+.PHONY: sdcsso_manta_image
+sdcsso_manta_image: $(SDCSSO_MANTA_BIT)
+
+$(SDCSSO_MANTA_BIT): $(SDCSSO_BITS)
+	@echo "# Build sdcsso_image: branch $(SDCSSO_BRANCH), sha $(SDCSSO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(SDCSSO_IMAGE_UUID)" -t $(SDCSSO_BITS) \
+		-o "$(SDCSSO_MANTA_BIT)" -p $(SDCSSO_PKGSRC) \
+		-t $(SDCSSO_EXTRA_TARBALLS) -n $(SDCSSO_IMAGE_NAME) \
+		-v $(_sdcsso_stamp) -d $(SDCSSO_IMAGE_DESCRIPTION)
+	@echo "# Created sdcsso image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(SDCSSO_MANTA_BIT)
+	@echo ""
+
+
 sdcsso_publish_image: $(SDCSSO_IMAGE_BIT)
 	@echo "# Publish sdcsso image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(SDCSSO_MANIFEST_BIT) -f $(SDCSSO_IMAGE_BIT)
@@ -1296,6 +1645,22 @@ $(FWAPI_IMAGE_BIT): $(FWAPI_BITS)
 	@echo "# Created fwapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(FWAPI_MANIFEST_BIT) $(FWAPI_IMAGE_BIT)
 	@echo ""
+
+FWAPI_MANTA_BIT=$(BITS_DIR)/fwapi/fwapi-zfs-$(_fwapi_stamp).manta
+
+.PHONY: fwapi_manta_image
+fwapi_manta_image: $(FWAPI_MANTA_BIT)
+
+$(FWAPI_MANTA_BIT): $(FWAPI_BITS)
+	@echo "# Build fwapi_image: branch $(FWAPI_BRANCH), sha $(FWAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(FWAPI_IMAGE_UUID)" -t $(FWAPI_BITS) \
+		-o "$(FWAPI_MANTA_BIT)" -p $(FWAPI_PKGSRC) \
+		-t $(FWAPI_EXTRA_TARBALLS) -n $(FWAPI_IMAGE_NAME) \
+		-v $(_fwapi_stamp) -d $(FWAPI_IMAGE_DESCRIPTION)
+	@echo "# Created fwapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(FWAPI_MANTA_BIT)
+	@echo ""
+
 
 fwapi_publish_image: $(FWAPI_IMAGE_BIT)
 	@echo "# Publish fwapi image to SDC Updates repo."
@@ -1341,6 +1706,22 @@ $(NAPI_IMAGE_BIT): $(NAPI_BITS)
 	@echo "# Created napi image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(NAPI_MANIFEST_BIT) $(NAPI_IMAGE_BIT)
 	@echo ""
+
+NAPI_MANTA_BIT=$(BITS_DIR)/napi/napi-zfs-$(_napi_stamp).manta
+
+.PHONY: napi_manta_image
+napi_manta_image: $(NAPI_MANTA_BIT)
+
+$(NAPI_MANTA_BIT): $(NAPI_BITS)
+	@echo "# Build napi_image: branch $(NAPI_BRANCH), sha $(NAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(NAPI_IMAGE_UUID)" -t $(NAPI_BITS) \
+		-o "$(NAPI_MANTA_BIT)" -p $(NAPI_PKGSRC) \
+		-t $(NAPI_EXTRA_TARBALLS) -n $(NAPI_IMAGE_NAME) \
+		-v $(_napi_stamp) -d $(NAPI_IMAGE_DESCRIPTION)
+	@echo "# Created napi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(NAPI_MANTA_BIT)
+	@echo ""
+
 
 napi_publish_image: $(NAPI_IMAGE_BIT)
 	@echo "# Publish napi image to SDC Updates repo."
@@ -1388,6 +1769,22 @@ $(SAPI_IMAGE_BIT): $(SAPI_BITS)
 	@ls -1 $(SAPI_MANIFEST_BIT) $(SAPI_IMAGE_BIT)
 	@echo ""
 
+SAPI_MANTA_BIT=$(BITS_DIR)/sapi/sapi-zfs-$(_sapi_stamp).manta
+
+.PHONY: sapi_manta_image
+sapi_manta_image: $(SAPI_MANTA_BIT)
+
+$(SAPI_MANTA_BIT): $(SAPI_BITS)
+	@echo "# Build sapi_image: branch $(SAPI_BRANCH), sha $(SAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(SAPI_IMAGE_UUID)" -t $(SAPI_BITS) \
+		-o "$(SAPI_MANTA_BIT)" -p $(SAPI_PKGSRC) \
+		-t $(SAPI_EXTRA_TARBALLS) -n $(SAPI_IMAGE_NAME) \
+		-v $(_sapi_stamp) -d $(SAPI_IMAGE_DESCRIPTION)
+	@echo "# Created sapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(SAPI_MANTA_BIT)
+	@echo ""
+
+
 sapi_publish_image: $(SAPI_IMAGE_BIT)
 	@echo "# Publish sapi image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(SAPI_MANIFEST_BIT) -f $(SAPI_IMAGE_BIT)
@@ -1433,6 +1830,22 @@ $(MARLIN_IMAGE_BIT): $(MARLIN_BITS)
 	@ls -1 $(MARLIN_MANIFEST_BIT) $(MARLIN_IMAGE_BIT)
 	@echo ""
 
+MARLIN_MANTA_BIT=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).manta
+
+.PHONY: marlin_manta_image
+marlin_manta_image: $(MARLIN_MANTA_BIT)
+
+$(MARLIN_MANTA_BIT): $(MARLIN_BITS)
+	@echo "# Build marlin_image: branch $(MARLIN_BRANCH), sha $(MARLIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MARLIN_IMAGE_UUID)" -t $(MARLIN_BITS) \
+		-o "$(MARLIN_MANTA_BIT)" -p $(MARLIN_PKGSRC) \
+		-t $(MARLIN_EXTRA_TARBALLS) -n $(MARLIN_IMAGE_NAME) \
+		-v $(_marlin_stamp) -d $(MARLIN_IMAGE_DESCRIPTION)
+	@echo "# Created marlin image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MARLIN_MANTA_BIT)
+	@echo ""
+
+
 marlin_publish_image: $(MARLIN_IMAGE_BIT)
 	@echo "# Publish marlin image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(MARLIN_MANIFEST_BIT) -f $(MARLIN_IMAGE_BIT)
@@ -1473,6 +1886,22 @@ $(MEDUSA_IMAGE_BIT): $(MEDUSA_BITS)
 	@ls -1 $(MEDUSA_MANIFEST_BIT) $(MEDUSA_IMAGE_BIT)
 	@echo ""
 
+MEDUSA_MANTA_BIT=$(BITS_DIR)/medusa/medusa-zfs-$(_medusa_stamp).manta
+
+.PHONY: medusa_manta_image
+medusa_manta_image: $(MEDUSA_MANTA_BIT)
+
+$(MEDUSA_MANTA_BIT): $(MEDUSA_BITS)
+	@echo "# Build medusa_image: branch $(MEDUSA_BRANCH), sha $(MEDUSA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MEDUSA_IMAGE_UUID)" -t $(MEDUSA_BITS) \
+		-o "$(MEDUSA_MANTA_BIT)" -p $(MEDUSA_PKGSRC) \
+		-t $(MEDUSA_EXTRA_TARBALLS) -n $(MEDUSA_IMAGE_NAME) \
+		-v $(_medusa_stamp) -d $(MEDUSA_IMAGE_DESCRIPTION)
+	@echo "# Created medusa image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MEDUSA_MANTA_BIT)
+	@echo ""
+
+
 .PHONY: medusa_publish_image
 medusa_publish_image: $(MEDUSA_IMAGE_BIT)
 	@echo "# Publish medusa image to SDC Updates repo."
@@ -1512,6 +1941,22 @@ $(MAHI_IMAGE_BIT): $(MAHI_BITS)
 	@echo "# Created mahi image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MAHI_MANIFEST_BIT) $(MAHI_IMAGE_BIT)
 	@echo ""
+
+MAHI_MANTA_BIT=$(BITS_DIR)/mahi/mahi-zfs-$(_mahi_stamp).manta
+
+.PHONY: mahi_manta_image
+mahi_manta_image: $(MAHI_MANTA_BIT)
+
+$(MAHI_MANTA_BIT): $(MAHI_BITS)
+	@echo "# Build mahi_image: branch $(MAHI_BRANCH), sha $(MAHI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MAHI_IMAGE_UUID)" -t $(MAHI_BITS) \
+		-o "$(MAHI_MANTA_BIT)" -p $(MAHI_PKGSRC) \
+		-t $(MAHI_EXTRA_TARBALLS) -n $(MAHI_IMAGE_NAME) \
+		-v $(_mahi_stamp) -d $(MAHI_IMAGE_DESCRIPTION)
+	@echo "# Created mahi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MAHI_MANTA_BIT)
+	@echo ""
+
 
 mahi_publish_image: $(MAHI_IMAGE_BIT)
 	@echo "# Publish mahi image to SDC Updates repo."
@@ -1554,6 +1999,22 @@ $(MANTA_WORKFLOW_IMAGE_BIT): $(MANTA_WORKFLOW_BITS)
 	@echo "# Created manta-workflow image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MANTA_WORKFLOW_MANIFEST_BIT) $(MANTA_WORKFLOW_IMAGE_BIT)
 	@echo ""
+
+MANTA_WORKFLOW_MANTA_BIT=$(BITS_DIR)/manta-workflow/manta-workflow-zfs-$(_manta-workflow_stamp).manta
+
+.PHONY: manta-workflow_manta_image
+manta-workflow_manta_image: $(MANTA_WORKFLOW_MANTA_BIT)
+
+$(MANTA_WORKFLOW_MANTA_BIT): $(MANTA_WORKFLOW_BITS)
+	@echo "# Build manta-workflow_image: branch $(MANTA_WORKFLOW_BRANCH), sha $(MANTA_WORKFLOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MANTA_WORKFLOW_IMAGE_UUID)" -t $(MANTA_WORKFLOW_BITS) \
+		-o "$(MANTA_WORKFLOW_MANTA_BIT)" -p $(MANTA_WORKFLOW_PKGSRC) \
+		-t $(MANTA_WORKFLOW_EXTRA_TARBALLS) -n $(MANTA_WORKFLOW_IMAGE_NAME) \
+		-v $(_manta-workflow_stamp) -d $(MANTA_WORKFLOW_IMAGE_DESCRIPTION)
+	@echo "# Created manta-workflow image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MANTA_WORKFLOW_MANTA_BIT)
+	@echo ""
+
 
 manta-workflow_publish_image: $(MANTA_WORKFLOW_IMAGE_BIT)
 	@echo "# Publish manta-workflow image to SDC Updates repo."
@@ -1599,6 +2060,22 @@ $(MOLA_IMAGE_BIT): $(MOLA_BITS)
 	@ls -1 $(MOLA_MANIFEST_BIT) $(MOLA_IMAGE_BIT)
 	@echo ""
 
+MOLA_MANTA_BIT=$(BITS_DIR)/mola/mola-zfs-$(_mola_stamp).manta
+
+.PHONY: mola_manta_image
+mola_manta_image: $(MOLA_MANTA_BIT)
+
+$(MOLA_MANTA_BIT): $(MOLA_BITS)
+	@echo "# Build mola_image: branch $(MOLA_BRANCH), sha $(MOLA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MOLA_IMAGE_UUID)" -t $(MOLA_BITS) \
+		-o "$(MOLA_MANTA_BIT)" -p $(MOLA_PKGSRC) \
+		-t $(MOLA_EXTRA_TARBALLS) -n $(MOLA_IMAGE_NAME) \
+		-v $(_mola_stamp) -d $(MOLA_IMAGE_DESCRIPTION)
+	@echo "# Created mola image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MOLA_MANTA_BIT)
+	@echo ""
+
+
 mola_publish_image: $(MOLA_IMAGE_BIT)
 	@echo "# Publish mola image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(MOLA_MANIFEST_BIT) -f $(MOLA_IMAGE_BIT)
@@ -1640,6 +2117,22 @@ $(MADTOM_IMAGE_BIT): $(MADTOM_BITS)
 	@echo "# Created madtom image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MADTOM_MANIFEST_BIT) $(MADTOM_IMAGE_BIT)
 	@echo ""
+
+MADTOM_MANTA_BIT=$(BITS_DIR)/madtom/madtom-zfs-$(_madtom_stamp).manta
+
+.PHONY: madtom_manta_image
+madtom_manta_image: $(MADTOM_MANTA_BIT)
+
+$(MADTOM_MANTA_BIT): $(MADTOM_BITS)
+	@echo "# Build madtom_image: branch $(MADTOM_BRANCH), sha $(MADTOM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MADTOM_IMAGE_UUID)" -t $(MADTOM_BITS) \
+		-o "$(MADTOM_MANTA_BIT)" -p $(MADTOM_PKGSRC) \
+		-t $(MADTOM_EXTRA_TARBALLS) -n $(MADTOM_IMAGE_NAME) \
+		-v $(_madtom_stamp) -d $(MADTOM_IMAGE_DESCRIPTION)
+	@echo "# Created madtom image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MADTOM_MANTA_BIT)
+	@echo ""
+
 
 madtom_publish_image: $(MADTOM_IMAGE_BIT)
 	@echo "# Publish madtom image to SDC Updates repo."
@@ -1683,6 +2176,22 @@ $(MORAY_IMAGE_BIT): $(MORAY_BITS)
 	@ls -1 $(MORAY_MANIFEST_BIT) $(MORAY_IMAGE_BIT)
 	@echo ""
 
+MORAY_MANTA_BIT=$(BITS_DIR)/moray/moray-zfs-$(_moray_stamp).manta
+
+.PHONY: moray_manta_image
+moray_manta_image: $(MORAY_MANTA_BIT)
+
+$(MORAY_MANTA_BIT): $(MORAY_BITS)
+	@echo "# Build moray_image: branch $(MORAY_BRANCH), sha $(MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MORAY_IMAGE_UUID)" -t $(MORAY_BITS) \
+		-o "$(MORAY_MANTA_BIT)" -p $(MORAY_PKGSRC) \
+		-t $(MORAY_EXTRA_TARBALLS) -n $(MORAY_IMAGE_NAME) \
+		-v $(_moray_stamp) -d $(MORAY_IMAGE_DESCRIPTION)
+	@echo "# Created moray image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MORAY_MANTA_BIT)
+	@echo ""
+
+
 moray_publish_image: $(MORAY_IMAGE_BIT)
 	@echo "# Publish moray image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(MORAY_MANIFEST_BIT) -f $(MORAY_IMAGE_BIT)
@@ -1724,6 +2233,22 @@ $(ELECTRIC_MORAY_IMAGE_BIT): $(ELECTRIC_MORAY_BITS)
 	@echo "# Created electric-moray image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(ELECTRIC_MORAY_MANIFEST_BIT) $(ELECTRIC_MORAY_IMAGE_BIT)
 	@echo ""
+
+ELECTRIC_MORAY_MANTA_BIT=$(BITS_DIR)/electric-moray/electric-moray-zfs-$(_electric-moray_stamp).manta
+
+.PHONY: electric-moray_manta_image
+electric-moray_manta_image: $(ELECTRIC_MORAY_MANTA_BIT)
+
+$(ELECTRIC_MORAY_MANTA_BIT): $(ELECTRIC_MORAY_BITS)
+	@echo "# Build electric-moray_image: branch $(ELECTRIC_MORAY_BRANCH), sha $(ELECTRIC_MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(ELECTRIC_MORAY_IMAGE_UUID)" -t $(ELECTRIC_MORAY_BITS) \
+		-o "$(ELECTRIC_MORAY_MANTA_BIT)" -p $(ELECTRIC_MORAY_PKGSRC) \
+		-t $(ELECTRIC_MORAY_EXTRA_TARBALLS) -n $(ELECTRIC_MORAY_IMAGE_NAME) \
+		-v $(_electric-moray_stamp) -d $(ELECTRIC_MORAY_IMAGE_DESCRIPTION)
+	@echo "# Created electric-moray image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(ELECTRIC_MORAY_MANTA_BIT)
+	@echo ""
+
 
 electric-moray_publish_image: $(ELECTRIC_MORAY_IMAGE_BIT)
 	@echo "# Publish electric-moray image to SDC Updates repo."
@@ -1767,6 +2292,22 @@ $(MUSKIE_IMAGE_BIT): $(MUSKIE_BITS)
 	@ls -1 $(MUSKIE_MANIFEST_BIT) $(MUSKIE_IMAGE_BIT)
 	@echo ""
 
+MUSKIE_MANTA_BIT=$(BITS_DIR)/muskie/muskie-zfs-$(_muskie_stamp).manta
+
+.PHONY: muskie_manta_image
+muskie_manta_image: $(MUSKIE_MANTA_BIT)
+
+$(MUSKIE_MANTA_BIT): $(MUSKIE_BITS)
+	@echo "# Build muskie_image: branch $(MUSKIE_BRANCH), sha $(MUSKIE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MUSKIE_IMAGE_UUID)" -t $(MUSKIE_BITS) \
+		-o "$(MUSKIE_MANTA_BIT)" -p $(MUSKIE_PKGSRC) \
+		-t $(MUSKIE_EXTRA_TARBALLS) -n $(MUSKIE_IMAGE_NAME) \
+		-v $(_muskie_stamp) -d $(MUSKIE_IMAGE_DESCRIPTION)
+	@echo "# Created muskie image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MUSKIE_MANTA_BIT)
+	@echo ""
+
+
 muskie_publish_image: $(MUSKIE_IMAGE_BIT)
 	@echo "# Publish muskie image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(MUSKIE_MANIFEST_BIT) -f $(MUSKIE_IMAGE_BIT)
@@ -1808,6 +2349,22 @@ $(WRASSE_IMAGE_BIT): $(WRASSE_BITS)
 	@echo "# Created wrasse image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(WRASSE_MANIFEST_BIT) $(WRASSE_IMAGE_BIT)
 	@echo ""
+
+WRASSE_MANTA_BIT=$(BITS_DIR)/wrasse/wrasse-zfs-$(_wrasse_stamp).manta
+
+.PHONY: wrasse_manta_image
+wrasse_manta_image: $(WRASSE_MANTA_BIT)
+
+$(WRASSE_MANTA_BIT): $(WRASSE_BITS)
+	@echo "# Build wrasse_image: branch $(WRASSE_BRANCH), sha $(WRASSE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(WRASSE_IMAGE_UUID)" -t $(WRASSE_BITS) \
+		-o "$(WRASSE_MANTA_BIT)" -p $(WRASSE_PKGSRC) \
+		-t $(WRASSE_EXTRA_TARBALLS) -n $(WRASSE_IMAGE_NAME) \
+		-v $(_wrasse_stamp) -d $(WRASSE_IMAGE_DESCRIPTION)
+	@echo "# Created wrasse image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(WRASSE_MANTA_BIT)
+	@echo ""
+
 
 wrasse_publish_image: $(WRASSE_IMAGE_BIT)
 	@echo "# Publish wrasse image to SDC Updates repo."
@@ -1912,6 +2469,22 @@ $(BINDER_IMAGE_BIT): $(BINDER_BITS)
 	@ls -1 $(BINDER_MANIFEST_BIT) $(BINDER_IMAGE_BIT)
 	@echo ""
 
+BINDER_MANTA_BIT=$(BITS_DIR)/binder/binder-zfs-$(_binder_stamp).manta
+
+.PHONY: binder_manta_image
+binder_manta_image: $(BINDER_MANTA_BIT)
+
+$(BINDER_MANTA_BIT): $(BINDER_BITS)
+	@echo "# Build binder_image: branch $(BINDER_BRANCH), sha $(BINDER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(BINDER_IMAGE_UUID)" -t $(BINDER_BITS) \
+		-o "$(BINDER_MANTA_BIT)" -p $(BINDER_PKGSRC) \
+		-t $(BINDER_EXTRA_TARBALLS) -n $(BINDER_IMAGE_NAME) \
+		-v $(_binder_stamp) -d $(BINDER_IMAGE_DESCRIPTION)
+	@echo "# Created binder image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(BINDER_MANTA_BIT)
+	@echo ""
+
+
 binder_publish_image: $(BINDER_IMAGE_BIT)
 	@echo "# Publish binder image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(BINDER_MANIFEST_BIT) -f $(BINDER_IMAGE_BIT)
@@ -1950,6 +2523,22 @@ $(MUPPET_IMAGE_BIT): $(MUPPET_BITS)
 	@echo "# Created muppet image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MUPPET_MANIFEST_BIT) $(MUPPET_IMAGE_BIT)
 	@echo ""
+
+MUPPET_MANTA_BIT=$(BITS_DIR)/muppet/muppet-zfs-$(_muppet_stamp).manta
+
+.PHONY: muppet_manta_image
+muppet_manta_image: $(MUPPET_MANTA_BIT)
+
+$(MUPPET_MANTA_BIT): $(MUPPET_BITS)
+	@echo "# Build muppet_image: branch $(MUPPET_BRANCH), sha $(MUPPET_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MUPPET_IMAGE_UUID)" -t $(MUPPET_BITS) \
+		-o "$(MUPPET_MANTA_BIT)" -p $(MUPPET_PKGSRC) \
+		-t $(MUPPET_EXTRA_TARBALLS) -n $(MUPPET_IMAGE_NAME) \
+		-v $(_muppet_stamp) -d $(MUPPET_IMAGE_DESCRIPTION)
+	@echo "# Created muppet image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MUPPET_MANTA_BIT)
+	@echo ""
+
 
 muppet_publish_image: $(MUPPET_IMAGE_BIT)
 	@echo "# Publish muppet image to SDC Updates repo."
@@ -2010,6 +2599,22 @@ $(MAKO_IMAGE_BIT): $(MAKO_BITS)
 	@echo "# Created mako image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MAKO_MANIFEST_BIT) $(MAKO_IMAGE_BIT)
 	@echo ""
+
+MAKO_MANTA_BIT=$(BITS_DIR)/mako/mako-zfs-$(_mako_stamp).manta
+
+.PHONY: mako_manta_image
+mako_manta_image: $(MAKO_MANTA_BIT)
+
+$(MAKO_MANTA_BIT): $(MAKO_BITS)
+	@echo "# Build mako_image: branch $(MAKO_BRANCH), sha $(MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MAKO_IMAGE_UUID)" -t $(MAKO_BITS) \
+		-o "$(MAKO_MANTA_BIT)" -p $(MAKO_PKGSRC) \
+		-t $(MAKO_EXTRA_TARBALLS) -n $(MAKO_IMAGE_NAME) \
+		-v $(_mako_stamp) -d $(MAKO_IMAGE_DESCRIPTION)
+	@echo "# Created mako image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MAKO_MANTA_BIT)
+	@echo ""
+
 
 mako_publish_image: $(MAKO_IMAGE_BIT)
 	@echo "# Publish mako image to SDC Updates repo."
@@ -2165,6 +2770,22 @@ $(MANTA_DEPLOYMENT_IMAGE_BIT): $(MANTA_DEPLOYMENT_BITS)
 	@echo "# Created manta-deployment image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MANTA_DEPLOYMENT_MANIFEST_BIT) $(MANTA_DEPLOYMENT_IMAGE_BIT)
 	@echo ""
+
+MANTA_DEPLOYMENT_MANTA_BIT=$(BITS_DIR)/manta-deployment/manta-deployment-zfs-$(_manta-deployment_stamp).manta
+
+.PHONY: manta-deployment_manta_image
+manta-deployment_manta_image: $(MANTA_DEPLOYMENT_MANTA_BIT)
+
+$(MANTA_DEPLOYMENT_MANTA_BIT): $(MANTA_DEPLOYMENT_BITS)
+	@echo "# Build manta-deployment_image: branch $(MANTA_DEPLOYMENT_BRANCH), sha $(MANTA_DEPLOYMENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MANTA_DEPLOYMENT_IMAGE_UUID)" -t $(MANTA_DEPLOYMENT_BITS) \
+		-o "$(MANTA_DEPLOYMENT_MANTA_BIT)" -p $(MANTA_DEPLOYMENT_PKGSRC) \
+		-t $(MANTA_DEPLOYMENT_EXTRA_TARBALLS) -n $(MANTA_DEPLOYMENT_IMAGE_NAME) \
+		-v $(_manta-deployment_stamp) -d $(MANTA_DEPLOYMENT_IMAGE_DESCRIPTION)
+	@echo "# Created manta-deployment image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MANTA_DEPLOYMENT_MANTA_BIT)
+	@echo ""
+
 
 manta-deployment_publish_image: $(MANTA_DEPLOYMENT_IMAGE_BIT)
 	@echo "# Publish manta-deployment image to SDC Updates repo."

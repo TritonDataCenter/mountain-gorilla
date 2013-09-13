@@ -61,20 +61,7 @@ if [[ -z "$UPLOAD_BRANCH" ]]; then
     UPLOAD_BRANCH=$BRANCH
 fi
 
-upload_dirs=$(mfind -t d /${MANTA_USER}/stor/${UPLOAD_BASE_DIR} -n "$UPLOAD_BRANCH-$TIMESTAMP.*" 2>/dev/null || /bin/true)
-last_upload_dir=$(echo ${upload_dirs} | tr ' ' '\n' | tail -n 1)
-
-if [[ -z "$last_upload_dir" ]]; then
-    upload_subdir=$UPLOAD_BRANCH-$TIMESTAMP
-else
-    serial=$(echo $last_upload_dir | awk -F- '{print $NF}')
-    if [[ "$serial:(-1)}" == "Z" ]]; then
-        next_serial=2
-    else
-        next_serial=$(( $serial + 1 ))
-    fi
-    upload_subdir=$UPLOAD_BRANCH-$TIMESTAMP-$next_serial
-fi
+upload_subdir=$UPLOAD_BRANCH-$TIMESTAMP
 
 start_time=$(date +%s)
 echo "Uploading bits to /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}"

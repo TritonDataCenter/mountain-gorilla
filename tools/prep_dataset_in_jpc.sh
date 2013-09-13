@@ -26,12 +26,26 @@ if [[ -z "$SDC_ACCOUNT" ]]; then
     export SDC_ACCOUNT="Joyent_Dev"
 fi
 if [[ -z "$SDC_URL" ]]; then
+    # Manta locality, use east
     export SDC_URL="https://us-east-1.api.joyentcloud.com"
 fi
 
 if [[ -z "$SDC_KEY_ID" ]]; then
     export SDC_KEY_ID="$(ssh-keygen -l -f ~/.ssh/id_rsa.pub | awk '{print $2}' | tr -d '\n')"
 fi
+
+if [[ -z "$MANTA_USER" ]]; then
+    export MANTA_USER=$SDC_ACCOUNT
+fi
+if [[ -z "$MANTA_URL" ]]; then
+    export MANTA_URL=https://us-east.manta.joyent.com
+fi
+
+if [[ -z "$MANTA_KEY_ID" ]]; then
+    export MANTA_KEY_ID="$SDC_KEY_ID"
+fi
+
+export SDC_TESTING=1
 
 # UUID of the created image/dataset.
 uuid=""
@@ -93,7 +107,7 @@ function usage() {
 
     echo "  -P PACKAGES     Package (instance / limit) name to use (eg sdc_256)"
     echo "  -o OUTPUT       Image output path. Should be of the form:"
-    echo "                  '/path/to/name.zfs.bz2'."
+    echo "                  '/path/to/name.manta'."
     echo "  -v VERSION      Version for produced image manifest."
     echo "  -n NAME         NAME for the produced image manifest."
     echo "  -d DESCRIPTION  DESCRIPTION for the produced image manifest."
@@ -163,23 +177,8 @@ if [[ -z "$image_uuid" ]]; then
   fatal "No image_uuid provided. Use the '-i' option."
 fi
 
-
-#
-# Choose a compression algorithm for the resulting image. The output file name
-# should indicate gzip or bzip2.
-#
-output_ext=${output##*.}
-output_sans_ext=${output%.*}
-if [[ "$output_ext" == "gz" ]]; then
-  compression="gzip"
-elif [[ "$output_ext" == "bz2" ]]; then
-  compression="bzip2"
-else
-  fatal "could not determine compression from output file ext: '$output_ext'"
-fi
-
 # Create the machine in the specified DC
-package="$(sdc-listpackages | json 0.id)"
+package="$(sdc-listpackages | tools/json -c 'this.name.match("smartos-image-creation")' 0.id)"
 instance_type_list="$(sdc-listpackages | json -H -a name id -d, | xargs)"
 for use_package in $instance_type_list; do
   if [[ $(echo $use_package | cut -d, -f1) == $image_package ]]; then
@@ -259,6 +258,12 @@ cat tools/clean-image.sh \
 
 sdc-stopmachine $machine
 
+state=$(sdc-getmachine $machine | json 'state')
+while [[ $state == 'running' ]]; do
+  sleep 1
+  state=$(sdc-getmachine $machine | json 'state')
+done
+
 image=$(cat <<EOM | sdc-cloudapi /my/images -X POST -d@- | json -H
 {
   "machine": "$machine",
@@ -271,12 +276,24 @@ EOM
 
 image_id=$(echo $image | json -H 'id')
 
-for i in {40..1}; do
-    sleep 3
-    if [[ -n "$(sdc-cloudapi /my/images/$image_id | json -H 'published_at')" ]]; then
+for i in {100..1}; do
+    sleep 5
+    if [[ "$(sdc-cloudapi /my/images/$image_id | json -H 'state')" != "creating" &&
+         "$(sdc-cloudapi /my/images/$image_id | json -H 'state')" != "unactivated" ]]; then
         break
     fi
 done
 
 sdc-deletemachine $machine
 
+if [[ "$(sdc-cloudapi /my/images/$image_id | json -H 'state')" != "active" ]]; then
+  echo "Error creating image"
+  exit 1
+fi
+
+mantapath=/${SDC_ACCOUNT}/stor/builds/${image_name}/$(echo ${image_version} | cut -d '-' -f1,2)/${image_name}
+mmkdir -p $mantapath
+
+sdc-cloudapi /my/images/$image_id?action=export -X POST --data "{\"manta_path\":\"${mantapath}\"}" | json -H > $output
+
+sdc-cloudapi /my/images/$image_id -X DELETE
