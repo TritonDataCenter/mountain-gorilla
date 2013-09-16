@@ -137,11 +137,6 @@ function preload_bits_from_manta() {
     if [[ -d bits/$target_base ]]; then
         return;
     fi
-    # sdcnode is stored differently
-    if [[ "$(basename $target)" == "sdcnode" ]]; then
-        preload_bits $@
-        return
-    fi
     echo ""
     echo "# preload 'bits/$target_base from Manta'"
 
@@ -222,7 +217,8 @@ function preload_bits_from_manta() {
 #   preload_bits http://download.joyent.com/pub/build/sdcnode master ""
 #
 function preload_bits() {
-    if [[ -n $USE_MANTA ]]; then
+
+    if [[ -n $USE_MANTA && "$(basename $1)" != "sdcnode" ]]; then
         preload_bits_from_manta $@
         return 0
     fi
