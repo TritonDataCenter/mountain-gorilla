@@ -297,3 +297,5 @@ mmkdir -p $mantapath
 sdc-cloudapi /my/images/$image_id?action=export -X POST --data "{\"manta_path\":\"${mantapath}\"}" | json -H > $output
 
 sdc-cloudapi /my/images/$image_id -X DELETE
+
+cat $output
