@@ -137,7 +137,11 @@ function preload_bits_from_manta() {
     if [[ -d bits/$target_base ]]; then
         return;
     fi
-
+    # sdcnode is stored differently
+    if [[ "$target" == "sdcnode" ]]; then
+        preload_bits $@
+        return
+    fi
     echo ""
     echo "# preload 'bits/$target_base from Manta'"
 
