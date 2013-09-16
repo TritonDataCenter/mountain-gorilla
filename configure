@@ -138,7 +138,7 @@ function preload_bits_from_manta() {
         return;
     fi
     # sdcnode is stored differently
-    if [[ "$target" == "sdcnode" ]]; then
+    if [[ "$(basename $target)" == "sdcnode" ]]; then
         preload_bits $@
         return
     fi
