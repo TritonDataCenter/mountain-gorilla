@@ -182,7 +182,7 @@ function preload_bits_from_manta() {
             local actual_md5=$(openssl dgst -md5 < $bit | awk '{print $NF}')
             if [[ $correct_md5 != $actual_md5 ]]; then
                 cd ..
-                rm ${MG_CACHE_DIR}/bits/$dir
+                rm -rf ${MG_CACHE_DIR}/bits/$dir
                 fatal "md5 check failure on ${MG_CACHE_DIR}/bits/$bit (actual '$actual_md5', from md5sums '$correct_md5')"
                 break
             fi
