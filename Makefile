@@ -153,7 +153,7 @@ amon_manta_image: $(AMON_MANTA_BIT)
 
 $(AMON_MANTA_BIT): $(AMON_BITS)
 	@echo "# Build amon_image: branch $(AMON_BRANCH), sha $(AMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(AMON_IMAGE_UUID)" -t $(AMON_BITS) \
+	./tools/prep_dataset_in_jpc.sh -i "$(AMON_IMAGE_UUID)" -t $(AMON_BITS_0) \
 		-o "$(AMON_MANTA_BIT)" -p $(AMON_PKGSRC) \
 		-t $(AMON_EXTRA_TARBALLS) -n $(AMON_IMAGE_NAME) \
 		-v $(_amon_stamp) -d $(AMON_IMAGE_DESCRIPTION)
@@ -217,7 +217,7 @@ ca_manta_image: $(CA_MANTA_BIT)
 
 $(CA_MANTA_BIT): $(CA_BITS)
 	@echo "# Build ca_image: branch $(CA_BRANCH), sha $(CA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(CA_IMAGE_UUID)" -t $(CA_BITS) \
+	./tools/prep_dataset_in_jpc.sh -i "$(CA_IMAGE_UUID)" -t $(CA_BITS_0) \
 		-o "$(CA_MANTA_BIT)" -p $(CA_PKGSRC) \
 		-t $(CA_EXTRA_TARBALLS) -n $(CA_IMAGE_NAME) \
 		-v $(_ca_stamp) -d $(CA_IMAGE_DESCRIPTION)

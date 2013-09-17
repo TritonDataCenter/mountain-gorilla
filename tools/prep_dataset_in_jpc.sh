@@ -145,19 +145,29 @@ while getopts ht:p:P:i:o:n:v:d: opt; do
     fi
     ;;
   i)
-    image_uuid=${OPTARG}
+    if [[ -n "${OPTARG}" ]]; then
+        image_uuid=${OPTARG}
+    fi
     ;;
   o)
-    output=$OPTARG
+    if [[ -n "${OPTARG}" ]]; then
+        output="${OPTARG}"
+    fi
     ;;
   n)
-    image_name=$OPTARG
+    if [[ -n "${OPTARG}" ]]; then
+        image_name=${OPTARG}
+    fi
     ;;
   v)
-    image_version=$OPTARG
+    if [[ -n "${OPTARG}" ]]; then
+        image_version=${OPTARG}
+    fi
     ;;
   d)
-    image_description="$OPTARG"
+    if [[ -n "${OPTARG}" ]]; then
+        image_description="${OPTARG}"
+    fi
     ;;
   \?)
     echo "Invalid flag"
@@ -171,7 +181,7 @@ fi
 
 [[ -n $image_name ]] || fatal "No image name, use '-n NAME'."
 [[ -n $image_version ]] || fatal "No image version, use '-v VERSION'."
-[[ -n $image_description ]] || fatal "No image description, use '-v DESC'."
+[[ -n $image_description ]] || image_description="$image_name" 
 
 if [[ -z "$image_uuid" ]]; then
   fatal "No image_uuid provided. Use the '-i' option."
