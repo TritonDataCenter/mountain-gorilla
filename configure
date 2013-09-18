@@ -174,22 +174,7 @@ function preload_bits_from_manta() {
             mget -O $file)
     done
 
-	for dir in ${dirs#$manta_base_path/}; do
-	    (cd ${MG_CACHE_DIR}/bits/$dir;
-        local md5sum_file=${MG_CACHE_DIR}/bits/$dir/../md5sums.txt;
-        for bit in $(find . -type f | grep -v md5sums.txt); do
-            local correct_md5=$(grep $bit $md5sum_file | cut -d ' ' -f1)
-            local actual_md5=$(openssl dgst -md5 < $bit | awk '{print $NF}')
-            if [[ $correct_md5 != $actual_md5 ]]; then
-                cd ..
-                rm -rf ${MG_CACHE_DIR}/bits/$dir
-                fatal "md5 check failure on ${MG_CACHE_DIR}/bits/$bit (actual '$actual_md5', from md5sums '$correct_md5')"
-                break
-            fi
-        done)
-    done
-
-    # Copy over to bits dir.
+	# Copy over to bits dir.
     mkdir -p bits
     [[ -d "bits/$target_base" ]] && fatal "'bits/$target_base' already exists"
     $CP_LINK -PR ${MG_CACHE_DIR}/bits/${latest_dir#$manta_base_path}/$target_base bits/$(basename $target)
