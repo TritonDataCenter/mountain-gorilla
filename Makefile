@@ -853,7 +853,7 @@ $(WORKFLOW_MANTA_BIT): $(WORKFLOW_BITS)
 	./tools/prep_dataset_in_jpc.sh -i "$(WORKFLOW_IMAGE_UUID)" -t $(WORKFLOW_BITS) \
 		-o "$(WORKFLOW_MANTA_BIT)" -p $(WORKFLOW_PKGSRC) \
 		-t $(WORKFLOW_EXTRA_TARBALLS) -n $(WORKFLOW_IMAGE_NAME) \
-		-v $(_workflow_stamp) -d $(WORKFLOW_IMAGE_DESCRIPTION)
+		-v $(_wf_stamp) -d $(WORKFLOW_IMAGE_DESCRIPTION)
 	@echo "# Created workflow image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(WORKFLOW_MANTA_BIT)
 	@echo ""
@@ -2000,7 +2000,7 @@ $(MANTA_WORKFLOW_IMAGE_BIT): $(MANTA_WORKFLOW_BITS)
 	@ls -1 $(MANTA_WORKFLOW_MANIFEST_BIT) $(MANTA_WORKFLOW_IMAGE_BIT)
 	@echo ""
 
-MANTA_WORKFLOW_MANTA_BIT=$(BITS_DIR)/manta-workflow/manta-workflow-zfs-$(_manta-workflow_stamp).manta
+MANTA_WORKFLOW_MANTA_BIT=$(BITS_DIR)/manta-workflow/manta-workflow-zfs-$(_manta-wf_stamp).manta
 
 .PHONY: manta-workflow_manta_image
 manta-workflow_manta_image: $(MANTA_WORKFLOW_MANTA_BIT)
@@ -2010,7 +2010,7 @@ $(MANTA_WORKFLOW_MANTA_BIT): $(MANTA_WORKFLOW_BITS)
 	./tools/prep_dataset_in_jpc.sh -i "$(MANTA_WORKFLOW_IMAGE_UUID)" -t $(MANTA_WORKFLOW_BITS) \
 		-o "$(MANTA_WORKFLOW_MANTA_BIT)" -p $(MANTA_WORKFLOW_PKGSRC) \
 		-t $(MANTA_WORKFLOW_EXTRA_TARBALLS) -n $(MANTA_WORKFLOW_IMAGE_NAME) \
-		-v $(_manta-workflow_stamp) -d $(MANTA_WORKFLOW_IMAGE_DESCRIPTION)
+		-v $(_manta-wf_stamp) -d $(MANTA_WORKFLOW_IMAGE_DESCRIPTION)
 	@echo "# Created manta-workflow image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MANTA_WORKFLOW_MANTA_BIT)
 	@echo ""
