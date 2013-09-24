@@ -170,8 +170,21 @@ function preload_bits_from_manta() {
     local files=$(mfind -t o $latest_dir)
     for file in $files; do
         dir=$(dirname $file)
-        (cd ${MG_CACHE_DIR}/bits/${dir#$manta_base_path};
-            mget -O $file)
+        if [[ "${file##*.}" == "manta" ]]; then
+            local targetname=$(cat targets.json | json ${target}.image_name)
+            local zfsfiles="$(mget -q $file | json -H -a image_path manifest_path)"
+            local image=$(echo $zfsfiles | cut -d ' ' -f 1)
+            local manifest=$(echo $zfsfiles | cut -d ' ' -f 2)
+            local image_targ=$(echo $image | sed -e "s:$targetname:$target_base:g")
+            local manifest_targ=$(echo $manifest | sed -e "s:$targetname:$target_base:g")
+            (cd ${MG_CACHE_DIR}/bits/${dir#$manta_base_path};
+                if [[ ! -f $(basename $image_targ) ]]; then mget -o $(basename $image_targ) $image; fi
+                if [[ ! -f $(basename $manifest_targ) ]]; then mget -o $(basename $manifest_targ) $manifest; fi
+            )
+        else
+            (cd ${MG_CACHE_DIR}/bits/${dir#$manta_base_path};
+                mget -O $file)
+        fi
     done
 
 	# Copy over to bits dir.
