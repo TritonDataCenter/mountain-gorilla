@@ -77,12 +77,12 @@ chmod 600 /zones/${uuid}/root/root/.ssh/authorized_keys
 ssh-add -L > /zones/${uuid}/root/root/.ssh/authorized_keys
 
 # Add the automation key and .ssh/config to use it.
-BITS_IP=10.2.172.96
+STUFF_IP=10.2.0.190
 export BATCH_SCP="scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no -o BatchMode=yes"
-$BATCH_SCP bits@$BITS_IP:etc/automation.id_rsa \
+$BATCH_SCP stuff@$STUFF_IP:builds-etc/automation.id_rsa \
     /zones/${uuid}/root/root/.ssh/automation.id_rsa
 chmod 600 /zones/${uuid}/root/root/.ssh/automation.id_rsa
-$BATCH_SCP bits@$BITS_IP:etc/automation.id_rsa.pub \
+$BATCH_SCP stuff@$STUFF_IP:builds-etc/automation.id_rsa.pub \
     /zones/${uuid}/root/root/.ssh/automation.id_rsa.pub
 chmod 644 /zones/${uuid}/root/root/.ssh/automation.id_rsa.pub
 

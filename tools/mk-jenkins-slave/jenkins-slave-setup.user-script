@@ -68,9 +68,12 @@ pkgin -y install binutils
 # zookeeper-client: binder needs this
 # postgres client: needed by manta
 # gsharutils: needed by manta
+#
+# Note: ignore failures here because one some newer images the package names
+# differ. E.g. no such postgresql client package version on multiarch.
 pkgin -y in gcc47 gcc-compiler gcc-runtime gcc-tools cscope gmake \
     scmgit python26 png GeoIP GeoLiteCity ghostscript zookeeper-client \
-    postgresql91-client-9.1.2 gsharutils
+    postgresql91-client-9.1.2 gsharutils || true
 
 
 # Having git "core.autocrlf=input" will cause spurious dirty files in
