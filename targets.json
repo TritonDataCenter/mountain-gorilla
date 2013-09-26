@@ -869,7 +869,6 @@
         {"url": "git@git.joyent.com:electric-moray.git"}
     ],
     "deps": [
-      "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
       "moray",
       "amon",

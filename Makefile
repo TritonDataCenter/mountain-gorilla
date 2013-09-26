@@ -2216,7 +2216,7 @@ electric-moray: $(ELECTRIC_MORAY_BITS) electric-moray_image
 $(ELECTRIC_MORAY_BITS): build/electric-moray
 	@echo "# Build electric-moray: branch $(ELECTRIC_MORAY_BRANCH), sha $(ELECTRIC_MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/electric-moray && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/electric-moray && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created electric-moray bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(ELECTRIC_MORAY_BITS)
 	@echo ""
