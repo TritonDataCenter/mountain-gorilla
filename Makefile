@@ -1401,7 +1401,7 @@ hagfish-watcher: $(HAGFISH_WATCHER_BITS)
 $(HAGFISH_WATCHER_BITS): build/hagfish-watcher
 	@echo "# Build hagfish-watcher: branch $(HAGFISH_WATCHER_BRANCH), sha $(HAGFISH_WATCHER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/hagfish-watcher && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/hagfish-watcher && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created hagfish-watcher bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(HAGFISH_WATCHER_BITS)
 	@echo ""
