@@ -79,7 +79,7 @@ smartlogin: $(SMARTLOGIN_BITS)
 $(SMARTLOGIN_BITS): build/smart-login
 	@echo "# Build smartlogin: branch $(SMART_LOGIN_BRANCH), sha $(SMART_LOGIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/smart-login && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) PATH=/usr/sfw/bin:$(PATH) BITS_DIR=$(BITS_DIR) gmake clean all publish)
+	(cd build/smart-login && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) PATH=/usr/sfw/bin:$(PATH) BITS_DIR=$(BITS_DIR) gmake clean all publish)
 	@echo "# Created smartlogin bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(SMARTLOGIN_BITS)
 	@echo ""
@@ -128,7 +128,7 @@ amon: $(AMON_BITS_0) amon_image
 $(AMON_BITS): build/amon
 	@echo "# Build amon: branch $(AMON_BRANCH), sha $(AMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/amon && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake clean all pkg publish)
+	(cd build/amon && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake clean all pkg publish)
 	@echo "# Created amon bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(AMON_BITS)
 	@echo ""
@@ -192,7 +192,7 @@ ca: $(CA_BITS_0) ca_image
 $(CA_BITS): build/cloud-analytics
 	@echo "# Build ca: branch $(CLOUD_ANALYTICS_BRANCH), sha $(CLOUD_ANALYTICS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/cloud-analytics && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
+	(cd build/cloud-analytics && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
 	@echo "# Created ca bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(CA_BITS)
 	@echo ""
@@ -254,7 +254,7 @@ ufds: $(UFDS_BITS) ufds_image
 $(UFDS_BITS): build/ufds
 	@echo "# Build ufds: branch $(UFDS_BRANCH), sha $(UFDS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/ufds && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/ufds && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created ufds bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(UFDS_BITS)
 	@echo ""
@@ -314,7 +314,7 @@ usageapi: $(USAGEAPI_BITS) usageapi_image
 $(USAGEAPI_BITS): build/usageapi
 	@echo "# Build usageapi: branch $(USAGEAPI_BRANCH), sha $(USAGEAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/usageapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/usageapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created usageapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(USAGEAPI_BITS)
 	@echo ""
@@ -373,7 +373,7 @@ assets: $(ASSETS_BITS) assets_image
 $(ASSETS_BITS): build/assets
 	@echo "# Build assets: branch $(ASSETS_BRANCH), sha $(ASSETS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/assets && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	(cd build/assets && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
 	@echo "# Created assets bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(ASSETS_BITS)
 	@echo ""
@@ -429,7 +429,7 @@ adminui: $(ADMINUI_BITS) adminui_image
 $(ADMINUI_BITS): build/adminui
 	@echo "# Build adminui: branch $(ADMINUI_BRANCH), sha $(ADMINUI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/adminui && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	(cd build/adminui && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
 	@echo "# Created adminui bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(ADMINUI_BITS)
 	@echo ""
@@ -482,7 +482,7 @@ redis: $(REDIS_BITS) redis_image
 $(REDIS_BITS): build/redis
 	@echo "# Build redis: branch $(REDIS_BRANCH), sha $(REDIS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/redis && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	(cd build/redis && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
 	@echo "# Created redis bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(REDIS_BITS)
 	@echo ""
@@ -538,7 +538,7 @@ amonredis: $(AMONREDIS_BITS) amonredis_image
 $(AMONREDIS_BITS): build/amonredis
 	@echo "# Build amonredis: branch $(AMONREDIS_BRANCH), sha $(AMONREDIS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/amonredis && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	(cd build/amonredis && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
 	@echo "# Created amonredis bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(AMONREDIS_BITS)
 	@echo ""
@@ -594,7 +594,7 @@ rabbitmq: $(RABBITMQ_BITS) rabbitmq_image
 $(RABBITMQ_BITS): build/rabbitmq
 	@echo "# Build rabbitmq: branch $(RABBITMQ_BRANCH), sha $(RABBITMQ_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/rabbitmq && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	(cd build/rabbitmq && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
 	@echo "# Created rabbitmq bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(RABBITMQ_BITS)
 	@echo ""
@@ -649,7 +649,7 @@ dhcpd: $(DHCPD_BITS) dhcpd_image
 $(DHCPD_BITS): build/dhcpd
 	@echo "# Build dhcpd: branch $(DHCPD_BRANCH), sha $(DHCPD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/dhcpd && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) \
+	(cd build/dhcpd && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) \
 		$(MAKE) release publish)
 	@echo "# Created dhcpd bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(DHCPD_BITS)
@@ -767,7 +767,7 @@ manatee: $(MANATEE_BITS) manatee_image
 $(MANATEE_BITS): build/manatee
 	@echo "# Build manatee: branch $(MANATEE_BRANCH), sha $(MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/manatee && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manatee && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created manatee bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MANATEE_BITS)
 	@echo ""
@@ -825,7 +825,7 @@ workflow: $(WORKFLOW_BITS) workflow_image
 $(WORKFLOW_BITS): build/workflow
 	@echo "# Build workflow: branch $(WORKFLOW_BRANCH), sha $(WORKFLOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/workflow && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/workflow && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created workflow bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(WORKFLOW_BITS)
 	@echo ""
@@ -885,7 +885,7 @@ vmapi: $(VMAPI_BITS) vmapi_image
 $(VMAPI_BITS): build/vmapi
 	@echo "# Build vmapi: branch $(VMAPI_BRANCH), sha $(VMAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/vmapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/vmapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created vmapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(VMAPI_BITS)
 	@echo ""
@@ -946,7 +946,7 @@ dapi: $(DAPI_BITS) dapi_image
 $(DAPI_BITS): build/dapi
 	@echo "# Build dapi: branch $(DAPI_BRANCH), sha $(DAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/dapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/dapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created dapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(DAPI_BITS)
 	@echo ""
@@ -1007,7 +1007,7 @@ papi: $(PAPI_BITS) papi_image
 $(PAPI_BITS): build/papi
 	@echo "# Build papi: branch $(PAPI_BRANCH), sha $(PAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/papi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/papi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created papi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(PAPI_BITS)
 	@echo ""
@@ -1064,7 +1064,7 @@ imgapi-cli: $(IMGAPI_CLI_BITS)
 $(IMGAPI_CLI_BITS): build/imgapi-cli
 	@echo "# Build imgapi-cli: branch $(IMGAPI_CLI_BRANCH), sha $(IMGAPI_CLI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/imgapi-cli && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/imgapi-cli && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created imgapi-cli bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(IMGAPI_CLI_BITS)
 	@echo ""
@@ -1088,7 +1088,7 @@ imgapi: $(IMGAPI_BITS) imgapi_image
 $(IMGAPI_BITS): build/imgapi
 	@echo "# Build imgapi: branch $(IMGAPI_BRANCH), sha $(IMGAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/imgapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/imgapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created imgapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(IMGAPI_BITS)
 	@echo ""
@@ -1144,7 +1144,7 @@ sdc: $(SDC_BITS) sdc_image
 $(SDC_BITS): build/sdc
 	@echo "# Build sdc: branch $(SDC_BRANCH), sha $(SDC_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/sdc && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created sdc bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(SDC_BITS)
 	@echo ""
@@ -1203,7 +1203,7 @@ vcapi: $(VCAPI_BITS) vcapi_image
 $(VCAPI_BITS): build/vcapi
 	@echo "# Build vcapi: branch $(VCAPI_BRANCH), sha $(VCAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/vcapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/vcapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created vcapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(VCAPI_BITS)
 	@echo ""
@@ -1260,7 +1260,6 @@ $(SDC_SYSTEM_TESTS_BITS): build/sdc-system-tests
 	@echo "# Build sdc-system-tests: branch $(SDC_SYSTEM_TESTS_BRANCH), sha $(SDC_SYSTEM_TESTS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/sdc-system-tests && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm \
-		NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode \
 		TIMESTAMP=$(TIMESTAMP) \
 		BITS_DIR=$(BITS_DIR) \
 		gmake all release publish)
@@ -1282,7 +1281,7 @@ agents_core: $(AGENTS_CORE_BITS)
 $(AGENTS_CORE_BITS): build/agents_core
 	@echo "# Build agents_core: branch $(AGENTS_CORE_BRANCH), sha $(AGENTS_CORE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/agents_core && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/agents_core && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created agents_core bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(AGENTS_CORE_BITS)
 	@echo ""
@@ -1307,7 +1306,7 @@ provisioner: $(PROVISIONER_BITS)
 $(PROVISIONER_BITS): build/provisioner
 	@echo "# Build provisioner: branch $(PROVISIONER_BRANCH), sha $(PROVISIONER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/provisioner && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/provisioner && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created provisioner bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(PROVISIONER_BITS)
 	@echo ""
@@ -1332,7 +1331,7 @@ heartbeater: $(HEARTBEATER_BITS)
 $(HEARTBEATER_BITS): build/heartbeater
 	@echo "# Build heartbeater: branch $(HEARTBEATER_BRANCH), sha $(HEARTBEATER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/heartbeater && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/heartbeater && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created heartbeater bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(HEARTBEATER_BITS)
 	@echo ""
@@ -1357,7 +1356,7 @@ zonetracker: $(ZONETRACKER_BITS)
 $(ZONETRACKER_BITS): build/zonetracker
 	@echo "# Build zonetracker: branch $(ZONETRACKER_BRANCH), sha $(ZONETRACKER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/zonetracker && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/zonetracker && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created zonetracker bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(ZONETRACKER_BITS)
 	@echo ""
@@ -1380,7 +1379,7 @@ config-agent: $(CONFIG_AGENT_BITS)
 $(CONFIG_AGENT_BITS): build/config-agent
 	@echo "# Build config-agent: branch $(CONFIG_AGENT_BRANCH), sha $(CONFIG_AGENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/config-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/config-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created config-agent bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(CONFIG_AGENT_BITS)
 	@echo ""
@@ -1448,7 +1447,7 @@ cnapi: $(CNAPI_BITS) cnapi_image
 $(CNAPI_BITS): build/cnapi
 	@echo "# Build cnapi: branch $(CNAPI_BRANCH), sha $(CNAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/cnapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/cnapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created cnapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(CNAPI_BITS)
 	@echo ""
@@ -1508,7 +1507,7 @@ keyapi: $(KEYAPI_BITS) keyapi_image
 $(KEYAPI_BITS): build/keyapi
 	@echo "# Build keyapi: branch $(KEYAPI_BRANCH), sha $(KEYAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/keyapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/keyapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created keyapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(KEYAPI_BITS)
 	@echo ""
@@ -1568,7 +1567,7 @@ sdcsso: $(SDCSSO_BITS) sdcsso_image
 $(SDCSSO_BITS): build/sdcsso
 	@echo "# Build sdcsso: branch $(KEYAPI_BRANCH), sha $(KEYAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/sdcsso && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdcsso && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created sdcsso bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(SDCSSO_BITS)
 	@echo ""
@@ -1628,7 +1627,7 @@ fwapi: $(FWAPI_BITS) fwapi_image
 $(FWAPI_BITS): build/fwapi
 	@echo "# Build fwapi: branch $(FWAPI_BRANCH), sha $(FWAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/fwapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/fwapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created fwapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(FWAPI_BITS)
 	@echo ""
@@ -1689,7 +1688,7 @@ napi: $(NAPI_BITS) napi_image
 $(NAPI_BITS): build/napi
 	@echo "# Build napi: branch $(NAPI_BRANCH), sha $(NAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/napi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/napi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created napi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(NAPI_BITS)
 	@echo ""
@@ -1751,7 +1750,7 @@ sapi: $(SAPI_BITS) sapi_image
 $(SAPI_BITS): build/sapi
 	@echo "# Build sapi: branch $(SAPI_BRANCH), sha $(SAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/sapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created sapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(SAPI_BITS)
 	@echo ""
@@ -1812,7 +1811,7 @@ marlin: $(MARLIN_BITS) marlin_image
 $(MARLIN_BITS): build/marlin
 	@echo "# Build marlin: branch $(MARLIN_BRANCH), sha $(MARLIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/marlin && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/marlin && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created marlin bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MARLIN_BITS)
 	@echo ""
@@ -1867,7 +1866,7 @@ medusa: $(MEDUSA_BITS) medusa_image
 $(MEDUSA_BITS): build/medusa
 	@echo "# Build medusa: branch $(MEDUSA_BRANCH), sha $(MEDUSA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/medusa && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/medusa && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created medusa bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MEDUSA_BITS)
 	@echo ""
@@ -1924,7 +1923,7 @@ mahi: $(MAHI_BITS) mahi_image
 $(MAHI_BITS): build/mahi
 	@echo "# Build mahi: branch $(MAHI_BRANCH), sha $(MAHI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/mahi && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/mahi && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created mahi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MAHI_BITS)
 	@echo ""
@@ -1982,7 +1981,7 @@ manta-workflow: $(MANTA_WORKFLOW_BITS) manta-workflow_image
 $(MANTA_WORKFLOW_BITS): build/manta-workflow
 	@echo "# Build manta-workflow: branch $(MANTA_WORKFLOW_BRANCH), sha $(MANTA_WORKFLOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/manta-workflow && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manta-workflow && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created manta-workflow bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MANTA_WORKFLOW_BITS)
 	@echo ""
@@ -2042,7 +2041,7 @@ mola: $(MOLA_BITS) mola_image
 $(MOLA_BITS): build/mola
 	@echo "# Build mola: branch $(MOLA_BRANCH), sha $(MOLA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/mola && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/mola && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created mola bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MOLA_BITS)
 	@echo ""
@@ -2100,7 +2099,7 @@ madtom: $(MADTOM_BITS) madtom_image
 $(MADTOM_BITS): build/madtom
 	@echo "# Build madtom: branch $(MADTOM_BRANCH), sha $(MADTOM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/madtom && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/madtom && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created madtom bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MADTOM_BITS)
 	@echo ""
@@ -2158,7 +2157,7 @@ moray: $(MORAY_BITS) moray_image
 $(MORAY_BITS): build/moray
 	@echo "# Build moray: branch $(MORAY_BRANCH), sha $(MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/moray && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/moray && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created moray bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MORAY_BITS)
 	@echo ""
@@ -2332,7 +2331,7 @@ wrasse: $(WRASSE_BITS) wrasse_image
 $(WRASSE_BITS): build/wrasse
 	@echo "# Build wrasse: branch $(WRASSE_BRANCH), sha $(WRASSE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/wrasse && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/wrasse && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created wrasse bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(WRASSE_BITS)
 	@echo ""
@@ -2386,7 +2385,7 @@ registrar: $(REGISTRAR_BITS)
 $(REGISTRAR_BITS): build/registrar
 	@echo "# Build registrar: branch $(REGISTRAR_BRANCH), sha $(REGISTRAR_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/registrar && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/registrar && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created registrar bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(REGISTRAR_BITS)
 	@echo ""
@@ -2407,7 +2406,7 @@ mackerel: $(MACKEREL_BITS)
 $(MACKEREL_BITS): build/mackerel
 	@echo "# Build mackerel: branch $(MACKEREL_BRANCH), sha $(MACKEREL_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/mackerel && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/mackerel && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created mackerel bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MACKEREL_BITS)
 	@echo ""
@@ -2428,7 +2427,7 @@ manowar: $(MANOWAR_BITS)
 $(MANOWAR_BITS): build/manowar
 	@echo "# Build manowar: branch $(MANOWAR_BRANCH), sha $(MANOWAR_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/manowar && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manowar && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created manowar bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MANOWAR_BITS)
 	@echo ""
@@ -2451,7 +2450,7 @@ binder: $(BINDER_BITS) binder_image
 $(BINDER_BITS): build/binder
 	@echo "# Build binder: branch $(BINDER_BRANCH), sha $(BINDER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/binder && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/binder && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created binder bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(BINDER_BITS)
 	@echo ""
@@ -2506,7 +2505,7 @@ muppet: $(MUPPET_BITS) muppet_image
 $(MUPPET_BITS): build/muppet
 	@echo "# Build muppet: branch $(MUPPET_BRANCH), sha $(MUPPET_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/muppet && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/muppet && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created muppet bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MUPPET_BITS)
 	@echo ""
@@ -2559,7 +2558,7 @@ minnow: $(MINNOW_BITS)
 $(MINNOW_BITS): build/minnow
 	@echo "# Build minnow: branch $(MINNOW_BRANCH), sha $(MINNOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/minnow && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/minnow && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created minnow bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MINNOW_BITS)
 	@echo ""
@@ -2582,7 +2581,7 @@ mako: $(MAKO_BITS) mako_image
 $(MAKO_BITS): build/mako
 	@echo "# Build mako: branch $(MAKO_BRANCH), sha $(MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/mako && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/mako && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created mako bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MAKO_BITS)
 	@echo ""
@@ -2642,7 +2641,7 @@ agentsshar: $(AGENTSSHAR_BITS_0)
 $(AGENTSSHAR_BITS): build/agents-installer/Makefile
 	@echo "# Build agentsshar: branch $(AGENTS_INSTALLER_BRANCH), sha $(AGENTS_INSTALLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)/agentsshar
-	(cd build/agents-installer && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/agentsshar/ -d $(BITS_DIR) -b "$(TRY_BRANCH) $(AGENTS_INSTALLER_BRANCH)")
+	(cd build/agents-installer && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/agentsshar/ -d $(BITS_DIR) -b "$(TRY_BRANCH) $(AGENTS_INSTALLER_BRANCH)")
 	@echo "# Created agentsshar bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(AGENTSSHAR_BITS)
 	@echo ""
@@ -2728,7 +2727,7 @@ convertvm: $(CONVERTVM_BITS)
 $(CONVERTVM_BITS): build/convertvm
 	@echo "# Build convertvm: branch $(CONVERTVM_BRANCH), sha $(CONVERTVM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/convertvm && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/convertvm && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created convertvm bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(CONVERTVM_BITS)
 	@echo ""
@@ -2753,7 +2752,7 @@ manta-deployment: $(MANTA_DEPLOYMENT_BITS) manta-deployment_image
 $(MANTA_DEPLOYMENT_BITS): build/manta-deployment
 	@echo "# Build manta-deployment: branch $(MANTA_DEPLOYMENT_BRANCH), sha $(MANTA_DEPLOYMENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/manta-deployment && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm NODE_PREBUILT_DIR=$(BITS_DIR)/sdcnode TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manta-deployment && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created manta-deployment bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(MANTA_DEPLOYMENT_BITS)
 	@echo ""
