@@ -2932,6 +2932,7 @@ build/smartos-live/configure-branches:
 		-e "s:UR_AGENT_BRANCH:$(UR_AGENT_BRANCH):" \
 		-e "s:ILLUMOS_KVM_BRANCH:$(ILLUMOS_KVM_BRANCH):" \
 		-e "s:ILLUMOS_KVM_CMD_BRANCH:$(ILLUMOS_KVM_CMD_BRANCH):" \
+		-e "s:MDATA_CLIENT_BRANCH:$(MDATA_CLIENT_BRANCH):" \
 		-e "s:SDC_PLATFORM_BRANCH:$(SDC_PLATFORM_BRANCH):" \
 		<smartos-live-configure-branches.in >build/smartos-live/configure-branches
 

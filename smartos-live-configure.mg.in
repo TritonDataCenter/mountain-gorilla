@@ -5,6 +5,8 @@ mkdir -p projects/local
     || git clone GITCLONESOURCEillumos-kvm kvm)
 (cd projects/local && [[ -d kvm-cmd ]] \
     || git clone GITCLONESOURCEillumos-kvm-cmd kvm-cmd)
+(cd projects/local && [[ -d mdata-client ]] \
+    || git clone GITCLONESOURCEmdata-client mdata-client)
 (cd projects/local && [[ -d sdc-platform ]] \
     || git clone GITCLONESOURCEsdc-platform)
 (cd overlay && [[ -d sdc ]] || \
