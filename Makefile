@@ -1492,66 +1492,6 @@ clean_cnapi:
 	(cd build/cnapi && gmake clean)
 
 
-#---- KeyAPI
-
-_keyapi_stamp=$(KEYAPI_BRANCH)-$(TIMESTAMP)-g$(KEYAPI_SHA)
-KEYAPI_BITS=$(BITS_DIR)/keyapi/keyapi-pkg-$(_keyapi_stamp).tar.bz2
-KEYAPI_IMAGE_BIT=$(BITS_DIR)/keyapi/keyapi-zfs-$(_keyapi_stamp).zfs.gz
-KEYAPI_MANIFEST_BIT=$(BITS_DIR)/keyapi/keyapi-zfs-$(_keyapi_stamp).zfs.imgmanifest
-
-.PHONY: keyapi
-keyapi: $(KEYAPI_BITS) keyapi_image
-
-# PATH for keyapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
-$(KEYAPI_BITS): build/keyapi
-	@echo "# Build keyapi: branch $(KEYAPI_BRANCH), sha $(KEYAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/keyapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created keyapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(KEYAPI_BITS)
-	@echo ""
-
-.PHONY: keyapi_image
-keyapi_image: $(KEYAPI_IMAGE_BIT)
-
-$(KEYAPI_IMAGE_BIT): $(KEYAPI_BITS)
-	@echo "# Build keyapi_image: branch $(KEYAPI_BRANCH), sha $(KEYAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset.sh -i "$(KEYAPI_IMAGE_UUID)" -t $(KEYAPI_BITS) \
-		-o "$(KEYAPI_IMAGE_BIT)" -p $(KEYAPI_PKGSRC) \
-		-t $(KEYAPI_EXTRA_TARBALLS) -n $(KEYAPI_IMAGE_NAME) \
-		-v $(_keyapi_stamp) -d $(KEYAPI_IMAGE_DESCRIPTION)
-	@echo "# Created keyapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(KEYAPI_MANIFEST_BIT) $(KEYAPI_IMAGE_BIT)
-	@echo ""
-
-KEYAPI_MANTA_BIT=$(BITS_DIR)/keyapi/keyapi-zfs-$(_keyapi_stamp).manta
-
-.PHONY: keyapi_manta_image
-keyapi_manta_image: $(KEYAPI_MANTA_BIT)
-
-$(KEYAPI_MANTA_BIT): $(KEYAPI_BITS)
-	@echo "# Build keyapi_image: branch $(KEYAPI_BRANCH), sha $(KEYAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(KEYAPI_IMAGE_UUID)" -t $(KEYAPI_BITS) \
-		-o "$(KEYAPI_MANTA_BIT)" -p $(KEYAPI_PKGSRC) \
-		-t $(KEYAPI_EXTRA_TARBALLS) -n $(KEYAPI_IMAGE_NAME) \
-		-v $(_keyapi_stamp) -d $(KEYAPI_IMAGE_DESCRIPTION)
-	@echo "# Created keyapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -1 $(KEYAPI_MANTA_BIT)
-	@echo ""
-
-
-keyapi_publish_image: $(KEYAPI_IMAGE_BIT)
-	@echo "# Publish keyapi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(KEYAPI_MANIFEST_BIT) -f $(KEYAPI_IMAGE_BIT)
-
-# Warning: if NAPI's submodule deps change, this 'clean_keyapi' is insufficient. It would
-# then need to call 'gmake dist-clean'.
-clean_keyapi:
-	rm -rf $(BITS_DIR)/keyapi
-	(cd build/keyapi && gmake clean)
-
-
 #---- SDCSSO
 
 _sdcsso_stamp=$(SDCSSO_BRANCH)-$(TIMESTAMP)-g$(SDCSSO_SHA)

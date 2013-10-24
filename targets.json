@@ -1089,35 +1089,6 @@
     ]
   },
 
-  "keyapi": {
-    "appliance": "true",
-    "image_name": "keyapi",
-    "image_description": "SDC KeyAPI",
-    "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [
-      "gcc-runtime-4.6.2",
-      "curl-7.23.1nb1",
-      "openldap-client-2.4.24",
-      "pkg_alternatives-1.5",
-      "python26-2.6.7nb2"
-    ],
-    "repos": [
-        {"url":  "git@github.com:joyent/keyapi.git" }
-    ],
-    "deps": [
-      "amon",
-      "sapi",
-      "registrar",
-      "https://download.joyent.com/pub/build/sdcnode"
-    ],
-    "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
-    ]
-  },
-
   "sdcsso": {
     "appliance": "true",
     "image_name": "sdcsso",
@@ -1240,7 +1211,6 @@
         "fwapi",
         "imgapi",
         "imgapi-cli",
-        "keyapi",
         "manatee",
         "manta-deployment",
         "moray",
