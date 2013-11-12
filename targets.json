@@ -105,6 +105,19 @@
       {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
     ]
   },
+  "mockcn": {
+    "appliance": "true",
+    "image_name": "mockcn",
+    "image_description": "SDC MOCK CN",
+    "image_version": "1.0.0",
+    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "pkgsrc": [],
+    "repos": [
+        {"url": "git@git.joyent.com:mockcn.git", "dir": "mockcn"}
+    ],
+    "deps": [],
+    "tarballs": []
+  },
   "dhcpd": {
     "appliance": "true",
     "image_name": "dhcpd",

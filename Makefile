@@ -59,10 +59,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi vcapi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi vcapi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi vcapi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi vcapi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
 
 
 #---- smartlogin
@@ -691,6 +691,62 @@ dhcpd_publish_image: $(DHCPD_IMAGE_BIT)
 clean_dhcpd:
 	rm -rf $(BITS_DIR)/dhcpd
 	(cd build/dhcpd && gmake clean)
+
+#---- MOCKCN
+
+_mockcn_stamp=$(MOCKCN_BRANCH)-$(TIMESTAMP)-g$(MOCKCN_SHA)
+MOCKCN_BITS=$(BITS_DIR)/mockcn/mockcn-pkg-$(_mockcn_stamp).tar.bz2
+MOCKCN_IMAGE_BIT=$(BITS_DIR)/mockcn/mockcn-zfs-$(_mockcn_stamp).zfs.gz
+MOCKCN_MANIFEST_BIT=$(BITS_DIR)/mockcn/mockcn-zfs-$(_mockcn_stamp).zfs.imgmanifest
+
+.PHONY: mockcn
+mockcn: $(MOCKCN_BITS) mockcn_image
+
+$(MOCKCN_BITS): build/mockcn
+	@echo "# Build mockcn: branch $(MOCKCN_BRANCH), sha $(MOCKCN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/mockcn && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) \
+		$(MAKE) release publish)
+	@echo "# Created mockcn bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MOCKCN_BITS)
+	@echo ""
+
+.PHONY: mockcn_image
+mockcn_image: $(MOCKCN_IMAGE_BIT)
+
+$(MOCKCN_IMAGE_BIT): $(MOCKCN_BITS)
+	@echo "# Build mockcn_image: branch $(MOCKCN_BRANCH), sha $(MOCKCN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset.sh -i "$(MOCKCN_IMAGE_UUID)" -t $(MOCKCN_BITS) \
+		-o "$(MOCKCN_IMAGE_BIT)" -p $(MOCKCN_PKGSRC) \
+		-t $(MOCKCN_EXTRA_TARBALLS) -n $(MOCKCN_IMAGE_NAME) \
+		-v $(_mockcn_stamp) -d $(MOCKCN_IMAGE_DESCRIPTION)
+	@echo "# Created mockcn image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MOCKCN_MANIFEST_BIT) $(MOCKCN_IMAGE_BIT)
+	@echo ""
+
+MOCKCN_MANTA_BIT=$(BITS_DIR)/mockcn/mockcn-zfs-$(_mockcn_stamp).manta
+
+.PHONY: mockcn_manta_image
+mockcn_manta_image: $(MOCKCN_MANTA_BIT)
+
+$(MOCKCN_MANTA_BIT): $(MOCKCN_BITS)
+	@echo "# Build mockcn_image: branch $(MOCKCN_BRANCH), sha $(MOCKCN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MOCKCN_IMAGE_UUID)" -t $(MOCKCN_BITS) \
+		-o "$(MOCKCN_MANTA_BIT)" -p $(MOCKCN_PKGSRC) \
+		-t $(MOCKCN_EXTRA_TARBALLS) -n $(MOCKCN_IMAGE_NAME) \
+		-v $(_mockcn_stamp) -d $(MOCKCN_IMAGE_DESCRIPTION)
+	@echo "# Created mockcn image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -1 $(MOCKCN_MANTA_BIT)
+	@echo ""
+
+
+mockcn_publish_image: $(MOCKCN_IMAGE_BIT)
+	@echo "# Publish mockcn image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(MOCKCN_MANIFEST_BIT) -f $(MOCKCN_IMAGE_BIT)
+
+clean_mockcn:
+	rm -rf $(BITS_DIR)/mockcn
+	(cd build/mockcn && gmake clean)
 
 
 #---- CLOUDAPI
