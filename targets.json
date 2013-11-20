@@ -1241,7 +1241,6 @@
         "sdcboot",
         "sdcsso",
         "ufds",
-        "usageapi",
         "vmapi",
         "workflow"
     ]
