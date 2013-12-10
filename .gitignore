@@ -4,5 +4,6 @@
 /bits
 /build
 /cache
+/node_modules
 
 .mg.json

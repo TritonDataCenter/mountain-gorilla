@@ -6,12 +6,16 @@ if [ "$TRACE" != "" ]; then
 fi
 set -o errexit
 
-PATH=$PATH:/opt/local/lib/node_modules/manta/bin/
+TOP=$(cd $(dirname $0)/../; pwd)
+BITS_DIR=bits/
+PATH=$PATH:${TOP}/node_modules/manta/bin
 
 # disable uploads on bh1 before doing anything else
 if echo $NODE_LABELS | grep "bh1" 2>&1 >/dev/null ; then
-    echo "Manta uploads have been disabled on this host"
-    exit 0
+    if [[ ${JOB_NAME} != "papi" ]]; then
+        echo "Manta uploads have been disabled on this host"
+        exit 0
+    fi
 fi
 
 # --- Manta config
@@ -23,8 +27,6 @@ if [[ -z "$MANTA_USER" ]]; then
     export MANTA_USER="Joyent_Dev";
 fi
 
-TOP=$(cd $(dirname $0)/../; pwd)
-BITS_DIR=bits/
 
 function fatal {
     echo "$(basename $0): error: $1"

@@ -604,6 +604,9 @@ if [[ $NODE_VERSION -lt 6 ]]; then
 fi
 JSON="$MG_NODE $ROOT/tools/json"
 
+# Make sure npm stuff is up-to-date
+npm install
+
 # '-r' regenerate early out.
 if [[ "$REGENERATE" == 'true' ]]; then
     gen_config
@@ -615,7 +618,6 @@ fi
 mkdir -p bits
 touch bits/config.mk
 make distclean
-
 
 if [[ ! -z "$TARGET" ]]; then
     flush_bits_cache
