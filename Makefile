@@ -2843,7 +2843,7 @@ clean_firmware-tools:
 # - pkgsrc isolation
 
 .PHONY: usbheadnode
-usbheadnode: boot coal usb upgrade releasejson
+usbheadnode: boot coal usb releasejson
 
 _usbheadnode_stamp=$(USB_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(USB_HEADNODE_SHA)
 
