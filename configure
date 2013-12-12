@@ -20,6 +20,8 @@ TRY_BRANCH=
 ROOT=$(pwd)
 MG_CACHE_DIR=${ROOT}/cache
 
+export PATH="${ROOT}/node_modules/manta/bin:${PATH}"
+
 # Username and password filled by `ensure_bits_credentials`.
 BITS_USERNAME=
 BITS_PASSWORD=
@@ -147,17 +149,17 @@ function preload_bits_from_manta() {
     if [[ "$target_branch" != "." ]]; then
         branch=$target_branch
     fi
-    target_mpath=${manta_base_path}/${target_base}/
+    target_mpath=${manta_base_path}/${target_base}
     local best_branch=$try_branch
     if [[ -z $best_branch ]]; then
         best_branch="master"
     fi
     local latest_mpath=${target_mpath}/${best_branch}-latest
-    local latest_dir=$(mget $latest_mpath 2> /dev/null)
+    local latest_dir=$(mget -q $latest_mpath)
     if [[ -z "$latest_dir" ]]; then
         best_branch="master"
         latest_mpath=${target_mpath}/${best_branch}-latest
-        latest_dir=$(mget $latest_mpath 2> /dev/null)
+        latest_dir=$(mget -q $latest_mpath)
     fi
     if [[ -z "$latest_dir" ]]; then
         fatal "Could not get latest dir for target $target"
@@ -178,16 +180,16 @@ function preload_bits_from_manta() {
             local image_targ=$(echo $image | sed -e "s:$targetname:$target_base:g")
             local manifest_targ=$(echo $manifest | sed -e "s:$targetname:$target_base:g")
             (cd ${MG_CACHE_DIR}/bits/${dir#$manta_base_path};
-                if [[ ! -f $(basename $image_targ) ]]; then mget -o $(basename $image_targ) $image; fi
-                if [[ ! -f $(basename $manifest_targ) ]]; then mget -o $(basename $manifest_targ) $manifest; fi
+                if [[ ! -f $(basename $image_targ) ]]; then mget -q -o $(basename $image_targ) $image; fi
+                if [[ ! -f $(basename $manifest_targ) ]]; then mget -q -o $(basename $manifest_targ) $manifest; fi
             )
         else
             (cd ${MG_CACHE_DIR}/bits/${dir#$manta_base_path};
-                mget -O $file)
+                mget -q -O $file)
         fi
     done
 
-	# Copy over to bits dir.
+    # Copy over to bits dir.
     mkdir -p bits
     [[ -d "bits/$target_base" ]] && fatal "'bits/$target_base' already exists"
     $CP_LINK -PR ${MG_CACHE_DIR}/bits/${latest_dir#$manta_base_path}/$target_base bits/$(basename $target)
