@@ -20,34 +20,12 @@ TRY_BRANCH=
 ROOT=$(pwd)
 MG_CACHE_DIR=${ROOT}/cache
 
-export PATH="${ROOT}/node_modules/manta/bin:${PATH}"
-
-# Username and password filled by `ensure_bits_credentials`.
-BITS_USERNAME=
-BITS_PASSWORD=
-BITS_PROTO=https
-BITS_HOST=bits.joyent.us
-BITS_BASE_PATH=/builds
-
-# This is a HACK to figure out if we're in the bh1 lab (assume we are if
-# the IP is 10.2.X.X) so that we can switch the Bits url to an IP because
-# the URL doesn't work in the lab.
-if [[ $(uname -s) == "SunOS" && \
-      $(sysinfo -p | grep "Network_Interface.*IPv4_Address=" \
-        | cut -d "'" -f2 | grep 10\.2\. | wc -l | tr -d ' ') -gt 0 ]]; then
-    # Assume we're in the BH-1 lab.
-    echo "# Looks like we're in the BH-1 lab, use internal IPs for BITS_HOST."
-    if [[ "$(echo $BITS_HOST | cut -d. -f1)" == "stuff" ]]; then
-        BITS_HOST=10.2.0.190
-    elif [[ "$(echo $BITS_HOST | cut -d. -f1)" == "bits" ]]; then
-        network=$(sysinfo | json "Virtual Network Interfaces".net0.ip4addr | cut -d '.' -f1-3)
-        if [[ "$network" == "10.2.172" ]]; then
-            BITS_HOST=10.2.172.96
-        else
-            BITS_HOST=10.2.0.21
-        fi
-    fi
+MGET_BIT_ARGS="-q"
+if [[ -n ${MGET_PROGRESS} ]]; then
+    MGET_BIT_ARGS="--progress"
 fi
+
+export PATH="${ROOT}/node_modules/manta/bin:${PATH}"
 
 if [[ $(uname -s) == "SunOS" ]]; then
     MTIME='stat -c %Z'
@@ -88,22 +66,6 @@ function ensure_manta_credentials {
     export manta_base_path="/Joyent_Dev/stor/builds"
 }
 
-function ensure_bits_credentials {
-    MG_CONFIG_PATH=~/.sdcbuild.json
-    if [[ -z "$BITS_USERNAME" ]]; then
-        BITS_USERNAME=$(cat $MG_CONFIG_PATH | $JSON username)
-    fi
-    if [[ -z "$BITS_USERNAME" ]]; then
-        fatal "Could not get 'username' from '$MG_CONFIG_PATH'."
-    fi
-    if [[ -z "$BITS_PASSWORD" ]]; then
-        BITS_PASSWORD=$(cat $MG_CONFIG_PATH | $JSON password)
-    fi
-    if [[ -z "$BITS_PASSWORD" ]]; then
-        fatal "Could not get 'password' from '$MG_CONFIG_PATH'."
-    fi
-}
-
 # Blow away the bits cache once per-day because don't want it to grow
 # unbounded in size (esp. for the continuous-build system). An alternative
 # would be to put a size limit on it.
@@ -127,14 +89,16 @@ function flush_bits_cache() {
 #   preload_bits_from_manta TARGET BRANCH TRY_BRANCH
 
 # Example:
-#   preload_bits smartlogin master ""
-#   preload_bits release-20110901-upgrade/agents-upgrade master ""
+#   preload_bits_from_manta smartlogin master ""
+#   preload_bits_from_manta release-20110901-upgrade/agents-upgrade master ""
 #
 function preload_bits_from_manta() {
     local target=$1
     local branch=$2
     local try_branch=$3
     local target_base=$(basename $target)
+    local start_time=$(date +%s)
+
     # Don't bork if this was already preloaded by another target.
     if [[ -d bits/$target_base ]]; then
         return;
@@ -180,12 +144,12 @@ function preload_bits_from_manta() {
             local image_targ=$(echo $image | sed -e "s:$targetname:$target_base:g")
             local manifest_targ=$(echo $manifest | sed -e "s:$targetname:$target_base:g")
             (cd ${MG_CACHE_DIR}/bits/${dir#$manta_base_path};
-                if [[ ! -f $(basename $image_targ) ]]; then mget -q -o $(basename $image_targ) $image; fi
+                if [[ ! -f $(basename $image_targ) ]]; then mget ${MGET_BIT_ARGS} -o $(basename $image_targ) $image; fi
                 if [[ ! -f $(basename $manifest_targ) ]]; then mget -q -o $(basename $manifest_targ) $manifest; fi
             )
         else
             (cd ${MG_CACHE_DIR}/bits/${dir#$manta_base_path};
-                mget -q -O $file)
+                mget ${MGET_BIT_ARGS} -O $file)
         fi
     done
 
@@ -194,139 +158,8 @@ function preload_bits_from_manta() {
     [[ -d "bits/$target_base" ]] && fatal "'bits/$target_base' already exists"
     $CP_LINK -PR ${MG_CACHE_DIR}/bits/${latest_dir#$manta_base_path}/$target_base bits/$(basename $target)
 
-}
-
-
-# Preload $MG_CACHE_DIR/bits/ with the latest built and uploaded bits for
-# the given target and branch.
-#
-# Usage:
-#   preload_bits TARGET BRANCH TRY_BRANCH
-# where:
-#   TARGET is one of:
-#       (a) a string subdir of the https://bits.joyent.com/builds
-#           builds repo;
-#       (b) a "$target_branch/$subdir" that specifies an alternative branch
-#           just for this target ; or
-#       (b) a full path to such a dir. This must be a URL dir
-#           that serves Apache/Nginx-index-style directories.
-#
-# Example:
-#   preload_bits smartlogin master ""
-#   preload_bits release-20110901-upgrade/agents-upgrade master ""
-#   preload_bits http://download.joyent.com/pub/build/sdcnode master ""
-#
-function preload_bits() {
-
-    if [[ -n $USE_MANTA && "$(basename $1)" != "sdcnode" ]]; then
-        preload_bits_from_manta $@
-        return 0
-    fi
-    local target=$1
-    local branch=$2
-    local try_branch=$3
-    local target_base=$(basename $target)
-
-    # Don't bork if this was already preloaded by another target.
-    if [[ -d bits/$target_base ]]; then
-        return;
-    fi
-
-    echo ""
-    echo "# preload 'bits/$target_base'"
-
-    ensure_bits_credentials
-
-    local target_url
-    local target_url_censor
-    if [[ $(echo $target | cut -c 1-4) == "http" ]]; then
-        target_url=$target
-        if [[ "${target_url:(-1)}" != "/" ]]; then
-            target_url=$target_url/
-        fi
-        target_url_censor=$target_url
-    else
-        # If a "target_branch" is specified, switch to that.
-        local target_branch=$(dirname $target)
-        if [[ "$target_branch" != "." ]]; then
-            branch=$target_branch
-        fi
-
-        local bits_url=$BITS_PROTO://$BITS_USERNAME:$BITS_PASSWORD@$BITS_HOST$BITS_BASE_PATH
-        local bits_url_censor=$BITS_PROTO://$BITS_USERNAME:*password*@$BITS_HOST$BITS_BASE_PATH
-        if [[ "${bits_url:(-1)}" != "/" ]]; then
-            bits_url=$bits_url/
-        fi
-        if [[ "${bits_url_censor:(-1)}" != "/" ]]; then
-            bits_url_censor=$bits_url_censor/
-        fi
-        target_url=$bits_url$target_base/
-        target_url_censor=$bits_url_censor$target_base/
-    fi
-    local_cache_reldir=${target_url#*://}
-    local_cache_reldir=${local_cache_reldir#*@}
-
-    # Branch dir: try $try_branch, then $branch.
-    local best_branch=$try_branch
-    local latest_url=$target_url$try_branch-latest/
-    if [[ -z "$best_branch" ||
-          $($CURL -kI $latest_url | head -1 | awk '{print $2}') != "200" ]]; then
-        best_branch=$branch
-        latest_url=$target_url$branch-latest/
-        if [[ $($CURL -kIS $latest_url | head -1 | awk '{print $2}') != "200" ]]; then
-            fatal "'$target_url_censor/$branch-latest/' does not exist"
-        fi
-    fi
-    echo "# use branch '$best_branch'"
-
-    # Find the latest build time for this branch.
-    local latest_build=$($CURL -Sk $target_url \
-        | grep "href=\"" \
-        | cut -d'"' -f2 \
-        | grep "^$best_branch-" \
-        | grep -v -- '-latest/$' \
-        | sort \
-        | tail -1)
-    local local_cache_dir=$MG_CACHE_DIR/bits/$local_cache_reldir$latest_build$target_base
-
-    if [[ -d $local_cache_dir ]]; then
-        echo "# local cache at '$local_cache_dir' already exists"
-    else
-        # Mark creation for bits cache flush every day.
-        mkdir -p $MG_CACHE_DIR/bits
-        if [[ ! -f $MG_CACHE_DIR/bits/created ]]; then
-            touch $MG_CACHE_DIR/bits/created
-        fi
-
-        latest_url=$target_url$latest_build
-        local latest_url_censor=$target_url_censor$latest_build
-
-        # Update cache in $MG_CACHE_DIR/bits
-        # `-l 2`: Two levels deep needed for 2-level depth of 'agents' bits area.
-        echo "# download from $latest_url_censor"
-        (cd $MG_CACHE_DIR/bits \
-            && wget -q -np -l 2 --no-check-certificate -r -L -R 'index.html,*.log' \
-                $latest_url$target_base/)
-    fi
-    local md5sums_path=$local_cache_dir/../md5sums.txt
-    if [[ ! -f $md5sums_path ]]; then
-        $CURL -Sk ${latest_url}md5sums.txt -o $md5sums_path
-    fi
-
-    # MD5 check of downloaded bits.
-    for bit in $(cd $local_cache_dir/../ && find . -type f | grep -v md5sums.txt); do
-        local correct_md5=$(grep $bit $md5sums_path | cut -d ' ' -f1)
-        local actual_md5=$(openssl dgst -md5 < $local_cache_dir/../$bit | awk '{print $NF}')
-        if [[ $correct_md5 != $actual_md5 ]]; then
-            rm $local_cache_dir/../$bit
-            fatal "md5 check failure on $local_cache_dir/../$bit (actual '$actual_md5', from md5sums '$correct_md5')"
-        fi
-    done
-
-    # Copy over to bits dir.
-    mkdir -p bits
-    [[ -d "bits/$target_base" ]] && fatal "'bits/$target_base' already exists"
-    $CP_LINK -PR $local_cache_dir bits/$target_base
+    local end_time=$(date +%s)
+    echo "$((${end_time} - ${start_time})) seconds to preload ${target_base}"
 }
 
 # Clone/update the given git repo in the repo cache.
@@ -624,12 +457,12 @@ make distclean
 if [[ ! -z "$TARGET" ]]; then
     flush_bits_cache
     if [[ "$TARGET" == "all-except-platform" ]]; then
-        preload_bits "platform" "$BRANCH" "$TRY_BRANCH"
+        preload_bits_from_manta "platform" "$BRANCH" "$TRY_BRANCH"
         TARGETS=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))' | grep -v '^platform')
         for targ in $TARGETS; do
             get_target_repos $targ
             for dep in `cat targets.json | $JSON $targ.deps | $JSON -a`; do
-                preload_bits $dep "$BRANCH" "$TRY_BRANCH"
+                preload_bits_from_manta $dep "$BRANCH" "$TRY_BRANCH"
             done
         done
     else
@@ -640,7 +473,7 @@ if [[ ! -z "$TARGET" ]]; then
         fi
         get_target_repos $TARGET
         for dep in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
-            preload_bits $dep "$BRANCH" "$TRY_BRANCH"
+            preload_bits_from_manta $dep "$BRANCH" "$TRY_BRANCH"
         done
     fi
 else
@@ -653,7 +486,7 @@ fi
 # "all" is a special target with deps to always preload.
 # I.e. for which "make all" doesn't build it.
 for dep in `cat targets.json | $JSON all.deps | $JSON -a`; do
-    preload_bits $dep "$BRANCH" "$TRY_BRANCH"
+    preload_bits_from_manta $dep "$BRANCH" "$TRY_BRANCH"
 done
 
 #get_pkgsrc
