@@ -81,6 +81,98 @@ function flush_bits_cache() {
     fi
 }
 
+# areload $MG_CACHE_DIR/bits/ with the latest built and uploaded bits for
+# the given target and branch via HTTP(S).
+#
+# Usage:
+#   preload_bits_from_http TARGET BRANCH TRY_BRANCH
+# where:
+#   TARGET is a URL dir that serves Apache/Nginx-index-style directories.
+#
+# Example:
+#   preload_bits_from_http http://download.joyent.com/pub/build/sdcnode master ""
+#
+function preload_bits_from_http() {
+
+    local target=$1
+    local branch=$2
+    local try_branch=$3
+    local target_base=$(basename $target)
+
+    echo ""
+    echo "# preload 'bits/$target_base'"
+
+    local target_url
+    [[ $(echo $target | cut -c 1-4) == "http" ]] || fatal "preload_bits_from_http called w/o http URL"
+
+    target_url=$target
+    if [[ "${target_url:(-1)}" != "/" ]]; then
+        target_url=$target_url/
+    fi
+    local_cache_reldir=${target_url#*://}
+    local_cache_reldir=${local_cache_reldir#*@}
+
+    # Branch dir: try $try_branch, then $branch.
+    local best_branch=$try_branch
+    local latest_url=$target_url$try_branch-latest/
+    if [[ -z "$best_branch" ||
+          $($CURL -kI $latest_url | head -1 | awk '{print $2}') != "200" ]]; then
+        best_branch=$branch
+        latest_url=$target_url$branch-latest/
+        if [[ $($CURL -kIS $latest_url | head -1 | awk '{print $2}') != "200" ]]; then
+            fatal "'$target_url/$branch-latest/' does not exist"
+        fi
+    fi
+    echo "# use branch '$best_branch'"
+
+    # Find the latest build time for this branch.
+    local latest_build=$($CURL -Sk $target_url \
+        | grep "href=\"" \
+        | cut -d'"' -f2 \
+        | grep "^$best_branch-" \
+        | grep -v -- '-latest/$' \
+        | sort \
+        | tail -1)
+    local local_cache_dir=$MG_CACHE_DIR/bits/$local_cache_reldir$latest_build$target_base
+
+    if [[ -d $local_cache_dir ]]; then
+        echo "# local cache at '$local_cache_dir' already exists"
+    else
+        # Mark creation for bits cache flush every day.
+        mkdir -p $MG_CACHE_DIR/bits
+        if [[ ! -f $MG_CACHE_DIR/bits/created ]]; then
+            touch $MG_CACHE_DIR/bits/created
+        fi
+
+        latest_url=$target_url$latest_build
+
+        # Update cache in $MG_CACHE_DIR/bits
+        # `-l 2`: Two levels deep needed for 2-level depth of 'agents' bits area.
+        echo "# download from $latest_url"
+        (cd $MG_CACHE_DIR/bits \
+            && wget -q -np -l 2 --no-check-certificate -r -L -R 'index.html,*.log' \
+                $latest_url$target_base/)
+    fi
+    local md5sums_path=$local_cache_dir/../md5sums.txt
+    if [[ ! -f $md5sums_path ]]; then
+        $CURL -Sk ${latest_url}md5sums.txt -o $md5sums_path
+    fi
+
+    # MD5 check of downloaded bits.
+    for bit in $(cd $local_cache_dir/../ && find . -type f | grep -v md5sums.txt); do
+        local correct_md5=$(grep $bit $md5sums_path | cut -d ' ' -f1)
+        local actual_md5=$(openssl dgst -md5 < $local_cache_dir/../$bit | awk '{print $NF}')
+        if [[ $correct_md5 != $actual_md5 ]]; then
+            rm $local_cache_dir/../$bit
+            fatal "md5 check failure on $local_cache_dir/../$bit (actual '$actual_md5', from md5sums '$correct_md5')"
+        fi
+    done
+
+    # Copy over to bits dir.
+    mkdir -p bits
+    [[ -d "bits/$target_base" ]] && fatal "'bits/$target_base' already exists"
+    $CP_LINK -PR $local_cache_dir bits/$target_base
+}
 
 #
 # Preload $MG_CACHE_DIR/bits/ with the latest built and uploaded bits for
@@ -104,6 +196,17 @@ function preload_bits_from_manta() {
     if [[ -d bits/$target_base ]]; then
         return;
     fi
+
+    # This is a hack here for the case where we've got something like:
+    #
+    # https://download.joyent.com/pub/build/sdcnode
+    #
+    # in the 'deps'. We'll then use HTTP to download that bit.
+    if [[ $(echo $target | cut -c 1-4) == "http" ]]; then
+        preload_bits_from_http $@
+        return 0
+    fi
+
     echo ""
     echo "# preload 'bits/$target_base from Manta'"
 
