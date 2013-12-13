@@ -3066,10 +3066,7 @@ cacheclean: distclean
 
 # Upload bits we want to keep for a Jenkins build.
 upload_jenkins:
-	@[[ -z "$(JOB_NAME)" ]] \
-		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
-		&& exit 1 || true
-	./tools/upload-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(UPLOAD_LOCATION)/$(JOB_NAME) $(JOB_NAME) $(UPLOAD_SUBDIRS)
+	@echo "We no longer upload to bits.joyent.us"
 
 # Upload bits we want to keep for a Jenkins build to manta
 manta_upload_jenkins:
