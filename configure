@@ -24,6 +24,7 @@ MGET_BIT_ARGS="-q"
 if [[ -n ${MGET_PROGRESS} ]]; then
     MGET_BIT_ARGS="--progress"
 fi
+MANTA_MAX_RETRIES=3
 
 export PATH="${ROOT}/node_modules/manta/bin:${PATH}"
 
@@ -37,10 +38,9 @@ fi
 if [[ -x `which gcp` ]]; then
     CP_LINK="gcp --link"
 else
-    CP_LINK=$((cp --version 2>/dev/null | grep GNU >/dev/null) && echo "cp --link" || echo "cp")
+    CP_LINK=$( (cp --version 2>/dev/null | grep GNU >/dev/null) && echo "cp --link" || echo "cp" )
 fi
 CURL="curl --fail --connect-timeout 10 -s"
-
 
 
 #---- internal support functions
@@ -82,12 +82,13 @@ function flush_bits_cache() {
 }
 
 
+#
 # Preload $MG_CACHE_DIR/bits/ with the latest built and uploaded bits for
 # the given target and branch.
 #
 # Usage:
 #   preload_bits_from_manta TARGET BRANCH TRY_BRANCH
-
+#
 # Example:
 #   preload_bits_from_manta smartlogin master ""
 #   preload_bits_from_manta release-20110901-upgrade/agents-upgrade master ""
@@ -108,55 +109,91 @@ function preload_bits_from_manta() {
 
     ensure_manta_credentials
 
-    local target_mpath
+    # You can specify "target" as branch/target, in which case we will use
+    # the branch from there. If target does not have '/', dirname returns '.'
     local target_branch=$(dirname $target)
     if [[ "$target_branch" != "." ]]; then
         branch=$target_branch
     fi
-    target_mpath=${manta_base_path}/${target_base}
+
+    # Remember: target_base is something like 'agents-upgrade'
+    local target_mpath=${manta_base_path}/${target_base}
+
+    # Branch dir: try $try_branch, then $branch.
     local best_branch=$try_branch
     if [[ -z $best_branch ]]; then
-        best_branch="master"
+        best_branch=$branch
     fi
+
+    #
+    # latest_mpath directory should be something like:
+    #
+    # /Joyent_Dev/stor/builds/agents-upgrade/master-latest
+    #
+    # which should exist as a file that contains the name of the actual latest
+    # path. Something similar but with a -<buildstamp> instead of -latest and
+    # we'll grab that into latest_dir.
+    #
     local latest_mpath=${target_mpath}/${best_branch}-latest
     local latest_dir=$(mget -q $latest_mpath)
     if [[ -z "$latest_dir" ]]; then
-        best_branch="master"
-        latest_mpath=${target_mpath}/${best_branch}-latest
-        latest_dir=$(mget -q $latest_mpath)
-    fi
-    if [[ -z "$latest_dir" ]]; then
         fatal "Could not get latest dir for target $target"
     fi
-    local dirs=$(mfind -t d $latest_dir)
-    mkdir -p $MG_CACHE_DIR/bits/
-    for dir in $dirs; do
-        mkdir -p ${MG_CACHE_DIR}/bits/${dir#$manta_base_path}
-    done
-    local files=$(mfind -t o $latest_dir)
+
+    # local_cache_dir will be something like:
+    # /root/MG/cache/bits/agents-upgrade/master-20131213T003614Z
+    local local_cache_dir=${MG_CACHE_DIR}/bits/${latest_dir#$manta_base_path/}
+    mkdir -p ${local_cache_dir}
+
+    # Mark creation for bits cache flush every day.
+    if [[ ! -f $MG_CACHE_DIR/bits/created ]]; then
+        touch $MG_CACHE_DIR/bits/created
+    fi
+
+    local cache_dirname=
+    local cache_filename=
+    local dir=
+    local files=$(mfind -t o ${latest_dir})
+    local found=
+    local local_file_md5=
+    local manta_file_md5=
+    local retries=
+
+    # loop through all the objects in the latest_dir
     for file in $files; do
         dir=$(dirname $file)
-        if [[ "${file##*.}" == "manta" ]]; then
-            local targetname=$(cat targets.json | json ${target}.image_name)
-            local zfsfiles="$(mget -q $file | json -H -a image_path manifest_path)"
-            local image=$(echo $zfsfiles | cut -d ' ' -f 1)
-            local manifest=$(echo $zfsfiles | cut -d ' ' -f 2)
-            local image_targ=$(echo $image | sed -e "s:$targetname:$target_base:g")
-            local manifest_targ=$(echo $manifest | sed -e "s:$targetname:$target_base:g")
-            (cd ${MG_CACHE_DIR}/bits/${dir#$manta_base_path};
-                if [[ ! -f $(basename $image_targ) ]]; then mget ${MGET_BIT_ARGS} -o $(basename $image_targ) $image; fi
-                if [[ ! -f $(basename $manifest_targ) ]]; then mget -q -o $(basename $manifest_targ) $manifest; fi
-            )
-        else
-            (cd ${MG_CACHE_DIR}/bits/${dir#$manta_base_path};
-                mget ${MGET_BIT_ARGS} -O $file)
-        fi
+        cache_dirname=$(echo "${local_cache_dir}/${dir#${latest_dir}}" | sed -e "s/\/$//g" | sed -e "s|//|/|g")
+        cache_filename=$(basename ${file})
+        manta_file_md5=$(mmd5 ${file} | cut -d' ' -f1)
+
+        # Ensure directory exists
+        mkdir -p ${cache_dirname}
+
+        retries=0
+        while [[ ${retries} -lt ${MANTA_MAX_RETRIES} ]]; do
+            if [[ ! -f ${cache_dirname}/${cache_filename} ]]; then
+                mget ${MGET_BIT_ARGS} -o ${cache_dirname}/${cache_filename} ${file}
+            fi
+
+            local_file_md5=$(md5sum ${cache_dirname}/${cache_filename} | cut -d ' ' -f1)
+            if [[ ${local_file_md5} == ${manta_file_md5} ]]; then
+                echo "# ${cache_dirname}/${cache_filename} has correct MD5"
+                break;
+            else
+                echo "# ${cache_dirname}/${cache_filename} has incorrect MD5, deleting"
+                rm -f ${cache_dirname}/${cache_filename}
+            fi
+            retries=$((${retries} + 1))
+        done
+
+        [[ -f ${cache_dirname}/${cache_filename} ]] \
+            || fatal "failed to preload ${cache_dirname}/${cache_filename}"
     done
 
     # Copy over to bits dir.
     mkdir -p bits
-    [[ -d "bits/$target_base" ]] && fatal "'bits/$target_base' already exists"
-    $CP_LINK -PR ${MG_CACHE_DIR}/bits/${latest_dir#$manta_base_path}/$target_base bits/$(basename $target)
+    [[ -d "bits/${target_base}" ]] && fatal "'bits/${target_base}' already exists"
+    $CP_LINK -PR ${local_cache_dir}/${target_base} bits/${target_base}
 
     local end_time=$(date +%s)
     echo "$((${end_time} - ${start_time})) seconds to preload ${target_base}"

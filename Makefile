@@ -2857,8 +2857,8 @@ $(BOOT_BIT): bits/usbheadnode/build.spec.local
 	@echo "# Build boot: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-tar-image -c
+		&& BITS_DIR=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
+		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc make tar
 	mv build/usb-headnode/$(shell basename $(BOOT_BIT)) $(BITS_DIR)/usbheadnode
 	@echo "# Created boot bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -1 $(BOOT_BIT)
