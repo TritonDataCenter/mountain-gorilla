@@ -10,6 +10,9 @@ cat <<HERE;
   "bits-url": "(unused because build passes in BITS_URL envvar)",
   "bits-branch": "(unused because build uses a local dir BITS_URL)",
 
+  "manta-user": "Joyent_Dev",
+  "manta-key-id": "de:e7:73:9a:b0:91:31:3e:72:8d:9f:62:ca:58:a2:ec",
+
   "platform-release": "$(ls bits/platform/platform*.tgz | xargs basename | cut -d- -f2)",
   "sdcboot-release": "$(ls bits/sdcboot/sdcboot*.tgz | xargs basename | cut -d- -f2)",
   "firmware-tools-release": "$(ls bits/firmware-tools/firmware-tools*.tgz | xargs basename | cut -d- -f3)",
