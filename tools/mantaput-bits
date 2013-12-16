@@ -80,8 +80,25 @@ done
 md5sums=""
 # now we can upload the files
 for file in $files; do
-    mput -f $file /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/${file#$BITS_DIR}
-    md5sums="${md5sums}$(md5sum $file)\n"
+    manta_object=/${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/${file#$BITS_DIR}
+
+    local_md5_line=$(md5sum ${file})
+    local_md5=$(echo "${local_md5_line}" | cut -d ' ' -f1)
+    manta_md5=$(mmd5 ${manta_object})
+
+    if [[ -n ${manta_md5} && ${manta_md5} != ${local_md5} ]]; then
+        fatal "${manta_object} exists but MD5 does not match ${file}"
+    fi
+
+    if [[ -z ${manta_md5} ]]; then
+        # file doesn't exist, upload it
+
+        mput -f ${file} ${manta_object}
+	[[ $? == 0 ]] || fatal "Failed to upload ${file} to ${manta_object}"
+    else
+        echo "${manta_object} already exists and matches local file, skipping upload."
+    fi
+    md5sums="${md5sums}${local_md5_line}\n"
 done
 
 # upload the md5sums and config.mk

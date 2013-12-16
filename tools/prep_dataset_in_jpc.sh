@@ -19,33 +19,35 @@ set -o errexit
 
 #---- globals, config
 
+CREATED_MACHINE_UUID=
+CREATED_MACHINE_IMAGE_UUID=
 TOP=$(cd $(dirname $0)/../ >/dev/null; pwd)
-JSON=$TOP/tools/json
+JSON=${TOP}/tools/json
+export PATH="${TOP}/node_modules/manta/bin:${TOP}/node_modules/smartdc/bin:${PATH}"
+image_package="g3-standard-2-smartos"
 
-if [[ -z "$SDC_ACCOUNT" ]]; then
-    export SDC_ACCOUNT="Joyent_Dev"
+if [[ -z ${SDC_ACCOUNT} ]]; then
+  export SDC_ACCOUNT="Joyent_Dev"
 fi
-if [[ -z "$SDC_URL" ]]; then
-    # Manta locality, use east
-    export SDC_URL="https://us-east-1.api.joyentcloud.com"
-fi
-
-if [[ -z "$SDC_KEY_ID" ]]; then
-    export SDC_KEY_ID="$(ssh-keygen -l -f ~/.ssh/id_rsa.pub | awk '{print $2}' | tr -d '\n')"
+if [[ -z ${SDC_URL} ]]; then
+  # Manta locality, use east
+  export SDC_URL="https://us-east-1.api.joyentcloud.com"
 fi
 
-if [[ -z "$MANTA_USER" ]]; then
-    export MANTA_USER=$SDC_ACCOUNT
-fi
-if [[ -z "$MANTA_URL" ]]; then
-    export MANTA_URL=https://us-east.manta.joyent.com
+if [[ -z ${SDC_KEY_ID} ]]; then
+  export SDC_KEY_ID="$(ssh-keygen -l -f ~/.ssh/id_rsa.pub | awk '{print $2}' | tr -d '\n')"
 fi
 
-if [[ -z "$MANTA_KEY_ID" ]]; then
-    export MANTA_KEY_ID="$SDC_KEY_ID"
+if [[ -z ${MANTA_USER} ]]; then
+  export MANTA_USER=${SDC_ACCOUNT}
+fi
+if [[ -z ${MANTA_URL} ]]; then
+  export MANTA_URL=https://us-east.manta.joyent.com
 fi
 
-export SDC_TESTING=1
+if [[ -z ${MANTA_KEY_ID} ]]; then
+  export MANTA_KEY_ID="${SDC_KEY_ID}"
+fi
 
 # UUID of the created image/dataset.
 uuid=""
@@ -56,68 +58,55 @@ packages=""
 output=""
 
 
-
 #---- functions
-
-# Because sdc-cloudapi doesn't exist
-function sdc-cloudapi {
-  url="${SDC_URL}$1"
-  shift
-  local now=`date -u "+%a, %d %h %Y %H:%M:%S GMT"` ;
-  local signature=`echo ${now} | tr -d '\n' | openssl dgst -sha256 -sign ~/.ssh/id_rsa | openssl enc -e -a | tr -d '\n'` ;
-  curl -k -is -H "Content-Type: application/json" -H "Accept: application/json" -H "x-api-version: 7.0.0" -H "Date: ${now}" -H "Authorization: Signature keyId=\"/${SDC_ACCOUNT}/keys/${SDC_KEY_ID}\",algorithm=\"rsa-sha256\" ${signature}" --url ${url} $@ ;
-  echo "";
-}
 
 function fatal {
   echo "$(basename $0): error: $1"
-  exit 1
+
+  cleanup 1
 }
 
 function cleanup() {
   local exit_status=${1:-$?}
-  if [[ -n $gzhost ]]; then
-    if [[ -n "$uuid" ]]; then
-      ${SSH} "vmadm stop -F ${uuid} ; vmadm destroy ${uuid}"
-    fi
+  if [[ -n ${CREATED_MACHINE_UUID} ]]; then
+    sdc-deletemachine ${CREATED_MACHINE_UUID}
   fi
-  exit $exit_status
+  if [[ -n ${CREATED_MACHINE_IMAGE_UUID} ]]; then
+    sdc-deleteimage ${CREATED_MACHINE_IMAGE_UUID}
+  fi
+  exit ${exit_status}
 }
 
 function usage() {
-    if [[ -n "$1" ]]; then
-        echo "error: $1"
-        echo ""
-    fi
-    echo "Usage:"
-    echo "  prep_dataset.sh [OPTIONS]"
+  if [[ -n "$1" ]]; then
+    echo "error: $1"
     echo ""
-    echo "Options:"
-    echo "  -h              Print this help and exit."
-    echo "  -i IMAGE_UUID   The base image UUID."
-    echo "  -t TARBALL      Space-separated list of tarballs to unarchive into"
-    echo "                  the new image. A tarball is of the form:"
-    echo "                    TARBALL-ABSOLUTE-PATH-PATTERN[:SYSROOT]"
-    echo "                  The default 'SYSROOT' is '/'. A '/' sysroot is the"
-    echo "                  typical fs tarball layout with '/root' and '/site'"
-    echo "                  base dirs. This can be called multiple times for"
-    echo "                  more tarballs."
-    echo "  -p PACKAGES     Space-separated list of pkgsrc package to install."
-    echo "                  This can be called multiple times."
+  fi
+  echo "Usage:"
+  echo "  prep_dataset.sh [OPTIONS]"
+  echo ""
+  echo "Options:"
+  echo "  -h              Print this help and exit."
+  echo "  -i IMAGE_UUID   The base image UUID."
+  echo "  -t TARBALL      Space-separated list of tarballs to unarchive into"
+  echo "                  the new image. A tarball is of the form:"
+  echo "                    TARBALL-ABSOLUTE-PATH-PATTERN[:SYSROOT]"
+  echo "                  The default 'SYSROOT' is '/'. A '/' sysroot is the"
+  echo "                  typical fs tarball layout with '/root' and '/site'"
+  echo "                  base dirs. This can be called multiple times for"
+  echo "                  more tarballs."
+  echo "  -p PACKAGES     Space-separated list of pkgsrc package to install."
+  echo "                  This can be called multiple times."
 
-    echo "  -P PACKAGES     Package (instance / limit) name to use (eg sdc_256)"
-    echo "  -o OUTPUT       Image output path. Should be of the form:"
-    echo "                  '/path/to/name.manta'."
-    echo "  -v VERSION      Version for produced image manifest."
-    echo "  -n NAME         NAME for the produced image manifest."
-    echo "  -d DESCRIPTION  DESCRIPTION for the produced image manifest."
-    echo ""
-    echo "  -s GZSERVERS    DEPRECATED. Don't see this being used."
-    echo ""
-    exit 1
+  echo "  -P PACKAGE      Package (instance / limit) name to use (eg sdc_256)"
+  echo "  -o OUTPUT       Image output path. Should be of the form:"
+  echo "                  '/path/to/name.manta'."
+  echo "  -v VERSION      Version for produced image manifest."
+  echo "  -n NAME         NAME for the produced image manifest."
+  echo "  -d DESCRIPTION  DESCRIPTION for the produced image manifest."
+  echo ""
+  exit 1
 }
-
-
 
 
 #---- mainline
@@ -125,47 +114,47 @@ function usage() {
 trap cleanup ERR
 
 while getopts ht:p:P:i:o:n:v:d: opt; do
-  case $opt in
+  case ${opt} in
   h)
     usage
     ;;
   t)
-    if [[ -n "${OPTARG}" ]]; then
+    if [[ -n ${OPTARG} ]]; then
       tarballs="${tarballs} ${OPTARG}"
     fi
     ;;
   p)
-    if [[ -n "${OPTARG}" ]]; then
+    if [[ -n ${OPTARG} ]]; then
       packages="${packages} ${OPTARG}"
     fi
     ;;
   P)
-    if [[ -n "${OPTARG}" ]]; then
+    if [[ -n ${OPTARG} ]]; then
       image_package="${OPTARG}"
     fi
     ;;
   i)
-    if [[ -n "${OPTARG}" ]]; then
+    if [[ -n ${OPTARG} ]]; then
         image_uuid=${OPTARG}
     fi
     ;;
   o)
-    if [[ -n "${OPTARG}" ]]; then
+    if [[ -n ${OPTARG} ]]; then
         output="${OPTARG}"
     fi
     ;;
   n)
-    if [[ -n "${OPTARG}" ]]; then
+    if [[ -n ${OPTARG} ]]; then
         image_name=${OPTARG}
     fi
     ;;
   v)
-    if [[ -n "${OPTARG}" ]]; then
+    if [[ -n ${OPTARG} ]]; then
         image_version=${OPTARG}
     fi
     ;;
   d)
-    if [[ -n "${OPTARG}" ]]; then
+    if [[ -n ${OPTARG} ]]; then
         image_description="${OPTARG}"
     fi
     ;;
@@ -179,49 +168,61 @@ if [[ -z ${output} ]]; then
   fatal "No output file specified. Use '-o' option."
 fi
 
-[[ -n $image_name ]] || fatal "No image name, use '-n NAME'."
-[[ -n $image_version ]] || fatal "No image version, use '-v VERSION'."
-[[ -n $image_description ]] || image_description="$image_name" 
+[[ -n ${image_name} ]] || fatal "No image name, use '-n NAME'."
+[[ -n ${image_version} ]] || fatal "No image version, use '-v VERSION'."
+[[ -n ${image_description} ]] || image_description="${image_name}"
 
-if [[ -z "$image_uuid" ]]; then
+if [[ -z ${image_uuid} ]]; then
   fatal "No image_uuid provided. Use the '-i' option."
 fi
 
 # Create the machine in the specified DC
-package="$(sdc-listpackages | tools/json -c 'this.name.match("smartos-image-creation")' 0.id)"
-instance_type_list="$(sdc-listpackages | json -H -a name id -d, | xargs)"
-for use_package in $instance_type_list; do
-  if [[ $(echo $use_package | cut -d, -f1) == $image_package ]]; then
-    package=$(echo $use_package | cut -d, -f2 | tr -d '\n')
-  fi
-done
+package=$(sdc-listpackages | ${JSON} -c "this.name == '${image_package}'" 0.id)
+[[ -n ${package} ]] || fatal "cannot find package \"${image_package}\""
 
-machine=$(sdc-createmachine -e $image_uuid -p $package | json 'id')
+machine=$(sdc-createmachine --dataset ${image_uuid} --package ${package} --name "TEMP-${image_name}-$(date +%s)"  | json id)
+[[ -n ${machine} ]] || fatal "cannot get uuid for new VM."
 
-state=$(sdc-getmachine $machine | json 'state')
-while [[ $state == 'provisioning' ]]; do
+# Set this here so from here out fatal() can try to destroy too.
+CREATED_MACHINE_UUID=${machine}
+
+state=$(sdc-getmachine ${machine} | json 'state')
+while [[ ${state} == 'provisioning' ]]; do
   sleep 1
-  state=$(sdc-getmachine $machine | json 'state')
+  state=$(sdc-getmachine ${machine} | json 'state')
 done
 
-machine_json=$(sdc-getmachine $machine)
+machine_json=$(sdc-getmachine ${machine})
 
-if [[ $state != 'running' ]]; then
-  echo "Problem with machine $machine"
+if [[ ${state} != 'running' ]]; then
+  echo "Problem with machine ${machine}"
   exit 1
 fi
-SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$(echo $machine_json | json ips.0)"
+SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$(echo "${machine_json}" | json ips.0)"
+
+# Wait for the broken networking in east to settle (EASTONE-111)
+# we'll wait up to 10 minutes then attempt to delete the VM
+waited=0
+while [[ ${waited} -lt 600 && -z $(${SSH} zonename) ]]; do
+  sleep 5
+  waited=$((${waited} + 5))
+done
+if [[ ${waited} -ge 600 ]]; then
+  sdc-deletemachine ${machine}
+  fatal "VM ${machine} still unavailable after ${waited} seconds."
+fi
+
 
 # "tarballs" is a list of:
 #   TARBALL-ABSOLUTE-PATH-PATTERN[:SYSROOT]
 # e.g.:
 #   /root/joy/mountain-gorilla/bits/amon/amon-agent-*.tgz:/opt
-for tb_info in $tarballs; do
-  tb_tarball=$(echo "$tb_info" | awk -F':' '{print $1}')
-  tb_sysroot=$(echo "$tb_info" | awk -F':' '{print $2}')
-  [[ -z "$tb_sysroot" ]] && tb_sysroot=/
+for tb_info in ${tarballs}; do
+  tb_tarball=$(echo "${tb_info}" | awk -F':' '{print $1}')
+  tb_sysroot=$(echo "${tb_info}" | awk -F':' '{print $2}')
+  [[ -z "${tb_sysroot}" ]] && tb_sysroot=/
 
-  bzip=$(echo $tb_tarball | grep "bz2$" || true)
+  bzip=$(echo ${tb_tarball} | grep "bz2$" || true)
   if [[ -n ${bzip} ]]; then
     uncompress=bzcat
   else
@@ -229,7 +230,7 @@ for tb_info in $tarballs; do
   fi
 
   echo "Copying tarball '${tb_tarball}' to zone '${uuid}'."
-  if [[ "$tb_sysroot" == "/" ]]; then
+  if [[ ${tb_sysroot} == "/" ]]; then
     # Special case: for tb_sysroot == '/' we presume these are fs-tarball
     # style tarballs with "/root/..." and "/site/...". We strip
     # appropriately.
@@ -251,7 +252,7 @@ if [[ -n "${packages}" ]]; then
   echo "Validating pkgsrc installation"
   for p in ${packages}
   do
-    echo "Checking for $p"
+    echo "Checking for ${p}"
     PKG_OK=$(${SSH} "/opt/local/bin/pkgin -y list | grep ${p} || true")
     if [[ -z "${PKG_OK}" ]]; then
       echo "error: pkgin install failed (${p})"
@@ -266,46 +267,66 @@ cat tools/clean-image.sh \
 
 # And then turn it in to an image
 
-sdc-stopmachine $machine
+sdc-stopmachine ${machine}
 
-state=$(sdc-getmachine $machine | json 'state')
-while [[ $state == 'running' ]]; do
+state=$(sdc-getmachine ${machine} | json 'state')
+while [[ ${state} == 'running' ]]; do
   sleep 1
-  state=$(sdc-getmachine $machine | json 'state')
+  state=$(sdc-getmachine ${machine} | json 'state')
 done
 
-image=$(cat <<EOM | sdc-cloudapi /my/images -X POST -d@- | json -H
-{
-  "machine": "$machine",
-  "name": "$image_name",
-  "version": "$image_version",
-  "description": "$image_description"
-}
-EOM
-)
+image=$(sdc-createimagefrommachine --machine ${machine} --name ${image_name}-zfs --imageVersion ${image_version} --description ${image_description} --tags '{"smartdc_service": true}')
+image_id=$(echo "${image}" | json -H 'id')
 
-image_id=$(echo $image | json -H 'id')
+# Set this here so from here out fatal() can try to destroy too.
+CREATED_MACHINE_IMAGE_UUID=${image_id}
 
 for i in {100..1}; do
-    sleep 5
-    if [[ "$(sdc-cloudapi /my/images/$image_id | json -H 'state')" != "creating" &&
-         "$(sdc-cloudapi /my/images/$image_id | json -H 'state')" != "unactivated" ]]; then
-        break
-    fi
+  sleep 5
+  state=$(sdc-getimage ${image_id} | json 'state')
+  if [[ ${state} != "creating" && ${state} != "unactivated" ]]; then
+    break
+  fi
 done
 
-sdc-deletemachine $machine
+sdc-deletemachine ${machine}
 
-if [[ "$(sdc-cloudapi /my/images/$image_id | json -H 'state')" != "active" ]]; then
+if [[ "$(sdc-getimage ${image_id} | json 'state')" != "active" ]]; then
   echo "Error creating image"
   exit 1
 fi
 
 mantapath=/${SDC_ACCOUNT}/stor/builds/${image_name}/$(echo ${image_version} | cut -d '-' -f1,2)/${image_name}
-mmkdir -p $mantapath
+mmkdir -p ${mantapath}
 
-sdc-cloudapi /my/images/$image_id?action=export -X POST --data "{\"manta_path\":\"${mantapath}\"}" | json -H > $output
+manta_bits=/tmp/manta-exported-image.$$
+sdc-exportimage --mantaPath ${mantapath} ${image_id} > ${manta_bits}
 
-sdc-cloudapi /my/images/$image_id -X DELETE
+output_dir=$(dirname ${output})
+image_path=$(json image_path < ${manta_bits})
+manifest_path=$(json manifest_path < ${manta_bits})
 
-cat $output
+image_filename=$(basename ${image_path})
+image_manifest_filename=$(basename ${manifest_path})
+
+# XXX we download back from manta now just so other scripts work and we can publish
+# to updates. Obviously it makes more sense not to do this, but there is not time to
+# fix everything at once.
+mget -o ${output_dir}/${image_filename} ${image_path}
+[[ -f ${output_dir}/${image_filename} ]] || fatal "Failed to download ${image_filename}"
+mget -o ${output_dir}/${image_manifest_filename} ${manifest_path}
+[[ -f ${output_dir}/${image_manifest_filename} ]] || fatal "Failed to download ${image_manifest_filename}"
+
+# XXX we need to add a requirement on the manifest for networks but the API does
+# not allow us to do that, so we have to change locally and push over the original.
+cat ${output_dir}/${image_manifest_filename} \
+    | json -e 'this.requirements.networks = {name: "net0", description: "admin"}' \
+    > ${output_dir}/${image_manifest_filename}.new \
+    && mv ${output_dir}/${image_manifest_filename}.new ${output_dir}/${image_manifest_filename} \
+    && mput -f ${output_dir}/${image_manifest_filename} ${manifest_path}
+
+sdc-deleteimage ${image_id}
+
+cat ${manta_bits}
+
+exit 0
