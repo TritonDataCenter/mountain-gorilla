@@ -2452,7 +2452,7 @@ manta_upload_jenkins:
 	@[[ -z "$(JOB_NAME)" ]] \
 		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
 		&& exit 1 || true
-	./tools/mantaput-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(MANTA_UPLOAD_BASE)/$(JOB_NAME) $(JOB_NAME) $(UPLOAD_SUBDIRS)
+	TRACE=1 ./tools/mantaput-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(MANTA_UPLOAD_BASE)/$(JOB_NAME) $(JOB_NAME) $(UPLOAD_SUBDIRS)
 
 
 # Publish the image for this Jenkins job to https://updates.joyent.com, if

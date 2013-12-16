@@ -84,7 +84,7 @@ for file in $files; do
 
     local_md5_line=$(md5sum ${file})
     local_md5=$(echo "${local_md5_line}" | cut -d ' ' -f1)
-    manta_md5=$(mmd5 ${manta_object})
+    manta_md5=$(mmd5 ${manta_object} | cut -d ' ' -f1)
 
     if [[ -n ${manta_md5} && ${manta_md5} != ${local_md5} ]]; then
         fatal "${manta_object} exists but MD5 does not match ${file}"
@@ -94,7 +94,7 @@ for file in $files; do
         # file doesn't exist, upload it
 
         mput -f ${file} ${manta_object}
-	[[ $? == 0 ]] || fatal "Failed to upload ${file} to ${manta_object}"
+        [[ $? == 0 ]] || fatal "Failed to upload ${file} to ${manta_object}"
     else
         echo "${manta_object} already exists and matches local file, skipping upload."
     fi
@@ -103,7 +103,7 @@ done
 
 # upload the md5sums and config.mk
 echo -e $md5sums | mput -H 'content-type: text/plain' /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/md5sums.txt
-mput -f $BITS_DIR/config.mk /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/config.mk 
+mput -f $BITS_DIR/config.mk /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/config.mk
 # now update the latest link
 
 echo "/${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}" | mput -H 'content-type: text/plain' /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${UPLOAD_BRANCH}-latest
