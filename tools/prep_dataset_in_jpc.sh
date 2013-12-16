@@ -319,8 +319,12 @@ mget -o ${output_dir}/${image_manifest_filename} ${manifest_path}
 
 # XXX we need to add a requirement on the manifest for networks but the API does
 # not allow us to do that, so we have to change locally and push over the original.
+# We also set the min_platform to the platform we just built the bits on, not the
+# platform we created the image on, since that's where the binary dependency should
+# come from.
 cat ${output_dir}/${image_manifest_filename} \
     | json -e 'this.requirements.networks = {name: "net0", description: "admin"}' \
+        -e "this.requirements.min_platform['7.0'] = '$(uname -v | cut -d '_' -f 2)'" \
     > ${output_dir}/${image_manifest_filename}.new \
     && mv ${output_dir}/${image_manifest_filename}.new ${output_dir}/${image_manifest_filename} \
     && mput -f ${output_dir}/${image_manifest_filename} ${manifest_path}
