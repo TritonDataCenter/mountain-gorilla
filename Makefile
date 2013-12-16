@@ -1551,7 +1551,7 @@ $(MANTA_WORKFLOW_IMAGE_BIT): $(MANTA_WORKFLOW_BITS)
 		-t $(MANTA_WORKFLOW_EXTRA_TARBALLS) -n $(MANTA_WORKFLOW_IMAGE_NAME) \
 		-v $(_manta-wf_stamp) -d $(MANTA_WORKFLOW_IMAGE_DESCRIPTION)
 	@echo "# Created manta-workflow image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(RABBITMQ_IMAGE_BIT))
+	@ls -l $$(dirname $(MANTA_WORKFLOW_IMAGE_BIT))
 	@echo ""
 
 manta-workflow_publish_image: $(MANTA_WORKFLOW_IMAGE_BIT)
@@ -1596,7 +1596,7 @@ $(MOLA_IMAGE_BIT): $(MOLA_BITS)
 		-t $(MOLA_EXTRA_TARBALLS) -n $(MOLA_IMAGE_NAME) \
 		-v $(_mola_stamp) -d $(MOLA_IMAGE_DESCRIPTION)
 	@echo "# Created mola image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(RABBITMQ_IMAGE_BIT))
+	@ls -l $$(dirname $(MOLA_IMAGE_BIT))
 	@echo ""
 
 mola_publish_image: $(MOLA_IMAGE_BIT)
@@ -1639,7 +1639,7 @@ $(MADTOM_IMAGE_BIT): $(MADTOM_BITS)
 		-t $(MADTOM_EXTRA_TARBALLS) -n $(MADTOM_IMAGE_NAME) \
 		-v $(_madtom_stamp) -d $(MADTOM_IMAGE_DESCRIPTION)
 	@echo "# Created madtom image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(RABBITMQ_IMAGE_BIT))
+	@ls -l $$(dirname $(MADTOM_IMAGE_BIT))
 	@echo ""
 
 madtom_publish_image: $(MADTOM_IMAGE_BIT)
@@ -1682,7 +1682,7 @@ $(MORAY_IMAGE_BIT): $(MORAY_BITS)
 		-t $(MORAY_EXTRA_TARBALLS) -n $(MORAY_IMAGE_NAME) \
 		-v $(_moray_stamp) -d $(MORAY_IMAGE_DESCRIPTION)
 	@echo "# Created moray image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(RABBITMQ_IMAGE_BIT))
+	@ls -l $$(dirname $(MORAY_IMAGE_BIT))
 	@echo ""
 
 moray_publish_image: $(MORAY_IMAGE_BIT)
@@ -1725,7 +1725,7 @@ $(ELECTRIC_MORAY_IMAGE_BIT): $(ELECTRIC_MORAY_BITS)
 		-t $(ELECTRIC_MORAY_EXTRA_TARBALLS) -n $(ELECTRIC_MORAY_IMAGE_NAME) \
 		-v $(_electric-moray_stamp) -d $(ELECTRIC_MORAY_IMAGE_DESCRIPTION)
 	@echo "# Created electric-moray image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(RABBITMQ_IMAGE_BIT))
+	@ls -l $$(dirname $(ELECTRIC_MORAY_IMAGE_BIT))
 	@echo ""
 
 electric-moray_publish_image: $(ELECTRIC_MORAY_IMAGE_BIT)
