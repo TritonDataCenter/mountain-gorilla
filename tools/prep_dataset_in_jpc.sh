@@ -357,7 +357,7 @@ mget -o ${output_dir}/${image_manifest_filename} ${manifest_path}
 # And we remove the '-zfs' from the end of the name which we added for the filename.
 #
 cat ${output_dir}/${image_manifest_filename} \
-  | json -e 'this.requirements.networks = {name: "net0", description: "admin"}' \
+  | json -e 'this.requirements.networks = [{name: "net0", description: "admin"}]' \
     -e "this.requirements.min_platform['7.0'] = '$(uname -v | cut -d '_' -f 2)'" \
     -e "this.name = '${image_name}'" \
   > ${output_dir}/${image_manifest_filename}.new \
