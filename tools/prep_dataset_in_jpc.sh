@@ -87,6 +87,7 @@ function usage() {
   echo ""
   echo "Options:"
   echo "  -h              Print this help and exit."
+  echo "  -b BUILD_NAME   The name of the build (if different from the image name)"
   echo "  -i IMAGE_UUID   The base image UUID."
   echo "  -t TARBALL      Space-separated list of tarballs to unarchive into"
   echo "                  the new image. A tarball is of the form:"
@@ -113,7 +114,7 @@ function usage() {
 
 trap cleanup ERR
 
-while getopts ht:p:P:i:o:n:v:d: opt; do
+while getopts ht:p:P:i:o:n:v:d:b: opt; do
   case ${opt} in
   h)
     usage
@@ -141,6 +142,11 @@ while getopts ht:p:P:i:o:n:v:d: opt; do
   o)
     if [[ -n ${OPTARG} ]]; then
         output="${OPTARG}"
+    fi
+    ;;
+  b)
+    if [[ -n ${OPTARG} ]]; then
+        build_name=${OPTARG}
     fi
     ;;
   n)
@@ -171,6 +177,7 @@ fi
 [[ -n ${image_name} ]] || fatal "No image name, use '-n NAME'."
 [[ -n ${image_version} ]] || fatal "No image version, use '-v VERSION'."
 [[ -n ${image_description} ]] || image_description="${image_name}"
+[[ -n ${build_name} ]] || build_name=${image_name}
 
 if [[ -z ${image_uuid} ]]; then
   fatal "No image_uuid provided. Use the '-i' option."
@@ -180,7 +187,7 @@ fi
 package=$(sdc-listpackages | ${JSON} -c "this.name == '${image_package}'" 0.id)
 [[ -n ${package} ]] || fatal "cannot find package \"${image_package}\""
 
-machine=$(sdc-createmachine --dataset ${image_uuid} --package ${package} --name "TEMP-${image_name}-$(date +%s)"  | json id)
+machine=$(sdc-createmachine --dataset ${image_uuid} --package ${package} --name "TEMP-${build_name}-$(date +%s)"  | json id)
 [[ -n ${machine} ]] || fatal "cannot get uuid for new VM."
 
 # Set this here so from here out fatal() can try to destroy too.
@@ -296,7 +303,7 @@ if [[ "$(sdc-getimage ${image_id} | json 'state')" != "active" ]]; then
   exit 1
 fi
 
-mantapath=/${SDC_ACCOUNT}/stor/builds/${image_name}/$(echo ${image_version} | cut -d '-' -f1,2)/${image_name}
+mantapath=/${SDC_ACCOUNT}/stor/builds/${build_name}/$(echo ${image_version} | cut -d '-' -f1,2)/${build_name}
 mmkdir -p ${mantapath}
 
 manta_bits=/tmp/manta-exported-image.$$
@@ -308,6 +315,30 @@ manifest_path=$(json manifest_path < ${manta_bits})
 
 image_filename=$(basename ${image_path})
 image_manifest_filename=$(basename ${manifest_path})
+
+# XXX See TOOLS-359, basically binder has image_name = manta-nameservice which breaks
+# backward compat when we switch to using JPC images. So I need to rename to the old
+# name here.
+if [[ ${image_name} != ${build_name} ]]; then
+  new_image_filename=$(echo ${image_filename} | sed -e "s/^${image_name}/${build_name}/")
+  new_image_manifest_filename=$(echo ${image_manifest_filename} | sed -e "s/^${image_name}/${build_name}/")
+  mln ${mantapath}/${image_filename} ${mantapath}/${new_image_filename}
+  mln ${mantapath}/${image_manifest_filename} ${mantapath}/${new_image_manifest_filename}
+  mrm ${mantapath}/${image_filename}
+  mrm ${mantapath}/${image_manifest_filename}
+  image_filename=${new_image_filename}
+  image_manifest_filename=${new_image_manifest_filename}
+  image_path=${mantapath}/${image_filename}
+  manifest_path=${mantapath}/${image_manifest_filename}
+
+  json \
+    -e "this.image_path='${image_path}'" \
+    -e "this.manifest_path='${manifest_path}'" \
+    < ${manta_bits} \
+    > ${manta_bits}.new \
+    && mv ${manta_bits}.new ${manta_bits}
+
+fi
 
 # XXX we download back from manta now just so other scripts work and we can publish
 # to updates. Obviously it makes more sense not to do this, but there is not time to
@@ -323,11 +354,11 @@ mget -o ${output_dir}/${image_manifest_filename} ${manifest_path}
 # platform we created the image on, since that's where the binary dependency should
 # come from.
 cat ${output_dir}/${image_manifest_filename} \
-    | json -e 'this.requirements.networks = {name: "net0", description: "admin"}' \
-        -e "this.requirements.min_platform['7.0'] = '$(uname -v | cut -d '_' -f 2)'" \
-    > ${output_dir}/${image_manifest_filename}.new \
-    && mv ${output_dir}/${image_manifest_filename}.new ${output_dir}/${image_manifest_filename} \
-    && mput -f ${output_dir}/${image_manifest_filename} ${manifest_path}
+  | json -e 'this.requirements.networks = {name: "net0", description: "admin"}' \
+    -e "this.requirements.min_platform['7.0'] = '$(uname -v | cut -d '_' -f 2)'" \
+  > ${output_dir}/${image_manifest_filename}.new \
+  && mv ${output_dir}/${image_manifest_filename}.new ${output_dir}/${image_manifest_filename} \
+  && mput -f ${output_dir}/${image_manifest_filename} ${manifest_path}
 
 sdc-deleteimage ${image_id}
 

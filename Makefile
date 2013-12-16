@@ -645,6 +645,7 @@ manatee_image: $(MANATEE_IMAGE_BIT)
 $(MANATEE_IMAGE_BIT): $(MANATEE_BITS)
 	@echo "# Build manatee_image: branch $(MANATEE_BRANCH), sha $(MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MANATEE_IMAGE_UUID)" -t $(MANATEE_BITS) \
+		-b "manatee" \
 		-o "$(MANATEE_IMAGE_BIT)" -p $(MANATEE_PKGSRC) \
 		-t $(MANATEE_EXTRA_TARBALLS) -n $(MANATEE_IMAGE_NAME) \
 		-v $(_manatee_stamp) -d $(MANATEE_IMAGE_DESCRIPTION)
@@ -1421,6 +1422,7 @@ marlin_image: $(MARLIN_IMAGE_BIT)
 $(MARLIN_IMAGE_BIT): $(MARLIN_BITS)
 	@echo "# Build marlin_image: branch $(MARLIN_BRANCH), sha $(MARLIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MARLIN_IMAGE_UUID)" -t $(MARLIN_BITS) \
+		-b "marlin" \
 		-o "$(MARLIN_IMAGE_BIT)" -p $(MARLIN_PKGSRC) \
 		-t $(MARLIN_EXTRA_TARBALLS) -n $(MARLIN_IMAGE_NAME) \
 		-v $(_marlin_stamp) -d $(MARLIN_IMAGE_DESCRIPTION)
@@ -1461,6 +1463,7 @@ medusa_image: $(MEDUSA_IMAGE_BIT)
 $(MEDUSA_IMAGE_BIT): $(MEDUSA_BITS)
 	@echo "# Build medusa_image: branch $(MEDUSA_BRANCH), sha $(MEDUSA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MEDUSA_IMAGE_UUID)" -t $(MEDUSA_BITS) \
+		-b "medusa" \
 		-o "$(MEDUSA_IMAGE_BIT)" -p $(MEDUSA_PKGSRC) \
 		-t $(MEDUSA_EXTRA_TARBALLS) -n $(MEDUSA_IMAGE_NAME) \
 		-v $(_medusa_stamp) -d $(MEDUSA_IMAGE_DESCRIPTION)
@@ -1501,6 +1504,7 @@ mahi_image: $(MAHI_IMAGE_BIT)
 $(MAHI_IMAGE_BIT): $(MAHI_BITS)
 	@echo "# Build mahi_image: branch $(MAHI_BRANCH), sha $(MAHI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MAHI_IMAGE_UUID)" -t $(MAHI_BITS) \
+		-b "mahi" \
 		-o "$(MAHI_IMAGE_BIT)" -p $(MAHI_PKGSRC) \
 		-t $(MAHI_EXTRA_TARBALLS) -n $(MAHI_IMAGE_NAME) \
 		-v $(_mahi_stamp) -d $(MAHI_IMAGE_DESCRIPTION)
@@ -1587,6 +1591,7 @@ mola_image: $(MOLA_IMAGE_BIT)
 $(MOLA_IMAGE_BIT): $(MOLA_BITS)
 	@echo "# Build mola_image: branch $(MOLA_BRANCH), sha $(MOLA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MOLA_IMAGE_UUID)" -t $(MOLA_BITS) \
+		-b "mola" \
 		-o "$(MOLA_IMAGE_BIT)" -p $(MOLA_PKGSRC) \
 		-t $(MOLA_EXTRA_TARBALLS) -n $(MOLA_IMAGE_NAME) \
 		-v $(_mola_stamp) -d $(MOLA_IMAGE_DESCRIPTION)
@@ -1629,6 +1634,7 @@ madtom_image: $(MADTOM_IMAGE_BIT)
 $(MADTOM_IMAGE_BIT): $(MADTOM_BITS)
 	@echo "# Build madtom_image: branch $(MADTOM_BRANCH), sha $(MADTOM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MADTOM_IMAGE_UUID)" -t $(MADTOM_BITS) \
+		-b "mola" \
 		-o "$(MADTOM_IMAGE_BIT)" -p $(MADTOM_PKGSRC) \
 		-t $(MADTOM_EXTRA_TARBALLS) -n $(MADTOM_IMAGE_NAME) \
 		-v $(_madtom_stamp) -d $(MADTOM_IMAGE_DESCRIPTION)
@@ -1671,6 +1677,7 @@ moray_image: $(MORAY_IMAGE_BIT)
 $(MORAY_IMAGE_BIT): $(MORAY_BITS)
 	@echo "# Build moray_image: branch $(MORAY_BRANCH), sha $(MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MORAY_IMAGE_UUID)" -t $(MORAY_BITS) \
+		-b "moray" \
 		-o "$(MORAY_IMAGE_BIT)" -p $(MORAY_PKGSRC) \
 		-t $(MORAY_EXTRA_TARBALLS) -n $(MORAY_IMAGE_NAME) \
 		-v $(_moray_stamp) -d $(MORAY_IMAGE_DESCRIPTION)
@@ -1713,6 +1720,7 @@ electric-moray_image: $(ELECTRIC_MORAY_IMAGE_BIT)
 $(ELECTRIC_MORAY_IMAGE_BIT): $(ELECTRIC_MORAY_BITS)
 	@echo "# Build electric-moray_image: branch $(ELECTRIC_MORAY_BRANCH), sha $(ELECTRIC_MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(ELECTRIC_MORAY_IMAGE_UUID)" -t $(ELECTRIC_MORAY_BITS) \
+		-b "electric-moray" \
 		-o "$(ELECTRIC_MORAY_IMAGE_BIT)" -p $(ELECTRIC_MORAY_PKGSRC) \
 		-t $(ELECTRIC_MORAY_EXTRA_TARBALLS) -n $(ELECTRIC_MORAY_IMAGE_NAME) \
 		-v $(_electric-moray_stamp) -d $(ELECTRIC_MORAY_IMAGE_DESCRIPTION)
@@ -1755,6 +1763,7 @@ muskie_image: $(MUSKIE_IMAGE_BIT)
 $(MUSKIE_IMAGE_BIT): $(MUSKIE_BITS)
 	@echo "# Build muskie_image: branch $(MUSKIE_BRANCH), sha $(MUSKIE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MUSKIE_IMAGE_UUID)" -t $(MUSKIE_BITS) \
+		-b "muskie" \
 		-o "$(MUSKIE_IMAGE_BIT)" -p $(MUSKIE_PKGSRC) \
 		-t $(MUSKIE_EXTRA_TARBALLS) -n $(MUSKIE_IMAGE_NAME) \
 		-v $(_muskie_stamp) -d $(MUSKIE_IMAGE_DESCRIPTION)
@@ -1797,6 +1806,7 @@ wrasse_image: $(WRASSE_IMAGE_BIT)
 $(WRASSE_IMAGE_BIT): $(WRASSE_BITS)
 	@echo "# Build wrasse_image: branch $(WRASSE_BRANCH), sha $(WRASSE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(WRASSE_IMAGE_UUID)" -t $(WRASSE_BITS) \
+		-b "wrasse" \
 		-o "$(WRASSE_IMAGE_BIT)" -p $(WRASSE_PKGSRC) \
 		-t $(WRASSE_EXTRA_TARBALLS) -n $(WRASSE_IMAGE_NAME) \
 		-v $(_wrasse_stamp) -d $(WRASSE_IMAGE_DESCRIPTION)
@@ -1900,6 +1910,7 @@ binder_image: $(BINDER_IMAGE_BIT)
 $(BINDER_IMAGE_BIT): $(BINDER_BITS)
 	@echo "# Build binder_image: branch $(BINDER_BRANCH), sha $(BINDER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(BINDER_IMAGE_UUID)" -t $(BINDER_BITS) \
+		-b "binder" \
 		-o "$(BINDER_IMAGE_BIT)" -p $(BINDER_PKGSRC) \
 		-t $(BINDER_EXTRA_TARBALLS) -n $(BINDER_IMAGE_NAME) \
 		-v $(_binder_stamp) -d $(BINDER_IMAGE_DESCRIPTION)
@@ -1939,6 +1950,7 @@ muppet_image: $(MUPPET_IMAGE_BIT)
 $(MUPPET_IMAGE_BIT): $(MUPPET_BITS)
 	@echo "# Build muppet_image: branch $(MUPPET_BRANCH), sha $(MUPPET_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MUPPET_IMAGE_UUID)" -t $(MUPPET_BITS) \
+		-b "muppet" \
 		-o "$(MUPPET_IMAGE_BIT)" -p $(MUPPET_PKGSRC) \
 		-t $(MUPPET_EXTRA_TARBALLS) -n $(MUPPET_IMAGE_NAME) \
 		-v $(_muppet_stamp) -d $(MUPPET_IMAGE_DESCRIPTION)
@@ -1999,6 +2011,7 @@ mako_image: $(MAKO_IMAGE_BIT)
 $(MAKO_IMAGE_BIT): $(MAKO_BITS)
 	@echo "# Build mako_image: branch $(MAKO_BRANCH), sha $(MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MAKO_IMAGE_UUID)" -t $(MAKO_BITS) \
+		-b "mola" \
 		-o "$(MAKO_IMAGE_BIT)" -p $(MAKO_PKGSRC) \
 		-t $(MAKO_EXTRA_TARBALLS) -n $(MAKO_IMAGE_NAME) \
 		-v $(_mako_stamp) -d $(MAKO_IMAGE_DESCRIPTION)
