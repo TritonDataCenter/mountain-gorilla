@@ -74,7 +74,7 @@ else
 fi
 
 for sub in $subs; do
-    mmkdir -p /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/${sub#${BITS_DIR}}
+    mmkdir -v -p /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/${sub#${BITS_DIR}}
 done
 
 md5sums=""
@@ -93,7 +93,7 @@ for file in $files; do
     if [[ -z ${manta_md5} ]]; then
         # file doesn't exist, upload it
 
-        mput -f ${file} ${manta_object}
+        mput -v -f ${file} ${manta_object}
         [[ $? == 0 ]] || fatal "Failed to upload ${file} to ${manta_object}"
     else
         echo "${manta_object} already exists and matches local file, skipping upload."
@@ -102,11 +102,11 @@ for file in $files; do
 done
 
 # upload the md5sums and config.mk
-echo -e $md5sums | mput -H 'content-type: text/plain' /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/md5sums.txt
-mput -f $BITS_DIR/config.mk /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/config.mk
+echo -e $md5sums | mput -v -H 'content-type: text/plain' /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/md5sums.txt
+mput -v -f $BITS_DIR/config.mk /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/config.mk
 # now update the latest link
 
-echo "/${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}" | mput -H 'content-type: text/plain' /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${UPLOAD_BRANCH}-latest
+echo "/${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}" | mput -v -H 'content-type: text/plain' /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${UPLOAD_BRANCH}-latest
 
 echo "Uploaded to /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}"
 
