@@ -877,9 +877,9 @@
     "appliance": "true",
     "image_name": "manta-electric-moray",
     "image_description": "Manta moray proxy",
-    "image_uuid": "ee1fb198-5fe1-11e2-9cce-e319fd47df7b",
+    "image_uuid": "4aec529c-55f9-11e3-868e-a37707fcbe86",
     "pkgsrc": [
-      "haproxy-1.4.22"
+      "haproxy-1.4.24"
     ],
     "repos": [
         {"url": "git@git.joyent.com:electric-moray.git"}
