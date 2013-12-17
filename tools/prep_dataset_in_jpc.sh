@@ -187,7 +187,7 @@ fi
 package=$(sdc-listpackages | ${JSON} -c "this.name == '${image_package}'" 0.id)
 [[ -n ${package} ]] || fatal "cannot find package \"${image_package}\""
 
-machine=$(sdc-createmachine --dataset ${image_uuid} --package ${package} --name "TEMP-${build_name}-$(date +%s)"  | json id)
+machine=$(sdc-createmachine --dataset ${image_uuid} --package ${package} --tag MG_IMAGE_BUILD=true --name "TEMP-${build_name}-$(date +%s)"  | json id)
 [[ -n ${machine} ]] || fatal "cannot get uuid for new VM."
 
 # Set this here so from here out fatal() can try to destroy too.
