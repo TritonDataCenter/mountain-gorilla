@@ -215,7 +215,6 @@ while [[ ${waited} -lt 600 && -z $(${SSH} zonename) ]]; do
   waited=$((${waited} + 5))
 done
 if [[ ${waited} -ge 600 ]]; then
-  sdc-deletemachine ${machine}
   fatal "VM ${machine} still unavailable after ${waited} seconds."
 fi
 
@@ -254,6 +253,11 @@ if [[ -n "${packages}" ]]; then
 
   ${SSH} "/opt/local/bin/pkgin -f -y update"
   ${SSH} "touch /opt/local/.dlj_license_accepted"
+
+  if [[ ${build_name} == "manatee" ]]; then
+    ${SSH} "/opt/local/bin/pkgin -y remove libuuid"
+  fi
+
   ${SSH} "/opt/local/bin/pkgin -y in ${packages}"
 
   echo "Validating pkgsrc installation"
