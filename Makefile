@@ -148,7 +148,7 @@ $(AMON_IMAGE_BIT): $(AMON_BITS_0)
 
 amon_publish_image: $(AMON_IMAGE_BIT)
 	@echo "# Publish amon image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(AMON_MANIFEST_BIT) -f $(AMON_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(AMON_MANIFEST_BIT) -f $(AMON_IMAGE_BIT)
 
 clean_amon:
 	rm -rf $(BITS_DIR)/amon
@@ -197,7 +197,7 @@ $(CA_IMAGE_BIT): $(CA_BITS_0)
 
 ca_publish_image: $(CA_IMAGE_BIT)
 	@echo "# Publish ca image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(CA_MANIFEST_BIT) -f $(CA_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(CA_MANIFEST_BIT) -f $(CA_IMAGE_BIT)
 
 # Warning: if CA's submodule deps change, this 'clean_ca' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -243,7 +243,7 @@ $(UFDS_IMAGE_BIT): $(UFDS_BITS)
 
 ufds_publish_image: $(UFDS_IMAGE_BIT)
 	@echo "# Publish ufds image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(UFDS_MANIFEST_BIT) -f $(UFDS_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(UFDS_MANIFEST_BIT) -f $(UFDS_IMAGE_BIT)
 
 # Warning: if UFDS's submodule deps change, this 'clean_ufds' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -287,7 +287,7 @@ $(USAGEAPI_IMAGE_BIT): $(USAGEAPI_BITS)
 
 usageapi_publish_image: $(USAGEAPI_IMAGE_BIT)
 	@echo "# Publish usageapi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(USAGEAPI_MANIFEST_BIT) -f $(USAGEAPI_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(USAGEAPI_MANIFEST_BIT) -f $(USAGEAPI_IMAGE_BIT)
 
 
 # Warning: if usageapi's submodule deps change, this 'clean_ufds' is insufficient. It would
@@ -330,7 +330,7 @@ $(ASSETS_IMAGE_BIT): $(ASSETS_BITS)
 
 assets_publish_image: $(ASSETS_IMAGE_BIT)
 	@echo "# Publish assets image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(ASSETS_MANIFEST_BIT) -f $(ASSETS_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(ASSETS_MANIFEST_BIT) -f $(ASSETS_IMAGE_BIT)
 
 clean_assets:
 	rm -rf $(BITS_DIR)/assets
@@ -369,7 +369,7 @@ $(ADMINUI_IMAGE_BIT): $(ADMINUI_BITS)
 
 adminui_publish_image: $(ADMINUI_IMAGE_BIT)
 	@echo "# Publish adminui image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(ADMINUI_MANIFEST_BIT) -f $(ADMINUI_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(ADMINUI_MANIFEST_BIT) -f $(ADMINUI_IMAGE_BIT)
 
 clean_adminui:
 	rm -rf $(BITS_DIR)/adminui
@@ -409,7 +409,7 @@ $(REDIS_IMAGE_BIT): $(REDIS_BITS)
 
 redis_publish_image: $(REDIS_IMAGE_BIT)
 	@echo "# Publish redis image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(REDIS_MANIFEST_BIT) -f $(REDIS_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(REDIS_MANIFEST_BIT) -f $(REDIS_IMAGE_BIT)
 
 clean_redis:
 	rm -rf $(BITS_DIR)/redis
@@ -449,7 +449,7 @@ $(AMONREDIS_IMAGE_BIT): $(AMONREDIS_BITS)
 
 amonredis_publish_image: $(AMONREDIS_IMAGE_BIT)
 	@echo "# Publish amonredis image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(AMONREDIS_MANIFEST_BIT) -f $(AMONREDIS_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(AMONREDIS_MANIFEST_BIT) -f $(AMONREDIS_IMAGE_BIT)
 
 clean_amonredis:
 	rm -rf $(BITS_DIR)/amonredis
@@ -489,7 +489,7 @@ $(RABBITMQ_IMAGE_BIT): $(RABBITMQ_BITS)
 
 rabbitmq_publish_image: $(RABBITMQ_IMAGE_BIT)
 	@echo "# Publish rabbitmq image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(RABBITMQ_MANIFEST_BIT) -f $(RABBITMQ_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(RABBITMQ_MANIFEST_BIT) -f $(RABBITMQ_IMAGE_BIT)
 
 clean_rabbitmq:
 	rm -rf $(BITS_DIR)/rabbitmq
@@ -529,7 +529,7 @@ $(DHCPD_IMAGE_BIT): $(DHCPD_BITS)
 
 dhcpd_publish_image: $(DHCPD_IMAGE_BIT)
 	@echo "# Publish dhcpd image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(DHCPD_MANIFEST_BIT) -f $(DHCPD_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(DHCPD_MANIFEST_BIT) -f $(DHCPD_IMAGE_BIT)
 
 clean_dhcpd:
 	rm -rf $(BITS_DIR)/dhcpd
@@ -569,7 +569,7 @@ $(MOCKCN_IMAGE_BIT): $(MOCKCN_BITS)
 
 mockcn_publish_image: $(MOCKCN_IMAGE_BIT)
 	@echo "# Publish mockcn image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MOCKCN_MANIFEST_BIT) -f $(MOCKCN_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(MOCKCN_MANIFEST_BIT) -f $(MOCKCN_IMAGE_BIT)
 
 clean_mockcn:
 	rm -rf $(BITS_DIR)/mockcn
@@ -611,7 +611,7 @@ $(CLOUDAPI_IMAGE_BIT): $(CLOUDAPI_BITS)
 
 cloudapi_publish_image: $(CLOUDAPI_IMAGE_BIT)
 	@echo "# Publish cloudapi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(CLOUDAPI_MANIFEST_BIT) -f $(CLOUDAPI_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(CLOUDAPI_MANIFEST_BIT) -f $(CLOUDAPI_IMAGE_BIT)
 
 
 # Warning: if cloudapi's submodule deps change, this 'clean_ufds' is insufficient. It would
@@ -655,7 +655,7 @@ $(MANATEE_IMAGE_BIT): $(MANATEE_BITS)
 
 manatee_publish_image: $(MANATEE_IMAGE_BIT)
 	@echo "# Publish manatee image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MANATEE_MANIFEST_BIT) -f $(MANATEE_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(MANATEE_MANIFEST_BIT) -f $(MANATEE_IMAGE_BIT)
 
 clean_manatee:
 	rm -rf $(BITS_DIR)/manatee
@@ -697,7 +697,7 @@ $(WORKFLOW_IMAGE_BIT): $(WORKFLOW_BITS)
 
 workflow_publish_image: $(WORKFLOW_IMAGE_BIT)
 	@echo "# Publish workflow image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(WORKFLOW_MANIFEST_BIT) -f $(WORKFLOW_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(WORKFLOW_MANIFEST_BIT) -f $(WORKFLOW_IMAGE_BIT)
 
 # Warning: if workflow's submodule deps change, this 'clean_workflow' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -741,7 +741,7 @@ $(VMAPI_IMAGE_BIT): $(VMAPI_BITS)
 
 vmapi_publish_image: $(VMAPI_IMAGE_BIT)
 	@echo "# Publish vmapi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(VMAPI_MANIFEST_BIT) -f $(VMAPI_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(VMAPI_MANIFEST_BIT) -f $(VMAPI_IMAGE_BIT)
 
 # Warning: if vmapi's submodule deps change, this 'clean_vmapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -786,7 +786,7 @@ $(DAPI_IMAGE_BIT): $(DAPI_BITS)
 
 dapi_publish_image: $(DAPI_IMAGE_BIT)
 	@echo "# Publish dapi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(DAPI_MANIFEST_BIT) -f $(DAPI_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(DAPI_MANIFEST_BIT) -f $(DAPI_IMAGE_BIT)
 
 # Warning: if dapi's submodule deps change, this 'clean_dapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -831,7 +831,7 @@ $(PAPI_IMAGE_BIT): $(PAPI_BITS)
 
 papi_publish_image: $(PAPI_IMAGE_BIT)
 	@echo "# Publish papi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(PAPI_MANIFEST_BIT) -f $(PAPI_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(PAPI_MANIFEST_BIT) -f $(PAPI_IMAGE_BIT)
 
 # Warning: if papi's submodule deps change, this 'clean_dapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -896,7 +896,7 @@ $(IMGAPI_IMAGE_BIT): $(IMGAPI_BITS)
 
 imgapi_publish_image: $(IMGAPI_IMAGE_BIT)
 	@echo "# Publish imgapi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(IMGAPI_MANIFEST_BIT) -f $(IMGAPI_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(IMGAPI_MANIFEST_BIT) -f $(IMGAPI_IMAGE_BIT)
 
 clean_imgapi:
 	rm -rf $(BITS_DIR)/imgapi
@@ -936,7 +936,7 @@ $(SDC_IMAGE_BIT): $(SDC_BITS)
 
 sdc_publish_image: $(SDC_IMAGE_BIT)
 	@echo "# Publish sdc image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(SDC_MANIFEST_BIT) -f $(SDC_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(SDC_MANIFEST_BIT) -f $(SDC_IMAGE_BIT)
 
 clean_sdc:
 	rm -rf $(BITS_DIR)/sdc
@@ -979,7 +979,7 @@ $(VCAPI_IMAGE_BIT): $(VCAPI_BITS)
 
 vcapi_publish_image: $(VCAPI_IMAGE_BIT)
 	@echo "# Publish vcapi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(VCAPI_MANIFEST_BIT) -f $(VCAPI_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(VCAPI_MANIFEST_BIT) -f $(VCAPI_IMAGE_BIT)
 
 # Warning: if vcapi's submodule deps change, this 'clean_dapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -1207,7 +1207,7 @@ $(CNAPI_IMAGE_BIT): $(CNAPI_BITS)
 
 cnapi_publish_image: $(CNAPI_IMAGE_BIT)
 	@echo "# Publish cnapi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(CNAPI_MANIFEST_BIT) -f $(CNAPI_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(CNAPI_MANIFEST_BIT) -f $(CNAPI_IMAGE_BIT)
 
 # Warning: if cnapi's submodule deps change, this 'clean_cnapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -1251,7 +1251,7 @@ $(SDCSSO_IMAGE_BIT): $(SDCSSO_BITS)
 
 sdcsso_publish_image: $(SDCSSO_IMAGE_BIT)
 	@echo "# Publish sdcsso image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(SDCSSO_MANIFEST_BIT) -f $(SDCSSO_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(SDCSSO_MANIFEST_BIT) -f $(SDCSSO_IMAGE_BIT)
 
 # Warning: if SDCSSO's submodule deps change, this 'clean_sdcsso is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -1295,7 +1295,7 @@ $(FWAPI_IMAGE_BIT): $(FWAPI_BITS)
 
 fwapi_publish_image: $(FWAPI_IMAGE_BIT)
 	@echo "# Publish fwapi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(FWAPI_MANIFEST_BIT) -f $(FWAPI_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(FWAPI_MANIFEST_BIT) -f $(FWAPI_IMAGE_BIT)
 
 # Warning: if FWAPI's submodule deps change, this 'clean_fwapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -1340,7 +1340,7 @@ $(NAPI_IMAGE_BIT): $(NAPI_BITS)
 
 napi_publish_image: $(NAPI_IMAGE_BIT)
 	@echo "# Publish napi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(NAPI_MANIFEST_BIT) -f $(NAPI_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(NAPI_MANIFEST_BIT) -f $(NAPI_IMAGE_BIT)
 
 # Warning: if NAPI's submodule deps change, this 'clean_napi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -1386,7 +1386,7 @@ $(SAPI_IMAGE_BIT): $(SAPI_BITS)
 
 sapi_publish_image: $(SAPI_IMAGE_BIT)
 	@echo "# Publish sapi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(SAPI_MANIFEST_BIT) -f $(SAPI_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(SAPI_MANIFEST_BIT) -f $(SAPI_IMAGE_BIT)
 
 # Warning: if SAPI's submodule deps change, this 'clean_sapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -1432,7 +1432,7 @@ $(MARLIN_IMAGE_BIT): $(MARLIN_BITS)
 
 marlin_publish_image: $(MARLIN_IMAGE_BIT)
 	@echo "# Publish marlin image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MARLIN_MANIFEST_BIT) -f $(MARLIN_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(MARLIN_MANIFEST_BIT) -f $(MARLIN_IMAGE_BIT)
 
 clean_marlin:
 	rm -rf $(BITS_DIR)/marlin
@@ -1474,7 +1474,7 @@ $(MEDUSA_IMAGE_BIT): $(MEDUSA_BITS)
 .PHONY: medusa_publish_image
 medusa_publish_image: $(MEDUSA_IMAGE_BIT)
 	@echo "# Publish medusa image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MEDUSA_MANIFEST_BIT) -f $(MEDUSA_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(MEDUSA_MANIFEST_BIT) -f $(MEDUSA_IMAGE_BIT)
 
 clean_medusa:
 	rm -rf $(BITS_DIR)/medusa
@@ -1514,7 +1514,7 @@ $(MAHI_IMAGE_BIT): $(MAHI_BITS)
 
 mahi_publish_image: $(MAHI_IMAGE_BIT)
 	@echo "# Publish mahi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MAHI_MANIFEST_BIT) -f $(MAHI_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(MAHI_MANIFEST_BIT) -f $(MAHI_IMAGE_BIT)
 
 clean_mahi:
 	rm -rf $(BITS_DIR)/mahi
@@ -1556,7 +1556,7 @@ $(MANTA_WORKFLOW_IMAGE_BIT): $(MANTA_WORKFLOW_BITS)
 
 manta-workflow_publish_image: $(MANTA_WORKFLOW_IMAGE_BIT)
 	@echo "# Publish manta-workflow image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MANTA_WORKFLOW_MANIFEST_BIT) -f $(MANTA_WORKFLOW_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(MANTA_WORKFLOW_MANIFEST_BIT) -f $(MANTA_WORKFLOW_IMAGE_BIT)
 
 # Warning: if workflow's submodule deps change, this 'clean_workflow' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -1601,7 +1601,7 @@ $(MOLA_IMAGE_BIT): $(MOLA_BITS)
 
 mola_publish_image: $(MOLA_IMAGE_BIT)
 	@echo "# Publish mola image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MOLA_MANIFEST_BIT) -f $(MOLA_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(MOLA_MANIFEST_BIT) -f $(MOLA_IMAGE_BIT)
 
 clean_mola:
 	rm -rf $(BITS_DIR)/mola
@@ -1644,7 +1644,7 @@ $(MADTOM_IMAGE_BIT): $(MADTOM_BITS)
 
 madtom_publish_image: $(MADTOM_IMAGE_BIT)
 	@echo "# Publish madtom image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MADTOM_MANIFEST_BIT) -f $(MADTOM_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(MADTOM_MANIFEST_BIT) -f $(MADTOM_IMAGE_BIT)
 
 clean_madtom:
 	rm -rf $(BITS_DIR)/madtom
@@ -1687,7 +1687,7 @@ $(MORAY_IMAGE_BIT): $(MORAY_BITS)
 
 moray_publish_image: $(MORAY_IMAGE_BIT)
 	@echo "# Publish moray image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MORAY_MANIFEST_BIT) -f $(MORAY_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(MORAY_MANIFEST_BIT) -f $(MORAY_IMAGE_BIT)
 
 clean_moray:
 	rm -rf $(BITS_DIR)/moray
@@ -1730,7 +1730,7 @@ $(ELECTRIC_MORAY_IMAGE_BIT): $(ELECTRIC_MORAY_BITS)
 
 electric-moray_publish_image: $(ELECTRIC_MORAY_IMAGE_BIT)
 	@echo "# Publish electric-moray image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(ELECTRIC_MORAY_MANIFEST_BIT) -f $(ELECTRIC_MORAY_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(ELECTRIC_MORAY_MANIFEST_BIT) -f $(ELECTRIC_MORAY_IMAGE_BIT)
 
 clean_electric-moray:
 	rm -rf $(BITS_DIR)/electric-moray
@@ -1773,7 +1773,7 @@ $(MUSKIE_IMAGE_BIT): $(MUSKIE_BITS)
 
 muskie_publish_image: $(MUSKIE_IMAGE_BIT)
 	@echo "# Publish muskie image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MUSKIE_MANIFEST_BIT) -f $(MUSKIE_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(MUSKIE_MANIFEST_BIT) -f $(MUSKIE_IMAGE_BIT)
 
 clean_muskie:
 	rm -rf $(BITS_DIR)/muskie
@@ -1816,7 +1816,7 @@ $(WRASSE_IMAGE_BIT): $(WRASSE_BITS)
 
 wrasse_publish_image: $(WRASSE_IMAGE_BIT)
 	@echo "# Publish wrasse image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(WRASSE_MANIFEST_BIT) -f $(WRASSE_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(WRASSE_MANIFEST_BIT) -f $(WRASSE_IMAGE_BIT)
 
 clean_wrasse:
 	rm -rf $(BITS_DIR)/wrasse
@@ -1920,7 +1920,7 @@ $(BINDER_IMAGE_BIT): $(BINDER_BITS)
 
 binder_publish_image: $(BINDER_IMAGE_BIT)
 	@echo "# Publish binder image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(BINDER_MANIFEST_BIT) -f $(BINDER_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(BINDER_MANIFEST_BIT) -f $(BINDER_IMAGE_BIT)
 
 clean_binder:
 	rm -rf $(BITS_DIR)/binder
@@ -1960,7 +1960,7 @@ $(MUPPET_IMAGE_BIT): $(MUPPET_BITS)
 
 muppet_publish_image: $(MUPPET_IMAGE_BIT)
 	@echo "# Publish muppet image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MUPPET_MANIFEST_BIT) -f $(MUPPET_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(MUPPET_MANIFEST_BIT) -f $(MUPPET_IMAGE_BIT)
 
 clean_muppet:
 	rm -rf $(BITS_DIR)/muppet
@@ -2021,7 +2021,7 @@ $(MAKO_IMAGE_BIT): $(MAKO_BITS)
 
 mako_publish_image: $(MAKO_IMAGE_BIT)
 	@echo "# Publish mako image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MAKO_MANIFEST_BIT) -f $(MAKO_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(MAKO_MANIFEST_BIT) -f $(MAKO_IMAGE_BIT)
 
 clean_mako:
 	rm -rf $(BITS_DIR)/mako
@@ -2176,7 +2176,7 @@ $(MANTA_DEPLOYMENT_IMAGE_BIT): $(MANTA_DEPLOYMENT_BITS)
 
 manta-deployment_publish_image: $(MANTA_DEPLOYMENT_IMAGE_BIT)
 	@echo "# Publish manta-deployment image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MANTA_DEPLOYMENT_MANIFEST_BIT) -f $(MANTA_DEPLOYMENT_IMAGE_BIT) || /bin/true
+	$(UPDATES_IMGADM) import -ddd -m $(MANTA_DEPLOYMENT_MANIFEST_BIT) -f $(MANTA_DEPLOYMENT_IMAGE_BIT)
 
 
 clean_manta-deployment:
