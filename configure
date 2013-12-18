@@ -587,6 +587,11 @@ if [[ $NODE_VERSION -lt 6 ]]; then
 fi
 JSON="$MG_NODE $ROOT/tools/json"
 
+# Workaround, see (TOOLS-366) but basically 1.1.2 is the last (apparently) working version.
+if [[ -f node_modules/manta/package.json && $(json version < node_modules/manta/package.json) != "1.1.2" ]]; then
+    rm -rf node_modules/manta
+fi
+
 # Make sure npm stuff is up-to-date
 npm install
 
