@@ -238,9 +238,13 @@ function preload_bits_from_manta() {
     # we'll grab that into latest_dir.
     #
     local latest_mpath=${target_mpath}/${best_branch}-latest
-    local latest_dir=$(mget -q $latest_mpath)
-    if [[ -z "$latest_dir" ]]; then
-        fatal "Could not get latest dir for target $target"
+    local latest_dir=$(mget -v -q $latest_mpath 2> /tmp/mget-output.$$)
+    if grep ResourceNotFoundError /tmp/mget-output.$$; then
+        latest_mpath=${target_mpath}/master-latest
+        latest_dir=$(mget -v -q $latest_mpath)
+        if [[ -z ${latest_dir} ]]; then
+            fatal "Could not get latest dir for target $target"
+        fi
     fi
 
     # local_cache_dir will be something like:
@@ -256,18 +260,22 @@ function preload_bits_from_manta() {
     local cache_dirname=
     local cache_filename=
     local dir=
-    local files=$(mfind -t o ${latest_dir})
+    local files=$(mfind -v -t o ${latest_dir})
     local found=
     local local_file_md5=
     local manta_file_md5=
     local retries=
+
+    if [[ -z ${files} ]]; then
+        fatal "failed to get files from ${latest_dir}"
+    fi
 
     # loop through all the objects in the latest_dir
     for file in $files; do
         dir=$(dirname $file)
         cache_dirname=$(echo "${local_cache_dir}/${dir#${latest_dir}}" | sed -e "s/\/$//g" | sed -e "s|//|/|g")
         cache_filename=$(basename ${file})
-        manta_file_md5=$(mmd5 ${file} | cut -d' ' -f1)
+        manta_file_md5=$(mmd5 -v ${file} | cut -d' ' -f1)
 
         # Ensure directory exists
         mkdir -p ${cache_dirname}
@@ -275,7 +283,7 @@ function preload_bits_from_manta() {
         retries=0
         while [[ ${retries} -lt ${MANTA_MAX_RETRIES} ]]; do
             if [[ ! -f ${cache_dirname}/${cache_filename} ]]; then
-                mget ${MGET_BIT_ARGS} -o ${cache_dirname}/${cache_filename} ${file}
+                mget -v ${MGET_BIT_ARGS} -o ${cache_dirname}/${cache_filename} ${file}
             fi
 
             local_file_md5=$(md5sum ${cache_dirname}/${cache_filename} | cut -d ' ' -f1)
