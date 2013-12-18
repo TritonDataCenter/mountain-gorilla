@@ -5,8 +5,8 @@
   "author": "Joyent (joyent.com)",
   "private": true,
   "dependencies": {
-    "manta": "git+ssh://git@github.com:joyent/node-manta.git#v1.1.2",
-    "smartdc": "git+ssh://git@github.com:joyent/node-smartdc.git#adea68b8ec425f4e11075bb6f8422fdf1a2af6e7"
+    "manta": "1.2.5",
+    "smartdc": "7.1.1"
   },
   "engines": {
     "node": ">=0.8"
