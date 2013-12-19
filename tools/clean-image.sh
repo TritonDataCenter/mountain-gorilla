@@ -1,5 +1,7 @@
 #!/usr/bin/bash
 
+set -o xtrace
+
 # removes old files and attempts to restore the machine to a
 # consistent (clean) state. It removes known sensitive files.
 
@@ -38,7 +40,11 @@ cleanup() {
   find /etc/hostname.net* | xargs rm -f
 
   # remove zoneconfig
-  rm /root/zoneconfig
+  if [[ -e /root/zoneconfig ]]; then
+     rm -f /root/zoneconfig
+  fi
 }
 
 cleanup
+
+exit 0

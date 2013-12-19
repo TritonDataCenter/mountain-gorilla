@@ -32,6 +32,9 @@ fi
 if [[ -z ${SDC_URL} ]]; then
   # Manta locality, use east
   export SDC_URL="https://us-east-1.api.joyentcloud.com"
+  # To test in us-beta-4 uncomment the following:
+  #export SDC_URL=https://165.225.142.135
+  #export SDC_TESTING=1
 fi
 
 if [[ -z ${SDC_KEY_ID} ]]; then
@@ -208,9 +211,10 @@ fi
 SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@$(echo "${machine_json}" | json ips.0)"
 
 # Wait for the broken networking in east to settle (EASTONE-111)
-# we'll wait up to 10 minutes then attempt to delete the VM
+# we'll wait up to 20 minutes then attempt to delete the VM, this
+# used to be 10m but that wasn't even enough. :(
 waited=0
-while [[ ${waited} -lt 600 && -z $(${SSH} zonename) ]]; do
+while [[ ${waited} -lt 1200 && -z $(${SSH} zonename) ]]; do
   sleep 5
   waited=$((${waited} + 5))
 done
@@ -218,6 +222,11 @@ if [[ ${waited} -ge 600 ]]; then
   fatal "VM ${machine} still unavailable after ${waited} seconds."
 fi
 
+# XXX install sm-prepare-image as it's required for img mgmt v2
+# but doesn't exist in 1.6.3
+if [[ ${image_uuid} == "01b2c898-945f-11e1-a523-af1afbe22822" ]]; then
+    cat tools/clean-image.sh | ${SSH} "cat > /opt/local/bin/sm-prepare-image && chmod 755 /opt/local/bin/sm-prepare-image && cat /opt/local/bin/sm-prepare-image"
+fi
 
 # "tarballs" is a list of:
 #   TARBALL-ABSOLUTE-PATH-PATTERN[:SYSROOT]
@@ -273,31 +282,20 @@ if [[ -n "${packages}" ]]; then
 
 fi
 
-cat tools/clean-image.sh \
-  | ${SSH} "cat > /tmp/clean-image.sh; /usr/bin/bash /tmp/clean-image.sh; shutdown -i5 -g0 -y;"
-
 # And then turn it in to an image
-
-sdc-stopmachine ${machine}
-
-state=$(sdc-getmachine ${machine} | json 'state')
-while [[ ${state} == 'running' ]]; do
-  sleep 1
-  state=$(sdc-getmachine ${machine} | json 'state')
-done
-
 image=$(sdc-createimagefrommachine --machine ${machine} --name ${image_name}-zfs --imageVersion ${image_version} --description ${image_description} --tags '{"smartdc_service": true}')
 image_id=$(echo "${image}" | json -H 'id')
 
 # Set this here so from here out fatal() can try to destroy too.
 CREATED_MACHINE_IMAGE_UUID=${image_id}
 
-for i in {100..1}; do
+# wait up to 10 minutes for image creation
+waited=0
+state=$(sdc-getimage ${image_id} | json 'state')
+while [[ ${waited} -lt 600 ]] && [[ ${state} == "creating" || ${state} == "unactivated" ]]; do
   sleep 5
+  waited=$((${waited} + 5))
   state=$(sdc-getimage ${image_id} | json 'state')
-  if [[ ${state} != "creating" && ${state} != "unactivated" ]]; then
-    break
-  fi
 done
 
 sdc-deletemachine ${machine}

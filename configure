@@ -239,12 +239,15 @@ function preload_bits_from_manta() {
     #
     local latest_mpath=${target_mpath}/${best_branch}-latest
     local latest_dir=$(mget -v -q $latest_mpath 2> /tmp/mget-output.$$)
+
     if grep ResourceNotFoundError /tmp/mget-output.$$; then
         latest_mpath=${target_mpath}/master-latest
         latest_dir=$(mget -v -q $latest_mpath)
-        if [[ -z ${latest_dir} ]]; then
-            fatal "Could not get latest dir for target $target"
-        fi
+    fi
+
+    if [[ -z ${latest_dir} ]]; then
+        cat /tmp/mget-output.$$
+        fatal "Could not get latest dir for target $target"
     fi
 
     # local_cache_dir will be something like:
