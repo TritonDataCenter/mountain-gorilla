@@ -71,11 +71,15 @@ function fatal {
 
 function cleanup() {
   local exit_status=${1:-$?}
-  if [[ -n ${CREATED_MACHINE_UUID} ]]; then
-    sdc-deletemachine ${CREATED_MACHINE_UUID}
-  fi
-  if [[ -n ${CREATED_MACHINE_IMAGE_UUID} ]]; then
-    sdc-deleteimage ${CREATED_MACHINE_IMAGE_UUID}
+  if [[ "$KEEP_INFRA_ON_FAILURE" == "true" || "$KEEP_INFRA_ON_FAILURE" == 1 ]]; then
+    echo "$0: NOT cleaning up (KEEP_INFRA_ON_FAILURE=$KEEP_INFRA_ON_FAILURE)"
+  else
+    if [[ -n ${CREATED_MACHINE_UUID} ]]; then
+      sdc-deletemachine ${CREATED_MACHINE_UUID}
+    fi
+    if [[ -n ${CREATED_MACHINE_IMAGE_UUID} ]]; then
+      sdc-deleteimage ${CREATED_MACHINE_IMAGE_UUID}
+    fi
   fi
   exit ${exit_status}
 }
@@ -298,7 +302,11 @@ while [[ ${waited} -lt 600 ]] && [[ ${state} == "creating" || ${state} == "unact
   state=$(sdc-getimage ${image_id} | json 'state')
 done
 
-sdc-deletemachine ${machine}
+if [[ "$KEEP_INFRA_ON_FAILURE" == "true" || "$KEEP_INFRA_ON_FAILURE" == 1 ]]; then
+    echo "$0: NOT deleting machine (KEEP_INFRA_ON_FAILURE=$KEEP_INFRA_ON_FAILURE)"
+else
+    sdc-deletemachine ${machine}
+fi
 
 if [[ "$(sdc-getimage ${image_id} | json 'state')" != "active" ]]; then
   echo "Error creating image"
@@ -366,7 +374,11 @@ cat ${output_dir}/${image_manifest_filename} \
   && mv ${output_dir}/${image_manifest_filename}.new ${output_dir}/${image_manifest_filename} \
   && mput -f ${output_dir}/${image_manifest_filename} ${manifest_path}
 
-sdc-deleteimage ${image_id}
+if [[ "$KEEP_INFRA_ON_FAILURE" == "true" || "$KEEP_INFRA_ON_FAILURE" == 1 ]]; then
+    echo "$0: NOT deleting image (KEEP_INFRA_ON_FAILURE=$KEEP_INFRA_ON_FAILURE)"
+else
+    sdc-deleteimage ${image_id}
+fi
 
 cat ${manta_bits}
 
