@@ -1634,7 +1634,7 @@ madtom_image: $(MADTOM_IMAGE_BIT)
 $(MADTOM_IMAGE_BIT): $(MADTOM_BITS)
 	@echo "# Build madtom_image: branch $(MADTOM_BRANCH), sha $(MADTOM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MADTOM_IMAGE_UUID)" -t $(MADTOM_BITS) \
-		-b "mola" \
+		-b "madtom" \
 		-o "$(MADTOM_IMAGE_BIT)" -p $(MADTOM_PKGSRC) \
 		-t $(MADTOM_EXTRA_TARBALLS) -n $(MADTOM_IMAGE_NAME) \
 		-v $(_madtom_stamp) -d $(MADTOM_IMAGE_DESCRIPTION)
@@ -2011,7 +2011,7 @@ mako_image: $(MAKO_IMAGE_BIT)
 $(MAKO_IMAGE_BIT): $(MAKO_BITS)
 	@echo "# Build mako_image: branch $(MAKO_BRANCH), sha $(MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MAKO_IMAGE_UUID)" -t $(MAKO_BITS) \
-		-b "mola" \
+		-b "mako" \
 		-o "$(MAKO_IMAGE_BIT)" -p $(MAKO_PKGSRC) \
 		-t $(MAKO_EXTRA_TARBALLS) -n $(MAKO_IMAGE_NAME) \
 		-v $(_mako_stamp) -d $(MAKO_IMAGE_DESCRIPTION)
