@@ -175,11 +175,11 @@ configuration.
 
 Simplified, what most of our jobs do here is:
 
- a) clone MG
- b) ./configure -t <job>
- c) gmake <job>
- d) gmake manta_upload_jenkins (which runs mountain-gorilla.git/tools/mantaput-bits)
- e) gmake jenkins_publish_image (which uploads to updates.joyent.com)
+ - clone MG (git@git.joyent.com:mountain-gorilla.git)
+ - ./configure -t <job>
+ - gmake <job>
+ - gmake manta_upload_jenkins (which runs mountain-gorilla.git/tools/mantaput-bits)
+ - gmake jenkins_publish_image (which uploads to updates.joyent.com)
 
 The 'configure -t <job>' here usually clones the repo(s) required and pulls down
 dependencies from npm and Manta. This is mountain-gorilla.git/configure in case
