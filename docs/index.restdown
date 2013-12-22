@@ -175,23 +175,24 @@ configuration.
 
 Simplified, what most of our jobs do here is:
 
- - clone MG (git@git.joyent.com:mountain-gorilla.git)
- - ./configure -t <job>
- - gmake <job>
- - gmake manta_upload_jenkins (which runs mountain-gorilla.git/tools/mantaput-bits)
- - gmake jenkins_publish_image (which uploads to updates.joyent.com)
+    git clone git@git.joyent.com:mountain-gorilla.git   # aka "MG"
+    cd mountain-gorilla
+    ./configure -t <job>
+    gmake <job>
+    gmake manta_upload_jenkins  # which runs mountain-gorilla.git/tools/mantaput-bits
+    gmake jenkins_publish_image # which uploads to updates.joyent.com
 
-The 'configure -t <job>' here usually clones the repo(s) required and pulls down
+The `configure -t <job>` here usually clones the repo(s) required and pulls down
 dependencies from npm and Manta. This is mountain-gorilla.git/configure in case
 you need to look at it.
 
-With all the components downloaded 'gmake <job>' builds all the bits that will
-end up in /opt/smartdc/<app> in the zone. This is the part that's critical to
+With all the components downloaded `gmake <job>` builds all the bits that will
+end up in /opt/smartdc/$app in the zone. This is the part that's critical to
 be run on an ancient platform so that we know it will work on any HN/CN we want
 to deploy to in JPC. This generates a tarball.
 
-After building the tarball but still within 'gmake <job>', we call:
-'./tools/prep_dataset_in_jpc.sh' which is the newest component here and the one
+After building the tarball but still within `gmake <job>`, we call:
+`./tools/prep_dataset_in_jpc.sh` which is the newest component here and the one
 that includes many of the components that talk to Manta and JPC and are the
 ones that fail most often. What this does (again simplified) is:
 
@@ -200,12 +201,13 @@ ones that fail most often. What this does (again simplified) is:
  - use ssh to send over the tarball and unpack
  - install packages listed in mountain-gorilla.git/targets.json
  - if smartos-1.6.3: drop tools/clean-image.sh into /opt/local/bin/sm-prepare-image
+   (necessary for image creation to work on the old smartos-1.6.3 image)
  - use sdc-createimagefrommachine to create image from the VM
  - wait for the state of the image to be 'active' (or fail if it goes to failed)
  - deletes the VM
  - uses sdc-exportimage to send the image to Manta
  - deletes the image
- - downloads the manifest + image from Manta to push to updates.joyent.us
+ - downloads the manifest + image from Manta to push to updates.joyent.com
  - modifies the manifest and pushes it back to Manta
 
 This is most of the new stuff over the previous build setup in BH1 and the
