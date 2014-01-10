@@ -12,15 +12,10 @@ set -o errexit
 #---- globals, config
 
 TOP=$(cd $(dirname $0)/../; pwd)
-WORKDIR="/var/tmp/check-repos-for-release.$$"
+WORKDIR="$TOP/tmp/check-repos-for-release"
 
 
 #---- functions
-
-function cleanup() {
-    cd /var/tmp
-    rm -rf $WORKDIR
-}
 
 function usage() {
     if [[ -n "$1" ]]; then
@@ -77,7 +72,11 @@ function apply_missing_to_repo {
     mkdir -p $WORKDIR
     repo_name=$(get_repo_name_from_url $repo_url)
     cd $WORKDIR;
-    git clone $repo_url $repo_name;
+    if [[ -d "$repo_name" ]]; then
+        (cd $repo_name && git pull --rebase origin master)
+    else
+        git clone $repo_url $repo_name;
+    fi
     cd $repo_name;
     git checkout master;
     if [[ ! -z "$tag" && -z "$NO_TAG" ]]; then
@@ -97,10 +96,16 @@ function check_repo_url {
     local targ=$2   # optional
 
     repo_name=$(get_repo_name_from_url $repo_url)
-    local hit=$(curl -sS https://mo.joyent.com/api/repos/$repo_name/refs -u $CREDS \
-        | $TOP/tools/json branches \
-        | grep "\"$BRANCH\"" \
-        || true)
+    local hit
+    if [[ -d "$WORKDIR/$repo_name" ]]; then
+        hit=$(cd $WORKDIR/$repo_name && git branch | (grep $BRANCH || true))
+    fi
+    if [[ -z "$hit" ]]; then
+        hit=$(curl -sS https://mo.joyent.com/api/repos/$repo_name/refs -u $CREDS \
+            | $TOP/tools/json branches \
+            | grep "\"$BRANCH\"" \
+            || true)
+    fi
     if [[ -z "$hit" ]]; then
       if [[ $APPLY -eq 1 ]]; then
         echo "Repo $repo_url ('$targ' target): missing '$BRANCH' branch"
@@ -123,8 +128,6 @@ function check_targ {
 
 
 #---- mainline
-
-trap cleanup EXIT
 
 APPLY=0   # whether to apply a branch/tag to repo
 CREDS=
