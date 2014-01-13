@@ -16,6 +16,7 @@ set -o pipefail
 
 BRANCH=master
 TRY_BRANCH=
+MG_DEP_USER=
 
 ROOT=$(pwd)
 MG_CACHE_DIR=${ROOT}/cache
@@ -63,7 +64,15 @@ function ensure_manta_credentials {
     if [[ -z "$MANTA_USER" ]]; then
         export MANTA_USER="Joyent_Dev";
     fi
-    export manta_base_path="/Joyent_Dev/stor/builds"
+
+    #
+    # manta_base_path is used for preloading bits. So if we've been
+    # passed in a -d option, we should use that here.
+    #
+    if [[ -z "$MG_DEP_USER" ]]; then
+	MG_DEP_USER="$MANTA_USER"
+    fi
+    export manta_base_path="/$MG_DEP_USER/stor/builds"
 }
 
 # Blow away the bits cache once per-day because don't want it to grow
@@ -458,6 +467,9 @@ function print_help() {
     echo "               The cache is used for caching git clones, preloaded"
     echo "               bits and npm downloads. The 'bits cache' is"
     echo "               automatically removed if it is more than a day old."
+    echo "  -d USER      Alternate user to pull dependencies from. eg. if "
+    echo "               building as yourself, -d Joyent_Dev will pull deps "
+    echo "               from normal builds."
     exit 0
 }
 
@@ -565,7 +577,7 @@ MG_NODE=$(which node)
 if [[ "$1" == "--help" ]]; then
   print_help
 fi
-while getopts "b:B:hrft:c:n:" opt; do
+while getopts "b:B:d:hrft:c:n:" opt; do
     case "$opt" in
         b) BRANCH=$OPTARG ;;
         B) TRY_BRANCH=$OPTARG ;;
@@ -576,6 +588,7 @@ while getopts "b:B:hrft:c:n:" opt; do
         n) MG_NODE=${OPTARG} ;;
         t) TARGET=${OPTARG} ;;
         c) MG_CACHE_DIR=${OPTARG} ;;
+	d) MG_DEP_USER=${OPTARG} ;;
         ?) fatal "unknown option: $opt" ;;
     esac
 done
