@@ -274,6 +274,7 @@
     "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
     "pkgsrc": [
       "openldap-client-2.4.24",
+      "postgresql91-client-9.1.2",
       "pkg_alternatives-1.5"
     ],
     "repos": [
