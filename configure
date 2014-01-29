@@ -596,7 +596,7 @@ shift $((OPTIND-1))
 
 
 # Pre-condition: must have node >=0.6 first on path (see RELENG-266).
-echo "Ensure have a 'node' v0.6."
+echo "Ensure have a 'node' >= v0.6."
 NODE_VERSION=$($MG_NODE --version | awk 'BEGIN{ FS="." } { print $2 }')
 if [[ $NODE_VERSION -lt 6 ]]; then
     fatal "Incorrect node version, '${NODE_VERSION}'. MG needs a node v0.6 or later (currently requiring v0.6 or v0.8). Either put a node v0.6 first on your PATH or use the '-n NODE_EXE' configure option."
