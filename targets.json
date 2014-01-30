@@ -191,7 +191,7 @@
     "image_name": "rabbitmq",
     "image_description": "SDC RabbitMQ",
     "image_version": "1.0.0",
-    "image_uuid": "4aec529c-55f9-11e3-868e-a37707fcbe86",
+    "image_uuid": "aeb4e3e0-8937-11e3-b0bd-637363a89e49",
     "pkgsrc": [
       "rabbitmq-3.1.5"
     ],
