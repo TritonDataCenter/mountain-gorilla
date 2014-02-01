@@ -1073,6 +1073,13 @@
     ]
   },
 
+  "sdcadm": {
+    "repos": [
+        {"url": "git@git.joyent.com:sdcadm.git"}
+    ],
+    "deps": []
+  },
+
   "agentsshar": {
     "repos": [
         {"url": "git@git.joyent.com:agents-installer.git"}

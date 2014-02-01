@@ -59,10 +59,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi vcapi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi vcapi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi vcapi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi vcapi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
 
 
 #---- smartlogin
@@ -2026,6 +2026,31 @@ mako_publish_image: $(MAKO_IMAGE_BIT)
 clean_mako:
 	rm -rf $(BITS_DIR)/mako
 	(cd build/mako && gmake distclean)
+
+
+#---- sdcadm
+
+ifeq ($(TRY_BRANCH),)
+_sdcadm_stamp=$(SDCADM_BRANCH)-$(TIMESTAMP)-g$(SDCADM_SHA)
+else
+_sdcadm_stamp=$(TRY_BRANCH)-$(TIMESTAMP)-g$(SDCADM_SHA)
+endif
+SDCADM_BITS=$(BITS_DIR)/sdcadm/sdcadm-$(_sdcadm_stamp).sh
+SDCADM_BITS_0=$(shell echo $(SDCADM_BITS) | awk '{print $$1}')
+
+.PHONY: sdcadm
+sdcadm: $(SDCADM_BITS_0)
+
+$(SDCADM_BITS): build/sdcadm/Makefile
+	@echo "# Build sdcadm: branch $(SDCADM_BRANCH), sha $(SDCADM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)/sdcadm
+	(cd build/sdcadm && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created sdcadm bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(SDCADM_BITS)
+	@echo ""
+
+clean_sdcadm:
+	rm -rf $(BITS_DIR)/sdcadm
 
 
 #---- agentsshar
