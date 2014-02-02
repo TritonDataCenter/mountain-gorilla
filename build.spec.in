@@ -42,7 +42,6 @@ cat <<HERE;
   "sdc-image": "sdc/$(ls bits/sdc/sdc-*manifest | xargs basename)",
   "sdcsso-image": "sdcsso/$(ls bits/sdcsso/sdcsso-*manifest | xargs basename)",
   "ufds-image": "ufds/$(ls bits/ufds/ufds-*manifest | xargs basename)",
-  "vcapi-image": "vcapi/$(ls bits/vcapi/vcapi-*manifest | xargs basename)",
   "vmapi-image": "vmapi/$(ls bits/vmapi/vmapi-*manifest | xargs basename)",
   "workflow-image": "workflow/$(ls bits/workflow/workflow-*manifest | xargs basename)"
 }

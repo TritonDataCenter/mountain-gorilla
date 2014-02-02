@@ -477,35 +477,6 @@
     ]
   },
 
-  "vcapi": {
-    "appliance": "true",
-    "image_name": "vcapi",
-    "image_description": "SDC VCAPI",
-    "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
-    "pkgsrc": [
-      "gcc-runtime-4.6.2",
-      "curl-7.23.1nb1",
-      "pkg_alternatives-1.5",
-      "python26-2.6.7nb2",
-      "haproxy-1.4.18"
-    ],
-    "repos": [
-        {"url": "git@git.joyent.com:vcapi.git"}
-    ],
-    "deps": [
-      "amon",
-      "sapi",
-      "registrar",
-      "https://download.joyent.com/pub/build/sdcnode"
-    ],
-    "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
-    ]
-  },
-
   "imgapi-cli": {
     "repos": [
         {"url": "git@git.joyent.com:imgapi-cli.git"}
@@ -1235,7 +1206,6 @@
         "moray",
         "napi",
         "papi",
-        "vcapi",
         "platform",
         "rabbitmq",
         "redis",
