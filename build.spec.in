@@ -17,6 +17,7 @@ cat <<HERE;
   "sdcboot-release": "$(ls bits/sdcboot/sdcboot*.tgz | xargs basename | cut -d- -f2)",
   "firmware-tools-release": "$(ls bits/firmware-tools/firmware-tools*.tgz | xargs basename | cut -d- -f3)",
   "agents-shar": "$(ls bits/agentsshar/agents-*.sh | xargs basename | cut -d- -f2)",
+  "sdcadm-release": "$(ls bits/sdcadm/sdcadm-*.sh | xargs basename | cut -d- -f2)",
 
   "// *-image": "This should be kept in sync with usb-headnode.git/build.spec",
   "adminui-image": "adminui/$(ls bits/adminui/adminui-*manifest | xargs basename)",

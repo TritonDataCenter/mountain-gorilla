@@ -1211,6 +1211,7 @@
         "redis",
         "sapi",
         "sdc",
+        "sdcadm",
         "sdcboot",
         "sdcsso",
         "ufds",
