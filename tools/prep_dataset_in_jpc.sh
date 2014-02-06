@@ -203,10 +203,14 @@ machine=$(sdc-createmachine --dataset ${image_uuid} --package ${package} --tag M
 # Set this here so from here out fatal() can try to destroy too.
 CREATED_MACHINE_UUID=${machine}
 
-state=$(sdc-getmachine ${machine} | json 'state')
-while [[ ${state} == 'provisioning' ]]; do
-  sleep 1
-  state=$(sdc-getmachine ${machine} | json 'state')
+echo "Wait up to 30 minutes for machine $machine to provision"
+for i in {1..360}; do
+    sleep 5
+    state=$(sdc-getmachine ${machine} | json state)
+    echo "Checking if machine $machine is provisioned (check $i of 360): $state"
+    if [[ $state != 'provisioning' ]]; then
+        break
+    fi
 done
 
 machine_json=$(sdc-getmachine ${machine})
