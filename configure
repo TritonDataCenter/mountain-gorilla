@@ -6,7 +6,7 @@
 # "targets.json" is a mapping of Makefile target to info about that target.
 
 if [ "$TRACE" != "" ]; then
-    export PS4='${BASH_SOURCE}:${LINENO}: '
+    export PS4='[\D{%FT%TZ}] ${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
     set -o xtrace
 fi
 set -o errexit
@@ -102,11 +102,15 @@ function flush_bits_cache() {
 #   preload_bits_from_http http://download.joyent.com/pub/build/sdcnode master ""
 #
 function preload_bits_from_http() {
-
     local target=$1
     local branch=$2
     local try_branch=$3
     local target_base=$(basename $target)
+
+    if [[ "$target_base" == "sdcnode" ]]; then
+        echo "Skip preload of sdcnode (see RELENG-404)."
+        return
+    fi
 
     echo ""
     echo "# preload 'bits/$target_base'"
