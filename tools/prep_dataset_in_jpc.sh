@@ -233,9 +233,14 @@ if [[ ${waited} -ge 600 ]]; then
   fatal "VM ${machine} still unavailable after ${waited} seconds."
 fi
 
-# XXX install sm-prepare-image as it's required for img mgmt v2
-# but doesn't exist in 1.6.3
-if [[ ${image_uuid} == "01b2c898-945f-11e1-a523-af1afbe22822" ]]; then
+# The current smartos-prepare-image script built-in to IMGAPI that are
+# used for as part of image creation relies on having
+# /opt/local/bin/sm-prepare-image. The old smartos/1.6.3 image that
+# we currently use for some SDC images doesn't have that script. Add it.
+#     01b2c898-945f-11e1-a523-af1afbe22822  smartos/1.6.3
+#     fd2cc906-8938-11e3-beab-4359c665ac99  sdc-smartos/1.6.3
+if [[ ${image_uuid} == "01b2c898-945f-11e1-a523-af1afbe22822"
+      || ${image_uuid} == "fd2cc906-8938-11e3-beab-4359c665ac99" ]]; then
     cat tools/clean-image.sh | ${SSH} "cat > /opt/local/bin/sm-prepare-image && chmod 755 /opt/local/bin/sm-prepare-image && cat /opt/local/bin/sm-prepare-image"
 fi
 
