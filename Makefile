@@ -59,10 +59,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow hagfish-watcher firewaller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow agents-upgrade agentsshar-upgrade hagfish-watcher firewaller
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow hagfish-watcher firewaller
 
 
 #---- smartlogin
@@ -2033,69 +2033,6 @@ $(AGENTSSHAR_BITS): build/agents-installer/Makefile
 clean_agentsshar:
 	rm -rf $(BITS_DIR)/agentsshar
 	(if [[ -d build/agents-installer ]]; then cd build/agents-installer && gmake clean; fi )
-
-
-#---- agents-upgrade
-
-_agents_upgrade_stamp=$(AGENTS_BRANCH)-$(TIMESTAMP)-g$(AGENTS_SHA)
-AGENTS_UPGRADE_BITS=$(BITS_DIR)/agents-upgrade/provisioner-v2-$(_agents_upgrade_stamp).tgz \
-	$(BITS_DIR)/agents-upgrade/zonetracker-v2-$(_agents_upgrade_stamp).tgz \
-	$(BITS_DIR)/agents-upgrade/heartbeater-$(_agents_upgrade_stamp).tgz
-AGENTS_UPGRADE_BITS_0=$(shell echo $(AGENTS_UPGRADE_BITS) | awk '{print $$1}')
-
-.PHONY: agents-upgrade
-agents-upgrade: $(AGENTS_UPGRADE_BITS_0)
-
-$(AGENTS_UPGRADE_BITS): build/agents/build.sh
-	@echo "# Build agents-upgrade: branch $(AGENTS_BRANCH), sha $(AGENTS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)/agents-upgrade
-	(cd build/agents && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) ./build.sh -n)
-	cp build/agents/build/zonetracker-v2*.tgz \
-		build/agents/build/provisioner-v2*.tgz \
-		build/agents/build/heartbeater-*.tgz \
-		build/agents/build/metadata-*.tgz \
-		$(BITS_DIR)/agents-upgrade
-	@echo "# Created agents-upgrade bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(AGENTS_UPGRADE_BITS)
-	@echo ""
-
-clean_agents-upgrade:
-	rm -rf $(BITS_DIR)/agents-upgrade
-	(if [[ -d build/agents-installer ]]; then cd build/agents-installer && gmake clean; fi )
-
-
-#---- agentsshar-upgrade
-# This is a build of an agents shar of the *agents-upgrade* agents.
-# Perhaps a little confusingly: the agents-upgrade are built out of
-# the "release-20110901-upgrade" branch of agents.git, but
-# agentsshar-upgrade is built out of the *master* branch of
-# agents-installer.git.
-
-_agentsshar_upgrade_stamp=release-20110901-upgrade-$(TIMESTAMP)-g$(AGENTS_INSTALLER_SHA)
-AGENTSSHAR_UPGRADE_BITS=$(BITS_DIR)/agentsshar-upgrade/agents-$(_agentsshar_upgrade_stamp).sh \
-	$(BITS_DIR)/agentsshar-upgrade/agents-$(_agentsshar_upgrade_stamp).md5sum
-AGENTSSHAR_UPGRADE_BITS_0=$(shell echo $(AGENTSSHAR_UPGRADE_BITS) | awk '{print $$1}')
-
-.PHONY: agentsshar-upgrade
-agentsshar-upgrade: $(AGENTSSHAR_UPGRADE_BITS_0)
-
-$(AGENTSSHAR_UPGRADE_BITS): build/agents-installer/Makefile
-	@echo "# Build agentsshar-upgrade: branch $(AGENTSSHAR_BRANCH), sha $(AGENTSSHAR_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)/agentsshar-upgrade
-	(cd build/agents-installer && TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar \
-		-d $(BITS_DIR) -b release-20110901-upgrade \
-		-o $(BITS_DIR)/agentsshar-upgrade \
-		agents-upgrade/provisioner-v2 \
-		agents-upgrade/zonetracker-v2 \
-		agents-upgrade/heartbeater \
-		agents-upgrade/metadata)
-	@echo "# Created agentsshar-upgrade bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(AGENTSSHAR_UPGRADE_BITS)
-	@echo ""
-
-clean_agentsshar-upgrade:
-	rm -rf $(BITS_DIR)/agentsshar-upgrade
-	(if [[ -d build/agents-installer ]]; then cd build/agents-installer && gmake distclean; fi )
 
 
 #---- convertvm
