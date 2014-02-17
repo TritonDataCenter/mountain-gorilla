@@ -16,7 +16,7 @@
     "image_name": "ca",
     "image_description": "SDC Cloud Analytics",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "zlib-1.2.3",
       "png-1.5.9",
@@ -44,7 +44,7 @@
     "image_name": "amon",
     "image_description": "SDC AMON",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [],
     "repos": [
       {"url": "git@git.joyent.com:amon.git"}
@@ -65,7 +65,7 @@
     "image_name": "assets",
     "image_description": "SDC Assets",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "nginx-1.0.10"
     ],
@@ -88,7 +88,7 @@
     "image_name": "adminui",
     "image_description": "SDC AdminUI",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [],
     "repos": [
         {"url": "git@git.joyent.com:adminui.git", "dir": "adminui"}
@@ -110,7 +110,7 @@
     "image_name": "mockcn",
     "image_description": "SDC MOCK CN",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "tftp-hpa-5.2"
     ],
@@ -125,7 +125,7 @@
     "image_name": "dhcpd",
     "image_description": "SDC DHCPD",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "tftp-hpa-5.2"
     ],
@@ -149,7 +149,7 @@
     "image_name": "redis",
     "image_description": "SDC Redis",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [],
     "repos": [
       {"url": "git@git.joyent.com:redis.git"}
@@ -170,7 +170,7 @@
     "image_name": "amonredis",
     "image_description": "SDC Amon Redis",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [],
     "repos": [
       {"url": "git@git.joyent.com:amonredis.git"}
@@ -214,7 +214,7 @@
     "image_name": "cloudapi",
     "image_description": "SDC CloudAPI",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "repos": [
       {"url": "git@git.joyent.com:cloudapi.git"}
     ],
@@ -245,7 +245,7 @@
     "image_name": "usageapi",
     "image_description": "SDC UsageAPI",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "postgresql91-client-9.1.2",
       "postgresql91-server-9.1.2"
@@ -271,7 +271,7 @@
     "image_name": "ufds",
     "image_description": "SDC UFDS",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "openldap-client-2.4.24",
       "postgresql91-client-9.1.2",
@@ -298,7 +298,7 @@
     "image_name": "manta-workflow",
     "image_description": "Manta Workflow",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "curl-7.23.1nb1",
       "pkg_alternatives-1.5",
@@ -325,7 +325,7 @@
     "image_name": "workflow",
     "image_description": "SDC Workflow",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "curl-7.23.1nb1",
       "pkg_alternatives-1.5",
@@ -353,7 +353,7 @@
     "image_name": "vmapi",
     "image_description": "SDC VMAPI",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "gcc-runtime-4.6.2",
       "curl-7.23.1nb1",
@@ -382,7 +382,7 @@
     "image_name": "dapi",
     "image_description": "SDC DAPI",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "gcc-runtime-4.6.2",
       "curl-7.23.1nb1",
@@ -410,7 +410,7 @@
     "image_name": "papi",
     "image_description": "SDC PAPI",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "gcc-runtime-4.6.2",
       "curl-7.23.1nb1",
@@ -459,7 +459,7 @@
     "appliance": "true",
     "image_name": "sdc",
     "image_description": "SDC tools/ops zone",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
         "mtr-0.82"
     ],
@@ -570,7 +570,7 @@
     "image_name": "cnapi",
     "image_description": "SDC CNAPI",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "gcc-runtime-4.6.2",
       "curl-7.23.1nb1",
@@ -600,7 +600,7 @@
     "image_name": "fwapi",
     "image_description": "SDC FWAPI",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "openldap-client-2.4.24"
     ],
@@ -624,7 +624,7 @@
     "appliance": "true",
     "image_name": "napi",
     "image_description": "SDC NAPI",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "openldap-client-2.4.24"
     ],
@@ -649,7 +649,7 @@
     "image_name": "sapi",
     "image_description": "SDC SAPI",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "gcc-runtime-4.6.2",
       "curl-7.23.1nb1",
@@ -712,7 +712,7 @@
     "appliance": "true",
     "image_name": "manta-nameservice",
     "image_description": "Manta nameservice",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "sun-jre6-6.0.26",
       "zookeeper-client-3.4.3",
@@ -738,7 +738,7 @@
     "appliance": "true",
     "image_name": "manta-postgres",
     "image_description": "Manta postgres",
-    "image_uuid": "4aec529c-55f9-11e3-868e-a37707fcbe86",
+    "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
     "pkgsrc": [
         "postgresql92-server-9.2.4nb1",
         "postgresql92-adminpack",
@@ -767,7 +767,7 @@
     "appliance": "true",
     "image_name": "manta-medusa",
     "image_description": "Manta medusa",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "zookeeper-client-3.4.3"
     ],
@@ -791,7 +791,7 @@
     "appliance": "true",
     "image_name": "manta-authcache",
     "image_description": "Manta authcache",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "redis-2.4.13",
       "zookeeper-client-3.4.3"
@@ -816,7 +816,7 @@
     "appliance": "true",
     "image_name": "manta-moray",
     "image_description": "Manta moray",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "haproxy-1.4.18",
       "postgresql91-client-9.1.2",
@@ -842,7 +842,7 @@
     "appliance": "true",
     "image_name": "manta-electric-moray",
     "image_description": "Manta moray proxy",
-    "image_uuid": "4aec529c-55f9-11e3-868e-a37707fcbe86",
+    "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
     "pkgsrc": [
       "haproxy-1.4.24"
     ],
@@ -866,7 +866,7 @@
     "appliance": "true",
     "image_name": "manta-loadbalancer",
     "image_description": "Manta loadbalancer",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "py27-curses",
       "stud-0nb20120827",
@@ -892,7 +892,7 @@
     "appliance": "true",
     "image_name": "manta-webapi",
     "image_description": "Manta webapi",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "haproxy-1.4.18",
       "sqlite3-3.7.9",
@@ -918,7 +918,7 @@
     "appliance": "true",
     "image_name": "manta-ops",
     "image_description": "Manta ops",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "redis-2.4.13",
       "zookeeper-client-3.4.3"
@@ -947,7 +947,7 @@
     "appliance": "true",
     "image_name": "manta-madtom",
     "image_description": "Manta madtom",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "postgresql91-client-9.1.2",
       "redis-2.4.13",
@@ -973,7 +973,7 @@
     "appliance": "true",
     "image_name": "manta-storage",
     "image_description": "Manta storage",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "pcre-8.21",
       "zookeeper-client-3.4.3"
@@ -1000,7 +1000,7 @@
     "appliance": "true",
     "image_name": "manta-jobsupervisor",
     "image_description": "Manta jobsupervisor",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "zookeeper-client-3.4.3"
     ],
@@ -1024,7 +1024,7 @@
     "appliance": "true",
     "image_name": "manta-jobpuller",
     "image_description": "Manta Job Puller",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "zookeeper-client-3.4.3"
     ],
@@ -1082,7 +1082,7 @@
     "image_name": "sdcsso",
     "image_description": "SDC SSO",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "gcc-runtime-4.6.2",
       "curl-7.23.1nb1",
@@ -1111,7 +1111,7 @@
     "image_name": "manta-deployment",
     "image_description": "Manta deployment tools",
     "image_version": "1.0.0",
-    "image_uuid": "01b2c898-945f-11e1-a523-af1afbe22822",
+    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "openldap-client-2.4.24"
     ],
