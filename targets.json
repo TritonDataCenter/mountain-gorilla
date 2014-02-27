@@ -778,7 +778,7 @@
 
   "sdc-manatee": {
     "appliance": "true",
-    "image_name": "sdc-manatee,
+    "image_name": "sdc-manatee",
     "image_description": "SDC manatee",
     "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
     "pkgsrc": [
