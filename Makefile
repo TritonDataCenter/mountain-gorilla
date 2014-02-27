@@ -59,10 +59,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow hagfish-watcher firewaller
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow hagfish-watcher firewaller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow hagfish-watcher firewaller
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow hagfish-watcher firewaller
 
 
 #---- smartlogin
@@ -619,6 +619,88 @@ cloudapi_publish_image: $(CLOUDAPI_IMAGE_BIT)
 clean_cloudapi:
 	rm -rf $(BITS_DIR)/cloudapi
 	(cd build/cloudapi && gmake clean)
+
+
+#---- MANTA-MANATEE
+
+_manta-manatee_stamp=$(MANTA-MANATEE_BRANCH)-$(TIMESTAMP)-g$(MANTA-MANATEE_SHA)
+MANTA-MANATEE_BITS=$(BITS_DIR)/manta-manatee/manta-manatee-pkg-$(_manta-manatee_stamp).tar.bz2
+MANTA-MANATEE_IMAGE_BIT=$(BITS_DIR)/manta-manatee/manta-manatee-zfs-$(_manta-manatee_stamp).zfs.gz
+MANTA-MANATEE_MANIFEST_BIT=$(BITS_DIR)/manta-manatee/manta-manatee-zfs-$(_manta-manatee_stamp).imgmanifest
+
+.PHONY: manta-manatee
+manta-manatee: $(MANTA-MANATEE_BITS) manta-manatee_image
+
+$(MANTA-MANATEE_BITS): build/manta-manatee
+	@echo "# Build manta-manatee: branch $(MANTA-MANATEE_BRANCH), sha $(MANTA-MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/manta-manatee && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created manta-manatee bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(MANTA-MANATEE_BITS)
+	@echo ""
+
+.PHONY: manta-manatee_image
+manta-manatee_image: $(MANTA-MANATEE_IMAGE_BIT)
+
+$(MANTA-MANATEE_IMAGE_BIT): $(MANTA-MANATEE_BITS)
+	@echo "# Build manta-manatee_image: branch $(MANTA-MANATEE_BRANCH), sha $(MANTA-MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MANTA-MANATEE_IMAGE_UUID)" -t $(MANTA-MANATEE_BITS) \
+		-b "manta-manatee" \
+		-o "$(MANTA-MANATEE_IMAGE_BIT)" -p $(MANTA-MANATEE_PKGSRC) \
+		-t $(MANTA-MANATEE_EXTRA_TARBALLS) -n $(MANTA-MANATEE_IMAGE_NAME) \
+		-v $(_manta-manatee_stamp) -d $(MANTA-MANATEE_IMAGE_DESCRIPTION)
+	@echo "# Created manta-manatee image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(MANTA-MANATEE_IMAGE_BIT))
+	@echo ""
+
+manta-manatee_publish_image: $(MANTA-MANATEE_IMAGE_BIT)
+	@echo "# Publish manta-manatee image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(MANTA-MANATEE_MANIFEST_BIT) -f $(MANTA-MANATEE_IMAGE_BIT)
+
+clean_manta-manatee:
+	rm -rf $(BITS_DIR)/manta-manatee
+	(cd build/manta-manatee && gmake distclean)
+
+
+#---- SDC-MANATEE
+
+_sdc-manatee_stamp=$(SDC-MANATEE_BRANCH)-$(TIMESTAMP)-g$(SDC-MANATEE_SHA)
+SDC-MANATEE_BITS=$(BITS_DIR)/sdc-manatee/sdc-manatee-pkg-$(_sdc-manatee_stamp).tar.bz2
+SDC-MANATEE_IMAGE_BIT=$(BITS_DIR)/sdc-manatee/sdc-manatee-zfs-$(_sdc-manatee_stamp).zfs.gz
+SDC-MANATEE_MANIFEST_BIT=$(BITS_DIR)/sdc-manatee/sdc-manatee-zfs-$(_sdc-manatee_stamp).imgmanifest
+
+.PHONY: sdc-manatee
+sdc-manatee: $(SDC-MANATEE_BITS) sdc-manatee_image
+
+$(SDC-MANATEE_BITS): build/sdc-manatee
+	@echo "# Build sdc-manatee: branch $(SDC-MANATEE_BRANCH), sha $(SDC-MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/sdc-manatee && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created sdc-manatee bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(SDC-MANATEE_BITS)
+	@echo ""
+
+.PHONY: sdc-manatee_image
+sdc-manatee_image: $(SDC-MANATEE_IMAGE_BIT)
+
+$(SDC-MANATEE_IMAGE_BIT): $(SDC-MANATEE_BITS)
+	@echo "# Build sdc-manatee_image: branch $(SDC-MANATEE_BRANCH), sha $(SDC-MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(SDC-MANATEE_IMAGE_UUID)" -t $(SDC-MANATEE_BITS) \
+		-b "sdc-manatee" \
+		-o "$(SDC-MANATEE_IMAGE_BIT)" -p $(SDC-MANATEE_PKGSRC) \
+		-t $(SDC-MANATEE_EXTRA_TARBALLS) -n $(SDC-MANATEE_IMAGE_NAME) \
+		-v $(_sdc-manatee_stamp) -d $(SDC-MANATEE_IMAGE_DESCRIPTION)
+	@echo "# Created sdc-manatee image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(SDC-MANATEE_IMAGE_BIT))
+	@echo ""
+
+sdc-manatee_publish_image: $(SDC-MANATEE_IMAGE_BIT)
+	@echo "# Publish sdc-manatee image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(SDC-MANATEE_MANIFEST_BIT) -f $(SDC-MANATEE_IMAGE_BIT)
+
+clean_sdc-manatee:
+	rm -rf $(BITS_DIR)/sdc-manatee
+	(cd build/sdc-manatee && gmake distclean)
 
 
 #---- MANATEE
