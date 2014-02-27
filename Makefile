@@ -621,82 +621,82 @@ clean_cloudapi:
 	(cd build/cloudapi && gmake clean)
 
 
-#---- MANTA-MANATEE
+#---- MANTA_MANATEE
 
-_manta-manatee_stamp=$(MANTA-MANATEE_BRANCH)-$(TIMESTAMP)-g$(MANTA-MANATEE_SHA)
-MANTA-MANATEE_BITS=$(BITS_DIR)/manta-manatee/manta-manatee-pkg-$(_manta-manatee_stamp).tar.bz2
-MANTA-MANATEE_IMAGE_BIT=$(BITS_DIR)/manta-manatee/manta-manatee-zfs-$(_manta-manatee_stamp).zfs.gz
-MANTA-MANATEE_MANIFEST_BIT=$(BITS_DIR)/manta-manatee/manta-manatee-zfs-$(_manta-manatee_stamp).imgmanifest
+_manta-manatee_stamp=$(MANTA_MANATEE_BRANCH)-$(TIMESTAMP)-g$(MANTA_MANATEE_SHA)
+MANTA_MANATEE_BITS=$(BITS_DIR)/manta-manatee/manta-manatee-pkg-$(_manta-manatee_stamp).tar.bz2
+MANTA_MANATEE_IMAGE_BIT=$(BITS_DIR)/manta-manatee/manta-manatee-zfs-$(_manta-manatee_stamp).zfs.gz
+MANTA_MANATEE_MANIFEST_BIT=$(BITS_DIR)/manta-manatee/manta-manatee-zfs-$(_manta-manatee_stamp).imgmanifest
 
 .PHONY: manta-manatee
-manta-manatee: $(MANTA-MANATEE_BITS) manta-manatee_image
+manta-manatee: $(MANTA_MANATEE_BITS) manta-manatee_image
 
-$(MANTA-MANATEE_BITS): build/manta-manatee
-	@echo "# Build manta-manatee: branch $(MANTA-MANATEE_BRANCH), sha $(MANTA-MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(MANTA_MANATEE_BITS): build/manta-manatee
+	@echo "# Build manta-manatee: branch $(MANTA_MANATEE_BRANCH), sha $(MANTA_MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/manta-manatee && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created manta-manatee bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(MANTA-MANATEE_BITS)
+	@ls -l $(MANTA_MANATEE_BITS)
 	@echo ""
 
 .PHONY: manta-manatee_image
-manta-manatee_image: $(MANTA-MANATEE_IMAGE_BIT)
+manta-manatee_image: $(MANTA_MANATEE_IMAGE_BIT)
 
-$(MANTA-MANATEE_IMAGE_BIT): $(MANTA-MANATEE_BITS)
-	@echo "# Build manta-manatee_image: branch $(MANTA-MANATEE_BRANCH), sha $(MANTA-MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(MANTA-MANATEE_IMAGE_UUID)" -t $(MANTA-MANATEE_BITS) \
+$(MANTA_MANATEE_IMAGE_BIT): $(MANTA_MANATEE_BITS)
+	@echo "# Build manta-manatee_image: branch $(MANTA_MANATEE_BRANCH), sha $(MANTA_MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MANTA_MANATEE_IMAGE_UUID)" -t $(MANTA_MANATEE_BITS) \
 		-b "manta-manatee" \
-		-o "$(MANTA-MANATEE_IMAGE_BIT)" -p $(MANTA-MANATEE_PKGSRC) \
-		-t $(MANTA-MANATEE_EXTRA_TARBALLS) -n $(MANTA-MANATEE_IMAGE_NAME) \
-		-v $(_manta-manatee_stamp) -d $(MANTA-MANATEE_IMAGE_DESCRIPTION)
+		-o "$(MANTA_MANATEE_IMAGE_BIT)" -p $(MANTA_MANATEE_PKGSRC) \
+		-t $(MANTA_MANATEE_EXTRA_TARBALLS) -n $(MANTA_MANATEE_IMAGE_NAME) \
+		-v $(_manta-manatee_stamp) -d $(MANTA_MANATEE_IMAGE_DESCRIPTION)
 	@echo "# Created manta-manatee image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(MANTA-MANATEE_IMAGE_BIT))
+	@ls -l $$(dirname $(MANTA_MANATEE_IMAGE_BIT))
 	@echo ""
 
-manta-manatee_publish_image: $(MANTA-MANATEE_IMAGE_BIT)
+manta-manatee_publish_image: $(MANTA_MANATEE_IMAGE_BIT)
 	@echo "# Publish manta-manatee image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MANTA-MANATEE_MANIFEST_BIT) -f $(MANTA-MANATEE_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(MANTA_MANATEE_MANIFEST_BIT) -f $(MANTA_MANATEE_IMAGE_BIT)
 
 clean_manta-manatee:
 	rm -rf $(BITS_DIR)/manta-manatee
 	(cd build/manta-manatee && gmake distclean)
 
 
-#---- SDC-MANATEE
+#---- SDC_MANATEE
 
-_sdc-manatee_stamp=$(SDC-MANATEE_BRANCH)-$(TIMESTAMP)-g$(SDC-MANATEE_SHA)
-SDC-MANATEE_BITS=$(BITS_DIR)/sdc-manatee/sdc-manatee-pkg-$(_sdc-manatee_stamp).tar.bz2
-SDC-MANATEE_IMAGE_BIT=$(BITS_DIR)/sdc-manatee/sdc-manatee-zfs-$(_sdc-manatee_stamp).zfs.gz
-SDC-MANATEE_MANIFEST_BIT=$(BITS_DIR)/sdc-manatee/sdc-manatee-zfs-$(_sdc-manatee_stamp).imgmanifest
+_sdc-manatee_stamp=$(SDC_MANATEE_BRANCH)-$(TIMESTAMP)-g$(SDC_MANATEE_SHA)
+SDC_MANATEE_BITS=$(BITS_DIR)/sdc-manatee/sdc-manatee-pkg-$(_sdc-manatee_stamp).tar.bz2
+SDC_MANATEE_IMAGE_BIT=$(BITS_DIR)/sdc-manatee/sdc-manatee-zfs-$(_sdc-manatee_stamp).zfs.gz
+SDC_MANATEE_MANIFEST_BIT=$(BITS_DIR)/sdc-manatee/sdc-manatee-zfs-$(_sdc-manatee_stamp).imgmanifest
 
 .PHONY: sdc-manatee
-sdc-manatee: $(SDC-MANATEE_BITS) sdc-manatee_image
+sdc-manatee: $(SDC_MANATEE_BITS) sdc-manatee_image
 
-$(SDC-MANATEE_BITS): build/sdc-manatee
-	@echo "# Build sdc-manatee: branch $(SDC-MANATEE_BRANCH), sha $(SDC-MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(SDC_MANATEE_BITS): build/sdc-manatee
+	@echo "# Build sdc-manatee: branch $(SDC_MANATEE_BRANCH), sha $(SDC_MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/sdc-manatee && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created sdc-manatee bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(SDC-MANATEE_BITS)
+	@ls -l $(SDC_MANATEE_BITS)
 	@echo ""
 
 .PHONY: sdc-manatee_image
-sdc-manatee_image: $(SDC-MANATEE_IMAGE_BIT)
+sdc-manatee_image: $(SDC_MANATEE_IMAGE_BIT)
 
-$(SDC-MANATEE_IMAGE_BIT): $(SDC-MANATEE_BITS)
-	@echo "# Build sdc-manatee_image: branch $(SDC-MANATEE_BRANCH), sha $(SDC-MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(SDC-MANATEE_IMAGE_UUID)" -t $(SDC-MANATEE_BITS) \
+$(SDC_MANATEE_IMAGE_BIT): $(SDC_MANATEE_BITS)
+	@echo "# Build sdc-manatee_image: branch $(SDC_MANATEE_BRANCH), sha $(SDC_MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(SDC_MANATEE_IMAGE_UUID)" -t $(SDC_MANATEE_BITS) \
 		-b "sdc-manatee" \
-		-o "$(SDC-MANATEE_IMAGE_BIT)" -p $(SDC-MANATEE_PKGSRC) \
-		-t $(SDC-MANATEE_EXTRA_TARBALLS) -n $(SDC-MANATEE_IMAGE_NAME) \
-		-v $(_sdc-manatee_stamp) -d $(SDC-MANATEE_IMAGE_DESCRIPTION)
+		-o "$(SDC_MANATEE_IMAGE_BIT)" -p $(SDC_MANATEE_PKGSRC) \
+		-t $(SDC_MANATEE_EXTRA_TARBALLS) -n $(SDC_MANATEE_IMAGE_NAME) \
+		-v $(_sdc-manatee_stamp) -d $(SDC_MANATEE_IMAGE_DESCRIPTION)
 	@echo "# Created sdc-manatee image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(SDC-MANATEE_IMAGE_BIT))
+	@ls -l $$(dirname $(SDC_MANATEE_IMAGE_BIT))
 	@echo ""
 
-sdc-manatee_publish_image: $(SDC-MANATEE_IMAGE_BIT)
+sdc-manatee_publish_image: $(SDC_MANATEE_IMAGE_BIT)
 	@echo "# Publish sdc-manatee image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(SDC-MANATEE_MANIFEST_BIT) -f $(SDC-MANATEE_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(SDC_MANATEE_MANIFEST_BIT) -f $(SDC_MANATEE_IMAGE_BIT)
 
 clean_sdc-manatee:
 	rm -rf $(BITS_DIR)/sdc-manatee
