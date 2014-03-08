@@ -1214,7 +1214,7 @@
         "fwapi",
         "imgapi",
         "imgapi-cli",
-        "manatee",
+        "sdc-manatee",
         "manta-deployment",
         "moray",
         "napi",

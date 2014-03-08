@@ -32,7 +32,7 @@ cat <<HERE;
   "dhcpd-image": "dhcpd/$(ls bits/dhcpd/dhcpd-*manifest | xargs basename)",
   "fwapi-image": "fwapi/$(ls bits/fwapi/fwapi-*manifest | xargs basename)",
   "imgapi-image": "imgapi/$(ls bits/imgapi/imgapi-*manifest | xargs basename)",
-  "manatee-image": "manatee/$(ls bits/manatee/manatee-*manifest | xargs basename)",
+  "manatee-image": "manatee/$(ls bits/sdc-manatee/sdc-manatee-*manifest | xargs basename)",
   "manta-image": "manta-deployment/$(ls bits/manta-deployment/manta-deployment-*manifest | xargs basename)",
   "moray-image": "moray/$(ls bits/moray/moray-*manifest | xargs basename)",
   "napi-image": "napi/$(ls bits/napi/napi-*manifest | xargs basename)",
