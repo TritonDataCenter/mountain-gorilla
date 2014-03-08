@@ -718,38 +718,9 @@
     ]
   },
 
-  "manatee": {
-    "appliance": "true",
-    "image_name": "manta-postgres",
-    "image_description": "Manta postgres",
-    "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
-    "pkgsrc": [
-        "postgresql92-server-9.2.4nb1",
-        "postgresql92-adminpack",
-        "postgresql92-datatypes",
-        "postgresql92-pgcrypto",
-        "postgresql92-replicationtools",
-        "postgresql92-upgrade"
-    ],
-    "repos": [
-      {"url": "git@git.joyent.com:manatee.git"}
-    ],
-    "deps": [
-      "https://download.joyent.com/pub/build/sdcnode",
-      "registrar",
-      "amon",
-      "sapi"
-    ],
-    "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
-    ]
-  },
-
   "manta-manatee": {
     "appliance": "true",
-    "image_name": "manta-test-postgres",
+    "image_name": "manta-postgres",
     "image_description": "Manta manatee",
     "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
     "pkgsrc": [
