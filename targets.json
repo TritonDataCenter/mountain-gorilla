@@ -1215,6 +1215,7 @@
         "imgapi",
         "imgapi-cli",
         "sdc-manatee",
+        "mahi",
         "manta-deployment",
         "moray",
         "napi",
