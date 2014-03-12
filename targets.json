@@ -275,7 +275,9 @@
     "pkgsrc": [
       "openldap-client-2.4.24",
       "postgresql91-client-9.1.2",
-      "pkg_alternatives-1.5"
+      "pkg_alternatives-1.5",
+      "gmake-3.82nb3",
+      "gcc-compiler-4.6.2"
     ],
     "repos": [
       {"url": "git@git.joyent.com:ufds.git"}
