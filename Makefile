@@ -59,10 +59,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow hagfish-watcher firewaller
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools manta-workflow hagfish-watcher firewaller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom config-agent sdcboot manta-deployment firmware-tools manta-workflow hagfish-watcher firewaller
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools manta-workflow hagfish-watcher firewaller
 
 
 #---- smartlogin
@@ -1686,6 +1686,49 @@ madtom_publish_image: $(MADTOM_IMAGE_BIT)
 clean_madtom:
 	rm -rf $(BITS_DIR)/madtom
 	(cd build/madtom && gmake distclean)
+
+
+#---- Marlin Dashboard
+
+_marlin-dashboard_stamp=$(MARLIN_DASHBOARD_BRANCH)-$(TIMESTAMP)-g$(MARLIN_DASHBOARD_SHA)
+MARLIN_DASHBOARD_BITS=$(BITS_DIR)/marlin-dashboard/marlin-dashboard-pkg-$(_marlin-dashboard_stamp).tar.bz2
+MARLIN_DASHBOARD_IMAGE_BIT=$(BITS_DIR)/marlin-dashboard/marlin-dashboard-zfs-$(_marlin-dashboard_stamp).zfs.gz
+MARLIN_DASHBOARD_MANIFEST_BIT=$(BITS_DIR)/marlin-dashboard/marlin-dashboard-zfs-$(_marlin-dashboard_stamp).imgmanifest
+
+.PHONY: marlin-dashboard
+marlin-dashboard: $(MARLIN_DASHBOARD_BITS) marlin-dashboard_image
+
+# PATH for marlin-dashboard build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(MARLIN_DASHBOARD_BITS): build/marlin-dashboard
+	@echo "# Build marlin-dashboard: branch $(MARLIN_DASHBOARD_BRANCH), sha $(MARLIN_DASHBOARD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/marlin-dashboard && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created marlin-dashboard bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(MARLIN_DASHBOARD_BITS)
+	@echo ""
+
+.PHONY: marlin-dashboard_image
+marlin-dashboard_image: $(MARLIN_DASHBOARD_IMAGE_BIT)
+
+$(MARLIN_DASHBOARD_IMAGE_BIT): $(MARLIN_DASHBOARD_BITS)
+	@echo "# Build marlin-dashboard_image: branch $(MARLIN_DASHBOARD_BRANCH), sha $(MARLIN_DASHBOARD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MARLIN_DASHBOARD_IMAGE_UUID)" -t $(MARLIN_DASHBOARD_BITS) \
+		-b "marlin-dashboard" \
+		-o "$(MARLIN_DASHBOARD_IMAGE_BIT)" -p $(MARLIN_DASHBOARD_PKGSRC) \
+		-t $(MARLIN_DASHBOARD_EXTRA_TARBALLS) -n $(MARLIN_DASHBOARD_IMAGE_NAME) \
+		-v $(_marlin-dashboard_stamp) -d $(MARLIN_DASHBOARD_IMAGE_DESCRIPTION)
+	@echo "# Created marlin-dashboard image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(MARLIN_DASHBOARD_IMAGE_BIT))
+	@echo ""
+
+marlin-dashboard_publish_image: $(MARLIN_DASHBOARD_IMAGE_BIT)
+	@echo "# Publish marlin-dashboard image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(MARLIN_DASHBOARD_MANIFEST_BIT) -f $(MARLIN_DASHBOARD_IMAGE_BIT)
+
+clean_marlin-dashboard:
+	rm -rf $(BITS_DIR)/marlin-dashboard
+	(cd build/marlin-dashboard && gmake distclean)
 
 
 #---- Moray
