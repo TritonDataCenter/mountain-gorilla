@@ -5,9 +5,12 @@
 # missing branch/tag with the '-a' flag.
 #
 
-#set -x
+if [[ -n "$TRACE" ]]; then
+    export PS4='[\D{%FT%TZ}] ${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+    set -o xtrace
+fi
 set -o errexit
-
+set -o pipefail
 
 #---- globals, config
 
@@ -73,12 +76,12 @@ function apply_missing_to_repo {
     repo_name=$(get_repo_name_from_url $repo_url)
     cd $WORKDIR;
     if [[ -d "$repo_name" ]]; then
-        (cd $repo_name && git pull --rebase origin master)
+        (cd $repo_name && git checkout master && git pull --rebase origin master)
     else
         git clone $repo_url $repo_name;
     fi
-    cd $repo_name;
-    git checkout master;
+    cd $repo_name
+    git checkout master
     if [[ ! -z "$tag" && -z "$NO_TAG" ]]; then
       # consider '-b' to force reset of branch if already exists.
       git tag -a "$tag" -m "$tag release"
