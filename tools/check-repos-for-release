@@ -92,6 +92,7 @@ function apply_missing_to_repo {
       git checkout -b $branch
       git push -q origin $branch
     fi
+    git checkout master   # go back to master branch for subsequent runs
 }
 
 function check_repo_url {
