@@ -22,7 +22,6 @@ set -o errexit
 CREATED_MACHINE_UUID=
 CREATED_MACHINE_IMAGE_UUID=
 TOP=$(cd $(dirname $0)/../ >/dev/null; pwd)
-JPC_SUPPORTS_DELETING_IMAGES=false
 JSON=${TOP}/tools/json
 export PATH="${TOP}/node_modules/manta/bin:${TOP}/node_modules/smartdc/bin:${PATH}"
 image_package="g3-standard-2-smartos"
@@ -78,9 +77,7 @@ function cleanup() {
     if [[ -n ${CREATED_MACHINE_UUID} ]]; then
       sdc-deletemachine ${CREATED_MACHINE_UUID}
     fi
-    if [[ -n ${CREATED_MACHINE_IMAGE_UUID}
-      && ${JPC_SUPPORTS_DELETING_IMAGES} == "true" ]]; then
-
+    if [[ -n ${CREATED_MACHINE_IMAGE_UUID} ]]; then
       sdc-deleteimage ${CREATED_MACHINE_IMAGE_UUID}
     fi
   fi
@@ -388,7 +385,7 @@ cat ${output_dir}/${image_manifest_filename} \
 
 if [[ "$KEEP_INFRA_ON_FAILURE" == "true" || "$KEEP_INFRA_ON_FAILURE" == 1 ]]; then
     echo "$0: NOT deleting image (KEEP_INFRA_ON_FAILURE=$KEEP_INFRA_ON_FAILURE)"
-elif [[ ${JPC_SUPPORTS_DELETING_IMAGES} == "true" ]]; then
+else
     sdc-deleteimage ${image_id}
 fi
 
