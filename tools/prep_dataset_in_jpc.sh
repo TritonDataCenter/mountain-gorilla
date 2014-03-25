@@ -367,18 +367,26 @@ mget -o ${output_dir}/${image_filename} ${image_path}
 mget -o ${output_dir}/${image_manifest_filename} ${manifest_path}
 [[ -f ${output_dir}/${image_manifest_filename} ]] || fatal "Failed to download ${image_manifest_filename}"
 
-# XXX we need to add a requirement on the manifest for networks but the API does
-# not allow us to do that, so we have to change locally and push over the original.
-# We also set the min_platform to the platform we just built the bits on, not the
-# platform we created the image on, since that's where the binary dependency should
-# come from.
-#
-# And we remove the '-zfs' from the end of the name which we added for the filename.
+# Image Notes:
+# - We need to add a requirement on the manifest for networks but the API does
+#   not allow us to do that, so we have to change locally and push over the
+#   original.
+# - We also set the min_platform to the platform we just built the bits on,
+#   not the platform we created the image on, since that's where the binary
+#   dependency should come from.
+# - And we remove the '-zfs' from the end of the name which we added
+#   for the filename.
+#   TODO: Use a basename in the 'sdc-exportimage' arg above, then change this
+#   to prefix the name with "BUILD-" or similar as a sign to not use these
+#   images for provisioning.
+# - We change the UUID because with the above changes this really is a different
+#   beast. See RELENG-518.
 #
 cat ${output_dir}/${image_manifest_filename} \
   | json -e 'this.requirements.networks = [{name: "net0", description: "admin"}]' \
     -e "this.requirements.min_platform['7.0'] = '$(uname -v | cut -d '_' -f 2)'" \
     -e "this.name = '${image_name}'" \
+    -e "this.uuid = '$(uuid)'" \
   > ${output_dir}/${image_manifest_filename}.new \
   && mv ${output_dir}/${image_manifest_filename}.new ${output_dir}/${image_manifest_filename} \
   && mput -f ${output_dir}/${image_manifest_filename} ${manifest_path}
