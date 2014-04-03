@@ -733,7 +733,7 @@
     "image_description": "Manta manatee",
     "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
     "pkgsrc": [
-        "postgresql92-server-9.2.4nb1",
+        "postgresql92-server-9.2.8nb1",
         "postgresql92-adminpack",
         "postgresql92-datatypes",
         "postgresql92-pgcrypto",
@@ -762,7 +762,7 @@
     "image_description": "SDC manatee",
     "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
     "pkgsrc": [
-        "postgresql92-server-9.2.4nb1",
+        "postgresql92-server-9.2.8nb1",
         "postgresql92-adminpack",
         "postgresql92-datatypes",
         "postgresql92-pgcrypto",
