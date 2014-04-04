@@ -22,29 +22,16 @@ repo, all the components are still in their respective repos.
     push to vmapi.git
         -> triggers a <https://jenkins.joyent.us/job/vmapi> build in Jenkins
         -> uses **MG's 'vmapi' target** to build and upload
-           new vmapi bits to <https://bits.joyent.us/builds/vmapi/master-latest/>
-        -> triggers a <https://jenkins.joyent.us/job/usbheadnodetar> build
-        -> uses MG's usb-headnode-related targets to build and upload
-           <https://bits.joyent.us/builds/usbheadnodetar/master-latest/>
-
-Then you can reflash your headnode using usb-headnode.git/bin/reflash, which
-will grab the latest tarball from that Bits directory.
-
+           new vmapi bits to `/Joyent_Dev/stor/builds/vmapi`
         -> triggers a <https://jenkins.joyent.us/job/usbheadnode> build
         -> uses MG's usb-headnode-related targets to build and upload
-           <https://bits.joyent.us/builds/usbheadnode/master-latest/>
+           `/Joyent_Dev/stor/builds/usbheadnode`
 
-The "usbheadnode" and "usbheadnodetar" builds are separated to get that
-"time from push to reflash" down. For reflash you only need the usb-headnode
-"tar" (aka "boot") tarball. For SDC releases we need the other usb-headnode
-build products.
+Then you can reflash your headnode using usb-headnode.git/bin/reflash, which
+will grab the latest tarball from that builds area directory.
 
 Roughly the same process happens in appropriate dep order for all other
-SDC repos. See <https://jenkins.joyent.us/view/sdc/> for a (hopefully
-up-to-date) list of all SDC jobs.  There isn't a reliable list of
-SDC-related repos. The best attempt is
-<https://mo.joyent.com/carnie/blob/master/repos.json> repos tagged with
-"sdc7".
+SDC repos. See <https://jenkins.joyent.us/>.
 
 
 # Overview
@@ -315,7 +302,7 @@ For example:
                     amon-pkg-master-20130226T191921Z-g7cd3e28.tar.bz2
                     amon-relay-master-20130226T191921Z-g7cd3e28.tgz
                     build.log
-        usbheadnodetar
+        usbheadnode
             master-latest -> master-20130301T004335Z
             ...
             master-20130301T004335Z/
@@ -324,6 +311,8 @@ For example:
                 md5sums.txt
                 usbheadnode/
                     boot-master-20130301T004335Z-gad6dfc4.tgz
+                    coal-master-20130301T004335Z-gad6dfc4.tgz
+                    usb-master-20130301T004335Z-gad6dfc4.tgz
                     build.log
                     build.spec.local
 
