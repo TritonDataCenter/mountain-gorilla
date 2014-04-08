@@ -1,6 +1,16 @@
-#set -o xtrace
+set -o xtrace
 set -o errexit
 set -o pipefail
+
+PLATFORM_DIR="platform"
+PLATFORM_BRANCH=2
+
+[[ -n "$USE_DEBUG_PLATFORM" ]]
+
+if [[ "$USE_DEBUG_PLATFORM" == "true" ]]; then
+	PLATFORM_DIR="$PLATFORM_DIR-debug"
+	PLATFORM_BRANCH=3
+fi
 
 cat <<HERE;
 {
@@ -10,10 +20,12 @@ cat <<HERE;
   "bits-url": "(unused because build passes in BITS_URL envvar)",
   "bits-branch": "(unused because build uses a local dir BITS_URL)",
 
+  "debug-platform": $USE_DEBUG_PLATFORM,
+
   "manta-user": "Joyent_Dev",
   "manta-key-id": "de:e7:73:9a:b0:91:31:3e:72:8d:9f:62:ca:58:a2:ec",
 
-  "platform-release": "$(ls bits/platform/platform*.tgz | xargs basename | cut -d- -f2)",
+  "platform-release": "$(ls bits/$PLATFORM_DIR/platform*.tgz | xargs basename | cut -d- -f$PLATFORM_BRANCH)",
   "sdcboot-release": "$(ls bits/sdcboot/sdcboot*.tgz | xargs basename | cut -d- -f2)",
   "firmware-tools-release": "$(ls bits/firmware-tools/firmware-tools*.tgz | xargs basename | cut -d- -f3)",
   "agents-shar": "$(ls bits/agentsshar/agents-*.sh | xargs basename | cut -d- -f2)",

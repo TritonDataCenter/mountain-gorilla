@@ -1266,6 +1266,49 @@
     ]
   },
 
+  "usbheadnode-debug": {
+    "repos": [
+        {"url": "git@git.joyent.com:usb-headnode.git"}
+    ],
+    "deps": [
+        "adminui",
+        "agentsshar",
+        "agentsshar-upgrade",
+        "amon",
+        "amonredis",
+        "assets",
+        "registrar",
+        "binder",
+        "ca",
+        "cloudapi",
+        "cnapi",
+        "dapi",
+        "dhcpd",
+        "firmware-tools",
+        "fwapi",
+        "imgapi",
+        "imgapi-cli",
+        "sdc-manatee",
+        "mahi",
+        "manta-deployment",
+        "moray",
+        "napi",
+        "papi",
+        "platform-debug",
+        "rabbitmq",
+        "redis",
+        "sapi",
+        "sdc",
+        "sdcadm",
+        "sdcboot",
+        "sdcsso",
+        "ufds",
+        "vmapi",
+        "workflow"
+    ]
+  },
+
+
   "all": {
     "deps": []
   }

@@ -16,7 +16,8 @@
 include bits/config.mk
 
 # Directories
-TOP=$(shell pwd)
+TOP := $(shell pwd)
+BUILD_DIR=$(TOP)/build
 BITS_DIR=$(TOP)/bits
 
 # Tools
@@ -2281,122 +2282,133 @@ clean_firmware-tools:
 # - solution for datasets
 # - pkgsrc isolation
 
-.PHONY: usbheadnode
-usbheadnode: boot coal usb releasejson
+.PHONY: usbheadnode usbheadnode-debug
+usbheadnode usbheadnode-debug: boot coal usb releasejson
+
+usbheadnode: USB_HEADNODE_SUFFIX = ""
+usbheadnode-debug: USB_HEADNODE_SUFFIX = "-debug"
+usbheadnode: USE_DEBUG_PLATFORM = false
+usbheadnode-debug: USE_DEBUG_PLATFORM = true
 
 _usbheadnode_stamp=$(USB_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(USB_HEADNODE_SHA)
 
+USB_BUILD_DIR=$(BUILD_DIR)/usb-headnode
+USB_BITS_DIR=$(BITS_DIR)/usbheadnode$(USB_HEADNODE_SUFFIX)
 
-BOOT_BIT=$(BITS_DIR)/usbheadnode/boot-$(_usbheadnode_stamp).tgz
+USB_BITS_SPEC=$(USB_BITS_DIR)/build.spec.local
+
+BOOT_BUILD=$(USB_BUILD_DIR)/boot-$(_usbheadnode_stamp).tgz
+BOOT_OUTPUT=$(USB_BITS_DIR)/boot$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).tgz
 
 .PHONY: boot
-boot: $(BOOT_BIT)
+boot: $(BOOT_OUTPUT)
 
-$(BOOT_BIT): bits/usbheadnode/build.spec.local
+$(USB_BITS_DIR):
+	mkdir -p $(USB_BITS_DIR)
+
+$(BOOT_OUTPUT): $(USB_BITS_SPEC) $(USB_BITS_DIR)
 	@echo "# Build boot: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& BITS_DIR=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc make tar
-	mv build/usb-headnode/$(shell basename $(BOOT_BIT)) $(BITS_DIR)/usbheadnode
+		&& BITS_DIR=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
+		ZONE_DIR=$(BUILD_DIR) PKGSRC_DIR=$(TOP)/build/pkgsrc make tar
+	mv $(BOOT_BUILD) $(BOOT_OUTPUT)
 	@echo "# Created boot bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(BOOT_BIT)
+	@ls -l $(BOOT_OUTPUT)
 	@echo ""
 
 
-COAL_BIT=$(BITS_DIR)/usbheadnode/coal-$(_usbheadnode_stamp)-4gb.tgz
+COAL_BUILD=$(USB_BUILD_DIR)/coal-$(_usbheadnode_stamp)-4gb.tgz
+COAL_OUTPUT=$(USB_BITS_DIR)/coal$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp)-4gb.tgz
 
-bits/usbheadnode/build.spec.local:
-	mkdir -p bits/usbheadnode
-	bash <build.spec.in >bits/usbheadnode/build.spec.local
-	(cd build/usb-headnode; rm -f build.spec.local; ln -s ../../bits/usbheadnode/build.spec.local)
+$(USB_BITS_SPEC): $(USB_BITS_DIR)
+	USE_DEBUG_PLATFORM=$(USE_DEBUG_PLATFORM) bash <build.spec.in >$(USB_BITS_SPEC)
+	(cd $(USB_BUILD_DIR); rm -f build.spec.local; ln -s $(USB_BITS_SPEC))
 
 .PHONY: coal
-coal: usb $(COAL_BIT)
+coal: usb $(COAL_OUTPUT)
 
-$(COAL_BIT): bits/usbheadnode/build.spec.local $(USB_BIT)
+$(COAL_OUTPUT): $(USB_BITS_SPEC) $(USB_OUTPUT)
 	@echo "# Build coal: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-coal-image -c $(USB_BIT)
-	mv build/usb-headnode/$(shell basename $(COAL_BIT)) $(BITS_DIR)/usbheadnode
+		&& BITS_URL=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
+		ZONE_DIR=$(BUILD_DIR) PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-coal-image -c $(USB_OUTPUT)
+	mv $(COAL_BUILD) $(COAL_OUTPUT)
 	@echo "# Created coal bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(COAL_BIT)
+	@ls -l $(COAL_OUTPUT)
 	@echo ""
 
-USB_BIT=$(BITS_DIR)/usbheadnode/usb-$(_usbheadnode_stamp).tgz
+USB_BUILD=$(USB_BUILD_DIR)/usb-$(_usbheadnode_stamp).tgz
+USB_OUTPUT=$(USB_BITS_DIR)/usb$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).tgz
 
 .PHONY: usb
-usb: $(USB_BIT)
+usb: $(USB_OUTPUT)
 
-$(USB_BIT): bits/usbheadnode/build.spec.local $(BOOT_BIT)
+$(USB_OUTPUT): $(USB_BITS_SPEC) $(BOOT_OUTPUT)
 	@echo "# Build usb: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-usb-image -c $(BOOT_BIT)
-	mv build/usb-headnode/$(shell basename $(USB_BIT)) $(BITS_DIR)/usbheadnode
+		&& BITS_URL=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
+		ZONE_DIR=$(BUILD_DIR) PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-usb-image -c $(BOOT_OUTPUT)
+	mv $(USB_BUILD) $(USB_OUTPUT)
 	@echo "# Created usb bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(USB_BIT)
+	@ls -l $(USB_OUTPUT)
 	@echo ""
 
-UPGRADE_BIT=$(BITS_DIR)/usbheadnode/upgrade-$(_usbheadnode_stamp).tgz
+UPGRADE_BUILD=$(USB_BUILD_DIR)/upgrade-$(_usbheadnode_stamp).tgz
+UPGRADE_OUTPUT=$(USB_BITS_DIR)/upgrade$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).tgz
 
 .PHONY: upgrade
-upgrade: $(UPGRADE_BIT)
+upgrade: $(UPGRADE_OUTPUT)
 
-$(UPGRADE_BIT): bits/usbheadnode/build.spec.local $(BOOT_BIT)
+$(UPGRADE_OUTPUT): $(USB_BITS_SPEC) $(BOOT_OUTPUT)
 	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-upgrade-image $(BOOT_BIT)
-	mv build/usb-headnode/$(shell basename $(UPGRADE_BIT)) $(BITS_DIR)/usbheadnode
+		&& BITS_URL=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
+		ZONE_DIR=$(BUILD_DIR) PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-upgrade-image $(BOOT_OUTPUT)
+	mv $(UPGRADE_BUILD) $(UPGRADE_OUTPUT)
 	@echo "# Created upgrade bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(UPGRADE_BIT)
+	@ls -l $(UPGRADE_OUTPUT)
 	@echo ""
 
 
 # A usbheadnode image that can be imported to an IMGAPI and used for
 # sdc-on-sdc.
 
-IMAGE_BIT=$(BITS_DIR)/usbheadnode/usb-$(_usbheadnode_stamp).zvol.bz2
-MANIFEST_BIT=$(BITS_DIR)/usbheadnode/usb-$(_usbheadnode_stamp).dsmanifest
+IMAGE_BUILD=$(USB_BUILD)/usb-$(_usbheadnode_stamp).zvol.bz2
+IMAGE_OUTPUT=$(USB_BITS_DIR)/usb$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).zvol.bz2
+MANIFEST_BUILD=$(USB_BUILD)/usb-$(_usbheadnode_stamp).dsmanifest
+MANIFEST_OUTPUT=$(USB_BITS_DIR)/usb$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).dsmanifest
 
 .PHONY: image
-image: $(IMAGE_BIT)
+image: $(IMAGE_OUTPUT)
 
-$(IMAGE_BIT): bits/usbheadnode/build.spec.local $(USB_BIT)
+$(IMAGE_OUTPUT): $(USB_BITS_SPEC) $(USB_OUTPUT)
 	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)/usbheadnode
 	cd build/usb-headnode \
-		&& BITS_URL=$(TOP)/bits TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(TOP)/build PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-dataset $(USB_BIT)
-	mv build/usb-headnode/$(shell basename $(IMAGE_BIT)) build/usb-headnode/$(shell basename $(MANIFEST_BIT)) $(BITS_DIR)/usbheadnode
+		&& BITS_URL=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
+		ZONE_DIR=$(BUILD_DIR) PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-dataset $(USB_OUTPUT)
+	mv $(IMAGE_BUILD) $(MANIFEST_BUILD) $(USB_BITS_DIR)/
 	@echo "# Created image bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(IMAGE_BIT))
+	@ls -l $(MANIFEST_OUTPUT) $(IMAGE_OUTPUT)
 	@echo ""
 
 
-RELEASEJSON_BIT=$(BITS_DIR)/usbheadnode/release.json
+RELEASEJSON_BIT=$(USB_BITS_DIR)/release.json
 
 .PHONY: releasejson
-releasejson:
-	mkdir -p $(BITS_DIR)/usbheadnode
+releasejson: $(USB_BITS_DIR)
 	echo "{ \
 	\"date\": \"$(TIMESTAMP)\", \
 	\"branch\": \"$(BRANCH)\", \
 	\"try-branch\": \"$(TRY-BRANCH)\", \
-	\"coal\": \"$(shell basename $(COAL_BIT))\", \
-	\"boot\": \"$(shell basename $(BOOT_BIT))\", \
-	\"usb\": \"$(shell basename $(USB_BIT))\", \
-	\"upgrade\": \"$(shell basename $(UPGRADE_BIT))\" \
+	\"coal\": \"$(shell basename $(COAL_OUTPUT))\", \
+	\"boot\": \"$(shell basename $(BOOT_OUTPUT))\", \
+	\"usb\": \"$(shell basename $(USB_OUTPUT))\", \
+	\"upgrade\": \"$(shell basename $(UPGRADE_OUTPUT))\" \
 }" | $(JSON) >$(RELEASEJSON_BIT)
 
 
 clean_usbheadnode:
-	rm -rf $(BOOT_BIT) $(UPGRADE_BIT) $(USB_BIT) $(COAL_BIT) $(RELEASEJSON_BIT)
+	rm -rf $(BITS_DIR)/usbheadnode $(BITS_DIR)/usbheadnode$(USB_HEADNODE_SUFFIX)
 
 
 
