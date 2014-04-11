@@ -2115,11 +2115,12 @@ _sdcadm_stamp=$(SDCADM_BRANCH)-$(TIMESTAMP)-g$(SDCADM_SHA)
 else
 _sdcadm_stamp=$(TRY_BRANCH)-$(TIMESTAMP)-g$(SDCADM_SHA)
 endif
-SDCADM_BITS=$(BITS_DIR)/sdcadm/sdcadm-$(_sdcadm_stamp).sh
-SDCADM_BITS_0=$(shell echo $(SDCADM_BITS) | awk '{print $$1}')
+SDCADM_PKG_BIT=$(BITS_DIR)/sdcadm/sdcadm-$(_sdcadm_stamp).sh
+SDCADM_MANIFEST_BIT=$(BITS_DIR)/sdcadm/sdcadm-$(_sdcadm_stamp).imgmanifest
+SDCADM_BITS=$(SDCADM_PKG_BIT) $(SDCADM_MANIFEST_BIT)
 
 .PHONY: sdcadm
-sdcadm: $(SDCADM_BITS_0)
+sdcadm: $(SDCADM_PKG_BIT)
 
 $(SDCADM_BITS): build/sdcadm/Makefile
 	@echo "# Build sdcadm: branch $(SDCADM_BRANCH), sha $(SDCADM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
@@ -2131,6 +2132,10 @@ $(SDCADM_BITS): build/sdcadm/Makefile
 
 clean_sdcadm:
 	rm -rf $(BITS_DIR)/sdcadm
+
+sdcadm_publish_image: $(SDCADM_BITS)
+	@echo "# Publish sdcadm image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(SDCADM_MANIFEST_BIT) -f $(SDCADM_PKG_BIT)
 
 
 #---- agentsshar
