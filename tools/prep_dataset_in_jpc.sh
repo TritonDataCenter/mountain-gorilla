@@ -15,8 +15,6 @@ if [[ -z "$(echo "$*" | grep -- '-h' || /bin/true)" ]]; then
 fi
 set -o errexit
 
-echo "RELENG-523: disabling image building in east-1 temporarily" >&2
-exit 42
 
 
 #---- globals, config
