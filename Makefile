@@ -60,10 +60,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools manta-workflow hagfish-watcher firewaller
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools manta-workflow hagfish-watcher firewaller
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
 
 
 #---- smartlogin
@@ -1557,50 +1557,6 @@ mahi_publish_image: $(MAHI_IMAGE_BIT)
 clean_mahi:
 	rm -rf $(BITS_DIR)/mahi
 	(cd build/mahi && gmake distclean)
-
-
-#---- Manta Workflow
-
-_manta-wf_stamp=$(MANTA_WORKFLOW_BRANCH)-$(TIMESTAMP)-g$(MANTA_WORKFLOW_SHA)
-MANTA_WORKFLOW_BITS=$(BITS_DIR)/manta-workflow/manta-workflow-pkg-$(_manta-wf_stamp).tar.bz2
-MANTA_WORKFLOW_IMAGE_BIT=$(BITS_DIR)/manta-workflow/manta-workflow-zfs-$(_manta-wf_stamp).zfs.gz
-MANTA_WORKFLOW_MANIFEST_BIT=$(BITS_DIR)/manta-workflow/manta-workflow-zfs-$(_manta-wf_stamp).imgmanifest
-
-.PHONY: manta-workflow
-manta-workflow: $(MANTA_WORKFLOW_BITS) manta-workflow_image
-
-# PATH for manta-workflow build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
-$(MANTA_WORKFLOW_BITS): build/manta-workflow
-	@echo "# Build manta-workflow: branch $(MANTA_WORKFLOW_BRANCH), sha $(MANTA_WORKFLOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/manta-workflow && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created manta-workflow bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(MANTA_WORKFLOW_BITS)
-	@echo ""
-
-.PHONY: manta-workflow_image
-manta-workflow_image: $(MANTA_WORKFLOW_IMAGE_BIT)
-
-$(MANTA_WORKFLOW_IMAGE_BIT): $(MANTA_WORKFLOW_BITS)
-	@echo "# Build manta-workflow_image: branch $(MANTA_WORKFLOW_BRANCH), sha $(MANTA_WORKFLOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(MANTA_WORKFLOW_IMAGE_UUID)" -t $(MANTA_WORKFLOW_BITS) \
-		-o "$(MANTA_WORKFLOW_IMAGE_BIT)" -p $(MANTA_WORKFLOW_PKGSRC) \
-		-t $(MANTA_WORKFLOW_EXTRA_TARBALLS) -n $(MANTA_WORKFLOW_IMAGE_NAME) \
-		-v $(_manta-wf_stamp) -d $(MANTA_WORKFLOW_IMAGE_DESCRIPTION)
-	@echo "# Created manta-workflow image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(MANTA_WORKFLOW_IMAGE_BIT))
-	@echo ""
-
-manta-workflow_publish_image: $(MANTA_WORKFLOW_IMAGE_BIT)
-	@echo "# Publish manta-workflow image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MANTA_WORKFLOW_MANIFEST_BIT) -f $(MANTA_WORKFLOW_IMAGE_BIT)
-
-# Warning: if workflow's submodule deps change, this 'clean_workflow' is insufficient. It would
-# then need to call 'gmake dist-clean'.
-clean_manta-workflow:
-	rm -rf $(BITS_DIR)/manta-workflow
-	(cd build/manta-workflow && gmake clean)
 
 
 #---- Mola
