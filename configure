@@ -250,25 +250,13 @@ function preload_bits_from_manta() {
     # path. Something similar but with a -<buildstamp> instead of -latest and
     # we'll grab that into latest_dir.
     #
-    local count=0
-    local latest_dir=
     local latest_mpath=${target_mpath}/${best_branch}-latest
-    while [[ ${count} -lt 3 && -z latest_dir ]]; do
+    local latest_dir=$(mget -v -q $latest_mpath 2> /tmp/mget-output.$$)
 
-        if [[ ${count} -gt 0 ]]; then
-            cat /tmp/mget-output.$$
-            echo "Could not get latest dir for target ${target}, retrying"
-            sleep $((${count} * 20))
-        fi
-
-        latest_dir=$(mget -v -q $latest_mpath 2> /tmp/mget-output.$$)
-
-        if grep ResourceNotFoundError /tmp/mget-output.$$; then
-            latest_mpath=${target_mpath}/master-latest
-            latest_dir=$(mget -v -q $latest_mpath)
-        fi
-        count=$((${count} + 1))
-    done
+    if grep ResourceNotFoundError /tmp/mget-output.$$; then
+        latest_mpath=${target_mpath}/master-latest
+        latest_dir=$(mget -v -q $latest_mpath)
+    fi
 
     if [[ -z ${latest_dir} ]]; then
         cat /tmp/mget-output.$$
