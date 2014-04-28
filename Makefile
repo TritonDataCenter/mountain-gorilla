@@ -60,10 +60,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi dapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
 
 
 #---- smartlogin
@@ -833,50 +833,6 @@ clean_vmapi:
 	(cd build/vmapi && gmake clean)
 
 
-#---- DAPI
-
-_dapi_stamp=$(DAPI_BRANCH)-$(TIMESTAMP)-g$(DAPI_SHA)
-DAPI_BITS=$(BITS_DIR)/dapi/dapi-pkg-$(_dapi_stamp).tar.bz2
-DAPI_IMAGE_BIT=$(BITS_DIR)/dapi/dapi-zfs-$(_dapi_stamp).zfs.gz
-DAPI_MANIFEST_BIT=$(BITS_DIR)/dapi/dapi-zfs-$(_dapi_stamp).imgmanifest
-
-
-.PHONY: dapi
-dapi: $(DAPI_BITS) dapi_image
-
-# PATH for dapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
-$(DAPI_BITS): build/dapi
-	@echo "# Build dapi: branch $(DAPI_BRANCH), sha $(DAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/dapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created dapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(DAPI_BITS)
-	@echo ""
-
-.PHONY: dapi_image
-dapi_image: $(DAPI_IMAGE_BIT)
-
-$(DAPI_IMAGE_BIT): $(DAPI_BITS)
-	@echo "# Build dapi_image: branch $(DAPI_BRANCH), sha $(DAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(DAPI_IMAGE_UUID)" -t $(DAPI_BITS) \
-		-o "$(DAPI_IMAGE_BIT)" -p $(DAPI_PKGSRC) \
-		-t $(DAPI_EXTRA_TARBALLS) -n $(DAPI_IMAGE_NAME) \
-		-v $(_dapi_stamp) -d $(DAPI_IMAGE_DESCRIPTION)
-	@echo "# Created dapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(DAPI_MANIFEST_BIT) $(DAPI_IMAGE_BIT)
-	@echo ""
-
-dapi_publish_image: $(DAPI_IMAGE_BIT)
-	@echo "# Publish dapi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(DAPI_MANIFEST_BIT) -f $(DAPI_IMAGE_BIT)
-
-# Warning: if dapi's submodule deps change, this 'clean_dapi' is insufficient. It would
-# then need to call 'gmake dist-clean'.
-clean_dapi:
-	rm -rf $(BITS_DIR)/dapi
-	(cd build/dapi && gmake clean)
-
 
 #---- PAPI
 
@@ -916,7 +872,7 @@ papi_publish_image: $(PAPI_IMAGE_BIT)
 	@echo "# Publish papi image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(PAPI_MANIFEST_BIT) -f $(PAPI_IMAGE_BIT)
 
-# Warning: if papi's submodule deps change, this 'clean_dapi' is insufficient. It would
+# Warning: if papi's submodule deps change, this 'clean_papi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_papi:
 	rm -rf $(BITS_DIR)/papi

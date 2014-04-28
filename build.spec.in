@@ -40,7 +40,6 @@ cat <<HERE;
   "ca-image": "ca/$(ls bits/ca/ca-*manifest | xargs basename)",
   "cloudapi-image": "cloudapi/$(ls bits/cloudapi/cloudapi-*manifest | xargs basename)",
   "cnapi-image": "cnapi/$(ls bits/cnapi/cnapi-*manifest | xargs basename)",
-  "dapi-image": "dapi/$(ls bits/dapi/dapi-*manifest | xargs basename)",
   "dhcpd-image": "dhcpd/$(ls bits/dhcpd/dhcpd-*manifest | xargs basename)",
   "fwapi-image": "fwapi/$(ls bits/fwapi/fwapi-*manifest | xargs basename)",
   "imgapi-image": "imgapi/$(ls bits/imgapi/imgapi-*manifest | xargs basename)",
