@@ -1027,6 +1027,31 @@ clean_agents_core:
 	(cd build/agents_core && gmake clean)
 
 
+#---- CN Agent
+
+_cn_agent_stamp=$(CN_AGENT_BRANCH)-$(TIMESTAMP)-g$(CN_AGENT_SHA)
+CN_AGENT_BITS=$(BITS_DIR)/cn-agent/cn-agent-$(_cn_agent_stamp).tgz
+
+.PHONY: cn-agent
+cn-agent: $(CN_AGENT_BITS)
+
+# PATH for cn-agent build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(CN_AGENT_BITS): build/cn-agent
+	@echo "# Build cn-agent: branch $(CN_AGENT_BRANCH), sha $(CN_AGENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/cn-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created cn-agent bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(CN_AGENT_BITS)
+	@echo ""
+
+# Warning: if cn-agents's submodule deps change, this 'clean_cn_agent' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_cn_agent:
+	rm -rf $(BITS_DIR)/cn-agent
+	(cd build/cn-agent && gmake clean)
+
+
 #---- Provisioner
 
 _provisioner_stamp=$(PROVISIONER_BRANCH)-$(TIMESTAMP)-g$(PROVISIONER_SHA)
