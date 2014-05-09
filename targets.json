@@ -1069,6 +1069,7 @@
       "provisioner",
       "hagfish-watcher",
       "heartbeater",
+      "vm-agent",
       "amon",
       "ca",
       "smartlogin",
