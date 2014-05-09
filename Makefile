@@ -1027,6 +1027,36 @@ clean_agents_core:
 	(cd build/agents_core && gmake clean)
 
 
+#---- VM Agent
+
+# The values for SDC_VM_AGENT_BRANCH and SDC_VM_AGENT_SHAR are generated from
+# the name of the git repo.
+# The repo name is "sdc-vm-agent" and we want the resultant tarball from this
+# process to be "vm-agent-<...>.tgz", not "sdc-vm-agent-<...>.tgz".
+
+_vm_agent_stamp=$(SDC_VM_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_VM_AGENT_SHA)
+VM_AGENT_BITS=$(BITS_DIR)/vm-agent/vm-agent-$(_vm_agent_stamp).tgz
+
+.PHONY: vm-agent
+vm-agent: $(VM_AGENT_BITS)
+
+# PATH for vm-agent build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(VM_AGENT_BITS): build/sdc-vm-agent
+	@echo "# Build vm-agent: branch $(SDC_VM_AGENT_BRANCH), sha $(SDC_VM_AGENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/sdc-vm-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created vm-agent bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(VM_AGENT_BITS)
+	@echo ""
+
+# Warning: if vm-agents's submodule deps change, this 'clean_vm_agent' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_vm_agent:
+	rm -rf $(BITS_DIR)/vm-agent
+	(cd build/sdc-vm-agent && gmake clean)
+
+
 #---- CN Agent
 
 # The values for SDC_CN_AGENT_BRANCH and SDC_CN_AGENT_SHAR are generated from
