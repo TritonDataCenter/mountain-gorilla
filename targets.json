@@ -1070,6 +1070,7 @@
       "hagfish-watcher",
       "heartbeater",
       "vm-agent",
+      "cn-agent",
       "amon",
       "ca",
       "smartlogin",
