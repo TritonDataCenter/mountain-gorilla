@@ -85,7 +85,6 @@ echo ""
 echo "#---------------------- upload"
 
 cp $LOG bits/$JOB_NAME/
-gmake upload_jenkins
 gmake manta_upload_jenkins
 gmake jenkins_publish_image
 

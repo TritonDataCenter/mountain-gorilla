@@ -2487,7 +2487,8 @@ cacheclean: distclean
 
 
 
-# Upload bits we want to keep for a Jenkins build.
+# DEPRECATED: Live build steps on jenkins.joyent.us still call this target. 
+# TODO: Remove those in Jenkins and then remove this target.
 upload_jenkins:
 	@echo "We no longer upload to bits.joyent.us"
 
