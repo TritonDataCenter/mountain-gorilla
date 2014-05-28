@@ -4,7 +4,7 @@
 - Who: Trent Mick, John Sonnenschein
 - Docs: <https://mo.joyent.com/docs/mg>
 - Bugs: <https://devhub.joyent.com/jira/browse/RELENG>
-- Builds: <https://jenkins.joyent.us>, /Joyent_Dev/stor/build in Manta
+- Builds: <https://jenkins.joyent.us>, `/Joyent_Dev/stor/build` in Manta
 
 A single repo to build all the parts of SDC. This is just a *build driver*
 repo, all the components are still in their respective repos.
@@ -20,8 +20,8 @@ build VMAPI:
 
     git clone git@git.joyent.com:mountain-gorilla.git
     cd mountain-gorilla
-    ./configure -t vmapi        # generates bits/config.mk and fetches repo and deps
-    make vmapi                  # builds in build/vmapi
+    ./configure -t vmapi -d Joyent_Dev  # generates bits/config.mk and fetches repo and deps
+    make vmapi                          # builds in build/vmapi, bits in bits/...
 
 If that fails for you, you might be missing prerequisites. See
 <https://mo.joyent.com/docs/mg/master/#prerequisites>.
