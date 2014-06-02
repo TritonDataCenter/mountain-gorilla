@@ -9,7 +9,7 @@
 #
 
 export PS4='${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
-if [[ -z "$(echo "$*" | grep -- '-h' || /bin/true)" ]]; then
+if [[ -z "$(echo "$*" | grep -- ' -h ' || /bin/true)" ]]; then
   # Try to avoid xtrace goop when print help/usage output.
   set -o xtrace
 fi
