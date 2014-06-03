@@ -3,7 +3,7 @@
 # Archive a version in all (non-archived) devhub Jira projects.
 #
 # Usage:
-#   ./archiveversion.sh VERSION
+#   ./archiveversion.sh VERSION [PROJECTS...]
 #
 # Example:
 #   ./archiveversion.sh '2011-12-29 Duffman'
@@ -30,15 +30,19 @@ if [[ -z "$1" ]]; then
     exit 1
 fi
 ARCHIVE_VERSION=$1
+shift
 
+PROJECTS=$*
 
-echo "This will archive version '$ARCHIVE_VERSION' for all devhub Jira projects."
+echo "This will archive version '$ARCHIVE_VERSION' for devhub Jira projects."
 read -p "Hit Enter to continue..."
 echo
 
-PROJECTS=$(./jira.sh `cat ~/.jiraclirc` --action getProjectList --server https://devhub.joyent.com/jira \
-    | python -c "import sys, csv; rows = list(csv.reader(sys.stdin)); projects = ['%s  %s' % (r[0], r[2]) for r in rows[2:] if r]; print '\n'.join(projects)" \
-    | grep -v Archived | cut -d' ' -f1 | xargs)
+if [[ -z "$PROJECTS" ]]; then
+    PROJECTS=$(./jira.sh `cat ~/.jiraclirc` --action getProjectList --server https://devhub.joyent.com/jira \
+        | python -c "import sys, csv; rows = list(csv.reader(sys.stdin)); projects = ['%s  %s' % (r[0], r[2]) for r in rows[2:] if r]; print '\n'.join(projects)" \
+        | grep -v Archived | cut -d' ' -f1 | xargs)
+fi
 
 for project in $PROJECTS
 do
