@@ -1,0 +1,33 @@
+This is intended to be copied to the headnode and run from there. Currently
+pretty rough and has several things hardcoded for the jenkins rig in EMY. It
+also expects:
+
+ - you have your SSH agent forwarded and the account you're creating this under
+   has your key (it tries to SSH to the new instance)
+ - you have added your SSH key to Jenkins
+   https://jenkins.joyent.us/user/<username>/configure
+ - you're trying to create a 1.6.3 slave (13.3.1 slave should work fine too
+   just not yet parameterized)
+ - if you want to build the platform, you'll also need to add fs_allowed options
+   (can be added through VMAPI if new enough). And reboot again if you've added
+   them after provision.
+
+To setup a new slave run:
+
+    ./create-slave <name>
+
+which will create the VM with VMAPI, install the packages and files and register
+the slave with jenkins. We've been choosing butler names, e.g. from
+<http://en.wikipedia.org/wiki/List_of_famous_fictional_butlers>.
+
+If you already have a zone setup, you can run:
+
+    setup-jenkins-slave.sh
+
+in it, but this will not automatically add it to Jenkins.
+
+NOTE: you'll need 2 files that are not in the repo:
+
+automation.id_rsa - the ssh *private* key for the automation user
+jenkins.creds     - a file with 'user:pass' for the user you want to use talking
+                    to jenkins

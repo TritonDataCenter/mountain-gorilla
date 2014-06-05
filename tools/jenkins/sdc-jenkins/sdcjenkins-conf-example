@@ -1,0 +1,5 @@
+{
+    "user": "automation",
+    "pass": "PASSWORD",
+    "host": "jenkins.joyent.us"
+}

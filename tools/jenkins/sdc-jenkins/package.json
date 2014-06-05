@@ -1,0 +1,34 @@
+{
+  "name": "sdc-jenkins",
+  "version": "0.0.0",
+  "description": "Joyent SmartDataCenter Jenkins Tools",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "jenkins": "git://github.com/silas/node-jenkins.git#a2145a04b879b8e524f023c71c1e3045214d5968",
+    "cmdln": "git://github.com/trentm/node-cmdln.git#5333231da28f9ea659cc56f417513563f261fded",
+    "assert-plus": "0.1.5",
+    "sprintf": "0.1.3",
+    "request": "2.36.0",
+    "cheerio": "0.16.0",
+    "tabula": "1.2.0",
+    "async": "0.9.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "mountain-gorilla.git"
+  },
+  "bin": {
+      "sdc-jenkins": "./bin/sdc-jenkins.js"
+  },
+  "keywords": [
+    "jenkins",
+    "builds",
+    "sdc",
+    "joyent"
+  ],
+  "author": "Joyent",
+  "license": "MIT"
+}
