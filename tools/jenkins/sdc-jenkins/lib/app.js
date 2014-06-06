@@ -36,8 +36,95 @@ function App() {
 util.inherits(App, cmdln.Cmdln);
 
 
-App.prototype.do_create_node = function (subcmd, opts, args, callback) {
+App.prototype.do_ssh_config = function (subcmd, opts, args, callback) {
+    var self = this;
+    var nodes = [];
 
+    var infos = {}, mdata, labels;
+
+    self.initialize();
+
+    async.waterfall([
+        getNodeList,
+        getNodesSystemInfo
+    ],
+    function (err) {
+        if (err) {
+            console.warn(err.message);
+            return;
+        }
+
+        var items = [];
+
+        nodes.forEach(function (n) {
+            var item = {
+                name: n,
+                ip: (infos[n] &&
+                     infos[n].JENKINS_IP_ADDR)
+            };
+
+            if (!item.ip) {
+                console.warn('Error: no IP address for %s', n);
+                return;
+            }
+            console.log(sprintf(
+                'Host %s\n'
+              + '    Hostname %s\n'
+              + '    StrictHostKeyChecking no\n'
+              + '    UserKnownHostsFile /dev/null\n', n, item.ip));
+        });
+
+        callback();
+    });
+
+    function getNodeList(cb) {
+        if (args.length) {
+            nodes = args;
+            nodes.sort();
+        } else {
+            self.jc.node.list(function (err, l) {
+                if (err) {
+                    cb(err);
+                    return;
+                }
+
+                nodes = l.computer.map(function (i) { return i.displayName; });
+                nodes.sort();
+                cb();
+            });
+        }
+    }
+
+    function getNodesSystemInfo(cb) {
+        self.getNodeSystemInfo(nodes, function (err, systemInfos) {
+            if (err) {
+                cb(err);
+                return;
+            }
+            infos = systemInfos;
+
+            cb();
+        });
+    }
+
+    function getNodesMdata(cb) {
+        self.getNodesMdata(nodes, function (err, nodeMdata) {
+            if (err) {
+                cb(err);
+                return;
+            }
+            mdata = nodeMdata;
+
+            cb();
+        });
+    }
+};
+
+
+App.prototype.do_ssh_config.help = 'Generate SSH config for given Jenkins nodes with defined addresses';
+
+
+App.prototype.do_create_node = function (subcmd, opts, args, callback) {
     var params = [ args[0] ];
 
     if (opts.image) {
@@ -163,7 +250,6 @@ App.prototype.do_nodes = function (subcmd, opts, args, callback) {
 
         cb(); return;
 
-
         self.getNodeSystemInfo(nodes, function (err, systemInfos) {
             if (err) {
                 cb(err);
@@ -246,7 +332,7 @@ App.prototype.getNodeSystemInfo = function (n, callback) {
                 cb();
                 return;
             }
-            request(url, function (error, response, body) {
+            request(url, { rejectUnauthorized: false }, function (error, response, body) {
                 if (error) {
                     console.warn(error.message);
                     callback(error);
