@@ -1057,6 +1057,36 @@ clean_vm_agent:
 	(cd build/sdc-vm-agent && gmake clean)
 
 
+#---- Net Agent
+
+# The values for SDC_NET_AGENT_BRANCH and SDC_NET_AGENT_SHAR are generated from
+# the name of the git repo.
+# The repo name is "sdc-net-agent" and we want the resultant tarball from this
+# process to be "net-agent-<...>.tgz", not "sdc-net-agent-<...>.tgz".
+
+_net_agent_stamp=$(SDC_NET_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_NET_AGENT_SHA)
+NET_AGENT_BITS=$(BITS_DIR)/net-agent/net-agent-$(_net_agent_stamp).tgz
+
+.PHONY: net-agent
+net-agent: $(NET_AGENT_BITS)
+
+# PATH for net-agent build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(NET_AGENT_BITS): build/sdc-net-agent
+	@echo "# Build net-agent: branch $(SDC_NET_AGENT_BRANCH), sha $(SDC_NET_AGENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/sdc-net-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created net-agent bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(NET_AGENT_BITS)
+	@echo ""
+
+# Warning: if net-agents's submodule deps change, this 'clean_net_agent' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_net_agent:
+	rm -rf $(BITS_DIR)/net-agent
+	(cd build/sdc-net-agent && gmake clean)
+
+
 #---- CN Agent
 
 # The values for SDC_CN_AGENT_BRANCH and SDC_CN_AGENT_SHAR are generated from
@@ -2487,7 +2517,7 @@ cacheclean: distclean
 
 
 
-# DEPRECATED: Live build steps on jenkins.joyent.us still call this target. 
+# DEPRECATED: Live build steps on jenkins.joyent.us still call this target.
 # TODO: Remove those in Jenkins and then remove this target.
 upload_jenkins:
 	@echo "We no longer upload to bits.joyent.us"

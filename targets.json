@@ -467,6 +467,15 @@
     ]
   },
 
+  "net-agent": {
+    "repos": [
+        {"url": "git@git.joyent.com:sdc-net-agent.git"}
+    ],
+    "deps": [
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
+  },
+
   "cn-agent": {
     "repos": [
         {"url": "git@git.joyent.com:sdc-cn-agent.git"}
