@@ -1,0 +1,81 @@
+# Joyent Jenkins Infrastructure
+
+Jenkins is a continuous integration (CI) server. We are using it for SDC builds
+in the engineering group, pkgsrc builds (jperkin), driving the nightly staging
+environment (nightly* jobs), etc. It is running here:
+
+url     https://jenkins.joyent.us
+auth    Your Joyent internal LDAP creds
+
+Currently this is being managed by Trent, JoshW with Orlando as their loyal
+sidekick.
+
+
+## Jenkins Slaves
+
+Slaves are named after fictional butlers. See
+https://jenkins.joyent.us/computer/ for the current slaves.
+
+## Jabber bot
+
+There is a "jerkins" (sic) jabber bot (curtesy the XMPP plugin for Jenkins)
+listening in mib@, os@ and jenkins@). It is using the "jenkins@joyent.com" JID
+(I think that is still true). Ask Trent for the password if you need it. Use
+"jerkins: help" (or "! help" shortcut) to learn how to use it.
+
+#  Jenkins Master Setup Details
+
+Jenkins is running on the "jenkins" zone in us-beta-4 as the "root" user. It
+was created as per the setup instructions in MG's README.
+
+Jenkins is running as a "jenkins" SMF service using "/config/jenkins.smf". All
+jenkins data is in "/data/jenkins". Currently we only have one builder machine,
+the "jenkins" master zone itself. We can add more later as we get more
+comfortable with Jenkins and need more speed.
+
+## Adding a Jenkins build slave
+
+There is a script for this at mountain-gorilla.git/tools/jenkins/sdc-jenkins/
+
+
+### jperkin's notes on pkgsrc github webhooks for building on commit
+
+(Note: For the non-pkgsrc Joyent repos on github for which we want builds: we
+could consider switching to the notifyCommit URL which doesn't require a
+password. This requires "Poll SCM" be enabled for that Jenkins Job. However,
+this likely won't work for private repos on github.)
+
+
+  - GitHub is configured with a webhook to POST the full push data to
+    http://jenkins.joyent.us:8080/ , as configured in https://github.com/joyent/pkgsrc/settings/hooks/1958947
+
+
+  - There is a small proxy /root/jenkins/github-proxy.js on jenkins.joyent.us
+    started from svc:/site/github-proxy:default which listens on that port for
+    requests.
+
+  - For now it just dumps requests to the SMF log, a better long-term solution
+    would be to ditch 'gith' and write a proper module which returns correct
+    responses back to GitHub - they are saved alongside each webhook request, and
+    that would make debugging a lot nicer.
+
+  - If a request comes in which matches the 'joyent/pkgsrc' repository, it does
+    a GET to
+
+    https://jenkins.joyent.us/git/notifyCommit?url=git@github.com:joyent/pkgsrc.git&branches=<branch>
+
+    where the branch is taken from GitHub's POST body (e.g.
+    'joyent/release/trunk')
+
+  - Each Jenkins pkgsrc job is configured for:
+
+    * Git repository = git@github.com:joyent/pkgsrc.git Branches to build =
+    * <branch> Poll SCM
+
+    and these are matched to the GET request, so that a build is only triggered
+    for an exact repo+branch combination.  scripting adding Jenkins Jobs
+
+
+See:
+
+    https://mo.joyent.com/pbulk/commit/617e1ac5f6c244b03131c75a6058db4feaf330c0#L2934
