@@ -403,7 +403,7 @@ App.prototype.getNodesMdata = function (n, callback) {
                 'sdc:datacenter_name'
             ];
 
-            exec('ssh ' + node +
+            exec('ssh -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -l root ' + node +
                  ' \'for i in ' + vals.join(' ') +
                  '; do mdata-get $i || echo "-"; done; sysinfo |json "Live Image"\'',
                  { timeout: 5000 },
@@ -459,7 +459,7 @@ App.prototype.getNodeLabels = function (n, callback) {
                 return;
             }
 
-            exec('ssh jenkins-ssh-api get-node ' + node,
+            exec('ssh -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -p 31337 jenkins.joyent.us get-node ' + node,
                  { timeout: 5000 },
                  function (err, stdout, stderr) {
                      var re = '<label>(.*)</label>';
