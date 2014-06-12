@@ -155,7 +155,7 @@ App.prototype.do_create_node = function (subcmd, opts, args, callback) {
     spawn.apply(null, spawnArgs);
 };
 
-App.prototype.do_create_node.help = 
+App.prototype.do_create_node.help =
     'Create a new SDC Jenkins node\n'
     + '\n'
     + 'Usage:\n'
