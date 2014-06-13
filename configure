@@ -610,7 +610,7 @@ MG_NODE=$(which node)
 if [[ "$1" == "--help" ]]; then
   print_help
 fi
-while getopts "b:B:d:hrft:c:n:" opt; do
+while getopts "b:B:d:hrft:c:" opt; do
     case "$opt" in
         b) BRANCH=$OPTARG ;;
         B) TRY_BRANCH=$OPTARG ;;
@@ -618,21 +618,20 @@ while getopts "b:B:d:hrft:c:n:" opt; do
         r)
             REGENERATE='true'
             ;;
-        n) MG_NODE=${OPTARG} ;;
         t) TARGET=${OPTARG} ;;
         c) MG_CACHE_DIR=${OPTARG} ;;
-	d) MG_DEP_USER=${OPTARG} ;;
+        d) MG_DEP_USER=${OPTARG} ;;
         ?) fatal "unknown option: $opt" ;;
     esac
 done
 shift $((OPTIND-1))
 
 
-# Pre-condition: must have node >=0.6 first on path (see RELENG-266).
-echo "Ensure have a 'node' >= v0.6."
+# Pre-condition: must have node >=0.10 first on path (see RELENG-266).
+echo "Ensure have a 'node' >= v0.10."
 NODE_VERSION=$($MG_NODE --version | awk 'BEGIN{ FS="." } { print $2 }')
-if [[ $NODE_VERSION -lt 6 ]]; then
-    fatal "Incorrect node version, '${NODE_VERSION}'. MG needs a node v0.6 or later (currently requiring v0.6 or v0.8). Either put a node v0.6 first on your PATH or use the '-n NODE_EXE' configure option."
+if [[ $NODE_VERSION -lt 10 ]]; then
+    fatal "Incorrect node version, '${NODE_VERSION}'. MG needs a node v0.10 or later on your PATH."
 fi
 JSON="$MG_NODE $ROOT/tools/json"
 
