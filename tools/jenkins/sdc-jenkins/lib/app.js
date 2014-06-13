@@ -70,6 +70,7 @@ App.prototype.do_ssh_config = function (subcmd, opts, args, callback) {
             console.log(sprintf(
                 'Host %s\n'
               + '    Hostname %s\n'
+              + '    User root\n'
               + '    StrictHostKeyChecking no\n'
               + '    UserKnownHostsFile /dev/null\n', n, item.ip));
         });
@@ -248,7 +249,7 @@ App.prototype.do_nodes = function (subcmd, opts, args, callback) {
     function getNodesSystemInfo(cb) {
         var nodes = list.computer.map(function (i) { return i.displayName; });
 
-        cb(); return;
+//         cb(); return;
 
         self.getNodeSystemInfo(nodes, function (err, systemInfos) {
             if (err) {
