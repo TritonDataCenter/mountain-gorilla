@@ -368,7 +368,7 @@ mget -o ${output_dir}/${image_manifest_filename} ${manifest_path}
 [[ -f ${output_dir}/${image_manifest_filename} ]] || fatal "Failed to download ${image_manifest_filename}"
 
 # Image Notes:
-# - We need to add a requirement on the manifest for networks but the API does
+# - We need to add a requirement on the manifest for networks but CloudAPI does
 #   not allow us to do that, so we have to change locally and push over the
 #   original.
 # - We also set the min_platform to the platform we just built the bits on,
@@ -379,12 +379,15 @@ mget -o ${output_dir}/${image_manifest_filename} ${manifest_path}
 #   TODO: Use a basename in the 'sdc-exportimage' arg above, then change this
 #   to prefix the name with "BUILD-" or similar as a sign to not use these
 #   images for provisioning.
+# - We set owner to the "not set" UUID (see IMGAPI-408), as is done by
+#   updates.joyent.com itself on import.
 # - We change the UUID because with the above changes this really is a different
 #   beast. See RELENG-518.
 #
 cat ${output_dir}/${image_manifest_filename} \
   | json -e 'this.requirements.networks = [{name: "net0", description: "admin"}]' \
     -e "this.requirements.min_platform['7.0'] = '$(uname -v | cut -d '_' -f 2)'" \
+    -e "this.owner = '00000000-0000-0000-0000-000000000000'" \
     -e "this.name = '${image_name}'" \
     -e "this.uuid = '$(uuid)'" \
   > ${output_dir}/${image_manifest_filename}.new \
