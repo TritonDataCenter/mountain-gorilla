@@ -2,14 +2,13 @@ set -o xtrace
 set -o errexit
 set -o pipefail
 
-PLATFORM_DIR="platform"
-PLATFORM_BRANCH=2
-
-[[ -n "$USE_DEBUG_PLATFORM" ]]
-
-if [[ "$USE_DEBUG_PLATFORM" == "true" ]]; then
-	PLATFORM_DIR="$PLATFORM_DIR-debug"
-	PLATFORM_BRANCH=3
+if [[ -z "$USE_DEBUG_PLATFORM" ]]; then
+    echo "build.spec.in error: you must define 'USE_DEBUG_PLATFORM=true|false'" >&2
+    exit 2
+elif [[ "$USE_DEBUG_PLATFORM" == "true" ]]; then
+	PLATFORM_NAME="platform-debug"
+else
+	PLATFORM_NAME="platform"
 fi
 
 cat <<HERE;
@@ -25,11 +24,11 @@ cat <<HERE;
   "manta-user": "Joyent_Dev",
   "manta-key-id": "de:e7:73:9a:b0:91:31:3e:72:8d:9f:62:ca:58:a2:ec",
 
-  "platform-release": "$(ls bits/$PLATFORM_DIR/platform*.tgz | xargs basename | cut -d- -f$PLATFORM_BRANCH)",
-  "sdcboot-release": "$(ls bits/sdcboot/sdcboot*.tgz | xargs basename | cut -d- -f2)",
-  "firmware-tools-release": "$(ls bits/firmware-tools/firmware-tools*.tgz | xargs basename | cut -d- -f3)",
-  "agents-shar": "$(ls bits/agentsshar/agents-*.sh | xargs basename | cut -d- -f2)",
-  "sdcadm-release": "$(ls bits/sdcadm/sdcadm-*.sh | xargs basename | cut -d- -f2)",
+  "platform-release": "$(ls bits/$PLATFORM_NAME/platform*.tgz | xargs basename | sed -e "s/^$PLATFORM_NAME-\(.*\)-[0-9]*T[0-9]*Z\.tgz$/\1/")",
+  "sdcboot-release": "$(ls bits/sdcboot/sdcboot*.tgz | xargs basename | sed -e "s/^sdcboot-\(.*\)-[0-9]*T[0-9]*Z-g[0-9a-f]*\.tgz$/\1/")",
+  "firmware-tools-release": "$(ls bits/firmware-tools/firmware-tools*.tgz | xargs basename | sed -e "s/^firmware-tools-\(.*\)-[0-9]*T[0-9]*Z-g[0-9a-f]*\.tgz$/\1/")",
+  "agents-shar": "$(ls bits/agentsshar/agents-*.sh | xargs basename | sed -e "s/^agents-\(.*\)-[0-9]*T[0-9]*Z-g[0-9a-f]*\.sh$/\1/")",
+  "sdcadm-release": "$(ls bits/sdcadm/sdcadm*.sh | xargs basename | sed -e "s/^sdcadm-\(.*\)-[0-9]*T[0-9]*Z-g[0-9a-f]*\.sh$/\1/")",
 
   "// *-image": "This should be kept in sync with usb-headnode.git/build.spec",
   "adminui-image": "adminui/$(ls bits/adminui/adminui-*manifest | xargs basename)",
