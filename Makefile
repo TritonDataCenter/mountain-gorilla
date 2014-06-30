@@ -60,10 +60,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi imgapi-cli sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
 
 
 #---- smartlogin
@@ -877,28 +877,6 @@ papi_publish_image: $(PAPI_IMAGE_BIT)
 clean_papi:
 	rm -rf $(BITS_DIR)/papi
 	(cd build/papi && gmake clean)
-
-
-
-#---- imgapi-cli
-
-_imgapi_cli_stamp=$(IMGAPI_CLI_BRANCH)-$(TIMESTAMP)-g$(IMGAPI_CLI_SHA)
-IMGAPI_CLI_BITS=$(BITS_DIR)/imgapi-cli/imgapi-cli-pkg-$(_imgapi_cli_stamp).tar.bz2
-
-.PHONY: imgapi-cli
-imgapi-cli: $(IMGAPI_CLI_BITS)
-
-$(IMGAPI_CLI_BITS): build/imgapi-cli
-	@echo "# Build imgapi-cli: branch $(IMGAPI_CLI_BRANCH), sha $(IMGAPI_CLI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/imgapi-cli && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created imgapi-cli bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(IMGAPI_CLI_BITS)
-	@echo ""
-
-clean_imgapi_cli:
-	rm -rf $(BITS_DIR)/imgapi-cli
-	(cd build/imgapi-cli && gmake clean)
 
 
 
