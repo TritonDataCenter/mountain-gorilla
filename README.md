@@ -88,6 +88,8 @@ Add it as a top-lever property in targets.json, as an object with properties
 
 - "repos" is an array of objects, with the property "url", pointing at a git url
 - "deps" is an array of strings, where the string is another top-level target in targets.json
+  (or optionally a "$branch/$target" to lock it to a branch, though the need for this
+  should be rare).
 
 For example:
 

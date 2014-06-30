@@ -662,7 +662,15 @@ if [[ ! -z "$TARGET" ]]; then
         for targ in $TARGETS; do
             get_target_repos $targ
             for dep in `cat targets.json | $JSON $targ.deps | $JSON -a`; do
-                preload_bits_from_manta $dep "$BRANCH" "$TRY_BRANCH"
+                if [[ -n "$(echo $dep | grep / || true)" ]]; then
+                    # Using the 'BRANCH/NAME' form to lock to a branch.
+                    dep_branch=$(echo $dep | cut -d/ -f1)
+                    dep=$(echo $dep | cut -d/ -f2)
+                    preload_bits_from_manta ${dep} "${dep_branch}"
+                else
+                    preload_bits_from_manta ${dep} "$BRANCH" "$TRY_BRANCH"
+                fi
+                dep_branch
             done
         done
     else
@@ -673,7 +681,14 @@ if [[ ! -z "$TARGET" ]]; then
         fi
         get_target_repos $TARGET
         for dep in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
-            preload_bits_from_manta $dep "$BRANCH" "$TRY_BRANCH"
+            if [[ -n "$(echo $dep | grep / || true)" ]]; then
+                # Using the 'BRANCH/NAME' form to lock to a branch.
+                dep_branch=$(echo $dep | cut -d/ -f1)
+                dep=$(echo $dep | cut -d/ -f2)
+                preload_bits_from_manta ${dep} "${dep_branch}"
+            else
+                preload_bits_from_manta ${dep} "$BRANCH" "$TRY_BRANCH"
+            fi
         done
     fi
 else
@@ -686,7 +701,14 @@ fi
 # "all" is a special target with deps to always preload.
 # I.e. for which "make all" doesn't build it.
 for dep in `cat targets.json | $JSON all.deps | $JSON -a`; do
-    preload_bits_from_manta $dep "$BRANCH" "$TRY_BRANCH"
+    if [[ -n "$(echo $dep | grep / || true)" ]]; then
+        # Using the 'BRANCH/NAME' form to lock to a branch.
+        dep_branch=$(echo $dep | cut -d/ -f1)
+        dep=$(echo $dep | cut -d/ -f2)
+        preload_bits_from_manta ${dep} "${dep_branch}"
+    else
+        preload_bits_from_manta ${dep} "$BRANCH" "$TRY_BRANCH"
+    fi
 done
 
 #get_pkgsrc

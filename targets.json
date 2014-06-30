@@ -1198,7 +1198,7 @@
     "deps": [
         "adminui",
         "agentsshar",
-        "agentsshar-upgrade",
+        "master/agentsshar-upgrade",
         "amon",
         "amonredis",
         "assets",
