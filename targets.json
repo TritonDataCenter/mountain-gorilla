@@ -1076,7 +1076,8 @@
       "ca",
       "smartlogin",
       "marlin",
-      "firewaller"
+      "firewaller",
+      "sapi"
     ]
   },
   "convertvm": {
