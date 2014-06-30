@@ -242,41 +242,36 @@ function preload_bits_from_manta() {
     fi
 
     #
-    # latest_mpath directory should be something like:
-    #
-    # /Joyent_Dev/stor/builds/agents-upgrade/master-latest
-    #
-    # which should exist as a file that contains the name of the actual latest
-    # path. Something similar but with a -<buildstamp> instead of -latest and
-    # we'll grab that into latest_dir.
+    # Each build dir has a "${branch}-latest" file, e.g.
+    # "/Joyent_Dev/stor/builds/amon/master-latest" that contains the name
+    # of the actual latest path. Something similar but with a "-<buildstamp>"
+    # instead of "-latest" and we'll grab that into latest_dir.
     #
     local count=0
     local latest_dir=
-    local latest_mpath=${target_mpath}/${best_branch}-latest
     local delay=0
     local success=
 
-    # want to do our own error-handling here
-    set +o errexit
+    set +o errexit  # want to do our own error-handling here
     while [[ ${count} -lt ${MANTA_MAX_RETRIES} && -z ${success} ]]; do
 
         if [[ ${count} -gt 0 ]]; then
             cat /tmp/mget-output.$$
-            echo "Could not get latest dir for target ${target}, retrying"
             delay=$((${count} * 20))
             if [[ $delay -gt 60 ]]; then
                 delay=60
             fi
+            echo "Could not get latest dir for target ${target}, retrying in ${delay}s"
             sleep ${delay}
         fi
 
-        latest_dir=$(mget -v -q $latest_mpath 2> /tmp/mget-output.$$)
+        latest_dir=$(mget -v -q ${target_mpath}/${best_branch}-latest 2> /tmp/mget-output.$$)
 
         if [[ $? == 0 ]]; then
             success=1
-        else
-        latest_mpath=${target_mpath}/master-latest
-        latest_dir=$(mget -v -q $latest_mpath)
+        elif [[ "$branch" != "$best_branch" ]]; then
+            # Try "branch" as a fallback, if we've specified "try_branch".
+            latest_dir=$(mget -v -q ${target_mpath}/${branch}-latest)
             if [[ $? == 0 ]]; then
                 success=1
             fi
@@ -284,8 +279,7 @@ function preload_bits_from_manta() {
 
         count=$((${count} + 1))
     done
-    # back to errexit
-    set -o errexit
+    set -o errexit  # back to errexit
 
     if [[ -z ${latest_dir} ]]; then
         cat /tmp/mget-output.$$
