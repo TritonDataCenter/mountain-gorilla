@@ -662,7 +662,7 @@ if [[ ! -z "$TARGET" ]]; then
         for targ in $TARGETS; do
             get_target_repos $targ
             for dep in `cat targets.json | $JSON $targ.deps | $JSON -a`; do
-                if [[ -n "$(echo $dep | grep / || true)" ]]; then
+                if [[ -n "$(echo $dep | grep / | grep -v 'https*:'  || true)" ]]; then
                     # Using the 'BRANCH/NAME' form to lock to a branch.
                     dep_branch=$(echo $dep | cut -d/ -f1)
                     dep=$(echo $dep | cut -d/ -f2)
@@ -681,7 +681,7 @@ if [[ ! -z "$TARGET" ]]; then
         fi
         get_target_repos $TARGET
         for dep in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
-            if [[ -n "$(echo $dep | grep / || true)" ]]; then
+            if [[ -n "$(echo $dep | grep /  | grep -v 'https*:' || true)" ]]; then
                 # Using the 'BRANCH/NAME' form to lock to a branch.
                 dep_branch=$(echo $dep | cut -d/ -f1)
                 dep=$(echo $dep | cut -d/ -f2)
