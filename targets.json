@@ -1077,7 +1077,8 @@
       "smartlogin",
       "marlin",
       "firewaller",
-      "sapi"
+      "sapi",
+      "config-agent"
     ]
   },
   "convertvm": {
