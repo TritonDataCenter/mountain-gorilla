@@ -1,0 +1,61 @@
+#!/bin/bash
+#
+# Quick hack script that looks in /Joyent_Dev/stor/builds/...
+# for SDC components for which there is no "release-YYYYMMDD"
+# build. These are ones that you may need to manually kick
+# off in jenkins.
+#
+
+if [[ -n "$TRACE" ]]; then
+    export PS4='[\D{%FT%TZ}] ${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+    set -o xtrace
+fi
+set -o errexit
+set -o pipefail
+
+
+#---- globals
+
+TOP=$(cd $(dirname $0)/../; pwd)
+
+
+#---- support stuff
+
+function fatal
+{
+    echo "$0: fatal error: $*"
+    exit 1
+}
+
+function usage() {
+    if [[ -n "$1" ]]; then
+        echo "error: $1"
+        echo ""
+    fi
+    echo "usage:"
+    echo "  ls-missing-release-builds <release>"
+    echo ""
+    echo "example:"
+    echo "  ls-missing-release-builds release-20140703"
+    exit 1
+}
+
+
+#---- mainline
+
+release=$1
+if [[ -z "$release" ]]; then
+    usage "no 'release' argument given"
+fi
+if [[ -z "$(echo $release | grep '^release-[0-9]\{8\}$' || true)" ]]; then
+    usage "given release, '$release', doesn't match /release-\d{8}/"
+fi
+
+targets="$(json -f $TOP/targets.json agentsshar.deps | json -a | xargs) $(json -f $TOP/targets.json usbheadnode.deps | json -a | grep -v agentsshar-upgrade | xargs) usbheadnode"
+for target in $targets; do
+    latest_mpath=/Joyent_Dev/stor/builds/$target/$release-latest
+    latest=$(mls $latest_mpath 2>/dev/null || true)
+    if [[ -z "$latest" ]]; then
+        echo "$target  # '$latest_mpath' does not exist, use <https://jenkins.joyent.us/job/$target/buildWithParameters?BRANCH=$release> to start build"
+    fi
+done

@@ -412,6 +412,9 @@ section documents how to perform a release.
       (with BRANCH=release-$RELDATE) for failures. Check its console log
       to see if failures are due to dependent agent builds not having
       completed. If so, manually restart those builds.
+    - Use `./tools/ls-missing-release-builds release-YYYYMMDD` to list
+      builds that are missing for this release. It provides URLs to the
+      Jenkins page to start the appropriate build.
 
     That this babysitting is required is lame. We should attempt to fix
     this (TODO). I'm [Trent] open to suggestions. A start would be improvements
