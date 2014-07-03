@@ -10,10 +10,43 @@
 set -o errexit
 unset LD_LIBRARY_PATH   # ensure don't get Java's libs (see OS-703)
 
+
 echo ""
-echo "#----------------------"
+echo "#---------------------- params"
 start_time=$(date +%s)
 last_time=${start_time}
+
+# If "payload" is defined, we presume this is from a post-receive hook.
+# `payload.ref` will defined the git branch. For "release-YYYYMMDD" branches
+# (the Joyent engineering convention for release branches) we'll be strict
+# and have:
+#   TRY_BRANCH=  BRANCH=$branch
+# but for other branches we'll be "nice" and use
+#   TRY_BRANCH=  BRANCH=master
+# which allows, for example, a commit to a feature branch (say "foo") to
+# work when ancillary repos (like mountain-gorilla.git and usb-headnode.git)
+# don't have that branch.
+if [[ -n "$payload" ]]; then
+    ref=$(echo "$payload" | json ref)
+    if [[ $(echo "$ref" | cut -d/ -f2) != "heads" ]]; then
+        echo "error: unexpected ref '$ref': is not 'refs/heads'"
+        exit 1
+    fi
+    BRANCH=$(echo "$ref" | cut -d/ -f3)
+    if [[ -z "$(echo $BRANCH | egrep '^release-[0-9]+' || true)" ]]; then
+        TRY_BRANCH=$BRANCH
+        BRANCH=master
+    fi
+fi
+if [[ -z "$BRANCH" ]]; then
+    BRANCH=master
+fi
+echo "BRANCH: $BRANCH"
+echo "TRY_BRANCH: $TRY_BRANCH"
+
+
+echo ""
+echo "#---------------------- mg"
 
 rm -rf MG.last
 # Poorman's backup of last build run.
@@ -21,6 +54,11 @@ mkdir -p MG && mv MG MG.last
 rm -rf MG
 git clone git@git.joyent.com:mountain-gorilla.git MG
 cd MG
+if [[ -n "$TRY_BRANCH" ]]; then
+    git checkout $TRY_BRANCH || git checkout $BRANCH
+else
+    git checkout $BRANCH
+fi
 
 now_time=$(date +%s)
 elapsed=$((${now_time} - ${last_time}))
