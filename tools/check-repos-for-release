@@ -83,8 +83,7 @@ function apply_missing_to_repo {
     cd $repo_name
     git checkout master
     if [[ ! -z "$tag" && -z "$NO_TAG" ]]; then
-      # consider '-b' to force reset of branch if already exists.
-      git tag -a "$tag" -m "$tag release"
+      git tag -f -a "$tag" -m "$tag release"
       git push -q --tags
     fi
     if [[ ! -z "$branch" ]]; then
@@ -204,6 +203,12 @@ if [[ -z "$TARGETS" ]]; then
         Object.keys(targets).forEach( function(targ) { console.log(targ) });" | xargs)
 fi
 
+# Get some "low on the food chain" repos first (RELENG-552).
+check_repo_url git@git.joyent.com:mountain-gorilla.git '(none)'
+check_repo_url git@git.joyent.com:registrar.git '(none)'
+check_repo_url git@git.joyent.com:config-agent.git '(none)'
+check_repo_url git@git.joyent.com:amon.git '(none)'
+
 for targ in $TARGETS; do
   if [[ $targ == 'all' ]]; then
     continue
@@ -213,4 +218,3 @@ done
 if [[ -n "$DO_SMARTOS_OVERLAY" ]]; then
     check_repo_url git@github.com:joyent/smartos-overlay.git '(none)'
 fi
-check_repo_url git@git.joyent.com:mountain-gorilla.git '(none)'
