@@ -8,27 +8,33 @@ apisections:
 
 
 ||Repository||git@git.joyent.com:mountain-gorilla.git, <https://mo.joyent.com/mountain-gorilla>||
-||Who||Trent Mick, John Sonnenschein||
+||Who||Trent Mick||
 ||Docs||<https://mo.joyent.com/docs/mg>||
 ||Bugs||<https://devhub.joyent.com/jira/browse/RELENG>||
-||Builds||<https://jenkins.joyent.us>, <https://bits.joyent.us/builds>||
+||Builds||/Joyent_Dev/stor/builds in Manta||
 
-A single repo to build all the parts of SDC. This is just a *build driver*
-repo, all the components are still in their respective repos.
+A single repo to build all the parts of SDC and Manta. This is just a *build
+driver* repo, all the components are still in their respective repos.
+Ideally this repo isn't necessary. Instead we should move to eng.git holding
+shared tooling and each repo knowing fully how to build its own release bits.
 
 
 # tl;dr
 
+A new build of a SDC or Manta component typically works like this:
+
     push to vmapi.git
         -> triggers a <https://jenkins.joyent.us/job/vmapi> build in Jenkins
-        -> uses **MG's 'vmapi' target** to build and upload
+        -> which uses **MG's `vmapi` Makefile target** to build and upload
            new vmapi bits to `/Joyent_Dev/stor/builds/vmapi`
-        -> triggers a <https://jenkins.joyent.us/job/usbheadnode> build
-        -> uses MG's usb-headnode-related targets to build and upload
+        -> which triggers a <https://jenkins.joyent.us/job/usbheadnode> build
+        -> uses MG's `usbheadnode` target to build and upload to
            `/Joyent_Dev/stor/builds/usbheadnode`
 
 Then you can reflash your headnode using usb-headnode.git/bin/reflash, which
-will grab the latest tarball from that builds area directory.
+will grab the latest tarball from that builds area directory. Or you can
+used incremental upgrade tooling (soon to be `sdcadm update vmapi`) to get
+the new vmapi build.
 
 Roughly the same process happens in appropriate dep order for all other
 SDC repos. See <https://jenkins.joyent.us/>.
@@ -36,67 +42,131 @@ SDC repos. See <https://jenkins.joyent.us/>.
 
 # Overview
 
-SDC (SmartDataCenter) has lots of components: the platform, agents, the
-sdc-role zones like vmapi & napi, components that build both like amon
-and ca, and the usb-headnode.git build that puts together the final
-shipping products. MG is the meta-repo that knows how to fetch and build each
-of them.
+SDC (SmartDataCenter) has lots of components: the platform, agents, the core
+zones like vmapi & napi, components that build both like amon and ca, and the
+usb-headnode.git build that puts together the final shipping products. MG is the
+meta-repo that knows how to fetch and build each of them.
 
-An MG build generally works like this:
+An MG build generally works as follows. The typical buildstep is
+<https://mo.joyent.com/mountain-gorilla/blob/master/tools/jenkins-build-step.sh>
+but some jobs have minor tweaks to that.
 
 1. Clone mountain-gorilla.git
 2. Configure to build one component. This pre-fetches the relevant repo(s)
    and dependencies (pre-built bits, dependent SDC component bits, pkgsrc,
    images).
-3. Build it
+3. Build it.
 4. Upload its built "bits" to a structured layout of bits at
-   <https://bits.joyent.us/builds>
+   `/Joyent_Dev/stor/builds` in Manta.
+5. Publish a new image to updates.joyent.com.
 
-Using amon as an example (see "Prerequisites" section below):
+Using vmapi as an example (see "Prerequisites" section below):
 
-    git clone git@git.joyent.com:mountain-gorilla.git   # 1.
+    git clone git@git.joyent.com:mountain-gorilla.git    # 1.
     cd mountain-gorilla
-    ./configure -t amon                                 # 2.
-    make amon                                           # 3.
-    JOB_NAME=amon make upload_jenkins                   # 4. see "Jenkins" below
-
-This results in a new set of amon bits for the "master" branch here:
-
-https://us-east.manta.joyent.com/Joyent_Dev/stor/builds/amon/<branch>-<buildstamp>
-
-And you can pull:
-
-https://us-east.manta.joyent.com/Joyent_Dev/stor/builds/amon/<branch>-latest
-
-to get the full manta path to the latest build. Eg.
-
-[root@winston ~]# mget /Joyent_Dev/stor/builds/amon/master-latest
-/Joyent_Dev/stor/builds/amon/master-20131220T003947Z
-[root@winston ~]#
-
-with that example you'd find the following files then under the
-/Joyent_Dev/stor/builds/amon/master-20131220T003947Z directory:
-
-[root@winston ~]# mfind /Joyent_Dev/stor/builds/amon/master-20131220T003947Z
-/Joyent_Dev/stor/builds/amon/master-20131220T003947Z/amon
-/Joyent_Dev/stor/builds/amon/master-20131220T003947Z/config.mk
-/Joyent_Dev/stor/builds/amon/master-20131220T003947Z/md5sums.txt
-/Joyent_Dev/stor/builds/amon/master-20131220T003947Z/amon/amon-agent-master-20131220T003947Z-g209252c.tgz
-/Joyent_Dev/stor/builds/amon/master-20131220T003947Z/amon/amon-pkg-master-20131220T003947Z-g209252c.tar.bz2
-/Joyent_Dev/stor/builds/amon/master-20131220T003947Z/amon/amon-relay-master-20131220T003947Z-g209252c.tgz
-/Joyent_Dev/stor/builds/amon/master-20131220T003947Z/amon/amon-zfs-master-20131220T003947Z-g209252c.imgmanifest
-/Joyent_Dev/stor/builds/amon/master-20131220T003947Z/amon/amon-zfs-master-20131220T003947Z-g209252c.zfs.gz
-/Joyent_Dev/stor/builds/amon/master-20131220T003947Z/amon/build.log
-[root@winston ~]#
-
-you can see that this includes the build configuration and build log.
-Branches are also supported (see "Branches" below).
+    ./configure -t vmapi -b master -d Joyent_Dev         # 2.
+    gmake vmapi                                          # 3.
+    JOB_NAME=vmapi gmake manta_upload_jenkins            # 4.
+        # New bits at /Joyent_Dev/stor/builds/vmapi/$branch-$timestamp/
+    JOB_NAME=vmapi gmake jenkins_publish_image           # 5.
+        # `updates-imgadm list name=vmapi` to see added VMAPI image.
 
 The full set of targets that MG supports is both in
 [targets.json](https://mo.joyent.com/mountain-gorilla/blob/master/targets.json)
 (nice and clean) and
 [Makefile](https://mo.joyent.com/mountain-gorilla/blob/master/Makefile)
 (ugly boilerplate that should be templatized away).
+
+
+
+# Prerequisites
+
+There are a lot of prerequisites to build the SDC components. For all
+but the platform you will need:
+
+- a SmartOS zone of the appropriate image. At the time of writing most
+  services are using 'sdc-smartos@1.6.3', and a few are using 'sdc-multiarch'.
+- [python, gcc, gmake, et al from
+  pkgsrc](https://mo.joyent.com/mountain-gorilla/blob/master/tools/mk-jenkins-slave/jenkins-slave-setup.user-script#L107-119)
+- [an imgapi-cli.git install to get
+  "updates-imgadm"](https://mo.joyent.com/mountain-gorilla/blob/master/tools/mk-jenkins-slave/jenkins-slave-setup.user-script#L122-130)
+
+The platform build requires more setup. The best authority are the Jenkins
+build slave creation scripts here:
+<https://mo.joyent.com/mountain-gorilla/tree/master/tools/jenkins/sdc-jenkins>.
+
+
+# Branches
+
+99% of the time MG builds just use (and default to) the "master" branch
+and that'll be all you need to know. However, MG supports building branches
+other than just "master". This is used for our bi-weekly sprint release
+builds:
+
+    ./configure -t amon -b release-YYYYMMDD
+
+However, to get a build of a feature branch, typically you only have that
+branch in *your* repo and not in ancillary repos. For that reason, MG supports
+the idea of a "TRY_BRANCH" to mean: "try pulling from TRY_BRANCH first, else
+fallback to BRANCH". This allows you to get a feature branch build like so:
+
+    ./configure -t cnapi -B CNAPI-1234 -b master
+
+or using the UI in jenkins:
+
+    # https://jenkins.joyent.us/job/cnapi/build
+    BRANCH:     master
+    TRY_BRANCH: CNAPI-123
+
+
+# Bits directory structure
+
+MG uploads build bits to a controlled directory structure at
+`/Joyent_Dev/stor/builds` in Manta. The MG `./configure ...` step handles
+downloading pre-built dependencies from this structure. The usb-headnode and
+agents-installer builds also rely on this structure.
+
+    /Joyent_Dev/stor/builds/
+        $job/                   # Typically $job === MG $target name
+            $branch-latest      # File with path to latest ".../$branch-$timestamp"
+            ...
+            $branch-$timestamp/
+                $target/
+                    ...the target's built bits...
+                ...all dependent bits and MG configuration...
+
+For example:
+
+    /Joyent_Dev/stor/builds/
+        amon/
+            master-latest
+            master-20130208T215745Z/
+            ...
+            master-20130226T191921Z/
+                config.mk
+                md5sums.txt
+                amon/
+                    amon-agent-master-20130226T191921Z-g7cd3e28.tgz
+                    amon-pkg-master-20130226T191921Z-g7cd3e28.tar.bz2
+                    amon-relay-master-20130226T191921Z-g7cd3e28.tgz
+                    build.log
+        usbheadnode
+            master-latest
+            ...
+            master-20130301T004335Z/
+                config.mk
+                md5sums.txt
+                usbheadnode/
+                    boot-master-20130301T004335Z-gad6dfc4.tgz
+                    coal-master-20130301T004335Z-gad6dfc4.tgz
+                    usb-master-20130301T004335Z-gad6dfc4.tgz
+                    build.log
+                    build.spec.local
+
+All those "extra" pieces (build log, md5sums.txt, config.mk)
+are there to be able to debug and theoretically reproduce builds.
+The "md5sums.txt" is used by the usb-headnode build to ensure uncorrupted
+downloads.
 
 
 # Jenkins
@@ -106,22 +176,6 @@ We use [Jenkins](https://jenkins.joyent.us)
 builds of all of SDC. Almost every relevant git repo is setup to trigger
 a build of the relevant jobs in Jenkins. See the "tl;dr" above for
 what happens after a push to a repo.
-
-The guts of a Jenkins job (the "Build" step) for SDC components is mostly
-identical for all of them. Basically this:
-
-    git clone git@git.joyent.com:mountain-gorilla.git MG
-    cd MG
-    ./configure -t amon -b "$BRANCH" -B "$TRY_BRANCH"
-    make amon
-    make upload_jenkins
-
-The full script, with logging and error checking is:
-<https://mo.joyent.com/mountain-gorilla/blob/master/tools/jenkins-build-step.sh>
-cut 'n pasted into each Jenkins job configuration, e.g.
-[for amon](https://jenkins.joyent.us/view/sdc/job/amon/configure).
-Note how similar this is to the above example. For 99% of cases,
-BRANCH=master and TRY_BRANCH="". See "Branches" below for the 1%.
 
 
 ## How Jenkins builds an SDC zone image
@@ -201,125 +255,50 @@ This is most of the new stuff over the previous build setup in BH1 and the
 primary place where problems have been occurring.
 
 
-## Troubleshooting Jenkins build failures
+# Automatic builds (post-receive hooks)
 
-The first step in debugging build failures is to ensure that you understand how
-builds work. See the previous section for details. With that understanding in
-hand you should start looking at the "Console Output" in Jenkins for the failed
-build. Usually the end of the log will tell you why the build failed if you
-follow along in the code.
+In general we use post-receive hooks (for repos hosted at git.joyent.com)
+and Github webhooks (for Github-hosted repos) to trigger the appropriate
+project build for pushes to any repository.
 
-The main sources of problems have been in the tools/prep_dataset_in_jpc.sh
-step from MG. This primarily has failed when provisioning to JPC or when talking
-to manta.
+An example of the former is:
 
-Another source of failure has been the npm steps in the configure phase here
-especially when multiple 'npm install' jobs run on the same host at the same time
-in that case we often experience segfaults.
+    [git@083a9e4b-8e3a-44f1-9e79-2056b3569e9d ~]$ cat repositories/imgapi.git/hooks/post-receive
+    #!/bin/bash
+    read oldrev newrev refname
+    bash $HOME/bin/common-post-receive-v2 -m -d imgapi -J imgapi $oldrev $newrev $refname
 
-In any case, reading the previous section on how the build works and following
-along in the jenkins log should help you figure out where we're failing here.
+It is the "-J imgapi" switch that results in jenkins being called:
 
+    ...
+    payload="{\"before\":\"$oldrev\",\"after\":\"$newrev\",\"ref\":\"$refname\"}"
+    curl -g --max-time 5 -sSf -k -X POST \
+        https://automation:PASS@jenkins.joyent.us/job/$JENKINS_JOB/buildWithParameters?payload="$payload"
 
-# Prerequisites
-
-There are a lot of prerequisites to build the SDC components. For all
-but the platform you will need:
-
-- a SmartOS zone (smartos-1.6.3 image is the current base, but that will
-  move to multiarch eventually)
-- [python, gcc, gmake, et al from
-  pkgsrc](https://mo.joyent.com/mountain-gorilla/blob/master/tools/mk-jenkins-slave/jenkins-slave-setup.user-script#L107-119)
-- [an imgapi-cli.git install to get
-  "updates-imgadm"](https://mo.joyent.com/mountain-gorilla/blob/master/tools/mk-jenkins-slave/jenkins-slave-setup.user-script#L122-130)
-
-The platform build requires more setup. The best authority is the
-[jenkins-slave-setup.user-script](https://mo.joyent.com/mountain-gorilla/blob/master/tools/mk-jenkins-slave/jenkins-slave-setup.user-script).
-If you are creating a new dev zone, consider using the
-[mk-jenkins-slave](https://mo.joyent.com/mountain-gorilla/blob/master/tools/mk-jenkins-slave/README.md)
-script to build and set it up.
+"common-post-receive-v2" lives in "gitosis-admin.git". It currently includes
+passwords so cannot be included in MG (arguably a better place).
 
 
-# Branches
+An example of the latter is (where "PASS" is the password of the special
+"github" user in our Jenkins, actually a ldap.joyent.com account):
 
-99% of the time MG builds just use (and default to) the "master" branch
-and that'll be all you need to know. However, MG supports building branches
-other than just "master". This is useful for our bi-weekly sprint release
-builds:
+    https://github:PASS@jenkins.joyent.us/job/platform/buildWithParameters
+    SSL verification disabled (jenkins.jo uses a self-signed cert)
+    Content-type: application/x-www-form-encoded (to allow jenkins to take 'payload' as a build param)
 
-    ./configure -t amon -b release-YYYYMMDD
-
-but can also be used to make a build of a pushed feature branch:
-
-    ./configure -t usbheadnode -b HEAD-1234
-
-MG has the concept of a "-B TRY_BRANCH" separate from "-b BRANCH". This
-allows you to build a target that uses multiple repos (e.g. the platform
-build uses about 7 repos) where only a subset of them has your feature
-branch:
-
-    ./configure -t platform -b master -B OS-1234
-
-Unfortunately, MG doesn't have a convenient way to build a target using
-**an uncommited working clone**. That could be added if people needed it.
-However, MG is just a wrapper build repo. Each repo knows how to build itself
-so using MG is *typically* unnecessary. MG just brings (a) strict control
-of dependent bits and (b) upload to the structured layout of bits on
-bits.joyent.us.
+For example: <https://github.com/joyent/smartos-live/settings/hooks/286660>
 
 
-# Bits directory structure
+The design of our post-receive hooks is that a 'payload' param with JSON
+content minimally with:
 
-MG uploads build bits to a controlled directory structure at
-<https://bits.joyent.us/builds>. The MG `./configure ...` step handles
-downloading pre-built dependencies from this structure. The usb-headnode and
-agents-installer builds also rely on this structure.
+    {"ref": "<pushed git ref, e.g. refs/heads/master>"}
 
-    https://bits.joyent.us/builds/
-        $job/               # Typically $job === MG $target name
-            $branch-latest -> $branch-$latest_timestamp
-            ...
-            $branch-$timestamp/
-                $target/
-                    ...the target's built bits...
-                ...all dependent bits and MG configuration...
+is passed. This is a subset of the Github webhook payload. Each jenkins job
+build step is [prefixed with block that will set `BRANCH` and `TRY_BRANCH`
+for that
+ref](https://mo.joyent.com/mountain-gorilla/blob/master/tools/jenkins-build-step.sh#L19-45).
 
-For example:
-
-    https://bits.joyent.us/builds/
-        amon/
-            master-latest -> master-20130226T191921Z
-            master-20130208T215745Z/
-            master-20130214T184711Z/
-            master-20130215T210716Z/
-            master-20130218T215536Z/
-            master-20130226T191921Z/
-                sdcnode/...
-                config.mk
-                md5sums.txt
-                amon/
-                    amon-agent-master-20130226T191921Z-g7cd3e28.tgz
-                    amon-pkg-master-20130226T191921Z-g7cd3e28.tar.bz2
-                    amon-relay-master-20130226T191921Z-g7cd3e28.tgz
-                    build.log
-        usbheadnode
-            master-latest -> master-20130301T004335Z
-            ...
-            master-20130301T004335Z/
-                ...lots of stuff because usb-headnode deps on everything...
-                config.mk
-                md5sums.txt
-                usbheadnode/
-                    boot-master-20130301T004335Z-gad6dfc4.tgz
-                    coal-master-20130301T004335Z-gad6dfc4.tgz
-                    usb-master-20130301T004335Z-gad6dfc4.tgz
-                    build.log
-                    build.spec.local
-
-All those "extra" pieces (build log, md5sums.txt, config.mk and the dependent
-bits) are there to be able to debug and theoretically reproduce builds.
-The "md5sums.txt" is used by the usb-headnode build to ensure uncorrupted
-downloads from Bits.
 
 
 # Versioning
@@ -389,8 +368,104 @@ Where:
   ".sh" (shar), ".md5sum", ".tar.bz2".
 
 
+# HOWTO: Cut an SDC bi-weekly sprint release
 
-# Adding a repository quickstart
+The SmartDataCenter product currently does bi-weekly sprint release builds.
+This involves branching/tagging all relevant repositories, building them
+all, and "releasing/archiving" versions in our Jira issue tracker. This
+section documents how to perform a release.
+
+1. Branch/tag all the repos.
+   Run the following on a machine with good connectivity (you'll be cloning
+   all SDC's repos).
+
+        git clone git@git.joyent.com:mountain-gorilla.git
+        cd mountain-gorilla
+        RELDATE=$(date +%Y%m%d)
+        ./tools/check-repos-for-release -h    # grok what this does
+        ./tools/check-repos-for-release -a $RELDATE
+
+   If running this fails, it is safe to re-run to pick up where it left off.
+
+   This will trigger builds with "BRANCH=release-$RELDATE" for all components.
+   You can watch the build queue pile up at <https://jenkins.joyent.us/>.
+
+   *Release branch* builds are strict (see the section above on automatic
+   builds) in that they will fail if dependencies do not yet have a build for
+   that branch. Therefore we expect some builds (e.g. usbheadnode) to fail
+   until all components, in particular the slower "platform" build, have had
+   time to complete.
+
+2. Babysit builds in Jenkins. Currently our builds are not as reliable as
+   we'd like, so failures do occur. The best strategy is probably:
+
+    - Allow an initial pass of many of the builds to complete.
+    - Watch the agentsshar build (https://jenkins.joyent.us/job/agentsshar/)
+      (with BRANCH=release-$RELDATE) for failures. Check its console log
+      to see if failures are due to dependent agent builds not having
+      completed. If so, manually restart those builds.
+    - Watch the usbheadnode build (https://jenkins.joyent.us/job/usbheadnode/)
+      (with BRANCH=release-$RELDATE) for failures. Check its console log
+      to see if failures are due to dependent agent builds not having
+      completed. If so, manually restart those builds.
+
+    That this babysitting is required is lame. We should attempt to fix
+    this (TODO). I'm [Trent] open to suggestions. A start would be improvements
+    to the `sdc-jenkins` tool to ensure that current Jenkins job definitions
+    have the proper dependencies. For example, the 'amon' build currently
+    triggers builds a many jobs that use amon-agent, but not all of them.
+    Of latest EASTONE-111 is a killer: it stalls a build for 20 minutes, then
+    often fails.
+
+3. "Release" this sprint version in our Jira projects:
+
+        cd .../mountain-gorilla/tools/jira
+        ./releaseversion.sh 'YYYY-MM-DD NAME'
+        # E.g.: ./releaseversion.sh '2014-07-10 Skynet'
+
+4. "Archive" the *previous* sprint version in our Jira projects:
+
+        cd .../mountain-gorilla/tools/jira
+        ./archiveversion.sh 'YYYY-MM-DD NAME'
+        # E.g.: ./archiveversion.sh '2014-06-26 Robocop'
+
+5. When branches are cut, tell Keith that he can do the SmartOS build.
+   SmartOS does bi-weekly releases with the same timeline as SDC.
+
+6. (Eventually, the plan is to) Publish these release bits to the "staging"
+   channel of updates.joyent.com. Then, upgrade staging-1/2/3 to the latest
+   in the "staging" channel.
+
+
+There are some common failure pathologies:
+
+- "error: unexpected ref 'refs/tags/20140703': is not 'refs/heads'"
+  The webhook used on github-hosted repos will POST for both the *tag* push
+  and the *branch* push. We only build for branch pushes (i.e. where "ref"
+  startswith "refs/heads/"). IOW, this can be ignored.
+
+- "Read from remote host github.com: Connection timed out"
+  We hit git repos hard when everything starts building. Github often doesn't
+  like this. Short of us moving to not using github repos directly in our
+  "package.json" files, I don't know of a fix here.
+
+
+
+# HOWTO: Troubleshooting Jenkins build failures
+
+The first step in debugging build failures is to ensure that you understand how
+builds work. See the previous section for details. With that understanding in
+hand you should start looking at the "Console Output" in Jenkins for the failed
+build. Usually the end of the log will tell you why the build failed if you
+follow along in the code.
+
+The main sources of problems have been in the tools/prep_dataset_in_jpc.sh
+step from MG. This primarily has failed when provisioning to JPC or when talking
+to manta.
+
+
+
+# HOWTO: Add a new project/repo/job to MG
 
 *(Warning: This section is a little out of date.)*
 
