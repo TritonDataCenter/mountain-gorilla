@@ -348,14 +348,14 @@
     ],
     "deps": [
       "amon",
-      "sapi",
+      "config-agent",
       "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "sapi/config-agent-*.tar.bz2", "sysroot": "/"}
+      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
     ]
   },
 
