@@ -295,9 +295,13 @@ content minimally with:
     {"ref": "<pushed git ref, e.g. refs/heads/master>"}
 
 is passed. This is a subset of the Github webhook payload. Each jenkins job
-build step is [prefixed with block that will set `BRANCH` and `TRY_BRANCH`
+build step is [prefixed with some code that will set `BRANCH` and `TRY_BRANCH`
 for that
 ref](https://mo.joyent.com/mountain-gorilla/blob/master/tools/jenkins-build-step.sh#L19-45).
+It strictly uses "BRANCH=$branch" for release branches to ensure that a release
+branch is *just bits using that release branch*. For feature branches, it uses
+"TRY_BRANCH=$branch BRANCH=master" as a convenience to allow builds where only
+one or a subset of involved repos have that branch.
 
 
 
