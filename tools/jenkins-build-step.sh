@@ -22,7 +22,7 @@ last_time=${start_time}
 # and have:
 #   TRY_BRANCH=  BRANCH=$branch
 # but for other branches we'll be "nice" and use
-#   TRY_BRANCH=  BRANCH=master
+#   TRY_BRANCH=$branch  BRANCH=master
 # which allows, for example, a commit to a feature branch (say "foo") to
 # work when ancillary repos (like mountain-gorilla.git and usb-headnode.git)
 # don't have that branch.
