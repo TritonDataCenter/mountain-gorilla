@@ -54,6 +54,7 @@ if [[ -z "$MG_JENKINS_BUILD_SECOND_PASS" ]]; then
     if [[ -z "$BRANCH" ]]; then
         BRANCH=master
     fi
+    export BRANCH TRY_BRANCH
     echo "BRANCH: $BRANCH"
     echo "TRY_BRANCH: $TRY_BRANCH"
 
