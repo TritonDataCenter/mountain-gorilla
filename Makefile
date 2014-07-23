@@ -2375,22 +2375,6 @@ $(USB_OUTPUT): $(USB_BITS_SPEC) $(BOOT_OUTPUT)
 	@ls -l $(USB_OUTPUT)
 	@echo ""
 
-UPGRADE_BUILD=$(USB_BUILD_DIR)/upgrade-$(_usbheadnode_stamp).tgz
-UPGRADE_OUTPUT=$(USB_BITS_DIR)/upgrade$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).tgz
-
-.PHONY: upgrade
-upgrade: $(UPGRADE_OUTPUT)
-
-$(UPGRADE_OUTPUT): $(USB_BITS_SPEC) $(BOOT_OUTPUT)
-	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	cd build/usb-headnode \
-		&& BITS_URL=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
-		ZONE_DIR=$(BUILD_DIR) PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-upgrade-image $(BOOT_OUTPUT)
-	mv $(UPGRADE_BUILD) $(UPGRADE_OUTPUT)
-	@echo "# Created upgrade bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(UPGRADE_OUTPUT)
-	@echo ""
-
 
 # A usbheadnode image that can be imported to an IMGAPI and used for
 # sdc-on-sdc.
@@ -2404,7 +2388,7 @@ MANIFEST_OUTPUT=$(USB_BITS_DIR)/usb$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).
 image: $(IMAGE_OUTPUT)
 
 $(IMAGE_OUTPUT): $(USB_BITS_SPEC) $(USB_OUTPUT)
-	@echo "# Build upgrade: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build sdc-on-sdc image: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	cd build/usb-headnode \
 		&& BITS_URL=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(BUILD_DIR) PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-dataset $(USB_OUTPUT)
@@ -2424,8 +2408,7 @@ releasejson: $(USB_BITS_DIR)
 	\"try-branch\": \"$(TRY-BRANCH)\", \
 	\"coal\": \"$(shell basename $(COAL_OUTPUT))\", \
 	\"boot\": \"$(shell basename $(BOOT_OUTPUT))\", \
-	\"usb\": \"$(shell basename $(USB_OUTPUT))\", \
-	\"upgrade\": \"$(shell basename $(UPGRADE_OUTPUT))\" \
+	\"usb\": \"$(shell basename $(USB_OUTPUT))\" \
 }" | $(JSON) >$(RELEASEJSON_BIT)
 
 
