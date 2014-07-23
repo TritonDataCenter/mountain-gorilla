@@ -125,9 +125,9 @@ echo ""
 echo "#---------------------- make"
 
 if [[ "$JOB_NAME" == "sdc" ]]; then
-    gmake
+    V=1 gmake
 else
-    gmake $JOB_NAME
+    V=1 gmake $JOB_NAME
 fi
 
 now_time=$(date +%s)
