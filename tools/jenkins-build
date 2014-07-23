@@ -59,7 +59,13 @@ if [[ -z "$MG_JENKINS_BUILD_SECOND_PASS" ]]; then
 
     cd MG
     if [[ -n "$TRY_BRANCH" ]]; then
-        git checkout $TRY_BRANCH || git checkout $BRANCH
+        mg_has_try_branch=$(git branch | cut -c3- \
+            | (grep "^$TRY_BRANCH\$" || true))
+        if [[ -n "$mg_has_try_branch" ]]; then
+            git checkout $TRY_BRANCH
+        else
+            git checkout $BRANCH
+        fi
     else
         git checkout $BRANCH
     fi
