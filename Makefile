@@ -2305,7 +2305,7 @@ clean_firmware-tools:
 # - pkgsrc isolation
 
 .PHONY: usbheadnode usbheadnode-debug
-usbheadnode usbheadnode-debug: boot coal usb releasejson
+usbheadnode usbheadnode-debug: cleanimgcruft boot coal usb releasejson
 
 usbheadnode: USB_HEADNODE_SUFFIX = ""
 usbheadnode-debug: USB_HEADNODE_SUFFIX = "-debug"
@@ -2321,6 +2321,15 @@ USB_BITS_SPEC=$(USB_BITS_DIR)/build.spec.local
 
 BOOT_BUILD=$(USB_BUILD_DIR)/boot-$(_usbheadnode_stamp).tgz
 BOOT_OUTPUT=$(USB_BITS_DIR)/boot$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).tgz
+
+
+# Delete any failed image files that might be sitting around, this is safe
+# because only one usbheadnode build runs at a time. Also cleanup any unused
+# lofi devices (used ones will just fail)
+.PHONY: cleanimgcruft
+cleanimgcruft:
+	rm -vf /tmp/*4gb.img
+	for dev in $(shell lofiadm | cut -d ' ' -f1 | grep -v "^Block"); do pfexec lofiadm -d ${dev}; done
 
 .PHONY: boot
 boot: $(BOOT_OUTPUT)
