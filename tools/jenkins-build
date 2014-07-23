@@ -108,11 +108,8 @@ CACHE_DIR=$(cd ../; pwd)/cache
 if [[ "$CLEAN_CACHE" == "true" ]]; then
     rm -rf $CACHE_DIR
 fi
-if [[ "$JOB_NAME" == "sdc" ]]; then
-    TRACE=1 ./configure -c "$CACHE_DIR" -b "$BRANCH" -B "$TRY_BRANCH"
-else
-    TRACE=1 ./configure -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" -B "$TRY_BRANCH"
-fi
+
+TRACE=1 ./configure -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" -B "$TRY_BRANCH"
 
 now_time=$(date +%s)
 elapsed=$((${now_time} - ${last_time}))
@@ -124,11 +121,7 @@ echo "TIME: MG configure took ${elapsed} seconds"
 echo ""
 echo "#---------------------- make"
 
-if [[ "$JOB_NAME" == "sdc" ]]; then
-    V=1 gmake
-else
-    V=1 gmake $JOB_NAME
-fi
+V=1 gmake $JOB_NAME
 
 now_time=$(date +%s)
 elapsed=$((${now_time} - ${last_time}))
