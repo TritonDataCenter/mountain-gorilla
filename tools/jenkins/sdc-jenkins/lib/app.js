@@ -345,6 +345,7 @@ App.prototype.do_oneachnode = function do_oneachnode(subcmd, opts, args, cb) {
     var cmd = args[0];
     var computers;
     var results = [];
+    var execTimeoutMs = (opts.exectimeout || 60) * 1000;
 
     vasync.pipeline({funcs: [
         function getComputers(_, next) {
@@ -372,7 +373,7 @@ App.prototype.do_oneachnode = function do_oneachnode(subcmd, opts, args, cb) {
                     exec(
                         format("%s %s '%s'", SSH, computer.displayName,
                             shellEscape(cmd)),
-                        {timeout: 5000},
+                        {timeout: execTimeoutMs},
                         function (err, stdout, stderr) {
                             results.push({
                                 computer: computer.displayName,
@@ -460,6 +461,11 @@ App.prototype.do_oneachnode.options = [
         names: ['jsonstream', 'J'],
         type: 'bool',
         help: 'JSON stream output'
+    },
+    {
+        names: ['exectimeout', 'T'],
+        type: 'positiveInteger',
+        help: 'Command execution timeout. Default is 60s.'
     },
 ];
 App.prototype.do_oneachnode.help = (
