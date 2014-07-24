@@ -2440,7 +2440,7 @@ platform-debug : PLAT_CONF_ARGS += "exclusive"
 
 
 .PHONY: platform platform-debug
-platform platform-debug: $(PLATFORM_BITS_0)
+platform platform-debug: smartos_live_make_check $(PLATFORM_BITS_0)
 
 build/smartos-live/configure.mg:
 	sed -e "s:GITCLONESOURCE:$(shell pwd)/build/:" \
@@ -2456,6 +2456,10 @@ build/smartos-live/configure-branches:
 		-e "s:MDATA_CLIENT_BRANCH:$(MDATA_CLIENT_BRANCH):" \
 		-e "s:SDC_PLATFORM_BRANCH:$(SDC_PLATFORM_BRANCH):" \
 		<smartos-live-configure-branches.in >build/smartos-live/configure-branches
+
+.PHONY: smartos_live_make_check
+smartos_live_make_check:
+	(cd build/smartos-live && make check)
 
 # PATH: Ensure using GCC from SFW as require for platform build.
 $(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-branches
