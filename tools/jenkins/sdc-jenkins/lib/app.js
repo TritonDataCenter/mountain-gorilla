@@ -1,3 +1,9 @@
+/*
+ * Copyright 2014 Joyent, Inc.  All rights reserved.
+ *
+ * Main CLI for sdc-jenkins tool.
+ */
+
 var cmdln = require('cmdln');
 var fs = require('fs');
 var util = require('util');
@@ -12,6 +18,24 @@ var async = require('async');
 var tabula = require('tabula');
 var exec = require('child_process').exec;
 var spawn = require('child_process').spawn;
+var vasync = require('vasync');
+
+
+//---- globals
+
+var p = console.log;
+
+
+
+//---- internal support stuff
+
+function shellEscape(s) {
+    return s.replace(/'/g, "'\\''");
+}
+
+
+
+//---- the CLI "App"
 
 function App() {
     this.blacklist = ['master', 'pkgsrc-pbulk-master'];
@@ -25,14 +49,13 @@ function App() {
                 helpArg: 'FILE',
                 type: 'string',
                 default: process.env.HOME + '/.sdcjenkins',
-                help:
-                    'Configuration JSON file. ' +
-                    'Must contain keys: user, pass, host.'
+                help: 'Configuration JSON file. ' +
+                    'Must contain keys: user, pass, host. ' +
+                    'Default is "~/.sdcjenkins".'
             }
         ]
     });
 }
-
 util.inherits(App, cmdln.Cmdln);
 
 
@@ -305,6 +328,149 @@ App.prototype.initialize = function () {
     assert.string(this.config.pass, 'options.pass');
     assert.string(this.config.host, 'options.host');
 };
+
+
+
+App.prototype.do_oneachnode = function do_oneachnode(subcmd, opts, args, cb) {
+    var self = this;
+    if (opts.help) {
+        this.do_help('help', {}, [subcmd], cb);
+        return;
+    } else if (args.length !== 1) {
+        return cb(new Error('incorrect number of args: ' + args));
+    }
+
+    self.initialize();
+    var SSH = 'ssh -q -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -l root';
+    var cmd = args[0];
+    var computers;
+    var results = [];
+
+    vasync.pipeline({funcs: [
+        function getComputers(_, next) {
+            self.jc.node.list(function (err, nodes) {
+                if (err) {
+                    return next(err)
+                }
+                computers = nodes.computer;
+                next();
+            });
+        },
+
+        function trim(_, next) {
+            var trimmed = computers.filter(function (c) {
+                return (self.blacklist.indexOf(c.displayName) === -1);
+            });
+            computers = trimmed;
+            next();
+        },
+
+        function run(_, next) {
+            vasync.forEachParallel({
+                inputs: computers,
+                func: function runOne(computer, next2) {
+                    exec(
+                        format("%s %s '%s'", SSH, computer.displayName,
+                            shellEscape(cmd)),
+                        {timeout: 5000},
+                        function (err, stdout, stderr) {
+                            results.push({
+                                computer: computer.displayName,
+                                result: {
+                                    err: err,
+                                    exit_status: (err ? err.code : 0),
+                                    stdout: stdout,
+                                    stderr: stderr
+                                }
+                            });
+                            next2();
+                        }
+                    );
+                }
+            }, next);
+        },
+
+        function display(_, next) {
+            tabula.sortArrayOfObjects(results, ['computer']);
+            if (opts.json) {
+                p(JSON.stringify(results, null, 4));
+            } else if (opts.jsonstream) {
+                for (var i = 0; i < results.length; i++) {
+                    p(JSON.stringify(results[i]));
+                }
+            } else {
+                var table = [];
+                var singleLineOutputs = true;
+                for (var i = 0; i < results.length; i++) {
+                    var computer = results[i].computer;
+                    var result = results[i].result;
+                    var output;
+                    if (result.err && result.err.killed) {
+                        output = format('<ERROR: timeout for computer %s>',
+                            computer);
+                    } else if (result.err && !result.stdout && !result.stderr) {
+                        output = format('<ERROR: ssh to %s failed (update your ~/.ssh/config)>',
+                            computer);
+                    } else {
+                        output = result.stdout;
+                        if (output.length > 1 && output.slice(-1) === '\n') {
+                            output = output.slice(0, output.length - 1);
+                        }
+                        if (result.stderr) {
+                            if (output) {
+                                output += '\n';
+                            }
+                            output += result.stderr;
+                        }
+                    }
+                    if (output.trim().indexOf('\n') !== -1) {
+                        singleLineOutputs = false;
+                    }
+                    table.push({computer: computer, output: output});
+                }
+                if (singleLineOutputs) {
+                    tabula(table);
+                } else {
+                    for (var i = 0; i < table.length; i++) {
+                        p("=== Output from", table[i].computer);
+                        p(table[i].output);
+                        if (table[i].output.slice(-1) !== '\n') {
+                            p();
+                        }
+                    }
+                }
+            }
+        }
+    ]}, function (err) {
+        cb(err);
+    });
+};
+App.prototype.do_oneachnode.options = [
+    {
+        names: ['help', 'h'],
+        type: 'bool',
+        help: 'Show this help.'
+    },
+    {
+        names: ['json', 'j'],
+        type: 'bool',
+        help: 'JSON output'
+    },
+    {
+        names: ['jsonstream', 'J'],
+        type: 'bool',
+        help: 'JSON stream output'
+    },
+];
+App.prototype.do_oneachnode.help = (
+    'Run the given command on each SDC jenkins slave.\n'
+    + '\n'
+    + 'Usage:\n'
+    + '     {{name}} oneachnode [<options>] <cmd>\n'
+    + '\n'
+    + '{{options}}\n'
+    + 'This skips the "master" and pkgsrc pbulk nodes.\n'
+);
 
 
 /*
