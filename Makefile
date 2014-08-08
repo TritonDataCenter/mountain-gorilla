@@ -60,10 +60,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel manowar madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
 
 
 #---- smartlogin
@@ -1924,27 +1924,6 @@ $(MACKEREL_BITS): build/mackerel
 clean_mackerel:
 	rm -rf $(BITS_DIR)/mackerel
 	(cd build/mackerel && gmake distclean)
-
-
-#---- manowar
-
-_manowar_stamp=$(MANOWAR_BRANCH)-$(TIMESTAMP)-g$(MANOWAR_SHA)
-MANOWAR_BITS=$(BITS_DIR)/manowar/manowar-pkg-$(_manowar_stamp).tar.bz2
-
-.PHONY: manowar
-manowar: $(MANOWAR_BITS)
-
-$(MANOWAR_BITS): build/manowar
-	@echo "# Build manowar: branch $(MANOWAR_BRANCH), sha $(MANOWAR_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/manowar && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created manowar bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(MANOWAR_BITS)
-	@echo ""
-
-clean_manowar:
-	rm -rf $(BITS_DIR)/manowar
-	(cd build/manowar && gmake distclean)
 
 
 #---- Binder
