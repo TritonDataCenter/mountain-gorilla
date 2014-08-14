@@ -1128,20 +1128,25 @@ clean_provisioner:
 #---- Heartbeater
 
 _heartbeater_stamp=$(HEARTBEATER_BRANCH)-$(TIMESTAMP)-g$(HEARTBEATER_SHA)
-HEARTBEATER_BITS=$(BITS_DIR)/heartbeater/heartbeater-$(_heartbeater_stamp).tgz
+HEARTBEATER_BIT=$(BITS_DIR)/heartbeater/heartbeater-$(_heartbeater_stamp).tgz
+HEARTBEATER_MANIFEST_BIT=$(BITS_DIR)/heartbeater/heartbeater-$(_heartbeater_stamp).manifest
 
 .PHONY: heartbeater
-heartbeater: $(HEARTBEATER_BITS)
+heartbeater: $(HEARTBEATER_BIT)
 
 # PATH for heartbeater build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(HEARTBEATER_BITS): build/heartbeater
+$(HEARTBEATER_BIT): build/heartbeater
 	@echo "# Build heartbeater: branch $(HEARTBEATER_BRANCH), sha $(HEARTBEATER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/heartbeater && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created heartbeater bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(HEARTBEATER_BITS)
+	@ls -l $(HEARTBEATER_BIT)
 	@echo ""
+
+heartbeater_publish_image: $(HEARTBEATER_BIT)
+	@echo "# Publish heartbeater image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(HEARTBEATER_MANIFEST_BIT) -f $(HEARTBEATER_BIT)
 
 # Warning: if heartbeater's submodule deps change, this 'clean_heartbeater' is insufficient. It would
 # then need to call 'gmake dist-clean'.
