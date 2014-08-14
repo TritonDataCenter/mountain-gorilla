@@ -1474,6 +1474,8 @@ _marlin_stamp=$(MARLIN_BRANCH)-$(TIMESTAMP)-g$(MARLIN_SHA)
 MARLIN_BITS=$(BITS_DIR)/marlin/marlin-pkg-$(_marlin_stamp).tar.bz2
 MARLIN_IMAGE_BIT=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).zfs.gz
 MARLIN_MANIFEST_BIT=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).imgmanifest
+MARLIN_AGENT_BIT=$(BITS_DIR)/marlin/marlin-$(_marlin_stamp).tar.gz
+MARLIN_AGENT_MANIFEST_BIT=$(BITS_DIR)/marlin/marlin-$(_marlin_stamp).manifest
 
 .PHONY: marlin
 marlin: $(MARLIN_BITS) marlin_image
@@ -1485,7 +1487,7 @@ $(MARLIN_BITS): build/marlin
 	mkdir -p $(BITS_DIR)
 	(cd build/marlin && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created marlin bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(MARLIN_BITS)
+	@ls -l $(MARLIN_BITS) $(MARLIN_AGENT_BIT) $(MARLIN_AGENT_MANIFEST_BIT)
 	@echo ""
 
 .PHONY: marlin_image
@@ -1503,8 +1505,9 @@ $(MARLIN_IMAGE_BIT): $(MARLIN_BITS)
 	@echo ""
 
 marlin_publish_image: $(MARLIN_IMAGE_BIT)
-	@echo "# Publish marlin image to SDC Updates repo."
+	@echo "# Publish marlin images to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(MARLIN_MANIFEST_BIT) -f $(MARLIN_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(MARLIN_AGENT_MANIFEST_BIT) -f $(MARLIN_AGENT_BIT)
 
 clean_marlin:
 	rm -rf $(BITS_DIR)/marlin
