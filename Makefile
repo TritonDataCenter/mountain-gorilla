@@ -1073,20 +1073,25 @@ clean_net_agent:
 # process to be "cn-agent-<...>.tgz", not "sdc-cn-agent-<...>.tgz".
 
 _cn_agent_stamp=$(SDC_CN_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_CN_AGENT_SHA)
-CN_AGENT_BITS=$(BITS_DIR)/cn-agent/cn-agent-$(_cn_agent_stamp).tgz
+CN_AGENT_BIT=$(BITS_DIR)/cn-agent/cn-agent-$(_cn_agent_stamp).tgz
+CN_AGENT_MANIFEST_BIT=$(BITS_DIR)/cn-agent/cn-agent-$(_cn_agent_stamp).manifest
 
 .PHONY: cn-agent
-cn-agent: $(CN_AGENT_BITS)
+cn-agent: $(CN_AGENT_BIT)
 
 # PATH for cn-agent build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(CN_AGENT_BITS): build/sdc-cn-agent
+$(CN_AGENT_BIT): build/sdc-cn-agent
 	@echo "# Build cn-agent: branch $(SDC_CN_AGENT_BRANCH), sha $(SDC_CN_AGENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/sdc-cn-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created cn-agent bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(CN_AGENT_BITS)
+	@ls -l $(CN_AGENT_BIT) $(CN_AGENT_MANIFEST_BIT)
 	@echo ""
+
+cn-agent_publish_image: $(CN_AGENT_BIT)
+	@echo "# Publish cn-agent image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(CN_AGENT_MANIFEST_BIT) -f $(CN_AGENT_BIT)
 
 # Warning: if cn-agents's submodule deps change, this 'clean_cn_agent' is insufficient. It would
 # then need to call 'gmake dist-clean'.
