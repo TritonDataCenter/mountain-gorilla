@@ -1103,20 +1103,25 @@ clean_cn_agent:
 #---- Provisioner
 
 _provisioner_stamp=$(PROVISIONER_BRANCH)-$(TIMESTAMP)-g$(PROVISIONER_SHA)
-PROVISIONER_BITS=$(BITS_DIR)/provisioner/provisioner-$(_provisioner_stamp).tgz
+PROVISIONER_BIT=$(BITS_DIR)/provisioner/provisioner-$(_provisioner_stamp).tgz
+PROVISIONER_MANIFEST_BIT=$(BITS_DIR)/provisioner/provisioner-$(_provisioner_stamp).manifest
 
 .PHONY: provisioner
-provisioner: $(PROVISIONER_BITS)
+provisioner: $(PROVISIONER_BIT)
 
 # PATH for provisioner build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(PROVISIONER_BITS): build/provisioner
+$(PROVISIONER_BIT): build/provisioner
 	@echo "# Build provisioner: branch $(PROVISIONER_BRANCH), sha $(PROVISIONER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/provisioner && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created provisioner bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(PROVISIONER_BITS)
+	@ls -l $(PROVISIONER_BIT) $(PROVISIONER_MANIFEST_BIT)
 	@echo ""
+
+provisioner_publish_image: $(PROVISIONER_BIT)
+	@echo "# Publish provisioner image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(PROVISIONER_MANIFEST_BIT) -f $(PROVISIONER_BIT)
 
 # Warning: if provisioner's submodule deps change, this 'clean_provisioner' is insufficient. It would
 # then need to call 'gmake dist-clean'.
