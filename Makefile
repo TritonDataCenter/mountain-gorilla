@@ -1036,7 +1036,7 @@ clean_agents_core:
 
 _vm_agent_stamp=$(SDC_VM_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_VM_AGENT_SHA)
 VM_AGENT_BIT=$(BITS_DIR)/vm-agent/vm-agent-$(_vm_agent_stamp).tgz
-VM_AGENT_BIT=$(BITS_DIR)/vm-agent/vm-agent-$(_vm_agent_stamp).manifest
+VM_AGENT_MANIFEST_BIT=$(BITS_DIR)/vm-agent/vm-agent-$(_vm_agent_stamp).manifest
 
 .PHONY: vm-agent
 vm-agent: $(VM_AGENT_BIT)
