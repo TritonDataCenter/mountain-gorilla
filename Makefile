@@ -169,6 +169,10 @@ CA_BITS=$(BITS_DIR)/ca/ca-pkg-$(_ca_stamp).tar.bz2 \
 CA_BITS_0=$(shell echo $(CA_BITS) | awk '{print $$1}')
 CA_IMAGE_BIT=$(BITS_DIR)/ca/ca-zfs-$(_ca_stamp).zfs.gz
 CA_MANIFEST_BIT=$(BITS_DIR)/ca/ca-zfs-$(_ca_stamp).imgmanifest
+CA_BASE_BIT=$(BITS_DIR)/ca/cabase-$(_ca_stamp).tar.gz
+CA_BASE_MANIFEST_BIT=$(BITS_DIR)/ca/cabase-$(_ca_stamp).manifest
+CA_INSTSVC_BIT=$(BITS_DIR)/ca/cainstsvc-$(_ca_stamp).tar.gz
+CA_INSTSVC_MANIFEST_BIT=$(BITS_DIR)/ca/cainstsvc-$(_ca_stamp).manifest
 
 .PHONY: ca
 ca: $(CA_BITS_0) ca_image
@@ -197,8 +201,10 @@ $(CA_IMAGE_BIT): $(CA_BITS_0)
 	@echo ""
 
 ca_publish_image: $(CA_IMAGE_BIT)
-	@echo "# Publish ca image to SDC Updates repo."
+	@echo "# Publish ca images to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(CA_MANIFEST_BIT) -f $(CA_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(CA_BASE_MANIFEST_BIT) -f $(CA_BASE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(CA_INSTSVC_MANIFEST_BIT) -f $(CA_INSTSVC_BIT)
 
 # Warning: if CA's submodule deps change, this 'clean_ca' is insufficient. It would
 # then need to call 'gmake dist-clean'.
