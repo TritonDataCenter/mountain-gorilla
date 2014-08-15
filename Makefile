@@ -127,6 +127,10 @@ AMON_BITS=$(BITS_DIR)/amon/amon-pkg-$(_amon_stamp).tar.bz2 \
 AMON_BITS_0=$(shell echo $(AMON_BITS) | awk '{print $$1}')
 AMON_IMAGE_BIT=$(BITS_DIR)/amon/amon-zfs-$(_amon_stamp).zfs.gz
 AMON_MANIFEST_BIT=$(BITS_DIR)/amon/amon-zfs-$(_amon_stamp).imgmanifest
+AMON_AGENT_BIT=$(BITS_DIR)/amon/amon-agent-$(_amon_stamp).tgz
+AMON_AGENT_MANIFEST_BIT=$(BITS_DIR)/amon/amon-agent-$(_amon_stamp).manifest
+AMON_RELAY_BIT=$(BITS_DIR)/amon/amon-relay-$(_amon_stamp).tgz
+AMON_RELAY_MANIFEST_BIT=$(BITS_DIR)/amon/amon-relay-$(_amon_stamp).manifest
 
 .PHONY: amon
 amon: $(AMON_BITS_0) amon_image
@@ -153,8 +157,10 @@ $(AMON_IMAGE_BIT): $(AMON_BITS_0)
 	@echo ""
 
 amon_publish_image: $(AMON_IMAGE_BIT)
-	@echo "# Publish amon image to SDC Updates repo."
+	@echo "# Publish amon images to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(AMON_MANIFEST_BIT) -f $(AMON_IMAGE_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(AMON_AGENT_MANIFEST_BIT) -f $(AMON_AGENT_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(AMON_RELAY_MANIFEST_BIT) -f $(AMON_RELAY_BIT)
 
 clean_amon:
 	rm -rf $(BITS_DIR)/amon
