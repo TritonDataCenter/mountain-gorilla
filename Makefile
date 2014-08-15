@@ -1,4 +1,3 @@
-
 #
 # Mountain Gorilla Makefile. See "README.md".
 #
@@ -60,10 +59,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller propeller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller propeller
 
 
 #---- smartlogin
@@ -1780,6 +1779,49 @@ marlin-dashboard_publish_image: $(MARLIN_DASHBOARD_IMAGE_BIT)
 clean_marlin-dashboard:
 	rm -rf $(BITS_DIR)/marlin-dashboard
 	(cd build/marlin-dashboard && gmake distclean)
+
+
+#---- Propeller
+
+_propeller_stamp=$(PROPELLER_BRANCH)-$(TIMESTAMP)-g$(PROPELLER_SHA)
+PROPELLER_BITS=$(BITS_DIR)/propeller/propeller-pkg-$(_propeller_stamp).tar.bz2
+PROPELLER_IMAGE_BIT=$(BITS_DIR)/propeller/propeller-zfs-$(_propeller_stamp).zfs.gz
+PROPELLER_MANIFEST_BIT=$(BITS_DIR)/propeller/propeller-zfs-$(_propeller_stamp).imgmanifest
+
+.PHONY: propeller
+propeller: $(PROPELLER_BITS) propeller_image
+
+# PATH for propeller build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(PROPELLER_BITS): build/propeller
+	@echo "# Build propeller: branch $(PROPELLER_BRANCH), sha $(PROPELLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/propeller && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created propeller bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(PROPELLER_BITS)
+	@echo ""
+
+.PHONY: propeller_image
+propeller_image: $(PROPELLER_IMAGE_BIT)
+
+$(PROPELLER_IMAGE_BIT): $(PROPELLER_BITS)
+	@echo "# Build propeller_image: branch $(PROPELLER_BRANCH), sha $(PROPELLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(PROPELLER_IMAGE_UUID)" -t $(PROPELLER_BITS) \
+		-b "propeller" \
+		-o "$(PROPELLER_IMAGE_BIT)" -p $(PROPELLER_PKGSRC) \
+		-t $(PROPELLER_EXTRA_TARBALLS) -n $(PROPELLER_IMAGE_NAME) \
+		-v $(_propeller_stamp) -d $(PROPELLER_IMAGE_DESCRIPTION)
+	@echo "# Created propeller image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(PROPELLER_IMAGE_BIT))
+	@echo ""
+
+propeller_publish_image: $(PROPELLER_IMAGE_BIT)
+	@echo "# Publish propeller image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(PROPELLER_MANIFEST_BIT) -f $(PROPELLER_IMAGE_BIT)
+
+clean_propeller:
+	rm -rf $(BITS_DIR)/propeller
+	(cd build/propeller && gmake distclean)
 
 
 #---- Moray
