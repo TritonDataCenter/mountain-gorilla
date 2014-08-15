@@ -1035,20 +1035,25 @@ clean_agents_core:
 # process to be "vm-agent-<...>.tgz", not "sdc-vm-agent-<...>.tgz".
 
 _vm_agent_stamp=$(SDC_VM_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_VM_AGENT_SHA)
-VM_AGENT_BITS=$(BITS_DIR)/vm-agent/vm-agent-$(_vm_agent_stamp).tgz
+VM_AGENT_BIT=$(BITS_DIR)/vm-agent/vm-agent-$(_vm_agent_stamp).tgz
+VM_AGENT_BIT=$(BITS_DIR)/vm-agent/vm-agent-$(_vm_agent_stamp).manifest
 
 .PHONY: vm-agent
-vm-agent: $(VM_AGENT_BITS)
+vm-agent: $(VM_AGENT_BIT)
 
 # PATH for vm-agent build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(VM_AGENT_BITS): build/sdc-vm-agent
+$(VM_AGENT_BIT): build/sdc-vm-agent
 	@echo "# Build vm-agent: branch $(SDC_VM_AGENT_BRANCH), sha $(SDC_VM_AGENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/sdc-vm-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created vm-agent bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(VM_AGENT_BITS)
+	@ls -l $(VM_AGENT_BIT) $(VM_AGENT_MANIFEST_BIT)
 	@echo ""
+
+vm-agent_publish_image: $(VM_AGENT_BIT)
+	@echo "# Publish vm-agent image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(VM_AGENT_MANIFEST_BIT) -f $(VM_AGENT_BIT)
 
 # Warning: if vm-agents's submodule deps change, this 'clean_vm_agent' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -1065,20 +1070,25 @@ clean_vm_agent:
 # process to be "net-agent-<...>.tgz", not "sdc-net-agent-<...>.tgz".
 
 _net_agent_stamp=$(SDC_NET_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_NET_AGENT_SHA)
-NET_AGENT_BITS=$(BITS_DIR)/net-agent/net-agent-$(_net_agent_stamp).tgz
+NET_AGENT_BIT=$(BITS_DIR)/net-agent/net-agent-$(_net_agent_stamp).tgz
+NET_AGENT_MANIFEST_BIT=$(BITS_DIR)/net-agent/net-agent-$(_net_agent_stamp).manifest
 
 .PHONY: net-agent
-net-agent: $(NET_AGENT_BITS)
+net-agent: $(NET_AGENT_BIT)
 
 # PATH for net-agent build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(NET_AGENT_BITS): build/sdc-net-agent
+$(NET_AGENT_BIT): build/sdc-net-agent
 	@echo "# Build net-agent: branch $(SDC_NET_AGENT_BRANCH), sha $(SDC_NET_AGENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/sdc-net-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created net-agent bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(NET_AGENT_BITS)
+	@ls -l $(NET_AGENT_BIT)
 	@echo ""
+
+net-agent_publish_image: $(NET_AGENT_BIT)
+	@echo "# Publish net-agent image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(NET_AGENT_MANIFEST_BIT) -f $(NET_AGENT_BIT)
 
 # Warning: if net-agents's submodule deps change, this 'clean_net_agent' is insufficient. It would
 # then need to call 'gmake dist-clean'.
@@ -1267,18 +1277,23 @@ clean_hagfish-watcher:
 #---- Firewaller
 
 _firewaller_stamp=$(FIREWALLER_BRANCH)-$(TIMESTAMP)-g$(FIREWALLER_SHA)
-FIREWALLER_BITS=$(BITS_DIR)/firewaller/firewaller-$(_firewaller_stamp).tgz
+FIREWALLER_BIT=$(BITS_DIR)/firewaller/firewaller-$(_firewaller_stamp).tgz
+FIREWALLER_MANIFEST_BIT=$(BITS_DIR)/firewaller/firewaller-$(_firewaller_stamp).manifest
 
 .PHONY: firewaller
-firewaller: $(FIREWALLER_BITS)
+firewaller: $(FIREWALLER_BIT)
 
-$(FIREWALLER_BITS): build/firewaller
+$(FIREWALLER_BIT): build/firewaller
 	@echo "# Build firewaller: branch $(FIREWALLER_BRANCH), sha $(FIREWALLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/firewaller && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created firewaller bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(FIREWALLER_BITS)
+	@ls -l $(FIREWALLER_BIT) $(FIREWALLER_MANIFEST_BIT)
 	@echo ""
+
+firewaller_publish_image: $(FIREWALLER_BIT)
+	@echo "# Publish firewaller image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(FIREWALLER_MANIFEST_BIT) -f $(FIREWALLER_BIT)
 
 clean_firewaller:
 	rm -rf $(BITS_DIR)/firewaller
