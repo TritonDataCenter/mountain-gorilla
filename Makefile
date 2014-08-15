@@ -70,20 +70,25 @@ all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heart
 # TODO:
 # - Re-instate 'gmake lint'?
 
-SMARTLOGIN_BITS=$(BITS_DIR)/smartlogin/smartlogin-$(SMART_LOGIN_BRANCH)-$(TIMESTAMP)-g$(SMART_LOGIN_SHA).tgz
+SMARTLOGIN_BIT=$(BITS_DIR)/smartlogin/smartlogin-$(SMART_LOGIN_BRANCH)-$(TIMESTAMP)-g$(SMART_LOGIN_SHA).tgz
+SMARTLOGIN_MANIFEST_BIT=$(BITS_DIR)/smartlogin/smartlogin-$(SMART_LOGIN_BRANCH)-$(TIMESTAMP)-g$(SMART_LOGIN_SHA).manifest
 
 .PHONY: smartlogin
-smartlogin: $(SMARTLOGIN_BITS)
+smartlogin: $(SMARTLOGIN_BIT)
 
 # PATH: ensure using GCC from SFW. Not sure this is necessary, but has been
 # the case for release builds pre-MG.
-$(SMARTLOGIN_BITS): build/smart-login
+$(SMARTLOGIN_BIT): build/smart-login
 	@echo "# Build smartlogin: branch $(SMART_LOGIN_BRANCH), sha $(SMART_LOGIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/smart-login && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) PATH=/usr/sfw/bin:$(PATH) BITS_DIR=$(BITS_DIR) gmake clean all publish)
 	@echo "# Created smartlogin bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(SMARTLOGIN_BITS)
+	@ls -l $(SMARTLOGIN_BIT)
 	@echo ""
+
+smartlogin_publish_image: $(SMARTLOGIN_BIT)
+	@echo "# Publish smartlogin image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(SMARTLOGIN_MANIFEST_BIT) -f $(SMARTLOGIN_BIT)
 
 clean_smartlogin:
 	rm -rf $(BITS_DIR)/smartlogin
