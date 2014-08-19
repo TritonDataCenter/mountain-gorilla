@@ -2277,7 +2277,7 @@ $(AGENTSSHAR_BITS): build/agents-installer/Makefile
 
 agentsshar_publish_image: $(AGENTSSHAR_BITS)
 	@echo "# Publish agentsshar image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(AGENTSSHAR_MANIFEST_BIT) -f $(AGENTSSHAR_BITS_))
+	$(UPDATES_IMGADM) import -ddd -m $(AGENTSSHAR_MANIFEST_BIT) -f $(AGENTSSHAR_BITS_0)
 
 clean_agentsshar:
 	rm -rf $(BITS_DIR)/agentsshar
