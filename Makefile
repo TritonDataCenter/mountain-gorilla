@@ -2262,6 +2262,7 @@ endif
 AGENTSSHAR_BITS=$(BITS_DIR)/agentsshar/agents-$(_as_stamp).sh \
 	$(BITS_DIR)/agentsshar/agents-$(_as_stamp).md5sum
 AGENTSSHAR_BITS_0=$(shell echo $(AGENTSSHAR_BITS) | awk '{print $$1}')
+AGENTSSHAR_MANIFEST_BIT=$(BITS_DIR)/agentsshar/agentsshar-$(_as_stamp).imgmanifest
 
 .PHONY: agentsshar
 agentsshar: $(AGENTSSHAR_BITS_0)
@@ -2273,6 +2274,10 @@ $(AGENTSSHAR_BITS): build/agents-installer/Makefile
 	@echo "# Created agentsshar bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(AGENTSSHAR_BITS)
 	@echo ""
+
+agentsshar_publish_image: $(AGENTSSHAR_BITS)
+	@echo "# Publish agentsshar image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(AGENTSSHAR_MANIFEST_BIT) -f $(AGENTSSHAR_BITS)
 
 clean_agentsshar:
 	rm -rf $(BITS_DIR)/agentsshar
