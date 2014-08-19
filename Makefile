@@ -2260,8 +2260,7 @@ else
 _as_stamp=$(TRY_BRANCH)-$(TIMESTAMP)-g$(AGENTS_INSTALLER_SHA)
 endif
 AGENTSSHAR_BITS=$(BITS_DIR)/agentsshar/agents-$(_as_stamp).sh \
-	$(BITS_DIR)/agentsshar/agents-$(_as_stamp).md5sum \
-	$(BITS_DIR)/agentsshar/agents-$(_as_stamp).manifest
+	$(BITS_DIR)/agentsshar/agents-$(_as_stamp).md5sum
 AGENTSSHAR_BITS_0=$(shell echo $(AGENTSSHAR_BITS) | awk '{print $$1}')
 AGENTSSHAR_MANIFEST_BIT=$(BITS_DIR)/agentsshar/agents-$(_as_stamp).manifest
 
