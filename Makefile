@@ -22,12 +22,14 @@ BITS_DIR=$(TOP)/bits
 # Tools
 MAKE = make
 TAR = tar
+RM = rm
 UNAME := $(shell uname)
 PFEXEC =
 ifeq ($(UNAME), SunOS)
 	MAKE = gmake
 	TAR = gtar
 	PFEXEC = pfexec
+	RM = grm
 endif
 JSON=$(MG_NODE) $(TOP)/tools/json
 UPDATES_IMGADM=$(HOME)/opt/imgapi-cli/bin/updates-imgadm -i $(HOME)/.ssh/automation.id_rsa -u mg
@@ -54,15 +56,24 @@ ifeq ($(MANTA_UPLOAD_BASE),)
 	MANTA_UPLOAD_BASE=builds
 endif
 
+#
+# This is set to true by the caller when, and only when, building the a
+# Joyent product.  Doing so causes the inclusion of ancillary repositories that
+# cannot be made publicly available.
+#
+JOYENT_BUILD ?= false
 
+ifeq ($(JOYENT_BUILD),true)
+	FIRMWARE_TOOLS=firmware-tools
+endif
 
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller propeller
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment firmware-tools hagfish-watcher firewaller propeller
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
 
 
 #---- smartlogin
@@ -90,7 +101,7 @@ smartlogin_publish_image: $(SMARTLOGIN_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(SMARTLOGIN_MANIFEST_BIT) -f $(SMARTLOGIN_BIT)
 
 clean_smartlogin:
-	rm -rf $(BITS_DIR)/smartlogin
+	$(RM) -rf $(BITS_DIR)/smartlogin
 
 
 
@@ -113,7 +124,7 @@ $(INCR_UPGRADE_BITS): build/usb-headnode
 	@echo ""
 
 clean_incr-upgrade:
-	rm -rf $(BITS_DIR)/incr-upgrade
+	$(RM) -rf $(BITS_DIR)/incr-upgrade
 
 
 
@@ -162,7 +173,7 @@ amon_publish_image: $(AMON_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(AMON_RELAY_MANIFEST_BIT) -f $(AMON_RELAY_BIT)
 
 clean_amon:
-	rm -rf $(BITS_DIR)/amon
+	$(RM) -rf $(BITS_DIR)/amon
 	(cd build/amon && gmake clean)
 
 #---- cloud-analytics
@@ -219,7 +230,7 @@ ca_publish_image: $(CA_IMAGE_BIT)
 # Warning: if CA's submodule deps change, this 'clean_ca' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_ca:
-	rm -rf $(BITS_DIR)/ca
+	$(RM) -rf $(BITS_DIR)/ca
 	(cd build/cloud-analytics && gmake clean)
 
 
@@ -265,7 +276,7 @@ ufds_publish_image: $(UFDS_IMAGE_BIT)
 # Warning: if UFDS's submodule deps change, this 'clean_ufds' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_ufds:
-	rm -rf $(BITS_DIR)/ufds
+	$(RM) -rf $(BITS_DIR)/ufds
 	(cd build/ufds && gmake clean)
 
 
@@ -310,7 +321,7 @@ usageapi_publish_image: $(USAGEAPI_IMAGE_BIT)
 # Warning: if usageapi's submodule deps change, this 'clean_ufds' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_usageapi:
-	rm -rf $(BITS_DIR)/usageapi
+	$(RM) -rf $(BITS_DIR)/usageapi
 	(cd build/usageapi && gmake clean)
 
 
@@ -350,7 +361,7 @@ assets_publish_image: $(ASSETS_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(ASSETS_MANIFEST_BIT) -f $(ASSETS_IMAGE_BIT)
 
 clean_assets:
-	rm -rf $(BITS_DIR)/assets
+	$(RM) -rf $(BITS_DIR)/assets
 	(cd build/assets && gmake clean)
 
 #---- ADMINUI
@@ -389,7 +400,7 @@ adminui_publish_image: $(ADMINUI_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(ADMINUI_MANIFEST_BIT) -f $(ADMINUI_IMAGE_BIT)
 
 clean_adminui:
-	rm -rf $(BITS_DIR)/adminui
+	$(RM) -rf $(BITS_DIR)/adminui
 	(cd build/adminui && gmake clean)
 
 
@@ -429,7 +440,7 @@ redis_publish_image: $(REDIS_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(REDIS_MANIFEST_BIT) -f $(REDIS_IMAGE_BIT)
 
 clean_redis:
-	rm -rf $(BITS_DIR)/redis
+	$(RM) -rf $(BITS_DIR)/redis
 	(cd build/redis && gmake clean)
 
 
@@ -469,7 +480,7 @@ amonredis_publish_image: $(AMONREDIS_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(AMONREDIS_MANIFEST_BIT) -f $(AMONREDIS_IMAGE_BIT)
 
 clean_amonredis:
-	rm -rf $(BITS_DIR)/amonredis
+	$(RM) -rf $(BITS_DIR)/amonredis
 	(cd build/amonredis && gmake clean)
 
 
@@ -509,7 +520,7 @@ rabbitmq_publish_image: $(RABBITMQ_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(RABBITMQ_MANIFEST_BIT) -f $(RABBITMQ_IMAGE_BIT)
 
 clean_rabbitmq:
-	rm -rf $(BITS_DIR)/rabbitmq
+	$(RM) -rf $(BITS_DIR)/rabbitmq
 	(cd build/rabbitmq && gmake clean)
 
 #---- DHCPD
@@ -549,7 +560,7 @@ dhcpd_publish_image: $(DHCPD_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(DHCPD_MANIFEST_BIT) -f $(DHCPD_IMAGE_BIT)
 
 clean_dhcpd:
-	rm -rf $(BITS_DIR)/dhcpd
+	$(RM) -rf $(BITS_DIR)/dhcpd
 	(cd build/dhcpd && gmake clean)
 
 #---- MOCKCN
@@ -589,7 +600,7 @@ mockcn_publish_image: $(MOCKCN_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(MOCKCN_MANIFEST_BIT) -f $(MOCKCN_IMAGE_BIT)
 
 clean_mockcn:
-	rm -rf $(BITS_DIR)/mockcn
+	$(RM) -rf $(BITS_DIR)/mockcn
 	(cd build/mockcn && gmake clean)
 
 
@@ -634,7 +645,7 @@ cloudapi_publish_image: $(CLOUDAPI_IMAGE_BIT)
 # Warning: if cloudapi's submodule deps change, this 'clean_ufds' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_cloudapi:
-	rm -rf $(BITS_DIR)/cloudapi
+	$(RM) -rf $(BITS_DIR)/cloudapi
 	(cd build/cloudapi && gmake clean)
 
 
@@ -675,7 +686,7 @@ manta-manatee_publish_image: $(MANTA_MANATEE_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(MANTA_MANATEE_MANIFEST_BIT) -f $(MANTA_MANATEE_IMAGE_BIT)
 
 clean_manta-manatee:
-	rm -rf $(BITS_DIR)/manta-manatee
+	$(RM) -rf $(BITS_DIR)/manta-manatee
 	(cd build/manta-manatee && gmake distclean)
 
 
@@ -716,7 +727,7 @@ sdc-manatee_publish_image: $(SDC_MANATEE_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(SDC_MANATEE_MANIFEST_BIT) -f $(SDC_MANATEE_IMAGE_BIT)
 
 clean_sdc-manatee:
-	rm -rf $(BITS_DIR)/sdc-manatee
+	$(RM) -rf $(BITS_DIR)/sdc-manatee
 	(cd build/sdc-manatee && gmake distclean)
 
 
@@ -757,7 +768,7 @@ manatee_publish_image: $(MANATEE_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(MANATEE_MANIFEST_BIT) -f $(MANATEE_IMAGE_BIT)
 
 clean_manatee:
-	rm -rf $(BITS_DIR)/manatee
+	$(RM) -rf $(BITS_DIR)/manatee
 	(cd build/manatee && gmake distclean)
 
 
@@ -801,7 +812,7 @@ workflow_publish_image: $(WORKFLOW_IMAGE_BIT)
 # Warning: if workflow's submodule deps change, this 'clean_workflow' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_workflow:
-	rm -rf $(BITS_DIR)/workflow
+	$(RM) -rf $(BITS_DIR)/workflow
 	(cd build/workflow && gmake clean)
 
 
@@ -845,7 +856,7 @@ vmapi_publish_image: $(VMAPI_IMAGE_BIT)
 # Warning: if vmapi's submodule deps change, this 'clean_vmapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_vmapi:
-	rm -rf $(BITS_DIR)/vmapi
+	$(RM) -rf $(BITS_DIR)/vmapi
 	(cd build/vmapi && gmake clean)
 
 
@@ -891,7 +902,7 @@ papi_publish_image: $(PAPI_IMAGE_BIT)
 # Warning: if papi's submodule deps change, this 'clean_papi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_papi:
-	rm -rf $(BITS_DIR)/papi
+	$(RM) -rf $(BITS_DIR)/papi
 	(cd build/papi && gmake clean)
 
 
@@ -932,7 +943,7 @@ imgapi_publish_image: $(IMGAPI_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(IMGAPI_MANIFEST_BIT) -f $(IMGAPI_IMAGE_BIT)
 
 clean_imgapi:
-	rm -rf $(BITS_DIR)/imgapi
+	$(RM) -rf $(BITS_DIR)/imgapi
 	(cd build/imgapi && gmake clean)
 
 
@@ -972,7 +983,7 @@ sdc_publish_image: $(SDC_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(SDC_MANIFEST_BIT) -f $(SDC_IMAGE_BIT)
 
 clean_sdc:
-	rm -rf $(BITS_DIR)/sdc
+	$(RM) -rf $(BITS_DIR)/sdc
 	(cd build/sdc && gmake clean)
 
 
@@ -1022,7 +1033,7 @@ agents_core_publish_image: $(AGENTS_CORE_BIT)
 # Warning: if agents_core's submodule deps change, this 'clean_agents_core' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_agents_core:
-	rm -rf $(BITS_DIR)/agents_core
+	$(RM) -rf $(BITS_DIR)/agents_core
 	(cd build/agents_core && gmake clean)
 
 
@@ -1057,7 +1068,7 @@ vm-agent_publish_image: $(VM_AGENT_BIT)
 # Warning: if vm-agents's submodule deps change, this 'clean_vm_agent' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_vm_agent:
-	rm -rf $(BITS_DIR)/vm-agent
+	$(RM) -rf $(BITS_DIR)/vm-agent
 	(cd build/sdc-vm-agent && gmake clean)
 
 
@@ -1092,7 +1103,7 @@ net-agent_publish_image: $(NET_AGENT_BIT)
 # Warning: if net-agents's submodule deps change, this 'clean_net_agent' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_net_agent:
-	rm -rf $(BITS_DIR)/net-agent
+	$(RM) -rf $(BITS_DIR)/net-agent
 	(cd build/sdc-net-agent && gmake clean)
 
 
@@ -1127,7 +1138,7 @@ cn-agent_publish_image: $(CN_AGENT_BIT)
 # Warning: if cn-agents's submodule deps change, this 'clean_cn_agent' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_cn_agent:
-	rm -rf $(BITS_DIR)/cn-agent
+	$(RM) -rf $(BITS_DIR)/cn-agent
 	(cd build/sdc-cn-agent && gmake clean)
 
 
@@ -1157,7 +1168,7 @@ provisioner_publish_image: $(PROVISIONER_BIT)
 # Warning: if provisioner's submodule deps change, this 'clean_provisioner' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_provisioner:
-	rm -rf $(BITS_DIR)/provisioner
+	$(RM) -rf $(BITS_DIR)/provisioner
 	(cd build/provisioner && gmake clean)
 
 
@@ -1187,7 +1198,7 @@ heartbeater_publish_image: $(HEARTBEATER_BIT)
 # Warning: if heartbeater's submodule deps change, this 'clean_heartbeater' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_heartbeater:
-	rm -rf $(BITS_DIR)/heartbeater
+	$(RM) -rf $(BITS_DIR)/heartbeater
 	(cd build/heartbeater && gmake clean)
 
 
@@ -1217,7 +1228,7 @@ zonetracker_publish_image: $(ZONETRACKER_BIT)
 # Warning: if zonetracker's submodule deps change, this 'clean_zonetracker' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_zonetracker:
-	rm -rf $(BITS_DIR)/zonetracker
+	$(RM) -rf $(BITS_DIR)/zonetracker
 	(cd build/zonetracker && gmake clean)
 
 
@@ -1243,7 +1254,7 @@ config-agent_publish_image: $(CONFIG_AGENT_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(CONFIG_AGENT_MANIFEST_BIT) -f $(CONFIG_AGENT_BIT)
 
 clean_config_agent:
-	rm -rf $(BITS_DIR)/config-agent
+	$(RM) -rf $(BITS_DIR)/config-agent
 	(cd build/config-agent && gmake clean)
 
 
@@ -1269,7 +1280,7 @@ hagfish-watcher_publish_image: $(HAGFISH_WATCHER_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(HAGFISH_WATCHER_MANIFEST_BIT) -f $(HAGFISH_WATCHER_BIT)
 
 clean_hagfish-watcher:
-	rm -rf $(BITS_DIR)/hagfish-watcher
+	$(RM) -rf $(BITS_DIR)/hagfish-watcher
 	(cd build/hagfish-watcher && gmake clean)
 
 
@@ -1295,7 +1306,7 @@ firewaller_publish_image: $(FIREWALLER_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(FIREWALLER_MANIFEST_BIT) -f $(FIREWALLER_BIT)
 
 clean_firewaller:
-	rm -rf $(BITS_DIR)/firewaller
+	$(RM) -rf $(BITS_DIR)/firewaller
 	(cd build/firewaller && gmake clean)
 
 
@@ -1340,7 +1351,7 @@ cnapi_publish_image: $(CNAPI_IMAGE_BIT)
 # Warning: if cnapi's submodule deps change, this 'clean_cnapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_cnapi:
-	rm -rf $(BITS_DIR)/cnapi
+	$(RM) -rf $(BITS_DIR)/cnapi
 	(cd build/cnapi && gmake clean)
 
 
@@ -1384,7 +1395,7 @@ sdcsso_publish_image: $(SDCSSO_IMAGE_BIT)
 # Warning: if SDCSSO's submodule deps change, this 'clean_sdcsso is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_sdcsso:
-	rm -rf $(BITS_DIR)/sdcsso
+	$(RM) -rf $(BITS_DIR)/sdcsso
 	(cd build/sdcsso && gmake clean)
 
 
@@ -1428,7 +1439,7 @@ fwapi_publish_image: $(FWAPI_IMAGE_BIT)
 # Warning: if FWAPI's submodule deps change, this 'clean_fwapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_fwapi:
-	rm -rf $(BITS_DIR)/fwapi
+	$(RM) -rf $(BITS_DIR)/fwapi
 	(cd build/fwapi && gmake clean)
 
 
@@ -1473,7 +1484,7 @@ napi_publish_image: $(NAPI_IMAGE_BIT)
 # Warning: if NAPI's submodule deps change, this 'clean_napi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_napi:
-	rm -rf $(BITS_DIR)/napi
+	$(RM) -rf $(BITS_DIR)/napi
 	(cd build/napi && gmake clean)
 
 
@@ -1519,7 +1530,7 @@ sapi_publish_image: $(SAPI_IMAGE_BIT)
 # Warning: if SAPI's submodule deps change, this 'clean_sapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_sapi:
-	rm -rf $(BITS_DIR)/sapi
+	$(RM) -rf $(BITS_DIR)/sapi
 	(cd build/sapi && gmake clean)
 
 
@@ -1566,7 +1577,7 @@ marlin_publish_image: $(MARLIN_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(MARLIN_AGENT_MANIFEST_BIT) -f $(MARLIN_AGENT_BIT)
 
 clean_marlin:
-	rm -rf $(BITS_DIR)/marlin
+	$(RM) -rf $(BITS_DIR)/marlin
 	(cd build/marlin && gmake distclean)
 
 #---- MEDUSA
@@ -1608,7 +1619,7 @@ medusa_publish_image: $(MEDUSA_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(MEDUSA_MANIFEST_BIT) -f $(MEDUSA_IMAGE_BIT)
 
 clean_medusa:
-	rm -rf $(BITS_DIR)/medusa
+	$(RM) -rf $(BITS_DIR)/medusa
 	(cd build/medusa && gmake distclean)
 
 #---- MAHI
@@ -1648,7 +1659,7 @@ mahi_publish_image: $(MAHI_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(MAHI_MANIFEST_BIT) -f $(MAHI_IMAGE_BIT)
 
 clean_mahi:
-	rm -rf $(BITS_DIR)/mahi
+	$(RM) -rf $(BITS_DIR)/mahi
 	(cd build/mahi && gmake distclean)
 
 
@@ -1691,7 +1702,7 @@ mola_publish_image: $(MOLA_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(MOLA_MANIFEST_BIT) -f $(MOLA_IMAGE_BIT)
 
 clean_mola:
-	rm -rf $(BITS_DIR)/mola
+	$(RM) -rf $(BITS_DIR)/mola
 	(cd build/mola && gmake distclean)
 
 
@@ -1734,7 +1745,7 @@ madtom_publish_image: $(MADTOM_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(MADTOM_MANIFEST_BIT) -f $(MADTOM_IMAGE_BIT)
 
 clean_madtom:
-	rm -rf $(BITS_DIR)/madtom
+	$(RM) -rf $(BITS_DIR)/madtom
 	(cd build/madtom && gmake distclean)
 
 
@@ -1777,7 +1788,7 @@ marlin-dashboard_publish_image: $(MARLIN_DASHBOARD_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(MARLIN_DASHBOARD_MANIFEST_BIT) -f $(MARLIN_DASHBOARD_IMAGE_BIT)
 
 clean_marlin-dashboard:
-	rm -rf $(BITS_DIR)/marlin-dashboard
+	$(RM) -rf $(BITS_DIR)/marlin-dashboard
 	(cd build/marlin-dashboard && gmake distclean)
 
 
@@ -1820,7 +1831,7 @@ propeller_publish_image: $(PROPELLER_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(PROPELLER_MANIFEST_BIT) -f $(PROPELLER_IMAGE_BIT)
 
 clean_propeller:
-	rm -rf $(BITS_DIR)/propeller
+	$(RM) -rf $(BITS_DIR)/propeller
 	(cd build/propeller && gmake distclean)
 
 
@@ -1863,7 +1874,7 @@ moray_publish_image: $(MORAY_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(MORAY_MANIFEST_BIT) -f $(MORAY_IMAGE_BIT)
 
 clean_moray:
-	rm -rf $(BITS_DIR)/moray
+	$(RM) -rf $(BITS_DIR)/moray
 	(cd build/moray && gmake distclean)
 
 
@@ -1906,7 +1917,7 @@ electric-moray_publish_image: $(ELECTRIC_MORAY_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(ELECTRIC_MORAY_MANIFEST_BIT) -f $(ELECTRIC_MORAY_IMAGE_BIT)
 
 clean_electric-moray:
-	rm -rf $(BITS_DIR)/electric-moray
+	$(RM) -rf $(BITS_DIR)/electric-moray
 	(cd build/electric-moray && gmake distclean)
 
 
@@ -1949,7 +1960,7 @@ muskie_publish_image: $(MUSKIE_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(MUSKIE_MANIFEST_BIT) -f $(MUSKIE_IMAGE_BIT)
 
 clean_muskie:
-	rm -rf $(BITS_DIR)/muskie
+	$(RM) -rf $(BITS_DIR)/muskie
 	(cd build/muskie && gmake distclean)
 
 
@@ -1992,7 +2003,7 @@ wrasse_publish_image: $(WRASSE_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(WRASSE_MANIFEST_BIT) -f $(WRASSE_IMAGE_BIT)
 
 clean_wrasse:
-	rm -rf $(BITS_DIR)/wrasse
+	$(RM) -rf $(BITS_DIR)/wrasse
 	(cd build/wrasse && gmake distclean)
 
 
@@ -2013,7 +2024,7 @@ $(REGISTRAR_BITS): build/registrar
 	@echo ""
 
 clean_registrar:
-	rm -rf $(BITS_DIR)/registrar
+	$(RM) -rf $(BITS_DIR)/registrar
 	(cd build/registrar && gmake distclean)
 
 
@@ -2034,7 +2045,7 @@ $(MACKEREL_BITS): build/mackerel
 	@echo ""
 
 clean_mackerel:
-	rm -rf $(BITS_DIR)/mackerel
+	$(RM) -rf $(BITS_DIR)/mackerel
 	(cd build/mackerel && gmake distclean)
 
 
@@ -2075,7 +2086,7 @@ binder_publish_image: $(BINDER_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(BINDER_MANIFEST_BIT) -f $(BINDER_IMAGE_BIT)
 
 clean_binder:
-	rm -rf $(BITS_DIR)/binder
+	$(RM) -rf $(BITS_DIR)/binder
 	(cd build/binder && gmake distclean)
 
 
@@ -2116,7 +2127,7 @@ sdc-zookeeper_publish_image: $(SDC_ZOOKEEPER_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(SDC_ZOOKEEPER_MANIFEST_BIT) -f $(SDC_ZOOKEEPER_IMAGE_BIT)
 
 clean_sdc-zookeeper:
-	rm -rf $(BITS_DIR)/sdc-zookeeper
+	$(RM) -rf $(BITS_DIR)/sdc-zookeeper
 	(cd build/sdc-zookeeper && gmake distclean)
 
 
@@ -2157,7 +2168,7 @@ muppet_publish_image: $(MUPPET_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(MUPPET_MANIFEST_BIT) -f $(MUPPET_IMAGE_BIT)
 
 clean_muppet:
-	rm -rf $(BITS_DIR)/muppet
+	$(RM) -rf $(BITS_DIR)/muppet
 	(cd build/muppet && gmake distclean)
 
 #---- Minnow
@@ -2177,7 +2188,7 @@ $(MINNOW_BITS): build/minnow
 	@echo ""
 
 clean_minnow:
-	rm -rf $(BITS_DIR)/minnow
+	$(RM) -rf $(BITS_DIR)/minnow
 	(cd build/minnow && gmake distclean)
 
 
@@ -2218,7 +2229,7 @@ mako_publish_image: $(MAKO_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(MAKO_MANIFEST_BIT) -f $(MAKO_IMAGE_BIT)
 
 clean_mako:
-	rm -rf $(BITS_DIR)/mako
+	$(RM) -rf $(BITS_DIR)/mako
 	(cd build/mako && gmake distclean)
 
 
@@ -2245,7 +2256,7 @@ $(SDCADM_BITS): build/sdcadm/Makefile
 	@echo ""
 
 clean_sdcadm:
-	rm -rf $(BITS_DIR)/sdcadm
+	$(RM) -rf $(BITS_DIR)/sdcadm
 
 sdcadm_publish_image: $(SDCADM_BITS)
 	@echo "# Publish sdcadm image to SDC Updates repo."
@@ -2280,7 +2291,7 @@ agentsshar_publish_image: $(AGENTSSHAR_BITS)
 	$(UPDATES_IMGADM) import -ddd -m $(AGENTSSHAR_MANIFEST_BIT) -f $(AGENTSSHAR_BITS_0)
 
 clean_agentsshar:
-	rm -rf $(BITS_DIR)/agentsshar
+	$(RM) -rf $(BITS_DIR)/agentsshar
 	(if [[ -d build/agents-installer ]]; then cd build/agents-installer && gmake clean; fi )
 
 
@@ -2305,7 +2316,7 @@ $(CONVERTVM_BITS): build/convertvm
 # Warning: if convertvm's submodule deps change, this 'clean_convertvm' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_convertvm:
-	rm -rf $(BITS_DIR)/convertvm
+	$(RM) -rf $(BITS_DIR)/convertvm
 	(cd build/convertvm && gmake clean)
 
 
@@ -2346,7 +2357,7 @@ manta-deployment_publish_image: $(MANTA_DEPLOYMENT_IMAGE_BIT)
 
 
 clean_manta-deployment:
-	rm -rf $(BITS_DIR)/manta-deployment
+	$(RM) -rf $(BITS_DIR)/manta-deployment
 	(cd build/manta-deployment && gmake distclean)
 
 
@@ -2368,10 +2379,12 @@ $(SDCBOOT_BITS): build/sdcboot
 	@echo ""
 
 clean_sdcboot:
-	rm -rf $(BITS_DIR)/sdcboot
+	$(RM) -rf $(BITS_DIR)/sdcboot
 	(cd build/sdcboot && gmake clean)
 
 #---- firmware-tools (Legacy-mode FDUM facilities and firmware for Joyent HW)
+
+ifeq ($(JOYENT_BUILD),true)
 
 _firmware_tools_stamp=$(FIRMWARE_TOOLS_BRANCH)-$(TIMESTAMP)-g$(FIRMWARE_TOOLS_SHA)
 FIRMWARE_TOOLS_BITS=$(BITS_DIR)/firmware-tools/firmware-tools-$(_firmware_tools_stamp).tgz
@@ -2388,8 +2401,10 @@ $(FIRMWARE_TOOLS_BITS): build/firmware-tools
 	@echo ""
 
 clean_firmware-tools:
-	rm -rf $(BITS_DIR)/firmware-tools
+	$(RM) -rf $(BITS_DIR)/firmware-tools
 	(cd build/firmware-tools && gmake clean)
+
+endif	# $(JOYENT_BUILD) == true
 
 #---- usb-headnode
 # We are using the '-s STAGE-DIR' option to the usb-headnode build to
@@ -2415,6 +2430,10 @@ USB_BITS_DIR=$(BITS_DIR)/usbheadnode$(USB_HEADNODE_SUFFIX)
 
 USB_BITS_SPEC=$(USB_BITS_DIR)/build.spec.local
 
+USB_BUILD_SPEC_ENV = \
+	USE_DEBUG_PLATFORM=$(USE_DEBUG_PLATFORM) \
+	JOYENT_BUILD=$(JOYENT_BUILD)
+
 BOOT_BUILD=$(USB_BUILD_DIR)/boot-$(_usbheadnode_stamp).tgz
 BOOT_OUTPUT=$(USB_BITS_DIR)/boot$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).tgz
 
@@ -2424,7 +2443,7 @@ BOOT_OUTPUT=$(USB_BITS_DIR)/boot$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).tgz
 # lofi devices (used ones will just fail)
 .PHONY: cleanimgcruft
 cleanimgcruft:
-	rm -vf /tmp/*4gb.img
+	$(RM) -vf /tmp/*4gb.img
 	for dev in $(shell lofiadm | cut -d ' ' -f1 | grep -v "^Block"); do pfexec lofiadm -d ${dev}; done
 
 .PHONY: boot
@@ -2448,8 +2467,8 @@ COAL_BUILD=$(USB_BUILD_DIR)/coal-$(_usbheadnode_stamp)-4gb.tgz
 COAL_OUTPUT=$(USB_BITS_DIR)/coal$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp)-4gb.tgz
 
 $(USB_BITS_SPEC): $(USB_BITS_DIR)
-	USE_DEBUG_PLATFORM=$(USE_DEBUG_PLATFORM) bash <build.spec.in >$(USB_BITS_SPEC)
-	(cd $(USB_BUILD_DIR); rm -f build.spec.local; ln -s $(USB_BITS_SPEC))
+	$(USB_BUILD_SPEC_ENV) bash <build.spec.in >$(USB_BITS_SPEC)
+	(cd $(USB_BUILD_DIR); $(RM) -f build.spec.local; ln -s $(USB_BITS_SPEC))
 
 .PHONY: coal
 coal: usb $(COAL_OUTPUT)
@@ -2518,7 +2537,7 @@ releasejson: $(USB_BITS_DIR)
 
 
 clean_usbheadnode:
-	rm -rf $(BITS_DIR)/usbheadnode $(BITS_DIR)/usbheadnode$(USB_HEADNODE_SUFFIX)
+	$(RM) -rf $(BITS_DIR)/usbheadnode $(BITS_DIR)/usbheadnode$(USB_HEADNODE_SUFFIX)
 
 
 
@@ -2577,7 +2596,7 @@ $(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-b
 	@echo ""
 
 clean_platform:
-	rm -rf $(BITS_DIR)/platform
+	$(RM) -rf $(BITS_DIR)/platform
 	(cd build/smartos-live && gmake clean)
 
 #---- docs target (based on eng.git/tools/mk code for this)
@@ -2607,7 +2626,7 @@ docs:							\
 $(RESTDOWN_EXEC): | deps/restdown/.git
 
 clean_docs:
-	rm -rf build/docs
+	$(RM) -rf build/docs
 
 
 
@@ -2621,11 +2640,11 @@ clean_null:
 
 .PHONY: distclean
 distclean:
-	$(PFEXEC) rm -rf bits build
+	$(PFEXEC) $(RM) -rf bits build
 
 .PHONY: cacheclean
 cacheclean: distclean
-	$(PFEXEC) rm -rf cache
+	$(PFEXEC) $(RM) -rf cache
 
 
 

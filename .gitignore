@@ -7,5 +7,6 @@
 /node_modules
 
 .mg.json
+targets.json
 
 /tools/jenkins/sdc-jenkins/node_modules

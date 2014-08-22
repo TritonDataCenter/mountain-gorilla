@@ -58,6 +58,15 @@ platform (because the platform is by far the longest part of the build):
     ./configure -t all-except-platform
     make all-except-platform
 
+To include ancillary closed repositories in a usb-headnode build (which the
+'all', 'all-except-platform', 'usb-headnode', and 'usb-headnode-debug'
+targets will build), you need to pass the `-j` option to configure.  Note
+that this will cause your build to fail if you do not have access to the
+private ancillary repositories, so it should be used only when building
+Joyent products:
+
+    ./configure -j -t all
+    gmake all
 
 # Prerequisites
 

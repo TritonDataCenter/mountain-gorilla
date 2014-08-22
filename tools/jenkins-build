@@ -110,7 +110,7 @@ if [[ "$CLEAN_CACHE" == "true" ]]; then
     rm -rf $CACHE_DIR
 fi
 
-TRACE=1 ./configure -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" -B "$TRY_BRANCH"
+TRACE=1 ./configure -j -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" -B "$TRY_BRANCH"
 
 now_time=$(date +%s)
 elapsed=$((${now_time} - ${last_time}))

@@ -1,13 +1,34 @@
+set -o errexit
+set -o pipefail
+
+[[ -z $JOYENT_BUILD ]] && JOYENT_BUILD=false
+
+if [[ "${JOYENT_BUILD}" == "true" ]]; then
+	FIRMWARE_TOOLS_DEP='"firmware-tools",'
+	FIRMWARE_TOOLS_ENTRY='
+  "firmware-tools": {
+    "repos": [
+	{"url": "git@git.joyent.com:firmware-tools.git"}
+    ],
+    "deps": []
+  },'
+elif [[ "${JOYENT_BUILD}" == "false" ]]; then
+  echo "targets.json: Non-Joyent build; disabling ancillary repositories." >&2
+else
+  echo "targets.json: ERROR: JOYENT_BUILD must be set to true|false." >&2
+fi
+
+cat <<EOF
 {
   "smartlogin": {
     "repos": [
-        {"url": "git@git.joyent.com:smart-login.git"}
+	{"url": "git@git.joyent.com:smart-login.git"}
     ],
     "deps": []
   },
   "incr-upgrade": {
     "repos": [
-        {"url": "git@git.joyent.com:usb-headnode.git"}
+	{"url": "git@git.joyent.com:usb-headnode.git"}
     ],
     "deps": []
   },
@@ -91,7 +112,7 @@
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [],
     "repos": [
-        {"url": "git@git.joyent.com:adminui.git", "dir": "adminui"}
+	{"url": "git@git.joyent.com:adminui.git", "dir": "adminui"}
     ],
     "deps": [
       "amon",
@@ -115,7 +136,7 @@
       "tftp-hpa-5.2"
     ],
     "repos": [
-        {"url": "git@git.joyent.com:mockcn.git", "dir": "mockcn"}
+	{"url": "git@git.joyent.com:mockcn.git", "dir": "mockcn"}
     ],
     "deps": [],
     "tarballs": []
@@ -130,7 +151,7 @@
       "tftp-hpa-5.2"
     ],
     "repos": [
-        {"url": "git@git.joyent.com:booter.git", "dir": "dhcpd"}
+	{"url": "git@git.joyent.com:booter.git", "dir": "dhcpd"}
     ],
     "deps": [
       "amon",
@@ -344,7 +365,7 @@
       "python26-2.6.7nb2"
     ],
     "repos": [
-        {"url": "git@git.joyent.com:vmapi.git"}
+	{"url": "git@git.joyent.com:vmapi.git"}
     ],
     "deps": [
       "amon",
@@ -372,7 +393,7 @@
       "python26-2.6.7nb2"
     ],
     "repos": [
-        {"url": "git@git.joyent.com:papi.git"}
+	{"url": "git@git.joyent.com:papi.git"}
     ],
     "deps": [
       "amon",
@@ -415,7 +436,7 @@
     "image_description": "SDC tools/ops zone",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
-        "mtr-0.82"
+	"mtr-0.82"
     ],
     "repos": [
       {"url": "git@git.joyent.com:sdc.git"}
@@ -433,7 +454,7 @@
 
   "agents_core": {
     "repos": [
-        {"url": "git@git.joyent.com:agents_core.git"}
+	{"url": "git@git.joyent.com:agents_core.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -442,7 +463,7 @@
 
   "heartbeater": {
     "repos": [
-        {"url": "git@git.joyent.com:heartbeater.git"}
+	{"url": "git@git.joyent.com:heartbeater.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -451,7 +472,7 @@
 
   "vm-agent": {
     "repos": [
-        {"url": "git@git.joyent.com:sdc-vm-agent.git"}
+	{"url": "git@git.joyent.com:sdc-vm-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -460,7 +481,7 @@
 
   "net-agent": {
     "repos": [
-        {"url": "git@git.joyent.com:sdc-net-agent.git"}
+	{"url": "git@git.joyent.com:sdc-net-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -469,7 +490,7 @@
 
   "cn-agent": {
     "repos": [
-        {"url": "git@git.joyent.com:sdc-cn-agent.git"}
+	{"url": "git@git.joyent.com:sdc-cn-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -478,7 +499,7 @@
 
   "provisioner": {
     "repos": [
-        {"url": "git@git.joyent.com:provisioner.git"}
+	{"url": "git@git.joyent.com:provisioner.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -487,7 +508,7 @@
 
   "zonetracker": {
     "repos": [
-        {"url": "git@git.joyent.com:zonetracker.git"}
+	{"url": "git@git.joyent.com:zonetracker.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -496,7 +517,7 @@
 
   "config-agent": {
     "repos": [
-        {"url": "git@git.joyent.com:config-agent.git"}
+	{"url": "git@git.joyent.com:config-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -505,7 +526,7 @@
 
   "hagfish-watcher": {
     "repos": [
-        {"url": "git@git.joyent.com:hagfish-watcher.git"}
+	{"url": "git@git.joyent.com:hagfish-watcher.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -514,7 +535,7 @@
 
   "firewaller": {
     "repos": [
-        {"url": "git@git.joyent.com:firewaller.git"}
+	{"url": "git@git.joyent.com:firewaller.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -536,7 +557,7 @@
       "gsharutils-4.11.1"
     ],
     "repos": [
-        {"url": "git@git.joyent.com:cnapi.git"}
+	{"url": "git@git.joyent.com:cnapi.git"}
     ],
     "deps": [
       "amon",
@@ -561,7 +582,7 @@
       "openldap-client-2.4.24"
     ],
     "repos": [
-        {"url": "git@git.joyent.com:fwapi.git"}
+	{"url": "git@git.joyent.com:fwapi.git"}
     ],
     "deps": [
       "amon",
@@ -614,7 +635,7 @@
       "python26-2.6.7nb2"
     ],
     "repos": [
-        {"url": "git@git.joyent.com:sapi.git"}
+	{"url": "git@git.joyent.com:sapi.git"}
     ],
     "deps": [
       "amon",
@@ -631,7 +652,7 @@
 
   "registrar": {
     "repos": [
-        {"url": "git@git.joyent.com:registrar.git"}
+	{"url": "git@git.joyent.com:registrar.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -640,7 +661,7 @@
 
   "minnow": {
     "repos": [
-        {"url": "git@git.joyent.com:minnow.git"}
+	{"url": "git@git.joyent.com:minnow.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -649,7 +670,7 @@
 
   "mackerel": {
     "repos": [
-        {"url": "git@git.joyent.com:mackerel.git"}
+	{"url": "git@git.joyent.com:mackerel.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -714,12 +735,12 @@
     "image_description": "Manta manatee",
     "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
     "pkgsrc": [
-        "postgresql92-server-9.2.4nb1",
-        "postgresql92-adminpack",
-        "postgresql92-datatypes",
-        "postgresql92-pgcrypto",
-        "postgresql92-replicationtools",
-        "postgresql92-upgrade"
+	"postgresql92-server-9.2.4nb1",
+	"postgresql92-adminpack",
+	"postgresql92-datatypes",
+	"postgresql92-pgcrypto",
+	"postgresql92-replicationtools",
+	"postgresql92-upgrade"
     ],
     "repos": [
       {"url": "git@git.joyent.com:manta-manatee.git"}
@@ -743,12 +764,12 @@
     "image_description": "SDC manatee",
     "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
     "pkgsrc": [
-        "postgresql92-server-9.2.4nb1",
-        "postgresql92-adminpack",
-        "postgresql92-datatypes",
-        "postgresql92-pgcrypto",
-        "postgresql92-replicationtools",
-        "postgresql92-upgrade"
+	"postgresql92-server-9.2.4nb1",
+	"postgresql92-adminpack",
+	"postgresql92-datatypes",
+	"postgresql92-pgcrypto",
+	"postgresql92-replicationtools",
+	"postgresql92-upgrade"
     ],
     "repos": [
       {"url": "git@git.joyent.com:sdc-manatee.git"}
@@ -826,7 +847,7 @@
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-        {"url": "git@git.joyent.com:moray.git"}
+	{"url": "git@git.joyent.com:moray.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
@@ -850,7 +871,7 @@
       "haproxy-1.4.24"
     ],
     "repos": [
-        {"url": "git@git.joyent.com:electric-moray.git"}
+	{"url": "git@git.joyent.com:electric-moray.git"}
     ],
     "deps": [
       "registrar",
@@ -1096,14 +1117,14 @@
 
   "sdcadm": {
     "repos": [
-        {"url": "git@git.joyent.com:sdcadm.git"}
+	{"url": "git@git.joyent.com:sdcadm.git"}
     ],
     "deps": []
   },
 
   "agentsshar": {
     "repos": [
-        {"url": "git@git.joyent.com:agents-installer.git"}
+	{"url": "git@git.joyent.com:agents-installer.git"}
     ],
     "deps": [
       "agents_core",
@@ -1124,7 +1145,7 @@
   },
   "convertvm": {
     "repos": [
-        {"url":  "git@github.com:joyent/convertvm.git" }
+	{"url":  "git@github.com:joyent/convertvm.git" }
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -1145,7 +1166,7 @@
       "python26-2.6.7nb2"
     ],
     "repos": [
-        {"url":  "git@github.com:joyent/sdcsso.git" }
+	{"url":  "git@github.com:joyent/sdcsso.git" }
     ],
     "deps": [
       "amon",
@@ -1170,7 +1191,7 @@
       "openldap-client-2.4.24"
     ],
     "repos": [
-        {"url": "git@git.joyent.com:manta-deployment.git"}
+	{"url": "git@git.joyent.com:manta-deployment.git"}
     ],
     "deps": [
       "amon",
@@ -1185,7 +1206,7 @@
 
   "sdc-system-tests": {
     "repos": [
-        {"url": "git@git.joyent.com:sdc-system-tests.git"}
+	{"url": "git@git.joyent.com:sdc-system-tests.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -1199,117 +1220,112 @@
     "deps": []
   },
 
-  "firmware-tools": {
-    "repos": [
-	{"url": "git@git.joyent.com:firmware-tools.git"}
-    ],
-    "deps": []
-  },
+  $FIRMWARE_TOOLS_ENTRY
 
   "platform": {
     "repos": [
-        {"url": "git@github.com:joyent/smartos-live.git"},
-        {"url": "git@github.com:joyent/illumos-joyent.git"},
-        {"url": "git@github.com:joyent/illumos-extra.git"},
-        {"url": "git@git.joyent.com:ur-agent.git"},
-        {"url": "git@github.com:joyent/illumos-kvm.git"},
-        {"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
-        {"url": "git@git.joyent.com:sdc-platform.git"},
-        {"url": "git@github.com:joyent/mdata-client.git"}
+	{"url": "git@github.com:joyent/smartos-live.git"},
+	{"url": "git@github.com:joyent/illumos-joyent.git"},
+	{"url": "git@github.com:joyent/illumos-extra.git"},
+	{"url": "git@git.joyent.com:ur-agent.git"},
+	{"url": "git@github.com:joyent/illumos-kvm.git"},
+	{"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
+	{"url": "git@git.joyent.com:sdc-platform.git"},
+	{"url": "git@github.com:joyent/mdata-client.git"}
     ],
     "deps": []
   },
  "platform-debug": {
     "repos": [
-        {"url": "git@github.com:joyent/smartos-live.git"},
-        {"url": "git@github.com:joyent/illumos-joyent.git"},
-        {"url": "git@github.com:joyent/illumos-extra.git"},
-        {"url": "git@git.joyent.com:ur-agent.git"},
-        {"url": "git@github.com:joyent/illumos-kvm.git"},
-        {"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
-        {"url": "git@git.joyent.com:sdc-platform.git"},
-        {"url": "git@github.com:joyent/mdata-client.git"}
+	{"url": "git@github.com:joyent/smartos-live.git"},
+	{"url": "git@github.com:joyent/illumos-joyent.git"},
+	{"url": "git@github.com:joyent/illumos-extra.git"},
+	{"url": "git@git.joyent.com:ur-agent.git"},
+	{"url": "git@github.com:joyent/illumos-kvm.git"},
+	{"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
+	{"url": "git@git.joyent.com:sdc-platform.git"},
+	{"url": "git@github.com:joyent/mdata-client.git"}
     ],
     "deps": []
   },
 
   "usbheadnode": {
     "repos": [
-        {"url": "git@git.joyent.com:usb-headnode.git"}
+	{"url": "git@git.joyent.com:usb-headnode.git"}
     ],
     "deps": [
-        "adminui",
-        "agentsshar",
-        "master/agentsshar-upgrade",
-        "amon",
-        "amonredis",
-        "assets",
-        "registrar",
-        "binder",
-        "ca",
-        "cloudapi",
-        "cnapi",
-        "dhcpd",
-        "firmware-tools",
-        "fwapi",
-        "imgapi",
-        "sdc-manatee",
-        "mahi",
-        "manta-deployment",
-        "moray",
-        "napi",
-        "papi",
-        "platform",
-        "rabbitmq",
-        "redis",
-        "sapi",
-        "sdc",
-        "sdcadm",
-        "sdcboot",
-        "sdcsso",
-        "ufds",
-        "vmapi",
-        "workflow"
+	"adminui",
+	"agentsshar",
+	"master/agentsshar-upgrade",
+	"amon",
+	"amonredis",
+	"assets",
+	"registrar",
+	"binder",
+	"ca",
+	"cloudapi",
+	"cnapi",
+	"dhcpd",
+	$FIRMWARE_TOOLS_DEP
+	"fwapi",
+	"imgapi",
+	"sdc-manatee",
+	"mahi",
+	"manta-deployment",
+	"moray",
+	"napi",
+	"papi",
+	"platform",
+	"rabbitmq",
+	"redis",
+	"sapi",
+	"sdc",
+	"sdcadm",
+	"sdcboot",
+	"sdcsso",
+	"ufds",
+	"vmapi",
+	"workflow"
     ]
   },
 
   "usbheadnode-debug": {
     "repos": [
-        {"url": "git@git.joyent.com:usb-headnode.git"}
+	{"url": "git@git.joyent.com:usb-headnode.git"}
     ],
     "deps": [
-        "adminui",
-        "agentsshar",
-        "agentsshar-upgrade",
-        "amon",
-        "amonredis",
-        "assets",
-        "registrar",
-        "binder",
-        "ca",
-        "cloudapi",
-        "cnapi",
-        "dhcpd",
-        "firmware-tools",
-        "fwapi",
-        "imgapi",
-        "sdc-manatee",
-        "mahi",
-        "manta-deployment",
-        "moray",
-        "napi",
-        "papi",
-        "platform-debug",
-        "rabbitmq",
-        "redis",
-        "sapi",
-        "sdc",
-        "sdcadm",
-        "sdcboot",
-        "sdcsso",
-        "ufds",
-        "vmapi",
-        "workflow"
+	"adminui",
+	"agentsshar",
+	"agentsshar-upgrade",
+	"amon",
+	"amonredis",
+	"assets",
+	"registrar",
+	"binder",
+	"ca",
+	"cloudapi",
+	"cnapi",
+	"dhcpd",
+	$FIRMWARE_TOOLS_DEP
+	"fwapi",
+	"imgapi",
+	"sdc-manatee",
+	"mahi",
+	"manta-deployment",
+	"moray",
+	"napi",
+	"papi",
+	"platform-debug",
+	"rabbitmq",
+	"redis",
+	"sapi",
+	"sdc",
+	"sdcadm",
+	"sdcboot",
+	"sdcsso",
+	"ufds",
+	"vmapi",
+	"workflow"
     ]
   },
 
@@ -1318,3 +1334,5 @@
     "deps": []
   }
 }
+
+EOF

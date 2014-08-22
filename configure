@@ -4,6 +4,7 @@
 # Configure the mountain gorilla (aka SDC) build.
 #
 # "targets.json" is a mapping of Makefile target to info about that target.
+# It is generated from targets.json.in.
 
 if [ "$TRACE" != "" ]; then
     export PS4='[\D{%FT%TZ}] ${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
@@ -428,6 +429,7 @@ BRANCH=$BRANCH
 TRY_BRANCH=$TRY_BRANCH
 MG_NODE=$MG_NODE
 MG_CACHE_DIR=$(cd $MG_CACHE_DIR >/dev/null; pwd)
+JOYENT_BUILD=$JOYENT_BUILD
 
 EOF
   mkdir -p build
@@ -497,6 +499,7 @@ function print_help() {
     echo "  -d USER      Alternate user to pull dependencies from. eg. if "
     echo "               building as yourself, -d Joyent_Dev will pull deps "
     echo "               from normal builds."
+    echo "  -j           Configure this workspace to build Joyent products."
     exit 0
 }
 
@@ -604,7 +607,7 @@ MG_NODE=$(which node)
 if [[ "$1" == "--help" ]]; then
   print_help
 fi
-while getopts "b:B:d:hrft:c:" opt; do
+while getopts "b:B:d:hrft:c:j" opt; do
     case "$opt" in
         b) BRANCH=$OPTARG ;;
         B) TRY_BRANCH=$OPTARG ;;
@@ -615,11 +618,16 @@ while getopts "b:B:d:hrft:c:" opt; do
         t) TARGET=${OPTARG} ;;
         c) MG_CACHE_DIR=${OPTARG} ;;
         d) MG_DEP_USER=${OPTARG} ;;
+        j) JOYENT_BUILD=true ;;
         ?) fatal "unknown option: $opt" ;;
     esac
 done
 shift $((OPTIND-1))
 
+[[ -z $JOYENT_BUILD ]] && JOYENT_BUILD=false
+export JOYENT_BUILD
+rm -f targets.json
+bash < targets.json.in > targets.json
 
 # Pre-condition: must have node >=0.10 first on path (see RELENG-266).
 echo "Ensure have a 'node' >= v0.10."

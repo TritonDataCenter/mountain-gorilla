@@ -91,9 +91,9 @@ if [[ "$CLEAN_CACHE" == "true" ]]; then
     rm -rf $CACHE_DIR
 fi
 if [[ "$JOB_NAME" == "sdc" ]]; then
-    TRACE=1 ./configure -c "$CACHE_DIR" -b "$BRANCH" -B "$TRY_BRANCH"
+    TRACE=1 ./configure -j -c "$CACHE_DIR" -b "$BRANCH" -B "$TRY_BRANCH"
 else
-    TRACE=1 ./configure -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" -B "$TRY_BRANCH"
+    TRACE=1 ./configure -j -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" -B "$TRY_BRANCH"
 fi
 
 now_time=$(date +%s)
