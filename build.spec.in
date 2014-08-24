@@ -15,7 +15,8 @@ if [[ -z "$JOYENT_BUILD" ]]; then
 	echo "build.spec.in error: you must define 'JOYENT_BUILD=true|false'" >&2
 	exit 2
 elif [[ "$JOYENT_BUILD" == "true" ]]; then
-	FIRMWARE_TOOLS='"firmware-tools-release": $(ls bits/firmware-tools/firmware-tools*.tgz | xargs basename | sed -e "s/^firmware-tools-\(.*\)-[0-9]*T[0-9]*Z-g[0-9a-f]*\.tgz$/\1/")",'
+	FWT_PATH="$(ls bits/firmware-tools/firmware-tools*.tgz | xargs basename | sed -e "s/^firmware-tools-\(.*\)-[0-9]*T[0-9]*Z-g[0-9a-f]*\.tgz$/\1/")"
+	FIRMWARE_TOOLS='"firmware-tools-release": "'${FWT_PATH}'",'
 else
 	FIRMWARE_TOOLS=
 fi
