@@ -106,7 +106,28 @@ echo "#---------------------- configure"
 [[ -z "$BRANCH" ]] && BRANCH=master
 # Note the "-c" to use a cache dir one up, i.e. shared between builds of this job.
 CACHE_DIR=$(cd ../; pwd)/cache
-if [[ "$CLEAN_CACHE" == "true" ]]; then
+echo "CLEAN_CACHE: ${CLEAN_CACHE}"
+
+# XXX TOOLS-610
+#
+#  We've temporarily set CLEAN_CACHE to default to "true" in order to facilitate
+#  the move to github. Once the move is complete, this code can be removed and
+#  the default can be set back to "false".
+#
+#  We may also consider only destroying the cache if git.joyent.com does not
+#  exist in the .git/config or .gitmodules files. The debug output below is
+#  to help determine whether that will work or not.
+#
+if [[ -d ${CACHE_DIR} ]]; then
+    if grep "git\.joyent\.com" ${CACHE_DIR}/.git/config; then
+        echo "=> ${CACHE_DIR}/.git/config contains 'git.joyent.com'"
+    fi
+    if grep "git\.joyent\.com" ${CACHE_DIR}/.gitmodules; then
+        echo "=> ${CACHE_DIR}/.gitmodules contains 'git.joyent.com'"
+    fi
+fi
+if [[ "$CLEAN_CACHE" != "false" ]]; then
+    echo "Cleaning cache..."
     rm -rf $CACHE_DIR
 fi
 
