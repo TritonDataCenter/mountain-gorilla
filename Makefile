@@ -797,10 +797,10 @@ workflow_image: $(WORKFLOW_IMAGE_BIT)
 
 $(WORKFLOW_IMAGE_BIT): $(WORKFLOW_BITS)
 	@echo "# Build workflow_image: branch $(SDC_WORKFLOW_BRANCH), sha $(SDC_WORKFLOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(WORKFLOW_IMAGE_UUID)" -t $(WORKFLOW_BITS) \
-		-o "$(WORKFLOW_IMAGE_BIT)" -p $(WORKFLOW_PKGSRC) \
-		-t $(WORKFLOW_EXTRA_TARBALLS) -n $(WORKFLOW_IMAGE_NAME) \
-		-v $(_wf_stamp) -d $(WORKFLOW_IMAGE_DESCRIPTION)
+	./tools/prep_dataset_in_jpc.sh -i "$(SDC_WORKFLOW_IMAGE_UUID)" -t $(WORKFLOW_BITS) \
+		-o "$(SDC_WORKFLOW_IMAGE_BIT)" -p $(SDC_WORKFLOW_PKGSRC) \
+		-t $(SDC_WORKFLOW_EXTRA_TARBALLS) -n $(SDC_WORKFLOW_IMAGE_NAME) \
+		-v $(_wf_stamp) -d $(SDC_WORKFLOW_IMAGE_DESCRIPTION)
 	@echo "# Created workflow image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $$(dirname $(WORKFLOW_IMAGE_BIT))
 	@echo ""
