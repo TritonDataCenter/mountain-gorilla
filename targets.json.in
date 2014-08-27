@@ -22,7 +22,7 @@ cat <<EOF
 {
   "smartlogin": {
     "repos": [
-	{"url": "git@git.joyent.com:smart-login.git"}
+	{"url": "git@github.com:joyent/sdc-smart-login.git"}
     ],
     "deps": []
   },
