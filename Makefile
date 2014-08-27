@@ -784,10 +784,10 @@ workflow: $(WORKFLOW_BITS) workflow_image
 
 # PATH for workflow build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(WORKFLOW_BITS): build/workflow
+$(WORKFLOW_BITS): build/sdc-workflow
 	@echo "# Build workflow: branch $(SDC_WORKFLOW_BRANCH), sha $(SDC_WORKFLOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/workflow && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-workflow && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created workflow bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(WORKFLOW_BITS)
 	@echo ""
@@ -812,8 +812,8 @@ workflow_publish_image: $(WORKFLOW_IMAGE_BIT)
 # Warning: if workflow's submodule deps change, this 'clean_workflow' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_workflow:
-	$(RM) -rf $(BITS_DIR)/workflow
-	(cd build/workflow && gmake clean)
+	$(RM) -rf $(BITS_DIR)/sdc-workflow
+	(cd build/sdc-workflow && gmake clean)
 
 
 #---- VMAPI
