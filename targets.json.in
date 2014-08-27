@@ -323,7 +323,7 @@ cat <<EOF
     ]
   },
 
-  "sdc-workflow": {
+  "workflow": {
     "appliance": "true",
     "image_name": "workflow",
     "image_description": "SDC Workflow",
@@ -1285,7 +1285,7 @@ cat <<EOF
 	"sdcsso",
 	"ufds",
 	"vmapi",
-	"sdc-workflow"
+	"workflow"
     ]
   },
 
@@ -1325,7 +1325,7 @@ cat <<EOF
 	"sdcsso",
 	"ufds",
 	"vmapi",
-	"sdc-workflow"
+	"workflow"
     ]
   },
 
