@@ -70,10 +70,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi sdc-papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
+all: smartlogin incr-upgrade amon amonredis sdc-ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi sdc-papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi sdc-papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
+all-except-platform: smartlogin incr-upgrade amon amonredis sdc-ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi sdc-papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
 
 
 #---- smartlogin
@@ -183,7 +183,7 @@ clean_amon:
 # - look at https://hub.joyent.com/wiki/display/dev/Setting+up+Cloud+Analytics+development+on+COAL-147
 #   for env setup. Might be demons in there. (RELENG-192)
 
-_ca_stamp=$(CLOUD_ANALYTICS_BRANCH)-$(TIMESTAMP)-g$(CLOUD_ANALYTICS_SHA)
+_ca_stamp=$(SDC_CLOUD_ANALYTICS_BRANCH)-$(TIMESTAMP)-g$(SDC_CLOUD_ANALYTICS_SHA)
 CA_BITS=$(BITS_DIR)/ca/ca-pkg-$(_ca_stamp).tar.bz2 \
 	$(BITS_DIR)/ca/cabase-$(_ca_stamp).tar.gz \
 	$(BITS_DIR)/ca/cainstsvc-$(_ca_stamp).tar.gz
@@ -195,15 +195,15 @@ CA_BASE_MANIFEST_BIT=$(BITS_DIR)/ca/cabase-$(_ca_stamp).manifest
 CA_INSTSVC_BIT=$(BITS_DIR)/ca/cainstsvc-$(_ca_stamp).tar.gz
 CA_INSTSVC_MANIFEST_BIT=$(BITS_DIR)/ca/cainstsvc-$(_ca_stamp).manifest
 
-.PHONY: ca
-ca: $(CA_BITS_0) ca_image
+.PHONY: sdc-ca
+sdc-ca: $(CA_BITS_0) ca_image
 
 # PATH for ca build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(CA_BITS): build/cloud-analytics
-	@echo "# Build ca: branch $(CLOUD_ANALYTICS_BRANCH), sha $(CLOUD_ANALYTICS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(CA_BITS): build/sdc-cloud-analytics
+	@echo "# Build ca: branch $(SDC_CLOUD_ANALYTICS_BRANCH), sha $(SDC_CLOUD_ANALYTICS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/cloud-analytics && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
+	(cd build/sdc-cloud-analytics && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) PATH="/sbin:/opt/local/bin:/usr/gnu/bin:/usr/bin:/usr/sbin:$(PATH)" gmake clean pkg release publish)
 	@echo "# Created ca bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(CA_BITS)
 	@echo ""
@@ -212,11 +212,11 @@ $(CA_BITS): build/cloud-analytics
 ca_image: $(CA_IMAGE_BIT)
 
 $(CA_IMAGE_BIT): $(CA_BITS_0)
-	@echo "# Build ca_image: branch $(CA_BRANCH), sha $(CA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(CA_IMAGE_UUID)" -t $(CA_BITS_0) \
-		-o "$(CA_IMAGE_BIT)" -p $(CA_PKGSRC) \
-		-t $(CA_EXTRA_TARBALLS) -n $(CA_IMAGE_NAME) \
-		-v $(_ca_stamp) -d $(CA_IMAGE_DESCRIPTION)
+	@echo "# Build ca_image: branch $(SDC_CA_BRANCH), sha $(SDC_CA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(SDC_CA_IMAGE_UUID)" -t $(CA_BITS_0) \
+		-o "$(CA_IMAGE_BIT)" -p $(SDC_CA_PKGSRC) \
+		-t $(SDC_CA_EXTRA_TARBALLS) -n $(SDC_CA_IMAGE_NAME) \
+		-v $(_ca_stamp) -d $(SDC_CA_IMAGE_DESCRIPTION)
 	@echo "# Created ca image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $$(dirname $(CA_IMAGE_BIT))
 	@echo ""
@@ -230,8 +230,8 @@ ca_publish_image: $(CA_IMAGE_BIT)
 # Warning: if CA's submodule deps change, this 'clean_ca' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_ca:
-	$(RM) -rf $(BITS_DIR)/ca
-	(cd build/cloud-analytics && gmake clean)
+	$(RM) -rf $(BITS_DIR)/sdc-ca
+	(cd build/sdc-cloud-analytics && gmake clean)
 
 
 
@@ -1578,7 +1578,7 @@ marlin_publish_image: $(MARLIN_IMAGE_BIT)
 
 clean_marlin:
 	$(RM) -rf $(BITS_DIR)/manta-marlin
-	(cd build/marlin && gmake distclean)
+	(cd build/manta-marlin && gmake distclean)
 
 #---- MEDUSA
 

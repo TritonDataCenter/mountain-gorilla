@@ -32,7 +32,7 @@ cat <<EOF
     ],
     "deps": []
   },
-  "ca": {
+  "sdc-ca": {
     "appliance": "true",
     "image_name": "ca",
     "image_description": "SDC Cloud Analytics",
@@ -46,7 +46,7 @@ cat <<EOF
       "GeoLiteCity-201203"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:cloud-analytics.git", "submodule-update": false}
+      {"url": "git@github.com:joyent/sdc-cloud-analytics.git", "submodule-update": false}
     ],
     "deps": [
       "amon",
@@ -1136,7 +1136,7 @@ cat <<EOF
       "net-agent",
       "vm-agent",
       "amon",
-      "ca",
+      "sdc-ca",
       "smartlogin",
       "manta-marlin",
       "firewaller",
@@ -1262,7 +1262,7 @@ cat <<EOF
 	"assets",
 	"registrar",
 	"binder",
-	"ca",
+	"sdc-ca",
 	"cloudapi",
 	"cnapi",
 	"dhcpd",
@@ -1302,7 +1302,7 @@ cat <<EOF
 	"assets",
 	"registrar",
 	"binder",
-	"ca",
+	"sdc-ca",
 	"cloudapi",
 	"cnapi",
 	"dhcpd",
