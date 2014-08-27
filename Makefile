@@ -1537,22 +1537,22 @@ clean_sapi:
 
 #---- Marlin
 
-_marlin_stamp=$(MARLIN_BRANCH)-$(TIMESTAMP)-g$(MARLIN_SHA)
+_marlin_stamp=$(MANTA_MARLIN_BRANCH)-$(TIMESTAMP)-g$(MANTA_MARLIN_SHA)
 MARLIN_BITS=$(BITS_DIR)/marlin/marlin-pkg-$(_marlin_stamp).tar.bz2
 MARLIN_IMAGE_BIT=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).zfs.gz
 MARLIN_MANIFEST_BIT=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).imgmanifest
 MARLIN_AGENT_BIT=$(BITS_DIR)/marlin/marlin-$(_marlin_stamp).tar.gz
 MARLIN_AGENT_MANIFEST_BIT=$(BITS_DIR)/marlin/marlin-$(_marlin_stamp).manifest
 
-.PHONY: marlin
-marlin: $(MARLIN_BITS) marlin_image
+.PHONY: manta-marlin
+manta-marlin: $(MARLIN_BITS) marlin_image
 
 # PATH for marlin build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(MARLIN_BITS): build/marlin
-	@echo "# Build marlin: branch $(MARLIN_BRANCH), sha $(MARLIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(MARLIN_BITS): build/manta-marlin
+	@echo "# Build marlin: branch $(MANTA_MARLIN_BRANCH), sha $(MANTA_MARLIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/marlin && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manta-marlin && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created marlin bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(MARLIN_BITS) $(MARLIN_AGENT_BIT) $(MARLIN_AGENT_MANIFEST_BIT)
 	@echo ""
@@ -1561,12 +1561,12 @@ $(MARLIN_BITS): build/marlin
 marlin_image: $(MARLIN_IMAGE_BIT)
 
 $(MARLIN_IMAGE_BIT): $(MARLIN_BITS)
-	@echo "# Build marlin_image: branch $(MARLIN_BRANCH), sha $(MARLIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(MARLIN_IMAGE_UUID)" -t $(MARLIN_BITS) \
+	@echo "# Build marlin_image: branch $(MANTA_MARLIN_BRANCH), sha $(MANTA_MARLIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MANTA_MARLIN_IMAGE_UUID)" -t $(MARLIN_BITS) \
 		-b "marlin" \
-		-o "$(MARLIN_IMAGE_BIT)" -p $(MARLIN_PKGSRC) \
-		-t $(MARLIN_EXTRA_TARBALLS) -n $(MARLIN_IMAGE_NAME) \
-		-v $(_marlin_stamp) -d $(MARLIN_IMAGE_DESCRIPTION)
+		-o "$(MARLIN_IMAGE_BIT)" -p $(MANTA_MARLIN_PKGSRC) \
+		-t $(MANTA_MARLIN_EXTRA_TARBALLS) -n $(MANTA_MARLIN_IMAGE_NAME) \
+		-v $(_marlin_stamp) -d $(MANTA_MARLIN_IMAGE_DESCRIPTION)
 	@echo "# Created marlin image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $$(dirname $(MARLIN_IMAGE_BIT))
 	@echo ""
@@ -1577,7 +1577,7 @@ marlin_publish_image: $(MARLIN_IMAGE_BIT)
 	$(UPDATES_IMGADM) import -ddd -m $(MARLIN_AGENT_MANIFEST_BIT) -f $(MARLIN_AGENT_BIT)
 
 clean_marlin:
-	$(RM) -rf $(BITS_DIR)/marlin
+	$(RM) -rf $(BITS_DIR)/manta-marlin
 	(cd build/marlin && gmake distclean)
 
 #---- MEDUSA

@@ -1041,7 +1041,7 @@ cat <<EOF
     ]
   },
 
-  "marlin": {
+  "manta-marlin": {
     "appliance": "true",
     "image_name": "manta-jobsupervisor",
     "image_description": "Manta jobsupervisor",
@@ -1050,7 +1050,7 @@ cat <<EOF
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:marlin.git"}
+      {"url": "git@github.com:joyent/manta-marlin.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
@@ -1138,7 +1138,7 @@ cat <<EOF
       "amon",
       "ca",
       "smartlogin",
-      "marlin",
+      "manta-marlin",
       "firewaller",
       "config-agent"
     ]
