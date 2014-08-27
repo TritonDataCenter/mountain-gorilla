@@ -244,7 +244,7 @@ cat <<EOF
     "image_version": "1.0.0",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "repos": [
-      {"url": "git@git.joyent.com:cloudapi.git"}
+      {"url": "git@github.com:joyent/sdc-cloudapi.git"}
     ],
     "deps": [
       "amon",
@@ -393,7 +393,7 @@ cat <<EOF
       "python26-2.6.7nb2"
     ],
     "repos": [
-	{"url": "git@git.joyent.com:papi.git"}
+	{"url": "git@github.com:joyent/sdc-papi.git"}
     ],
     "deps": [
       "amon",
