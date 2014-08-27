@@ -775,9 +775,9 @@ clean_manatee:
 #---- WORKFLOW
 
 _wf_stamp=$(SDC_WORKFLOW_BRANCH)-$(TIMESTAMP)-g$(SDC_WORKFLOW_SHA)
-WORKFLOW_BITS=$(BITS_DIR)/workflow/workflow-pkg-$(_wf_stamp).tar.bz2
-WORKFLOW_IMAGE_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).zfs.gz
-WORKFLOW_MANIFEST_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).imgmanifest
+WORKFLOW_BITS=$(BITS_DIR)/sdc-workflow/workflow-pkg-$(_wf_stamp).tar.bz2
+WORKFLOW_IMAGE_BIT=$(BITS_DIR)/sdc-workflow/workflow-zfs-$(_wf_stamp).zfs.gz
+WORKFLOW_MANIFEST_BIT=$(BITS_DIR)/sdc-workflow/workflow-zfs-$(_wf_stamp).imgmanifest
 
 .PHONY: sdc-workflow
 sdc-workflow: $(WORKFLOW_BITS) workflow_image
