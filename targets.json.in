@@ -308,7 +308,7 @@ cat <<EOF
       "gcc-compiler-4.6.2"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:ufds.git"}
+      {"url": "git@github.com:joyent/sdc-ufds.git"}
     ],
     "deps": [
       "amon",
