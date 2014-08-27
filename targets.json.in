@@ -32,7 +32,7 @@ cat <<EOF
     ],
     "deps": []
   },
-  "sdc-ca": {
+  "ca": {
     "appliance": "true",
     "image_name": "ca",
     "image_description": "SDC Cloud Analytics",
@@ -1136,7 +1136,7 @@ cat <<EOF
       "net-agent",
       "vm-agent",
       "amon",
-      "sdc-ca",
+      "ca",
       "smartlogin",
       "manta-marlin",
       "firewaller",
@@ -1262,7 +1262,7 @@ cat <<EOF
 	"assets",
 	"registrar",
 	"binder",
-	"sdc-ca",
+	"ca",
 	"cloudapi",
 	"cnapi",
 	"dhcpd",
@@ -1302,7 +1302,7 @@ cat <<EOF
 	"assets",
 	"registrar",
 	"binder",
-	"sdc-ca",
+	"ca",
 	"cloudapi",
 	"cnapi",
 	"dhcpd",
