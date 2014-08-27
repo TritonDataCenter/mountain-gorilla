@@ -70,10 +70,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
 
 
 #---- smartlogin
@@ -775,9 +775,9 @@ clean_manatee:
 #---- WORKFLOW
 
 _wf_stamp=$(SDC_WORKFLOW_BRANCH)-$(TIMESTAMP)-g$(SDC_WORKFLOW_SHA)
-WORKFLOW_BITS=$(BITS_DIR)/sdc-workflow/workflow-pkg-$(_wf_stamp).tar.bz2
-WORKFLOW_IMAGE_BIT=$(BITS_DIR)/sdc-workflow/workflow-zfs-$(_wf_stamp).zfs.gz
-WORKFLOW_MANIFEST_BIT=$(BITS_DIR)/sdc-workflow/workflow-zfs-$(_wf_stamp).imgmanifest
+WORKFLOW_BITS=$(BITS_DIR)/workflow/workflow-pkg-$(_wf_stamp).tar.bz2
+WORKFLOW_IMAGE_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).zfs.gz
+WORKFLOW_MANIFEST_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).imgmanifest
 
 .PHONY: sdc-workflow
 sdc-workflow: $(WORKFLOW_BITS) workflow_image

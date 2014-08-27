@@ -155,6 +155,9 @@ echo "TIME: build took ${elapsed} seconds"
 echo ""
 echo "#---------------------- upload"
 
+# It does not exist for sdc-workflow, for example:
+mkdir -p bits/$JOB_NAME
+
 cp $LOG bits/$JOB_NAME/
 gmake manta_upload_jenkins
 gmake jenkins_publish_image
