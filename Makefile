@@ -1260,17 +1260,17 @@ clean_config_agent:
 
 #---- Hagfish Watcher
 
-_hagfish_watcher_stamp=$(HAGFISH_WATCHER_BRANCH)-$(TIMESTAMP)-g$(HAGFISH_WATCHER_SHA)
+_hagfish_watcher_stamp=$(SDC_HAGFISH_WATCHER_BRANCH)-$(TIMESTAMP)-g$(SDC_HAGFISH_WATCHER_SHA)
 HAGFISH_WATCHER_BIT=$(BITS_DIR)/hagfish-watcher/hagfish-watcher-$(_hagfish_watcher_stamp).tgz
 HAGFISH_WATCHER_MANIFEST_BIT=$(BITS_DIR)/hagfish-watcher/hagfish-watcher-$(_hagfish_watcher_stamp).manifest
 
 .PHONY: hagfish-watcher
 hagfish-watcher: $(HAGFISH_WATCHER_BIT)
 
-$(HAGFISH_WATCHER_BIT): build/hagfish-watcher
-	@echo "# Build hagfish-watcher: branch $(HAGFISH_WATCHER_BRANCH), sha $(HAGFISH_WATCHER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(HAGFISH_WATCHER_BIT): build/sdc-hagfish-watcher
+	@echo "# Build hagfish-watcher: branch $(SDC_HAGFISH_WATCHER_BRANCH), sha $(HAGFISH_WATCHER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/hagfish-watcher && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-hagfish-watcher && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created hagfish-watcher bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(HAGFISH_WATCHER_BIT) $(HAGFISH_WATCHER_MANIFEST_BIT)
 	@echo ""
@@ -1281,7 +1281,7 @@ hagfish-watcher_publish_image: $(HAGFISH_WATCHER_BIT)
 
 clean_hagfish-watcher:
 	$(RM) -rf $(BITS_DIR)/hagfish-watcher
-	(cd build/hagfish-watcher && gmake clean)
+	(cd build/sdc-hagfish-watcher && gmake clean)
 
 
 #---- Firewaller
