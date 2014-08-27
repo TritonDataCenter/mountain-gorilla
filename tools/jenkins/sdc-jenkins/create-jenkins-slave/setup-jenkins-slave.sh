@@ -7,7 +7,7 @@ set -o errexit
 set -o xtrace
 
 export HOME=/root
-export PATH=/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin
+export PATH=/root/opt/node/bin:/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin
 
 if [[ -f /root/.ssh/automation.id_rsa.pub ]]; then
     # already setup
@@ -87,11 +87,30 @@ pkgin -y install $(pkgin search sun | grep ^sun-j[dr][ke] | cut -d ' ' -f1 | xar
 pkgin -y install gcc47 gcc-compiler gcc-runtime gcc-tools cscope gmake \
      scmgit python26 png GeoIP GeoLiteCity ghostscript zookeeper-client \
      binutils postgresql91-client-9.1.2 gsharutils build-essential \
-     cdrtools nodejs \
+     cdrtools \
      || /bin/true
+
+
+# Download our own (sdc) node 0.10
+pkgin -y rm nodejs || /bin/true
+
+mkdir -p ~/opt
+
+if [[ ${IMAGE_UUID} == "01b2c898-945f-11e1-a523-af1afbe22822" || ${IMAGE_UUID} == "fd2cc906-8938-11e3-beab-4359c665ac99" ]]; then
+    # If smartos-1.6.3
+    NODEURL=https://download.joyent.com/pub/build/sdcnode/fd2cc906-8938-11e3-beab-4359c665ac99/master-latest/sdcnode/sdcnode-v0.10.26-zone-fd2cc906-8938-11e3-beab-4359c665ac99-master-20140623T210420Z-g28c7f9f.tgz
+    cd ~/opt && curl $NODEURL | tar zxvf -
+else
+    # If multiarch
+    NODEURL=https://download.joyent.com/pub/build/sdcnode/b4bdc598-8939-11e3-bea4-8341f6861379/master-latest/sdcnode/sdcnode-v0.10.26-zone64-b4bdc598-8939-11e3-bea4-8341f6861379-master-20140623T210418Z-g28c7f9f.tgz
+    cd ~/opt && curl $NODEURL | tar zxvf -
+fi
+
+/root/opt/node/bin/node /root/opt/node/lib/node_modules/npm/cli.js install -gf npm
 
 git config --global user.name "Jenkins Slave"
 git config --global user.email jenkins-slave@joyent.com
+
 
 # Get npm working with the old old node and npm by default in
 # smartos/1.6.3. This avoids a CERT problem to the registry.
@@ -99,16 +118,13 @@ cat > /root/.npmrc <<EOF
 registry = http://registry.npmjs.org/
 EOF
 
-# Ensure npm is at its latest version
-npm install -g npm
-
 # Need 'updates-imgadm' from imgapi-cli.git on the PATH (this is used
 # by the MG builds to publish build images to updates.joyent.com).
 mkdir -p /root/opt
 (cd /root/opt \
     && git clone git@git.joyent.com:imgapi-cli.git \
     && cd imgapi-cli \
-    && NODE_PREBUILT_CC_VERSION=4.6.2 PATH=/opt/local/bin:/opt/local/gnu/bin:$PATH gmake)
+    && NODE_PREBUILT_CC_VERSION=4.6.2 PATH=/root/opt/node/bin:/opt/local/bin:/opt/local/gnu/bin:$PATH gmake)
 echo '' >>/root/.bashrc
 echo "export PATH=/root/opt/imgapi-cli/bin:$PATH" >>/root/.bashrc
 
@@ -124,6 +140,8 @@ if [[ ${IS_163} -eq 0 ]]; then
     cd /root
     rm -rf /root/tmp
 fi
+
+sed -i "s/^export PATH=/export PATH=\\/root\\/opt\\/node\\/bin:/g" ~/.bashrc
 
 # setup some tunables and a /root/bin/startup.sh script so we can run stuff at boot.
 
@@ -161,7 +179,7 @@ done
 [[ \${retries} -eq 0 ]] && exit 1
 
 export GIT_SSL_NO_VERIFY=true
-export PATH=/root/opt/imgapi-cli/bin:/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin
+export PATH=/root/opt/node/bin:/root/opt/imgapi-cli/bin:/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin
 export HOME=/root
 export JENKINS_IP_ADDR=\$(/usr/sbin/mdata-get sdc:nics.0.ip)
 
@@ -181,6 +199,7 @@ nohup /opt/local/bin/java -jar /root/data/jenkins/slave.jar \
 exit \${SMF_EXIT_OK}
 EOF
 chmod 755 /root/bin/startup.sh
+
 
 cat > /tmp/jenkins-slave-startup.xml <<EOF
 <?xml version='1.0'?>

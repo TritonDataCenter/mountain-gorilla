@@ -201,7 +201,21 @@ App.prototype.do_create_node.options = [
         type: 'string',
         default: 'sdc-smartos-1.6.3',
         help: 'Name of image to be used for provisioning Jenkins node'
-    }
+    },
+    {
+        names: ['datacenter', 'd'],
+        helpArg: 'DATACENTER',
+        type: 'string',
+        default: 'emy-jenkins',
+        help: 'The datacenter to provision on'
+    },
+    {
+        names: ['server', 's'],
+        helpArg: 'SERVER',
+        type: 'string',
+        default: '49fbb6b8-367b-0010-bed7-047d7bbb7863',
+        help: 'The datacenter to provision on'
+    },
 ];
 
 

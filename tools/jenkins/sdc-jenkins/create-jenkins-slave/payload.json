@@ -4,7 +4,7 @@
   "owner_uuid": "930896af-bf8c-48d4-885c-6573a94b1853",
   "brand": "joyent",
   "alias": "jenkins-ALIAS-IMAGE_VERSION",
-  "server_uuid": "44454c4c-3200-1039-804e-c2c04f575231",
+  "server_uuid": "49fbb6b8-367b-0010-bed7-047d7bbb7863",
   "billing_id": "16425b42-b818-11e2-90d4-87477f18a688",
   "customer_metadata": {
     "jenkins_creds": "JENKINS_CREDS",
@@ -18,6 +18,7 @@
   "vcpus": 16,
   "fs_allowed": "ufs,pcfs,tmpfs",
   "zfs_io_priority": 1000,
+  "zfs_root_compression": "lz4",
   "networks": [
     {
       "uuid": "7561f1d6-588f-4dbf-9102-6b7aef1dec1c",
