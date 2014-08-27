@@ -336,7 +336,7 @@ cat <<EOF
       "apg-2.2.3"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:workflow.git"}
+      {"url": "git@github.com:joyent/sdc-workflow.git"}
     ],
     "deps": [
       "amon",
