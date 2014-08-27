@@ -237,7 +237,7 @@ cat <<EOF
       {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
     ]
   },
-  "cloudapi": {
+  "sdc-cloudapi": {
     "appliance": "true",
     "image_name": "cloudapi",
     "image_description": "SDC CloudAPI",
@@ -323,7 +323,7 @@ cat <<EOF
     ]
   },
 
-  "workflow": {
+  "sdc-workflow": {
     "appliance": "true",
     "image_name": "workflow",
     "image_description": "SDC Workflow",
@@ -380,7 +380,7 @@ cat <<EOF
     ]
   },
 
-  "papi": {
+  "sdc-papi": {
     "appliance": "true",
     "image_name": "papi",
     "image_description": "SDC PAPI",
@@ -1263,7 +1263,7 @@ cat <<EOF
 	"registrar",
 	"binder",
 	"ca",
-	"cloudapi",
+	"sdc-cloudapi",
 	"cnapi",
 	"dhcpd",
 	$FIRMWARE_TOOLS_DEP
@@ -1274,7 +1274,7 @@ cat <<EOF
 	"manta-deployment",
 	"moray",
 	"napi",
-	"papi",
+	"sdc-papi",
 	"platform",
 	"rabbitmq",
 	"redis",
@@ -1285,7 +1285,7 @@ cat <<EOF
 	"sdcsso",
 	"ufds",
 	"vmapi",
-	"workflow"
+	"sdc-workflow"
     ]
   },
 
@@ -1303,7 +1303,7 @@ cat <<EOF
 	"registrar",
 	"binder",
 	"ca",
-	"cloudapi",
+	"sdc-cloudapi",
 	"cnapi",
 	"dhcpd",
 	$FIRMWARE_TOOLS_DEP
@@ -1314,7 +1314,7 @@ cat <<EOF
 	"manta-deployment",
 	"moray",
 	"napi",
-	"papi",
+	"sdc-papi",
 	"platform-debug",
 	"rabbitmq",
 	"redis",
@@ -1325,7 +1325,7 @@ cat <<EOF
 	"sdcsso",
 	"ufds",
 	"vmapi",
-	"workflow"
+	"sdc-workflow"
     ]
   },
 
