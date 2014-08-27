@@ -380,7 +380,7 @@ cat <<EOF
     ]
   },
 
-  "papi": {
+  "sdc-papi": {
     "appliance": "true",
     "image_name": "papi",
     "image_description": "SDC PAPI",
@@ -1274,7 +1274,7 @@ cat <<EOF
 	"manta-deployment",
 	"moray",
 	"napi",
-	"papi",
+	"sdc-papi",
 	"platform",
 	"rabbitmq",
 	"redis",
@@ -1314,7 +1314,7 @@ cat <<EOF
 	"manta-deployment",
 	"moray",
 	"napi",
-	"papi",
+	"sdc-papi",
 	"platform-debug",
 	"rabbitmq",
 	"redis",

@@ -70,10 +70,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
+all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi sdc-papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
+all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi sdc-papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
 
 
 #---- smartlogin
@@ -863,21 +863,21 @@ clean_vmapi:
 
 #---- PAPI
 
-_papi_stamp=$(PAPI_BRANCH)-$(TIMESTAMP)-g$(PAPI_SHA)
+_papi_stamp=$(SDC_PAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_PAPI_SHA)
 PAPI_BITS=$(BITS_DIR)/papi/papi-pkg-$(_papi_stamp).tar.bz2
 PAPI_IMAGE_BIT=$(BITS_DIR)/papi/papi-zfs-$(_papi_stamp).zfs.gz
 PAPI_MANIFEST_BIT=$(BITS_DIR)/papi/papi-zfs-$(_papi_stamp).imgmanifest
 
 
-.PHONY: papi
-papi: $(PAPI_BITS) papi_image
+.PHONY: sdc-papi
+sdc-papi: $(PAPI_BITS) papi_image
 
 # PATH for papi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(PAPI_BITS): build/papi
-	@echo "# Build papi: branch $(PAPI_BRANCH), sha $(PAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(PAPI_BITS): build/sdc-papi
+	@echo "# Build papi: branch $(SDC_PAPI_BRANCH), sha $(SDC_PAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/papi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-papi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created papi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(PAPI_BITS)
 	@echo ""
@@ -886,11 +886,11 @@ $(PAPI_BITS): build/papi
 papi_image: $(PAPI_IMAGE_BIT)
 
 $(PAPI_IMAGE_BIT): $(PAPI_BITS)
-	@echo "# Build papi_image: branch $(PAPI_BRANCH), sha $(PAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(PAPI_IMAGE_UUID)" -t $(PAPI_BITS) \
-		-o "$(PAPI_IMAGE_BIT)" -p $(PAPI_PKGSRC) \
-		-t $(PAPI_EXTRA_TARBALLS) -n $(PAPI_IMAGE_NAME) \
-		-v $(_papi_stamp) -d $(PAPI_IMAGE_DESCRIPTION)
+	@echo "# Build papi_image: branch $(SDC_PAPI_BRANCH), sha $(SDC_PAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(SDC_PAPI_IMAGE_UUID)" -t $(PAPI_BITS) \
+		-o "$(PAPI_IMAGE_BIT)" -p $(SDC_PAPI_PKGSRC) \
+		-t $(SDC_PAPI_EXTRA_TARBALLS) -n $(SDC_PAPI_IMAGE_NAME) \
+		-v $(_papi_stamp) -d $(SDC_PAPI_IMAGE_DESCRIPTION)
 	@echo "# Created papi image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $$(dirname $(PAPI_IMAGE_BIT))
 	@echo ""
@@ -902,7 +902,7 @@ papi_publish_image: $(PAPI_IMAGE_BIT)
 # Warning: if papi's submodule deps change, this 'clean_papi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_papi:
-	$(RM) -rf $(BITS_DIR)/papi
+	$(RM) -rf $(BITS_DIR)/sdc-papi
 	(cd build/papi && gmake clean)
 
 
