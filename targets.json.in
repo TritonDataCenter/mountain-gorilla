@@ -91,7 +91,7 @@ cat <<EOF
       "nginx-1.0.10"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:assets.git"}
+      {"url": "git@github.com/joyent:sdc-assets.git"}
     ],
     "deps": [
       "amon",
@@ -224,7 +224,7 @@ cat <<EOF
       "rabbitmq-2.7.1"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:rabbitmq.git"}
+      {"url": "git@github.com:joyent/sdc-rabbitmq.git"}
     ],
     "deps": [
       "amon",
