@@ -780,7 +780,7 @@ WORKFLOW_IMAGE_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).zfs.gz
 WORKFLOW_MANIFEST_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).imgmanifest
 
 .PHONY: sdc-workflow
-workflow: $(WORKFLOW_BITS) workflow_image
+sdc-workflow: $(WORKFLOW_BITS) workflow_image
 
 # PATH for workflow build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
