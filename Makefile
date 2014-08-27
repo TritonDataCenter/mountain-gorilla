@@ -818,7 +818,7 @@ clean_workflow:
 
 #---- VMAPI
 
-_vmapi_stamp=$(VMAPI_BRANCH)-$(TIMESTAMP)-g$(VMAPI_SHA)
+_vmapi_stamp=$(SDC_VMAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_VMAPI_SHA)
 VMAPI_BITS=$(BITS_DIR)/vmapi/vmapi-pkg-$(_vmapi_stamp).tar.bz2
 VMAPI_IMAGE_BIT=$(BITS_DIR)/vmapi/vmapi-zfs-$(_vmapi_stamp).zfs.gz
 VMAPI_MANIFEST_BIT=$(BITS_DIR)/vmapi/vmapi-zfs-$(_vmapi_stamp).imgmanifest
@@ -828,10 +828,10 @@ vmapi: $(VMAPI_BITS) vmapi_image
 
 # PATH for vmapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(VMAPI_BITS): build/vmapi
-	@echo "# Build vmapi: branch $(VMAPI_BRANCH), sha $(VMAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(VMAPI_BITS): build/sdc-vmapi
+	@echo "# Build vmapi: branch $(SDC_VMAPI_BRANCH), sha $(SDC_VMAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/vmapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-vmapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created vmapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(VMAPI_BITS)
 	@echo ""
@@ -840,7 +840,7 @@ $(VMAPI_BITS): build/vmapi
 vmapi_image: $(VMAPI_IMAGE_BIT)
 
 $(VMAPI_IMAGE_BIT): $(VMAPI_BITS)
-	@echo "# Build vmapi_image: branch $(VMAPI_BRANCH), sha $(VMAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build vmapi_image: branch $(SDC_VMAPI_BRANCH), sha $(SDC_VMAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(VMAPI_IMAGE_UUID)" -t $(VMAPI_BITS) \
 		-o "$(VMAPI_IMAGE_BIT)" -p $(VMAPI_PKGSRC) \
 		-t $(VMAPI_EXTRA_TARBALLS) -n $(VMAPI_IMAGE_NAME) \
@@ -857,7 +857,7 @@ vmapi_publish_image: $(VMAPI_IMAGE_BIT)
 # then need to call 'gmake dist-clean'.
 clean_vmapi:
 	$(RM) -rf $(BITS_DIR)/vmapi
-	(cd build/vmapi && gmake clean)
+	(cd build/sdc-vmapi && gmake clean)
 
 
 
