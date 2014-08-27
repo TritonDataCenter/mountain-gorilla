@@ -621,7 +621,7 @@ cat <<EOF
     ]
   },
 
-  "sdc-sapi": {
+  "sapi": {
     "appliance": "true",
     "image_name": "sapi",
     "image_description": "SDC SAPI",
@@ -635,7 +635,7 @@ cat <<EOF
       "python26-2.6.7nb2"
     ],
     "repos": [
-	{"url": "git@github.com:joyent/sdc-sapi.git"}
+	{"url": "git@git.joyent.com:sapi.git"}
     ],
     "deps": [
       "amon",
@@ -1278,7 +1278,7 @@ cat <<EOF
 	"platform",
 	"rabbitmq",
 	"redis",
-	"sdc-sapi",
+	"sapi",
 	"sdc",
 	"sdcadm",
 	"sdcboot",
@@ -1318,7 +1318,7 @@ cat <<EOF
 	"platform-debug",
 	"rabbitmq",
 	"redis",
-	"sdc-sapi",
+	"sapi",
 	"sdc",
 	"sdcadm",
 	"sdcboot",

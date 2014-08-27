@@ -70,10 +70,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi sdc-papi napi sdc-sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
+all: smartlogin incr-upgrade amon amonredis sdc-ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi sdc-papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi sdc-papi napi sdc-sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
+all-except-platform: smartlogin incr-upgrade amon amonredis sdc-ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi sdc-papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
 
 
 #---- smartlogin
@@ -1491,21 +1491,21 @@ clean_napi:
 
 #---- SAPI
 
-_sapi_stamp=$(SDC_SAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_SAPI_SHA)
+_sapi_stamp=$(SAPI_BRANCH)-$(TIMESTAMP)-g$(SAPI_SHA)
 SAPI_BITS=$(BITS_DIR)/sapi/sapi-pkg-$(_sapi_stamp).tar.bz2
 SAPI_IMAGE_BIT=$(BITS_DIR)/sapi/sapi-zfs-$(_sapi_stamp).zfs.gz
 SAPI_MANIFEST_BIT=$(BITS_DIR)/sapi/sapi-zfs-$(_sapi_stamp).imgmanifest
 
-.PHONY: sdc-sapi
-sdc-sapi: $(SAPI_BITS) sapi_image
+.PHONY: sapi
+sapi: $(SAPI_BITS) sapi_image
 
 
 # PATH for sapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(SAPI_BITS): build/sdc-sapi
-	@echo "# Build sapi: branch $(SDC_SAPI_BRANCH), sha $(SDC_SAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(SAPI_BITS): build/sapi
+	@echo "# Build sapi: branch $(SAPI_BRANCH), sha $(SAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/sdc-sapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created sapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(SAPI_BITS)
 	@echo ""
@@ -1514,11 +1514,11 @@ $(SAPI_BITS): build/sdc-sapi
 sapi_image: $(SAPI_IMAGE_BIT)
 
 $(SAPI_IMAGE_BIT): $(SAPI_BITS)
-	@echo "# Build sapi_image: branch $(SDC_SAPI_BRANCH), sha $(SDC_SAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(SDC_SAPI_IMAGE_UUID)" -t $(SAPI_BITS) \
-		-o "$(SAPI_IMAGE_BIT)" -p $(SDC_SAPI_PKGSRC) \
-		-t $(SDC_SAPI_EXTRA_TARBALLS) -n $(SDC_SAPI_IMAGE_NAME) \
-		-v $(_sapi_stamp) -d $(SDC_SAPI_IMAGE_DESCRIPTION)
+	@echo "# Build sapi_image: branch $(SAPI_BRANCH), sha $(SAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(SAPI_IMAGE_UUID)" -t $(SAPI_BITS) \
+		-o "$(SAPI_IMAGE_BIT)" -p $(SAPI_PKGSRC) \
+		-t $(SAPI_EXTRA_TARBALLS) -n $(SAPI_IMAGE_NAME) \
+		-v $(_sapi_stamp) -d $(SAPI_IMAGE_DESCRIPTION)
 	@echo "# Created sapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $$(dirname $(SAPI_IMAGE_BIT))
 	@echo ""
@@ -1530,7 +1530,7 @@ sapi_publish_image: $(SAPI_IMAGE_BIT)
 # Warning: if SAPI's submodule deps change, this 'clean_sapi' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_sapi:
-	$(RM) -rf $(BITS_DIR)/sdc-sapi
+	$(RM) -rf $(BITS_DIR)/sapi
 	(cd build/sapi && gmake clean)
 
 
