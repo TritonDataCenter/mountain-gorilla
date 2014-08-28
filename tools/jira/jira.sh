@@ -1,4 +1,7 @@
 #!/bin/bash
+#
+# LICENSE: See lib/LICENSE.txt
+#
 
 # Comments
 # - Customize for your installation, for instance you might want to add default parameters like the following:
