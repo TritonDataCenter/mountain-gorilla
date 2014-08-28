@@ -1751,7 +1751,7 @@ clean_madtom:
 
 #---- Marlin Dashboard
 
-_marlin-dashboard_stamp=$(MARLIN_DASHBOARD_BRANCH)-$(TIMESTAMP)-g$(MARLIN_DASHBOARD_SHA)
+_marlin-dashboard_stamp=$(MANTA_MARLIN_DASHBOARD_BRANCH)-$(TIMESTAMP)-g$(MANTA_MARLIN_DASHBOARD_SHA)
 MARLIN_DASHBOARD_BITS=$(BITS_DIR)/marlin-dashboard/marlin-dashboard-pkg-$(_marlin-dashboard_stamp).tar.bz2
 MARLIN_DASHBOARD_IMAGE_BIT=$(BITS_DIR)/marlin-dashboard/marlin-dashboard-zfs-$(_marlin-dashboard_stamp).zfs.gz
 MARLIN_DASHBOARD_MANIFEST_BIT=$(BITS_DIR)/marlin-dashboard/marlin-dashboard-zfs-$(_marlin-dashboard_stamp).imgmanifest
@@ -1761,10 +1761,10 @@ marlin-dashboard: $(MARLIN_DASHBOARD_BITS) marlin-dashboard_image
 
 # PATH for marlin-dashboard build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(MARLIN_DASHBOARD_BITS): build/marlin-dashboard
-	@echo "# Build marlin-dashboard: branch $(MARLIN_DASHBOARD_BRANCH), sha $(MARLIN_DASHBOARD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(MARLIN_DASHBOARD_BITS): build/manta-marlin-dashboard
+	@echo "# Build marlin-dashboard: branch $(MANTA_MARLIN_DASHBOARD_BRANCH), sha $(MANTA_MARLIN_DASHBOARD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/marlin-dashboard && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manta-marlin-dashboard && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created marlin-dashboard bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(MARLIN_DASHBOARD_BITS)
 	@echo ""
@@ -1773,7 +1773,7 @@ $(MARLIN_DASHBOARD_BITS): build/marlin-dashboard
 marlin-dashboard_image: $(MARLIN_DASHBOARD_IMAGE_BIT)
 
 $(MARLIN_DASHBOARD_IMAGE_BIT): $(MARLIN_DASHBOARD_BITS)
-	@echo "# Build marlin-dashboard_image: branch $(MARLIN_DASHBOARD_BRANCH), sha $(MARLIN_DASHBOARD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build marlin-dashboard_image: branch $(MANTA_MARLIN_DASHBOARD_BRANCH), sha $(MANTA_MARLIN_DASHBOARD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MARLIN_DASHBOARD_IMAGE_UUID)" -t $(MARLIN_DASHBOARD_BITS) \
 		-b "marlin-dashboard" \
 		-o "$(MARLIN_DASHBOARD_IMAGE_BIT)" -p $(MARLIN_DASHBOARD_PKGSRC) \
@@ -1789,7 +1789,7 @@ marlin-dashboard_publish_image: $(MARLIN_DASHBOARD_IMAGE_BIT)
 
 clean_marlin-dashboard:
 	$(RM) -rf $(BITS_DIR)/marlin-dashboard
-	(cd build/marlin-dashboard && gmake distclean)
+	(cd build/manta-marlin-dashboard && gmake distclean)
 
 
 #---- Propeller
