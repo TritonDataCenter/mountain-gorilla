@@ -1323,10 +1323,10 @@ cnapi: $(CNAPI_BITS) cnapi_image
 
 # PATH for cnapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(CNAPI_BITS): build/cnapi
+$(CNAPI_BITS): build/sdc-cnapi
 	@echo "# Build cnapi: branch $(CNAPI_BRANCH), sha $(CNAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/cnapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-cnapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created cnapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(CNAPI_BITS)
 	@echo ""
@@ -1352,7 +1352,7 @@ cnapi_publish_image: $(CNAPI_IMAGE_BIT)
 # then need to call 'gmake dist-clean'.
 clean_cnapi:
 	$(RM) -rf $(BITS_DIR)/cnapi
-	(cd build/cnapi && gmake clean)
+	(cd build/sdc-cnapi && gmake clean)
 
 
 #---- SDCSSO
