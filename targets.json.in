@@ -661,7 +661,7 @@ cat <<EOF
 
   "minnow": {
     "repos": [
-	{"url": "git@git.joyent.com:minnow.git"}
+	{"url": "git@github.com:joyent/manta-minnow.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -948,7 +948,7 @@ cat <<EOF
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:mola.git"}
+      {"url": "git@github.com:joyent/manta-mola.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
@@ -976,7 +976,7 @@ cat <<EOF
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:madtom.git"}
+      {"url": "git@github.com:joyent/manta-madtom.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
@@ -1024,7 +1024,7 @@ cat <<EOF
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:mako.git"}
+      {"url": "git@github.com:joyent/manta-mako.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
@@ -1100,7 +1100,7 @@ cat <<EOF
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:propeller.git"}
+      {"url": "git@github.com:joyent/manta-propeller.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",

@@ -1665,7 +1665,7 @@ clean_mahi:
 
 #---- Mola
 
-_mola_stamp=$(MOLA_BRANCH)-$(TIMESTAMP)-g$(MOLA_SHA)
+_mola_stamp=$(MANTA_MOLA_BRANCH)-$(TIMESTAMP)-g$(MANTA_MOLA_SHA)
 MOLA_BITS=$(BITS_DIR)/mola/mola-pkg-$(_mola_stamp).tar.bz2
 MOLA_IMAGE_BIT=$(BITS_DIR)/mola/mola-zfs-$(_mola_stamp).zfs.gz
 MOLA_MANIFEST_BIT=$(BITS_DIR)/mola/mola-zfs-$(_mola_stamp).imgmanifest
@@ -1675,10 +1675,10 @@ mola: $(MOLA_BITS) mola_image
 
 # PATH for mola build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(MOLA_BITS): build/mola
-	@echo "# Build mola: branch $(MOLA_BRANCH), sha $(MOLA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(MOLA_BITS): build/manta-mola
+	@echo "# Build mola: branch $(MANTA_MOLA_BRANCH), sha $(MANTA_MOLA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/mola && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manta-mola && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created mola bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(MOLA_BITS)
 	@echo ""
@@ -1687,7 +1687,7 @@ $(MOLA_BITS): build/mola
 mola_image: $(MOLA_IMAGE_BIT)
 
 $(MOLA_IMAGE_BIT): $(MOLA_BITS)
-	@echo "# Build mola_image: branch $(MOLA_BRANCH), sha $(MOLA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build mola_image: branch $(MANTA_MOLA_BRANCH), sha $(MANTA_MOLA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MOLA_IMAGE_UUID)" -t $(MOLA_BITS) \
 		-b "mola" \
 		-o "$(MOLA_IMAGE_BIT)" -p $(MOLA_PKGSRC) \
@@ -1703,12 +1703,12 @@ mola_publish_image: $(MOLA_IMAGE_BIT)
 
 clean_mola:
 	$(RM) -rf $(BITS_DIR)/mola
-	(cd build/mola && gmake distclean)
+	(cd build/manta-mola && gmake distclean)
 
 
 #---- Madtom
 
-_madtom_stamp=$(MADTOM_BRANCH)-$(TIMESTAMP)-g$(MADTOM_SHA)
+_madtom_stamp=$(MANTA_MADTOM_BRANCH)-$(TIMESTAMP)-g$(MANTA_MADTOM_SHA)
 MADTOM_BITS=$(BITS_DIR)/madtom/madtom-pkg-$(_madtom_stamp).tar.bz2
 MADTOM_IMAGE_BIT=$(BITS_DIR)/madtom/madtom-zfs-$(_madtom_stamp).zfs.gz
 MADTOM_MANIFEST_BIT=$(BITS_DIR)/madtom/madtom-zfs-$(_madtom_stamp).imgmanifest
@@ -1718,10 +1718,10 @@ madtom: $(MADTOM_BITS) madtom_image
 
 # PATH for madtom build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(MADTOM_BITS): build/madtom
-	@echo "# Build madtom: branch $(MADTOM_BRANCH), sha $(MADTOM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(MADTOM_BITS): build/manta-madtom
+	@echo "# Build madtom: branch $(MANTA_MADTOM_BRANCH), sha $(MANTA_MADTOM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/madtom && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manta-madtom && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created madtom bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(MADTOM_BITS)
 	@echo ""
@@ -1730,7 +1730,7 @@ $(MADTOM_BITS): build/madtom
 madtom_image: $(MADTOM_IMAGE_BIT)
 
 $(MADTOM_IMAGE_BIT): $(MADTOM_BITS)
-	@echo "# Build madtom_image: branch $(MADTOM_BRANCH), sha $(MADTOM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build madtom_image: branch $(MANTA_MADTOM_BRANCH), sha $(MANTA_MADTOM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MADTOM_IMAGE_UUID)" -t $(MADTOM_BITS) \
 		-b "madtom" \
 		-o "$(MADTOM_IMAGE_BIT)" -p $(MADTOM_PKGSRC) \
@@ -1746,7 +1746,7 @@ madtom_publish_image: $(MADTOM_IMAGE_BIT)
 
 clean_madtom:
 	$(RM) -rf $(BITS_DIR)/madtom
-	(cd build/madtom && gmake distclean)
+	(cd build/manta-madtom && gmake distclean)
 
 
 #---- Marlin Dashboard
@@ -1794,7 +1794,7 @@ clean_marlin-dashboard:
 
 #---- Propeller
 
-_propeller_stamp=$(PROPELLER_BRANCH)-$(TIMESTAMP)-g$(PROPELLER_SHA)
+_propeller_stamp=$(MANTA_PROPELLER_BRANCH)-$(TIMESTAMP)-g$(MANTA_PROPELLER_SHA)
 PROPELLER_BITS=$(BITS_DIR)/propeller/propeller-pkg-$(_propeller_stamp).tar.bz2
 PROPELLER_IMAGE_BIT=$(BITS_DIR)/propeller/propeller-zfs-$(_propeller_stamp).zfs.gz
 PROPELLER_MANIFEST_BIT=$(BITS_DIR)/propeller/propeller-zfs-$(_propeller_stamp).imgmanifest
@@ -1804,10 +1804,10 @@ propeller: $(PROPELLER_BITS) propeller_image
 
 # PATH for propeller build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(PROPELLER_BITS): build/propeller
-	@echo "# Build propeller: branch $(PROPELLER_BRANCH), sha $(PROPELLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(PROPELLER_BITS): build/manta-propeller
+	@echo "# Build propeller: branch $(MANTA_PROPELLER_BRANCH), sha $(MANTA_PROPELLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/propeller && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manta-propeller && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created propeller bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(PROPELLER_BITS)
 	@echo ""
@@ -1816,7 +1816,7 @@ $(PROPELLER_BITS): build/propeller
 propeller_image: $(PROPELLER_IMAGE_BIT)
 
 $(PROPELLER_IMAGE_BIT): $(PROPELLER_BITS)
-	@echo "# Build propeller_image: branch $(PROPELLER_BRANCH), sha $(PROPELLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build propeller_image: branch $(MANTA_PROPELLER_BRANCH), sha $(MANTA_PROPELLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(PROPELLER_IMAGE_UUID)" -t $(PROPELLER_BITS) \
 		-b "propeller" \
 		-o "$(PROPELLER_IMAGE_BIT)" -p $(PROPELLER_PKGSRC) \
@@ -1832,7 +1832,7 @@ propeller_publish_image: $(PROPELLER_IMAGE_BIT)
 
 clean_propeller:
 	$(RM) -rf $(BITS_DIR)/propeller
-	(cd build/propeller && gmake distclean)
+	(cd build/manta-propeller && gmake distclean)
 
 
 #---- Moray
@@ -2173,28 +2173,28 @@ clean_muppet:
 
 #---- Minnow
 
-_minnow_stamp=$(MINNOW_BRANCH)-$(TIMESTAMP)-g$(MINNOW_SHA)
+_minnow_stamp=$(MANTA_MINNOW_BRANCH)-$(TIMESTAMP)-g$(MANTA_MINNOW_SHA)
 MINNOW_BITS=$(BITS_DIR)/minnow/minnow-pkg-$(_minnow_stamp).tar.bz2
 
 .PHONY: minnow
 minnow: $(MINNOW_BITS)
 
-$(MINNOW_BITS): build/minnow
-	@echo "# Build minnow: branch $(MINNOW_BRANCH), sha $(MINNOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(MINNOW_BITS): build/manta-minnow
+	@echo "# Build minnow: branch $(MANTA_MINNOW_BRANCH), sha $(MANTA_MINNOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/minnow && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manta-minnow && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created minnow bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(MINNOW_BITS)
 	@echo ""
 
 clean_minnow:
 	$(RM) -rf $(BITS_DIR)/minnow
-	(cd build/minnow && gmake distclean)
+	(cd build/manta-minnow && gmake distclean)
 
 
 #---- Mako
 
-_mako_stamp=$(MAKO_BRANCH)-$(TIMESTAMP)-g$(MAKO_SHA)
+_mako_stamp=$(MANTA_MAKO_BRANCH)-$(TIMESTAMP)-g$(MANTA_MAKO_SHA)
 MAKO_BITS=$(BITS_DIR)/mako/mako-pkg-$(_mako_stamp).tar.bz2
 MAKO_IMAGE_BIT=$(BITS_DIR)/mako/mako-zfs-$(_mako_stamp).zfs.gz
 MAKO_MANIFEST_BIT=$(BITS_DIR)/mako/mako-zfs-$(_mako_stamp).imgmanifest
@@ -2202,10 +2202,10 @@ MAKO_MANIFEST_BIT=$(BITS_DIR)/mako/mako-zfs-$(_mako_stamp).imgmanifest
 .PHONY: mako
 mako: $(MAKO_BITS) mako_image
 
-$(MAKO_BITS): build/mako
-	@echo "# Build mako: branch $(MAKO_BRANCH), sha $(MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(MAKO_BITS): build/manta-mako
+	@echo "# Build mako: branch $(MANTA_MAKO_BRANCH), sha $(MANTA_MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/mako && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manta-mako && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created mako bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(MAKO_BITS)
 	@echo ""
@@ -2214,7 +2214,7 @@ $(MAKO_BITS): build/mako
 mako_image: $(MAKO_IMAGE_BIT)
 
 $(MAKO_IMAGE_BIT): $(MAKO_BITS)
-	@echo "# Build mako_image: branch $(MAKO_BRANCH), sha $(MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build mako_image: branch $(MANTA_MAKO_BRANCH), sha $(MANTA_MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MAKO_IMAGE_UUID)" -t $(MAKO_BITS) \
 		-b "mako" \
 		-o "$(MAKO_IMAGE_BIT)" -p $(MAKO_PKGSRC) \
@@ -2230,7 +2230,7 @@ mako_publish_image: $(MAKO_IMAGE_BIT)
 
 clean_mako:
 	$(RM) -rf $(BITS_DIR)/mako
-	(cd build/mako && gmake distclean)
+	(cd build/manta-mako && gmake distclean)
 
 
 #---- sdcadm
