@@ -327,7 +327,7 @@ clean_usageapi:
 
 #---- ASSETS
 
-_assets_stamp=$(ASSETS_BRANCH)-$(TIMESTAMP)-g$(ASSETS_SHA)
+_assets_stamp=$(SDC_ASSETS_BRANCH)-$(TIMESTAMP)-g$(SDC_ASSETS_SHA)
 ASSETS_BITS=$(BITS_DIR)/assets/assets-pkg-$(_assets_stamp).tar.bz2
 ASSETS_IMAGE_BIT=$(BITS_DIR)/assets/assets-zfs-$(_assets_stamp).zfs.gz
 ASSETS_MANIFEST_BIT=$(BITS_DIR)/assets/assets-zfs-$(_assets_stamp).imgmanifest
@@ -335,10 +335,10 @@ ASSETS_MANIFEST_BIT=$(BITS_DIR)/assets/assets-zfs-$(_assets_stamp).imgmanifest
 .PHONY: assets
 assets: $(ASSETS_BITS) assets_image
 
-$(ASSETS_BITS): build/assets
+$(ASSETS_BITS): build/sdc-assets
 	@echo "# Build assets: branch $(ASSETS_BRANCH), sha $(ASSETS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/assets && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	(cd build/sdc-assets && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
 	@echo "# Created assets bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(ASSETS_BITS)
 	@echo ""
@@ -362,7 +362,7 @@ assets_publish_image: $(ASSETS_IMAGE_BIT)
 
 clean_assets:
 	$(RM) -rf $(BITS_DIR)/assets
-	(cd build/assets && gmake clean)
+	(cd build/sdc-assets && gmake clean)
 
 #---- ADMINUI
 
@@ -486,7 +486,7 @@ clean_amonredis:
 
 #---- RABBITMQ
 
-_rabbitmq_stamp=$(RABBITMQ_BRANCH)-$(TIMESTAMP)-g$(RABBITMQ_SHA)
+_rabbitmq_stamp=$(SDC_RABBITMQ_BRANCH)-$(TIMESTAMP)-g$(SDC_RABBITMQ_SHA)
 RABBITMQ_BITS=$(BITS_DIR)/rabbitmq/rabbitmq-pkg-$(_rabbitmq_stamp).tar.bz2
 RABBITMQ_IMAGE_BIT=$(BITS_DIR)/rabbitmq/rabbitmq-zfs-$(_rabbitmq_stamp).zfs.gz
 RABBITMQ_MANIFEST_BIT=$(BITS_DIR)/rabbitmq/rabbitmq-zfs-$(_rabbitmq_stamp).imgmanifest
@@ -494,10 +494,10 @@ RABBITMQ_MANIFEST_BIT=$(BITS_DIR)/rabbitmq/rabbitmq-zfs-$(_rabbitmq_stamp).imgma
 .PHONY: rabbitmq
 rabbitmq: $(RABBITMQ_BITS) rabbitmq_image
 
-$(RABBITMQ_BITS): build/rabbitmq
+$(RABBITMQ_BITS): build/sdc-rabbitmq
 	@echo "# Build rabbitmq: branch $(RABBITMQ_BRANCH), sha $(RABBITMQ_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/rabbitmq && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	(cd build/sdc-rabbitmq && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
 	@echo "# Created rabbitmq bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(RABBITMQ_BITS)
 	@echo ""
@@ -521,7 +521,7 @@ rabbitmq_publish_image: $(RABBITMQ_IMAGE_BIT)
 
 clean_rabbitmq:
 	$(RM) -rf $(BITS_DIR)/rabbitmq
-	(cd build/rabbitmq && gmake clean)
+	(cd build/sdc-rabbitmq && gmake clean)
 
 #---- DHCPD
 
