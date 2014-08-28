@@ -635,7 +635,7 @@ cat <<EOF
       "python26-2.6.7nb2"
     ],
     "repos": [
-	{"url": "git@git.joyent.com:sapi.git"}
+	{"url": "git@github.com:joyent/sdc-sapi.git"}
     ],
     "deps": [
       "amon",
