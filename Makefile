@@ -2030,23 +2030,23 @@ clean_registrar:
 
 #---- mackerel
 
-_mackerel_stamp=$(MANTA_MACKEREL_BRANCH)-$(TIMESTAMP)-g$(MANTA_MACKEREL_SHA)
+_mackerel_stamp=$(MACKEREL_BRANCH)-$(TIMESTAMP)-g$(MACKEREL_SHA)
 MACKEREL_BITS=$(BITS_DIR)/mackerel/mackerel-pkg-$(_mackerel_stamp).tar.bz2
 
 .PHONY: mackerel
 mackerel: $(MACKEREL_BITS)
 
-$(MACKEREL_BITS): build/manta-mackerel
-	@echo "# Build mackerel: branch $(MANTA_MACKEREL_BRANCH), sha $(MANTA_MACKEREL_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(MACKEREL_BITS): build/mackerel
+	@echo "# Build mackerel: branch $(MACKEREL_BRANCH), sha $(MACKEREL_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/manta-mackerel && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/mackerel && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created mackerel bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(MACKEREL_BITS)
 	@echo ""
 
 clean_mackerel:
 	$(RM) -rf $(BITS_DIR)/mackerel
-	(cd build/manta-mackerel && gmake distclean)
+	(cd build/mackerel && gmake distclean)
 
 
 #---- Binder
