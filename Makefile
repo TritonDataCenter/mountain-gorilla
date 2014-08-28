@@ -1313,7 +1313,7 @@ clean_firewaller:
 
 #---- CNAPI
 
-_cnapi_stamp=$(CNAPI_BRANCH)-$(TIMESTAMP)-g$(CNAPI_SHA)
+_cnapi_stamp=$(SDC_CNAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_CNAPI_SHA)
 CNAPI_BITS=$(BITS_DIR)/cnapi/cnapi-pkg-$(_cnapi_stamp).tar.bz2
 CNAPI_IMAGE_BIT=$(BITS_DIR)/cnapi/cnapi-zfs-$(_cnapi_stamp).zfs.gz
 CNAPI_MANIFEST_BIT=$(BITS_DIR)/cnapi/cnapi-zfs-$(_cnapi_stamp).imgmanifest
@@ -1324,7 +1324,7 @@ cnapi: $(CNAPI_BITS) cnapi_image
 # PATH for cnapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(CNAPI_BITS): build/sdc-cnapi
-	@echo "# Build cnapi: branch $(CNAPI_BRANCH), sha $(CNAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build cnapi: branch $(SDC_CNAPI_BRANCH), sha $(SDC_CNAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/sdc-cnapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created cnapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1335,7 +1335,7 @@ $(CNAPI_BITS): build/sdc-cnapi
 cnapi_image: $(CNAPI_IMAGE_BIT)
 
 $(CNAPI_IMAGE_BIT): $(CNAPI_BITS)
-	@echo "# Build cnapi_image: branch $(CNAPI_BRANCH), sha $(CNAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build cnapi_image: branch $(SDC_CNAPI_BRANCH), sha $(SDC_CNAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(CNAPI_IMAGE_UUID)" -t $(CNAPI_BITS) \
 		-o "$(CNAPI_IMAGE_BIT)" -p $(CNAPI_PKGSRC) \
 		-t $(CNAPI_EXTRA_TARBALLS) -n $(CNAPI_IMAGE_NAME) \
