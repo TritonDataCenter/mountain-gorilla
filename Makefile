@@ -1234,17 +1234,17 @@ clean_zonetracker:
 
 #---- Configuration Agent
 
-_config_agent_stamp=$(CONFIG_AGENT_BRANCH)-$(TIMESTAMP)-g$(CONFIG_AGENT_SHA)
+_config_agent_stamp=$(SDC_CONFIG_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_CONFIG_AGENT_SHA)
 CONFIG_AGENT_BIT=$(BITS_DIR)/config-agent/config-agent-pkg-$(_config_agent_stamp).tar.bz2
 CONFIG_AGENT_MANIFEST_BIT=$(BITS_DIR)/config-agent/config-agent-pkg-$(_config_agent_stamp).manifest
 
 .PHONY: config-agent
 config-agent: $(CONFIG_AGENT_BIT)
 
-$(CONFIG_AGENT_BIT): build/config-agent
-	@echo "# Build config-agent: branch $(CONFIG_AGENT_BRANCH), sha $(CONFIG_AGENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(CONFIG_AGENT_BIT): build/sdc-config-agent
+	@echo "# Build config-agent: branch $(SDC_CONFIG_AGENT_BRANCH), sha $(SDC_CONFIG_AGENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/config-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-config-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created config-agent bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(CONFIG_AGENT_BIT) $(CONFIG_AGENT_MANIFEST_BIT)
 	@echo ""
@@ -1255,7 +1255,7 @@ config-agent_publish_image: $(CONFIG_AGENT_BIT)
 
 clean_config_agent:
 	$(RM) -rf $(BITS_DIR)/config-agent
-	(cd build/config-agent && gmake clean)
+	(cd build/sdc-config-agent && gmake clean)
 
 
 #---- Hagfish Watcher
