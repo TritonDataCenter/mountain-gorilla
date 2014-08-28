@@ -715,7 +715,7 @@ cat <<EOF
       "zookeeper-server-3.4.3"
     ],
     "repos": [
-       {"url": "git@git.joyent.com:sdc-zookeeper.git"}
+       {"url": "git@github.com:joyent/sdc-zookeeper.git"}
     ],
     "deps": [
       "registrar",
