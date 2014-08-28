@@ -472,7 +472,7 @@ cat <<EOF
 
   "vm-agent": {
     "repos": [
-	{"url": "git@git.joyent.com:sdc-vm-agent.git"}
+	{"url": "git@github.com:joyent/sdc-vm-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
