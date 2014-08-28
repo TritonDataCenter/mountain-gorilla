@@ -238,7 +238,7 @@ clean_ca:
 #---- UFDS
 
 
-_ufds_stamp=$(UFDS_BRANCH)-$(TIMESTAMP)-g$(UFDS_SHA)
+_ufds_stamp=$(SDC_UFDS_BRANCH)-$(TIMESTAMP)-g$(SDC_UFDS_SHA)
 UFDS_BITS=$(BITS_DIR)/ufds/ufds-pkg-$(_ufds_stamp).tar.bz2
 UFDS_IMAGE_BIT=$(BITS_DIR)/ufds/ufds-zfs-$(_ufds_stamp).zfs.gz
 UFDS_MANIFEST_BIT=$(BITS_DIR)/ufds/ufds-zfs-$(_ufds_stamp).imgmanifest
@@ -249,7 +249,7 @@ ufds: $(UFDS_BITS) ufds_image
 # PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(UFDS_BITS): build/sdc-ufds
-	@echo "# Build ufds: branch $(UFDS_BRANCH), sha $(UFDS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build ufds: branch $(SDC_UFDS_BRANCH), sha $(SDC_UFDS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/sdc-ufds && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created ufds bits (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -260,7 +260,7 @@ $(UFDS_BITS): build/sdc-ufds
 ufds_image: $(UFDS_IMAGE_BIT)
 
 $(UFDS_IMAGE_BIT): $(UFDS_BITS)
-	@echo "# Build ufds_image: branch $(UFDS_BRANCH), sha $(UFDS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build ufds_image: branch $(SDC_UFDS_BRANCH), sha $(SDC_UFDS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(UFDS_IMAGE_UUID)" -t $(UFDS_BITS) \
 		-o "$(UFDS_IMAGE_BIT)" -p $(UFDS_PKGSRC) \
 		-t $(UFDS_EXTRA_TARBALLS) -n $(UFDS_IMAGE_NAME) \
