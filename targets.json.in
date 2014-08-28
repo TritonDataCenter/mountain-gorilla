@@ -481,7 +481,7 @@ cat <<EOF
 
   "net-agent": {
     "repos": [
-	{"url": "git@git.joyent.com:sdc-net-agent.git"}
+	{"url": "git@github.com:joyent/sdc-net-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
