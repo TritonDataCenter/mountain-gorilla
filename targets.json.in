@@ -1126,7 +1126,7 @@ cat <<EOF
 
   "agentsshar": {
     "repos": [
-	{"url": "git@git.joyent.com:agents-installer.git"}
+	{"url": "git@github.com:joyent/sdc-agents-installer.git"}
     ],
     "deps": [
       "agents_core",

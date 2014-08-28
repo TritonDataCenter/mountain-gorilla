@@ -2276,9 +2276,9 @@ sdcadm_publish_image: $(SDCADM_BITS)
 #---- agentsshar
 
 ifeq ($(TRY_BRANCH),)
-_as_stamp=$(AGENTS_INSTALLER_BRANCH)-$(TIMESTAMP)-g$(AGENTS_INSTALLER_SHA)
+_as_stamp=$(SDC_AGENTS_INSTALLER_BRANCH)-$(TIMESTAMP)-g$(SDC_AGENTS_INSTALLER_SHA)
 else
-_as_stamp=$(TRY_BRANCH)-$(TIMESTAMP)-g$(AGENTS_INSTALLER_SHA)
+_as_stamp=$(TRY_BRANCH)-$(TIMESTAMP)-g$(SDC_AGENTS_INSTALLER_SHA)
 endif
 AGENTSSHAR_BITS=$(BITS_DIR)/agentsshar/agents-$(_as_stamp).sh \
 	$(BITS_DIR)/agentsshar/agents-$(_as_stamp).md5sum
@@ -2288,10 +2288,10 @@ AGENTSSHAR_MANIFEST_BIT=$(BITS_DIR)/agentsshar/agents-$(_as_stamp).manifest
 .PHONY: agentsshar
 agentsshar: $(AGENTSSHAR_BITS_0)
 
-$(AGENTSSHAR_BITS): build/agents-installer/Makefile
-	@echo "# Build agentsshar: branch $(AGENTS_INSTALLER_BRANCH), sha $(AGENTS_INSTALLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(AGENTSSHAR_BITS): build/sdc-agents-installer/Makefile
+	@echo "# Build agentsshar: branch $(SDC_AGENTS_INSTALLER_BRANCH), sha $(SDC_AGENTS_INSTALLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)/agentsshar
-	(cd build/agents-installer && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/agentsshar/ -d $(BITS_DIR) -b "$(TRY_BRANCH) $(BRANCH)")
+	(cd build/sdc-agents-installer && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) ./mk-agents-shar -o $(BITS_DIR)/agentsshar/ -d $(BITS_DIR) -b "$(TRY_BRANCH) $(BRANCH)")
 	@echo "# Created agentsshar bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(AGENTSSHAR_BITS)
 	@echo ""
@@ -2302,7 +2302,7 @@ agentsshar_publish_image: $(AGENTSSHAR_BITS)
 
 clean_agentsshar:
 	$(RM) -rf $(BITS_DIR)/agentsshar
-	(if [[ -d build/agents-installer ]]; then cd build/agents-installer && gmake clean; fi )
+	(if [[ -d build/sdc-agents-installer ]]; then cd build/agents-installer && gmake clean; fi )
 
 
 #---- convertvm
