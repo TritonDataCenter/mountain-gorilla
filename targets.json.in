@@ -652,7 +652,7 @@ cat <<EOF
 
   "registrar": {
     "repos": [
-	{"url": "git@git.joyent.com:registrar.git"}
+	{"url": "git@github.com:joyent/registrar.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
