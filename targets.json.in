@@ -735,12 +735,13 @@ cat <<EOF
     "image_description": "Manta manatee",
     "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
     "pkgsrc": [
-	"postgresql92-server-9.2.4nb1",
-	"postgresql92-adminpack",
-	"postgresql92-datatypes",
-	"postgresql92-pgcrypto",
-	"postgresql92-replicationtools",
-	"postgresql92-upgrade"
+        "postgresql92-server-9.2.4nb1",
+        "postgresql92-adminpack",
+        "postgresql92-datatypes",
+        "postgresql92-pgcrypto",
+        "postgresql92-replicationtools",
+        "postgresql92-upgrade",
+        "lz4-120"
     ],
     "repos": [
       {"url": "git@github.com:joyent/manta-manatee.git"}
@@ -764,12 +765,13 @@ cat <<EOF
     "image_description": "SDC manatee",
     "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
     "pkgsrc": [
-	"postgresql92-server-9.2.4nb1",
-	"postgresql92-adminpack",
-	"postgresql92-datatypes",
-	"postgresql92-pgcrypto",
-	"postgresql92-replicationtools",
-	"postgresql92-upgrade"
+        "postgresql92-server-9.2.4nb1",
+        "postgresql92-adminpack",
+        "postgresql92-datatypes",
+        "postgresql92-pgcrypto",
+        "postgresql92-replicationtools",
+        "postgresql92-upgrade",
+        "lz4-120"
     ],
     "repos": [
       {"url": "git@github.com:joyent/sdc-manatee.git"}
