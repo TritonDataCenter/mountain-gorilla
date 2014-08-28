@@ -557,7 +557,7 @@ cat <<EOF
       "gsharutils-4.11.1"
     ],
     "repos": [
-        {"url": "git@github.com:joyent/cnapi.git"}
+        {"url": "git@github.com:joyent/sdc-cnapi.git"}
     ],
     "deps": [
       "amon",
