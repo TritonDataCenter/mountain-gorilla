@@ -1296,17 +1296,17 @@ clean_hagfish-watcher:
 
 #---- Firewaller
 
-_firewaller_stamp=$(FIREWALLER_BRANCH)-$(TIMESTAMP)-g$(FIREWALLER_SHA)
+_firewaller_stamp=$(SDC_FIREWALLER_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_FIREWALLER_AGENT_SHA)
 FIREWALLER_BIT=$(BITS_DIR)/firewaller/firewaller-$(_firewaller_stamp).tgz
 FIREWALLER_MANIFEST_BIT=$(BITS_DIR)/firewaller/firewaller-$(_firewaller_stamp).manifest
 
 .PHONY: firewaller
 firewaller: $(FIREWALLER_BIT)
 
-$(FIREWALLER_BIT): build/firewaller
-	@echo "# Build firewaller: branch $(FIREWALLER_BRANCH), sha $(FIREWALLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(FIREWALLER_BIT): build/sdc-firewaller-agent
+	@echo "# Build firewaller: branch $(SDC_FIREWALLER_AGENT_BRANCH), sha $(FIREWALLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/firewaller && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-firewaller-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created firewaller bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(FIREWALLER_BIT) $(FIREWALLER_MANIFEST_BIT)
 	@echo ""
@@ -1411,7 +1411,7 @@ clean_sdcsso:
 
 #---- FWAPI
 
-_fwapi_stamp=$(FWAPI_BRANCH)-$(TIMESTAMP)-g$(FWAPI_SHA)
+_fwapi_stamp=$(SDC_FWAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_FWAPI_SHA)
 FWAPI_BITS=$(BITS_DIR)/fwapi/fwapi-pkg-$(_fwapi_stamp).tar.bz2
 FWAPI_IMAGE_BIT=$(BITS_DIR)/fwapi/fwapi-zfs-$(_fwapi_stamp).zfs.gz
 FWAPI_MANIFEST_BIT=$(BITS_DIR)/fwapi/fwapi-zfs-$(_fwapi_stamp).imgmanifest
@@ -1421,10 +1421,10 @@ fwapi: $(FWAPI_BITS) fwapi_image
 
 # PATH for fwapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(FWAPI_BITS): build/fwapi
-	@echo "# Build fwapi: branch $(FWAPI_BRANCH), sha $(FWAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(FWAPI_BITS): build/sdc-fwapi
+	@echo "# Build fwapi: branch $(SDC_FWAPI_BRANCH), sha $(SDC_FWAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/fwapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/sdc-fwapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created fwapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(FWAPI_BITS)
 	@echo ""
@@ -1456,7 +1456,7 @@ clean_fwapi:
 
 #---- NAPI
 
-_napi_stamp=$(NAPI_BRANCH)-$(TIMESTAMP)-g$(NAPI_SHA)
+_napi_stamp=$(SDC_NAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_NAPI_SHA)
 NAPI_BITS=$(BITS_DIR)/napi/napi-pkg-$(_napi_stamp).tar.bz2
 NAPI_IMAGE_BIT=$(BITS_DIR)/napi/napi-zfs-$(_napi_stamp).zfs.gz
 NAPI_MANIFEST_BIT=$(BITS_DIR)/napi/napi-zfs-$(_napi_stamp).imgmanifest
@@ -1466,10 +1466,10 @@ napi: $(NAPI_BITS) napi_image
 
 # PATH for napi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(NAPI_BITS): build/napi
-	@echo "# Build napi: branch $(NAPI_BRANCH), sha $(NAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(NAPI_BITS): build/sdc-napi
+	@echo "# Build napi: branch $(SDC_NAPI_BRANCH), sha $(SDC_NAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/napi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/sdc-napi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created napi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(NAPI_BITS)
 	@echo ""
