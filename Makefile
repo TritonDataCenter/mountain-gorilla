@@ -1966,7 +1966,7 @@ clean_muskie:
 
 #---- Wrasse
 
-_wrasse_stamp=$(WRASSE_BRANCH)-$(TIMESTAMP)-g$(WRASSE_SHA)
+_wrasse_stamp=$(MANTA_WRASSE_BRANCH)-$(TIMESTAMP)-g$(MANTA_WRASSE_SHA)
 WRASSE_BITS=$(BITS_DIR)/wrasse/wrasse-pkg-$(_wrasse_stamp).tar.bz2
 WRASSE_IMAGE_BIT=$(BITS_DIR)/wrasse/wrasse-zfs-$(_wrasse_stamp).zfs.gz
 WRASSE_MANIFEST_BIT=$(BITS_DIR)/wrasse/wrasse-zfs-$(_wrasse_stamp).imgmanifest
@@ -1976,10 +1976,10 @@ wrasse: $(WRASSE_BITS) wrasse_image
 
 # PATH for wrasse build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(WRASSE_BITS): build/wrasse
-	@echo "# Build wrasse: branch $(WRASSE_BRANCH), sha $(WRASSE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(WRASSE_BITS): build/manta-wrasse
+	@echo "# Build wrasse: branch $(MANTA_WRASSE_BRANCH), sha $(MANTA_WRASSE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/wrasse && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manta-wrasse && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created wrasse bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(WRASSE_BITS)
 	@echo ""
@@ -1988,7 +1988,7 @@ $(WRASSE_BITS): build/wrasse
 wrasse_image: $(WRASSE_IMAGE_BIT)
 
 $(WRASSE_IMAGE_BIT): $(WRASSE_BITS)
-	@echo "# Build wrasse_image: branch $(WRASSE_BRANCH), sha $(WRASSE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build wrasse_image: branch $(MANTA_WRASSE_BRANCH), sha $(MANTA_WRASSE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(WRASSE_IMAGE_UUID)" -t $(WRASSE_BITS) \
 		-b "wrasse" \
 		-o "$(WRASSE_IMAGE_BIT)" -p $(WRASSE_PKGSRC) \
@@ -2004,7 +2004,7 @@ wrasse_publish_image: $(WRASSE_IMAGE_BIT)
 
 clean_wrasse:
 	$(RM) -rf $(BITS_DIR)/wrasse
-	(cd build/wrasse && gmake distclean)
+	(cd build/manta-wrasse && gmake distclean)
 
 
 #---- Registrar
