@@ -406,7 +406,7 @@ clean_adminui:
 
 #---- REDIS
 
-_redis_stamp=$(REDIS_BRANCH)-$(TIMESTAMP)-g$(REDIS_SHA)
+_redis_stamp=$(SDC_REDIS_BRANCH)-$(TIMESTAMP)-g$(SDC_REDIS_SHA)
 REDIS_BITS=$(BITS_DIR)/redis/redis-pkg-$(_redis_stamp).tar.bz2
 REDIS_IMAGE_BIT=$(BITS_DIR)/redis/redis-zfs-$(_redis_stamp).zfs.gz
 REDIS_MANIFEST_BIT=$(BITS_DIR)/redis/redis-zfs-$(_redis_stamp).imgmanifest
@@ -414,10 +414,10 @@ REDIS_MANIFEST_BIT=$(BITS_DIR)/redis/redis-zfs-$(_redis_stamp).imgmanifest
 .PHONY: redis
 redis: $(REDIS_BITS) redis_image
 
-$(REDIS_BITS): build/redis
+$(REDIS_BITS): build/sdc-redis
 	@echo "# Build redis: branch $(REDIS_BRANCH), sha $(REDIS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/redis && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	(cd build/sdc-redis && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
 	@echo "# Created redis bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(REDIS_BITS)
 	@echo ""
@@ -441,12 +441,12 @@ redis_publish_image: $(REDIS_IMAGE_BIT)
 
 clean_redis:
 	$(RM) -rf $(BITS_DIR)/redis
-	(cd build/redis && gmake clean)
+	(cd build/sdc-redis && gmake clean)
 
 
 #---- amonredis
 
-_amonredis_stamp=$(AMONREDIS_BRANCH)-$(TIMESTAMP)-g$(AMONREDIS_SHA)
+_amonredis_stamp=$(SDC_AMONREDIS_BRANCH)-$(TIMESTAMP)-g$(SDC_AMONREDIS_SHA)
 AMONREDIS_BITS=$(BITS_DIR)/amonredis/amonredis-pkg-$(_amonredis_stamp).tar.bz2
 AMONREDIS_IMAGE_BIT=$(BITS_DIR)/amonredis/amonredis-zfs-$(_amonredis_stamp).zfs.gz
 AMONREDIS_MANIFEST_BIT=$(BITS_DIR)/amonredis/amonredis-zfs-$(_amonredis_stamp).imgmanifest
@@ -454,10 +454,10 @@ AMONREDIS_MANIFEST_BIT=$(BITS_DIR)/amonredis/amonredis-zfs-$(_amonredis_stamp).i
 .PHONY: amonredis
 amonredis: $(AMONREDIS_BITS) amonredis_image
 
-$(AMONREDIS_BITS): build/amonredis
+$(AMONREDIS_BITS): build/sdc-amonredis
 	@echo "# Build amonredis: branch $(AMONREDIS_BRANCH), sha $(AMONREDIS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/amonredis && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	(cd build/sdc-amonredis && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
 	@echo "# Created amonredis bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(AMONREDIS_BITS)
 	@echo ""
@@ -481,7 +481,7 @@ amonredis_publish_image: $(AMONREDIS_IMAGE_BIT)
 
 clean_amonredis:
 	$(RM) -rf $(BITS_DIR)/amonredis
-	(cd build/amonredis && gmake clean)
+	(cd build/sdc-amonredis && gmake clean)
 
 
 #---- RABBITMQ
