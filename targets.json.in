@@ -91,7 +91,7 @@ cat <<EOF
       "nginx-1.0.10"
     ],
     "repos": [
-      {"url": "git@github.com/joyent:sdc-assets.git"}
+      {"url": "git@github.com:joyent/sdc-assets.git"}
     ],
     "deps": [
       "amon",
