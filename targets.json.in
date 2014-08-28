@@ -743,7 +743,7 @@ cat <<EOF
 	"postgresql92-upgrade"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:manta-manatee.git"}
+      {"url": "git@github.com:joyent/manta-manatee.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
@@ -772,7 +772,7 @@ cat <<EOF
 	"postgresql92-upgrade"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:sdc-manatee.git"}
+      {"url": "git@github.com:joyent/sdc-manatee.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
@@ -871,7 +871,7 @@ cat <<EOF
       "haproxy-1.4.24"
     ],
     "repos": [
-	{"url": "git@git.joyent.com:electric-moray.git"}
+	{"url": "git@github.com:joyent/electric-moray.git"}
     ],
     "deps": [
       "registrar",
