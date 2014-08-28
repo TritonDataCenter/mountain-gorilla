@@ -248,10 +248,10 @@ ufds: $(UFDS_BITS) ufds_image
 
 # PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(UFDS_BITS): build/ufds
+$(UFDS_BITS): build/sdc-ufds
 	@echo "# Build ufds: branch $(UFDS_BRANCH), sha $(UFDS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/ufds && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
+	(cd build/sdc-ufds && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created ufds bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(UFDS_BITS)
 	@echo ""
@@ -277,7 +277,7 @@ ufds_publish_image: $(UFDS_IMAGE_BIT)
 # then need to call 'gmake dist-clean'.
 clean_ufds:
 	$(RM) -rf $(BITS_DIR)/ufds
-	(cd build/ufds && gmake clean)
+	(cd build/sdc-ufds && gmake clean)
 
 
 #---- usageapi
