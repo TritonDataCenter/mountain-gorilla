@@ -2322,7 +2322,7 @@ clean_convertvm:
 
 #---- Manta deployment (the manta zone)
 
-_manta_deployment_stamp=$(MANTA_DEPLOYMENT_BRANCH)-$(TIMESTAMP)-g$(MANTA_DEPLOYMENT_SHA)
+_manta_deployment_stamp=$(SDC_MANTA_BRANCH)-$(TIMESTAMP)-g$(SDC_MANTA_SHA)
 MANTA_DEPLOYMENT_BITS=$(BITS_DIR)/manta-deployment/manta-deployment-pkg-$(_manta_deployment_stamp).tar.bz2
 MANTA_DEPLOYMENT_IMAGE_BIT=$(BITS_DIR)/manta-deployment/manta-deployment-zfs-$(_manta_deployment_stamp).zfs.gz
 MANTA_DEPLOYMENT_MANIFEST_BIT=$(BITS_DIR)/manta-deployment/manta-deployment-zfs-$(_manta_deployment_stamp).imgmanifest
@@ -2330,10 +2330,10 @@ MANTA_DEPLOYMENT_MANIFEST_BIT=$(BITS_DIR)/manta-deployment/manta-deployment-zfs-
 .PHONY: manta-deployment
 manta-deployment: $(MANTA_DEPLOYMENT_BITS) manta-deployment_image
 
-$(MANTA_DEPLOYMENT_BITS): build/manta-deployment
-	@echo "# Build manta-deployment: branch $(MANTA_DEPLOYMENT_BRANCH), sha $(MANTA_DEPLOYMENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(MANTA_DEPLOYMENT_BITS): build/sdc-manta
+	@echo "# Build manta-deployment: branch $(SDC_MANTA_BRANCH), sha $(SDC_MANTA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/manta-deployment && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-manta && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created manta-deployment bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(MANTA_DEPLOYMENT_BITS)
 	@echo ""
@@ -2342,7 +2342,7 @@ $(MANTA_DEPLOYMENT_BITS): build/manta-deployment
 manta-deployment_image: $(MANTA_DEPLOYMENT_IMAGE_BIT)
 
 $(MANTA_DEPLOYMENT_IMAGE_BIT): $(MANTA_DEPLOYMENT_BITS)
-	@echo "# Build manta-deployment_image: branch $(MANTA_DEPLOYMENT_BRANCH), sha $(MANTA_DEPLOYMENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build manta-deployment_image: branch $(SDC_MANTA_BRANCH), sha $(SDC_MANTA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MANTA_DEPLOYMENT_IMAGE_UUID)" -t $(MANTA_DEPLOYMENT_BITS) \
 		-o "$(MANTA_DEPLOYMENT_IMAGE_BIT)" -p $(MANTA_DEPLOYMENT_PKGSRC) \
 		-t $(MANTA_DEPLOYMENT_EXTRA_TARBALLS) -n $(MANTA_DEPLOYMENT_IMAGE_NAME) \
@@ -2358,7 +2358,7 @@ manta-deployment_publish_image: $(MANTA_DEPLOYMENT_IMAGE_BIT)
 
 clean_manta-deployment:
 	$(RM) -rf $(BITS_DIR)/manta-deployment
-	(cd build/manta-deployment && gmake distclean)
+	(cd build/sdc-manta && gmake distclean)
 
 
 

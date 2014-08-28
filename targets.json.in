@@ -1191,7 +1191,7 @@ cat <<EOF
       "openldap-client-2.4.24"
     ],
     "repos": [
-	{"url": "git@git.joyent.com:manta-deployment.git"}
+	{"url": "git@github.com:joyent/sdc-manta.git"}
     ],
     "deps": [
       "amon",
