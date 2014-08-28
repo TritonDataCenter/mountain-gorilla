@@ -1230,7 +1230,7 @@ cat <<EOF
 	{"url": "git@git.joyent.com:ur-agent.git"},
 	{"url": "git@github.com:joyent/illumos-kvm.git"},
 	{"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
-	{"url": "git@git.joyent.com:sdc-platform.git"},
+	{"url": "git@github.com:joyent/sdc-platform.git"},
 	{"url": "git@github.com:joyent/mdata-client.git"}
     ],
     "deps": []
@@ -1243,7 +1243,7 @@ cat <<EOF
 	{"url": "git@git.joyent.com:ur-agent.git"},
 	{"url": "git@github.com:joyent/illumos-kvm.git"},
 	{"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
-	{"url": "git@git.joyent.com:sdc-platform.git"},
+	{"url": "git@github.com:joyent/sdc-platform.git"},
 	{"url": "git@github.com:joyent/mdata-client.git"}
     ],
     "deps": []
