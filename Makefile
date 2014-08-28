@@ -70,10 +70,10 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis sdc-ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
+all: smartlogin incr-upgrade amon amonredis sdc-ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
 
 .PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis sdc-ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi sdc-workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
+all-except-platform: smartlogin incr-upgrade amon amonredis sdc-ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
 
 
 #---- smartlogin
@@ -779,8 +779,8 @@ WORKFLOW_BITS=$(BITS_DIR)/workflow/workflow-pkg-$(_wf_stamp).tar.bz2
 WORKFLOW_IMAGE_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).zfs.gz
 WORKFLOW_MANIFEST_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).imgmanifest
 
-.PHONY: sdc-workflow
-sdc-workflow: $(WORKFLOW_BITS) workflow_image
+.PHONY: workflow
+workflow: $(WORKFLOW_BITS) workflow_image
 
 # PATH for workflow build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
@@ -797,10 +797,10 @@ workflow_image: $(WORKFLOW_IMAGE_BIT)
 
 $(WORKFLOW_IMAGE_BIT): $(WORKFLOW_BITS)
 	@echo "# Build workflow_image: branch $(SDC_WORKFLOW_BRANCH), sha $(SDC_WORKFLOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(SDC_WORKFLOW_IMAGE_UUID)" -t $(WORKFLOW_BITS) \
-		-o "$(WORKFLOW_IMAGE_BIT)" -p $(SDC_WORKFLOW_PKGSRC) \
-		-t $(SDC_WORKFLOW_EXTRA_TARBALLS) -n $(SDC_WORKFLOW_IMAGE_NAME) \
-		-v $(_wf_stamp) -d $(SDC_WORKFLOW_IMAGE_DESCRIPTION)
+	./tools/prep_dataset_in_jpc.sh -i "$(WORKFLOW_IMAGE_UUID)" -t $(WORKFLOW_BITS) \
+		-o "$(WORKFLOW_IMAGE_BIT)" -p $(WORKFLOW_PKGSRC) \
+		-t $(WORKFLOW_EXTRA_TARBALLS) -n $(WORKFLOW_IMAGE_NAME) \
+		-v $(_wf_stamp) -d $(WORKFLOW_IMAGE_DESCRIPTION)
 	@echo "# Created workflow image (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $$(dirname $(WORKFLOW_IMAGE_BIT))
 	@echo ""
@@ -812,7 +812,7 @@ workflow_publish_image: $(WORKFLOW_IMAGE_BIT)
 # Warning: if workflow's submodule deps change, this 'clean_workflow' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_workflow:
-	$(RM) -rf $(BITS_DIR)/sdc-workflow
+	$(RM) -rf $(BITS_DIR)/workflow
 	(cd build/sdc-workflow && gmake clean)
 
 
