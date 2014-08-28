@@ -606,7 +606,7 @@ clean_mockcn:
 
 #---- CLOUDAPI
 
-_cloudapi_stamp=$(CLOUDAPI_BRANCH)-$(TIMESTAMP)-g$(CLOUDAPI_SHA)
+_cloudapi_stamp=$(SDC_CLOUDAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_CLOUDAPI_SHA)
 CLOUDAPI_BITS=$(BITS_DIR)/cloudapi/cloudapi-pkg-$(_cloudapi_stamp).tar.bz2
 CLOUDAPI_IMAGE_BIT=$(BITS_DIR)/cloudapi/cloudapi-zfs-$(_cloudapi_stamp).zfs.gz
 CLOUDAPI_MANIFEST_BIT=$(BITS_DIR)/cloudapi/cloudapi-zfs-$(_cloudapi_stamp).imgmanifest
@@ -616,10 +616,10 @@ cloudapi: $(CLOUDAPI_BITS) cloudapi_image
 
 # cloudapi still uses platform node, ensure that same version is first
 # node (and npm) on the PATH.
-$(CLOUDAPI_BITS): build/cloudapi
-	@echo "# Build cloudapi: branch $(CLOUDAPI_BRANCH), sha $(CLOUDAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(CLOUDAPI_BITS): build/sdc-cloudapi
+	@echo "# Build cloudapi: branch $(SDC_CLOUDAPI_BRANCH), sha $(SDC_CLOUDAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/cloudapi && PATH=/opt/node/0.6.12/bin:$(PATH) NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-cloudapi && PATH=/opt/node/0.6.12/bin:$(PATH) NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created cloudapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(CLOUDAPI_BITS)
 	@echo ""
@@ -628,7 +628,7 @@ $(CLOUDAPI_BITS): build/cloudapi
 cloudapi_image: $(CLOUDAPI_IMAGE_BIT)
 
 $(CLOUDAPI_IMAGE_BIT): $(CLOUDAPI_BITS)
-	@echo "# Build cloudapi_image: branch $(CLOUDAPI_BRANCH), sha $(CLOUDAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build cloudapi_image: branch $(SDC_CLOUDAPI_BRANCH), sha $(SDC_CLOUDAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(CLOUDAPI_IMAGE_UUID)" -t $(CLOUDAPI_BITS) \
 		-o "$(CLOUDAPI_IMAGE_BIT)" -p $(CLOUDAPI_PKGSRC) \
 		-t $(CLOUDAPI_EXTRA_TARBALLS) -n $(CLOUDAPI_IMAGE_NAME) \
@@ -646,7 +646,7 @@ cloudapi_publish_image: $(CLOUDAPI_IMAGE_BIT)
 # then need to call 'gmake dist-clean'.
 clean_cloudapi:
 	$(RM) -rf $(BITS_DIR)/cloudapi
-	(cd build/cloudapi && gmake clean)
+	(cd build/sdc-cloudapi && gmake clean)
 
 
 #---- MANTA_MANATEE
