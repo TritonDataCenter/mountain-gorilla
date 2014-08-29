@@ -925,7 +925,7 @@ cat <<EOF
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:muskie.git"}
+      {"url": "git@github.com:joyent/manta-muskie.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",

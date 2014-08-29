@@ -1933,7 +1933,7 @@ clean_electric-moray:
 
 #---- Muskie
 
-_muskie_stamp=$(MUSKIE_BRANCH)-$(TIMESTAMP)-g$(MUSKIE_SHA)
+_muskie_stamp=$(MANTA_MUSKIE_BRANCH)-$(TIMESTAMP)-g$(MANTA_MUSKIE_SHA)
 MUSKIE_BITS=$(BITS_DIR)/muskie/muskie-pkg-$(_muskie_stamp).tar.bz2
 MUSKIE_IMAGE_BIT=$(BITS_DIR)/muskie/muskie-zfs-$(_muskie_stamp).zfs.gz
 MUSKIE_MANIFEST_BIT=$(BITS_DIR)/muskie/muskie-zfs-$(_muskie_stamp).imgmanifest
@@ -1943,10 +1943,10 @@ muskie: $(MUSKIE_BITS) muskie_image
 
 # PATH for muskie build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(MUSKIE_BITS): build/muskie
-	@echo "# Build muskie: branch $(MUSKIE_BRANCH), sha $(MUSKIE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(MUSKIE_BITS): build/manta-muskie
+	@echo "# Build muskie: branch $(MANTA_MUSKIE_BRANCH), sha $(MANTA_MUSKIE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/muskie && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manta-muskie && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created muskie bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(MUSKIE_BITS)
 	@echo ""
@@ -1955,7 +1955,7 @@ $(MUSKIE_BITS): build/muskie
 muskie_image: $(MUSKIE_IMAGE_BIT)
 
 $(MUSKIE_IMAGE_BIT): $(MUSKIE_BITS)
-	@echo "# Build muskie_image: branch $(MUSKIE_BRANCH), sha $(MUSKIE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build muskie_image: branch $(MANTA_MUSKIE_BRANCH), sha $(MANTA_MUSKIE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MUSKIE_IMAGE_UUID)" -t $(MUSKIE_BITS) \
 		-b "muskie" \
 		-o "$(MUSKIE_IMAGE_BIT)" -p $(MUSKIE_PKGSRC) \
@@ -1971,7 +1971,7 @@ muskie_publish_image: $(MUSKIE_IMAGE_BIT)
 
 clean_muskie:
 	$(RM) -rf $(BITS_DIR)/muskie
-	(cd build/muskie && gmake distclean)
+	(cd build/manta-muskie && gmake distclean)
 
 
 #---- Wrasse
