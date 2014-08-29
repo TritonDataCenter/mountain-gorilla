@@ -1,6 +1,6 @@
 mkdir -p projects/local
 (cd projects/local && [[ -d ur-agent ]] \
-    || git clone GITCLONESOURCEur-agent)
+    || git clone GITCLONESOURCEsdc-ur-agent ur-agent)
 (cd projects/local && [[ -d kvm ]] \
     || git clone GITCLONESOURCEillumos-kvm kvm)
 (cd projects/local && [[ -d kvm-cmd ]] \
