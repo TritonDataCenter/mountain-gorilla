@@ -1019,7 +1019,7 @@ $(SDC_SYSTEM_TESTS_BITS): build/sdc-system-tests
 
 #---- Agents core
 
-_agents_core_stamp=$(AGENTS_CORE_BRANCH)-$(TIMESTAMP)-g$(AGENTS_CORE_SHA)
+_agents_core_stamp=$(SDC_AGENTS_CORE_BRANCH)-$(TIMESTAMP)-g$(SDC_AGENTS_CORE_SHA)
 AGENTS_CORE_BIT=$(BITS_DIR)/agents_core/agents_core-$(_agents_core_stamp).tgz
 AGENTS_CORE_MANIFEST_BIT=$(BITS_DIR)/agents_core/agents_core-$(_agents_core_stamp).manifest
 
@@ -1029,9 +1029,9 @@ agents_core: $(AGENTS_CORE_BIT)
 # PATH for agents_core build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(AGENTS_CORE_BIT): build/agents_core
-	@echo "# Build agents_core: branch $(AGENTS_CORE_BRANCH), sha $(AGENTS_CORE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build agents_core: branch $(SDC_AGENTS_CORE_BRANCH), sha $(SDC_AGENTS_CORE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/agents_core && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-agents-core && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created agents_core bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(AGENTS_CORE_BIT) $(AGENTS_CORE_MANIFEST_BIT)
 	@echo ""
@@ -1044,7 +1044,7 @@ agents_core_publish_image: $(AGENTS_CORE_BIT)
 # then need to call 'gmake dist-clean'.
 clean_agents_core:
 	$(RM) -rf $(BITS_DIR)/agents_core
-	(cd build/agents_core && gmake clean)
+	(cd build/sdc-agents-core && gmake clean)
 
 
 #---- VM Agent
@@ -1184,7 +1184,7 @@ clean_provisioner:
 
 #---- Heartbeater
 
-_heartbeater_stamp=$(HEARTBEATER_BRANCH)-$(TIMESTAMP)-g$(HEARTBEATER_SHA)
+_heartbeater_stamp=$(SDC_HEARTBEATER_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_HEARTBEATER_AGENT_SHA)
 HEARTBEATER_BIT=$(BITS_DIR)/heartbeater/heartbeater-$(_heartbeater_stamp).tgz
 HEARTBEATER_MANIFEST_BIT=$(BITS_DIR)/heartbeater/heartbeater-$(_heartbeater_stamp).manifest
 
@@ -1193,10 +1193,10 @@ heartbeater: $(HEARTBEATER_BIT)
 
 # PATH for heartbeater build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(HEARTBEATER_BIT): build/heartbeater
-	@echo "# Build heartbeater: branch $(HEARTBEATER_BRANCH), sha $(HEARTBEATER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(HEARTBEATER_BIT): build/sdc-heartbeater-agent
+	@echo "# Build heartbeater: branch $(SDC_HEARTBEATER_AGENT_BRANCH), sha $(SDC_HEARTBEATER_AGENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/heartbeater && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-heartbeater-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created heartbeater bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(HEARTBEATER_BIT)
 	@echo ""
@@ -1209,7 +1209,7 @@ heartbeater_publish_image: $(HEARTBEATER_BIT)
 # then need to call 'gmake dist-clean'.
 clean_heartbeater:
 	$(RM) -rf $(BITS_DIR)/heartbeater
-	(cd build/heartbeater && gmake clean)
+	(cd build/sdc-heartbeater-agent && gmake clean)
 
 
 #---- Zonetracker

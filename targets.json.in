@@ -454,7 +454,7 @@ cat <<EOF
 
   "agents_core": {
     "repos": [
-	{"url": "git@git.joyent.com:agents_core.git"}
+	{"url": "git@github.com:joyent/sdc-agents-core.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -463,7 +463,7 @@ cat <<EOF
 
   "heartbeater": {
     "repos": [
-	{"url": "git@git.joyent.com:heartbeater.git"}
+	{"url": "git@github.com:joyent/sdc-heartbeater-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
