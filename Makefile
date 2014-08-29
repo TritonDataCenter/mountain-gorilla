@@ -1028,7 +1028,7 @@ agents_core: $(AGENTS_CORE_BIT)
 
 # PATH for agents_core build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(AGENTS_CORE_BIT): build/agents_core
+$(AGENTS_CORE_BIT): build/sdc-agents-core
 	@echo "# Build agents_core: branch $(SDC_AGENTS_CORE_BRANCH), sha $(SDC_AGENTS_CORE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/sdc-agents-core && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
