@@ -499,7 +499,7 @@ cat <<EOF
 
   "provisioner": {
     "repos": [
-	{"url": "git@git.joyent.com:provisioner.git"}
+	{"url": "git@github.com:joyent/sdc-provisioner-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"

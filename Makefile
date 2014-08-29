@@ -1154,7 +1154,7 @@ clean_cn_agent:
 
 #---- Provisioner
 
-_provisioner_stamp=$(PROVISIONER_BRANCH)-$(TIMESTAMP)-g$(PROVISIONER_SHA)
+_provisioner_stamp=$(SDC_PROVISIONER_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_PROVISIONER_AGENT_SHA)
 PROVISIONER_BIT=$(BITS_DIR)/provisioner/provisioner-$(_provisioner_stamp).tgz
 PROVISIONER_MANIFEST_BIT=$(BITS_DIR)/provisioner/provisioner-$(_provisioner_stamp).manifest
 
@@ -1163,10 +1163,10 @@ provisioner: $(PROVISIONER_BIT)
 
 # PATH for provisioner build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
-$(PROVISIONER_BIT): build/provisioner
-	@echo "# Build provisioner: branch $(PROVISIONER_BRANCH), sha $(PROVISIONER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(PROVISIONER_BIT): build/sdc-provisioner-agent
+	@echo "# Build provisioner: branch $(SDC_PROVISIONER_AGENT_BRANCH), sha $(PROVISIONER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/provisioner && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-provisioner-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created provisioner bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(PROVISIONER_BIT) $(PROVISIONER_MANIFEST_BIT)
 	@echo ""
@@ -1179,7 +1179,7 @@ provisioner_publish_image: $(PROVISIONER_BIT)
 # then need to call 'gmake dist-clean'.
 clean_provisioner:
 	$(RM) -rf $(BITS_DIR)/provisioner
-	(cd build/provisioner && gmake clean)
+	(cd build/sdc-provisioner-agent && gmake clean)
 
 
 #---- Heartbeater
