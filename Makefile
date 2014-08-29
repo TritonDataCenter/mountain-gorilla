@@ -919,7 +919,7 @@ clean_papi:
 
 #---- IMGAPI
 
-_imgapi_stamp=$(IMGAPI_BRANCH)-$(TIMESTAMP)-g$(IMGAPI_SHA)
+_imgapi_stamp=$(SDC_IMGAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_IMGAPI_SHA)
 IMGAPI_BITS=$(BITS_DIR)/imgapi/imgapi-pkg-$(_imgapi_stamp).tar.bz2
 IMGAPI_IMAGE_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_stamp).zfs.gz
 IMGAPI_MANIFEST_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_stamp).imgmanifest
@@ -927,10 +927,10 @@ IMGAPI_MANIFEST_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_stamp).imgmanifest
 .PHONY: imgapi
 imgapi: $(IMGAPI_BITS) imgapi_image
 
-$(IMGAPI_BITS): build/imgapi
-	@echo "# Build imgapi: branch $(IMGAPI_BRANCH), sha $(IMGAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(IMGAPI_BITS): build/sdc-imgapi
+	@echo "# Build imgapi: branch $(SDC_IMGAPI_BRANCH), sha $(SDC_IMGAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/imgapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-imgapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created imgapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(IMGAPI_BITS)
 	@echo ""
@@ -939,7 +939,7 @@ $(IMGAPI_BITS): build/imgapi
 imgapi_image: $(IMGAPI_IMAGE_BIT)
 
 $(IMGAPI_IMAGE_BIT): $(IMGAPI_BITS)
-	@echo "# Build imgapi_image: branch $(IMGAPI_BRANCH), sha $(IMGAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build imgapi_image: branch $(SDC_IMGAPI_BRANCH), sha $(SDC_IMGAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(IMGAPI_IMAGE_UUID)" -t $(IMGAPI_BITS) \
 		-o "$(IMGAPI_IMAGE_BIT)" -p $(IMGAPI_PKGSRC) \
 		-t $(IMGAPI_EXTRA_TARBALLS) -n $(IMGAPI_IMAGE_NAME) \
@@ -954,7 +954,7 @@ imgapi_publish_image: $(IMGAPI_IMAGE_BIT)
 
 clean_imgapi:
 	$(RM) -rf $(BITS_DIR)/imgapi
-	(cd build/imgapi && gmake clean)
+	(cd build/sdc-imgapi && gmake clean)
 
 
 #---- sdc
