@@ -439,7 +439,7 @@ cat <<EOF
 	"mtr-0.82"
     ],
     "repos": [
-      {"url": "git@git.joyent.com:sdc.git"}
+      {"url": "git@github.com:joyent/sdc.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
