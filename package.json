@@ -5,8 +5,8 @@
   "author": "Joyent (joyent.com)",
   "private": true,
   "dependencies": {
-    "manta": "1.2.5",
-    "smartdc": "7.1.1"
+    "manta": "1.4.3",
+    "smartdc": "7.3.0"
   },
   "engines": {
     "node": ">=0.8"
