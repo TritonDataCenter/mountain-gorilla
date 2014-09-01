@@ -117,18 +117,18 @@ clean_smartlogin:
 
 #---- incr-upgrade
 
-_incr_upgrade_stamp=$(USB_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(USB_HEADNODE_SHA)
+_incr_upgrade_stamp=$(SDC_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(SDC_HEADNODE_SHA)
 INCR_UPGRADE_BITS=$(BITS_DIR)/incr-upgrade/incr-upgrade-$(_incr_upgrade_stamp).tgz
 
 .PHONY: incr-upgrade
 incr-upgrade: $(INCR_UPGRADE_BITS)
 
-$(INCR_UPGRADE_BITS): build/usb-headnode
-	@echo "# Build incr-upgrade: branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(INCR_UPGRADE_BITS): build/sdc-headnode
+	@echo "# Build incr-upgrade: branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/usb-headnode && BRANCH="" TIMESTAMP=$(TIMESTAMP) gmake incr-upgrade)
+	(cd build/sdc-headnode && BRANCH="" TIMESTAMP=$(TIMESTAMP) gmake incr-upgrade)
 	mkdir -p $(BITS_DIR)/incr-upgrade
-	cp build/usb-headnode/incr-upgrade-$(_incr_upgrade_stamp).tgz $(BITS_DIR)/incr-upgrade
+	cp build/sdc-headnode/incr-upgrade-$(_incr_upgrade_stamp).tgz $(BITS_DIR)/incr-upgrade
 	@echo "# Created incr-upgrade bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(INCR_UPGRADE_BITS)
 	@echo ""
@@ -2372,7 +2372,7 @@ clean_manta-deployment:
 
 
 
-#---- sdcboot (boot utilities for usb-headnode)
+#---- sdcboot (boot utilities for sdc-headnode)
 
 _sdcboot_stamp=$(SDCBOOT_BRANCH)-$(TIMESTAMP)-g$(SDCBOOT_SHA)
 SDCBOOT_BITS=$(BITS_DIR)/sdcboot/sdcboot-$(_sdcboot_stamp).tgz
@@ -2416,10 +2416,10 @@ clean_firmware-tools:
 
 endif	# $(JOYENT_BUILD) == true
 
-#---- usb-headnode
-# We are using the '-s STAGE-DIR' option to the usb-headnode build to
+#---- sdc-headnode
+# We are using the '-s STAGE-DIR' option to the sdc-headnode build to
 # avoid rebuilding it. We use the "boot" target to build the stage dir
-# and have the other usb-headnode targets depend on that.
+# and have the other sdc-headnode targets depend on that.
 #
 # TODO:
 # - solution for datasets
@@ -2433,9 +2433,9 @@ usbheadnode-debug: USB_HEADNODE_SUFFIX = "-debug"
 usbheadnode: USE_DEBUG_PLATFORM = false
 usbheadnode-debug: USE_DEBUG_PLATFORM = true
 
-_usbheadnode_stamp=$(USB_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(USB_HEADNODE_SHA)
+_usbheadnode_stamp=$(SDC_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(SDC_HEADNODE_SHA)
 
-USB_BUILD_DIR=$(BUILD_DIR)/usb-headnode
+USB_BUILD_DIR=$(BUILD_DIR)/sdc-headnode
 USB_BITS_DIR=$(BITS_DIR)/usbheadnode$(USB_HEADNODE_SUFFIX)
 
 USB_BITS_SPEC=$(USB_BITS_DIR)/build.spec.local
@@ -2463,8 +2463,8 @@ $(USB_BITS_DIR):
 	mkdir -p $(USB_BITS_DIR)
 
 $(BOOT_OUTPUT): $(USB_BITS_SPEC) $(USB_BITS_DIR)
-	@echo "# Build boot: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	cd build/usb-headnode \
+	@echo "# Build boot: sdc-headnode branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	cd build/sdc-headnode \
 		&& BITS_DIR=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(BUILD_DIR) PKGSRC_DIR=$(TOP)/build/pkgsrc make tar
 	mv $(BOOT_BUILD) $(BOOT_OUTPUT)
@@ -2484,8 +2484,8 @@ $(USB_BITS_SPEC): $(USB_BITS_DIR)
 coal: usb $(COAL_OUTPUT)
 
 $(COAL_OUTPUT): $(USB_BITS_SPEC) $(USB_OUTPUT)
-	@echo "# Build coal: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	cd build/usb-headnode \
+	@echo "# Build coal: sdc-headnode branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	cd build/sdc-headnode \
 		&& BITS_URL=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(BUILD_DIR) PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-coal-image -c $(USB_OUTPUT)
 	mv $(COAL_BUILD) $(COAL_OUTPUT)
@@ -2500,8 +2500,8 @@ USB_OUTPUT=$(USB_BITS_DIR)/usb$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).tgz
 usb: $(USB_OUTPUT)
 
 $(USB_OUTPUT): $(USB_BITS_SPEC) $(BOOT_OUTPUT)
-	@echo "# Build usb: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	cd build/usb-headnode \
+	@echo "# Build usb: sdc-headnode branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	cd build/sdc-headnode \
 		&& BITS_URL=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(BUILD_DIR) PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-usb-image -c $(BOOT_OUTPUT)
 	mv $(USB_BUILD) $(USB_OUTPUT)
@@ -2522,8 +2522,8 @@ MANIFEST_OUTPUT=$(USB_BITS_DIR)/usb$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).
 image: $(IMAGE_OUTPUT)
 
 $(IMAGE_OUTPUT): $(USB_BITS_SPEC) $(USB_OUTPUT)
-	@echo "# Build sdc-on-sdc image: usb-headnode branch $(USB_HEADNODE_BRANCH), sha $(USB_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	cd build/usb-headnode \
+	@echo "# Build sdc-on-sdc image: sdc-headnode branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	cd build/sdc-headnode \
 		&& BITS_URL=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
 		ZONE_DIR=$(BUILD_DIR) PKGSRC_DIR=$(TOP)/build/pkgsrc ./bin/build-dataset $(USB_OUTPUT)
 	mv $(IMAGE_BUILD) $(MANIFEST_BUILD) $(USB_BITS_DIR)/
