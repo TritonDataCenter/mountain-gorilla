@@ -1592,7 +1592,7 @@ clean_marlin:
 
 #---- MEDUSA
 
-_medusa_stamp=$(MEDUSA_BRANCH)-$(TIMESTAMP)-g$(MEDUSA_SHA)
+_medusa_stamp=$(MANTA_MEDUSA_BRANCH)-$(TIMESTAMP)-g$(MANTA_MEDUSA_SHA)
 MEDUSA_BITS=$(BITS_DIR)/medusa/medusa-pkg-$(_medusa_stamp).tar.bz2
 MEDUSA_IMAGE_BIT=$(BITS_DIR)/medusa/medusa-zfs-$(_medusa_stamp).zfs.gz
 MEDUSA_MANIFEST_BIT=$(BITS_DIR)/medusa/medusa-zfs-$(_medusa_stamp).imgmanifest
@@ -1600,10 +1600,10 @@ MEDUSA_MANIFEST_BIT=$(BITS_DIR)/medusa/medusa-zfs-$(_medusa_stamp).imgmanifest
 .PHONY: medusa
 medusa: $(MEDUSA_BITS) medusa_image
 
-$(MEDUSA_BITS): build/medusa
-	@echo "# Build medusa: branch $(MEDUSA_BRANCH), sha $(MEDUSA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(MEDUSA_BITS): build/manta-medusa
+	@echo "# Build medusa: branch $(MANTA_MEDUSA_BRANCH), sha $(MANTA_MEDUSA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/medusa && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/manta-medusa && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created medusa bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(MEDUSA_BITS)
 	@echo ""
@@ -1613,7 +1613,7 @@ $(MEDUSA_BITS): build/medusa
 medusa_image: $(MEDUSA_IMAGE_BIT)
 
 $(MEDUSA_IMAGE_BIT): $(MEDUSA_BITS)
-	@echo "# Build medusa_image: branch $(MEDUSA_BRANCH), sha $(MEDUSA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build medusa_image: branch $(MANTA_MEDUSA_BRANCH), sha $(MANTA_MEDUSA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MEDUSA_IMAGE_UUID)" -t $(MEDUSA_BITS) \
 		-b "medusa" \
 		-o "$(MEDUSA_IMAGE_BIT)" -p $(MEDUSA_PKGSRC) \
@@ -1630,7 +1630,7 @@ medusa_publish_image: $(MEDUSA_IMAGE_BIT)
 
 clean_medusa:
 	$(RM) -rf $(BITS_DIR)/medusa
-	(cd build/medusa && gmake distclean)
+	(cd build/manta-medusa && gmake distclean)
 
 #---- MAHI
 
