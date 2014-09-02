@@ -2246,9 +2246,9 @@ clean_mako:
 #---- sdcadm
 
 ifeq ($(TRY_BRANCH),)
-_sdcadm_stamp=$(SDCADM_BRANCH)-$(TIMESTAMP)-g$(SDCADM_SHA)
+_sdcadm_stamp=$(SDC_ADM_BRANCH)-$(TIMESTAMP)-g$(SDC_ADM_SHA)
 else
-_sdcadm_stamp=$(TRY_BRANCH)-$(TIMESTAMP)-g$(SDCADM_SHA)
+_sdcadm_stamp=$(TRY_BRANCH)-$(TIMESTAMP)-g$(SDC_ADM_SHA)
 endif
 SDCADM_PKG_BIT=$(BITS_DIR)/sdcadm/sdcadm-$(_sdcadm_stamp).sh
 SDCADM_MANIFEST_BIT=$(BITS_DIR)/sdcadm/sdcadm-$(_sdcadm_stamp).imgmanifest
@@ -2257,10 +2257,10 @@ SDCADM_BITS=$(SDCADM_PKG_BIT) $(SDCADM_MANIFEST_BIT)
 .PHONY: sdcadm
 sdcadm: $(SDCADM_PKG_BIT)
 
-$(SDCADM_BITS): build/sdcadm/Makefile
-	@echo "# Build sdcadm: branch $(SDCADM_BRANCH), sha $(SDCADM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(SDCADM_BITS): build/sdc-adm/Makefile
+	@echo "# Build sdcadm: branch $(SDC_ADM_BRANCH), sha $(SDC_ADM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)/sdcadm
-	(cd build/sdcadm && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-adm && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created sdcadm bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(SDCADM_BITS)
 	@echo ""
