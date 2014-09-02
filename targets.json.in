@@ -849,7 +849,7 @@ cat <<EOF
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-	{"url": "git@git.joyent.com:moray.git"}
+	{"url": "git@github.com:joyent/moray.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
