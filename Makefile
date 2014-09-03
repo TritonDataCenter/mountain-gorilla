@@ -959,7 +959,7 @@ clean_imgapi:
 
 #---- sdc
 
-_sdc_stamp=$(SDC_BRANCH)-$(TIMESTAMP)-g$(SDC_SHA)
+_sdc_stamp=$(SDC_SDC_BRANCH)-$(TIMESTAMP)-g$(SDC_SDC_SHA)
 SDC_BITS=$(BITS_DIR)/sdc/sdc-pkg-$(_sdc_stamp).tar.bz2
 SDC_IMAGE_BIT=$(BITS_DIR)/sdc/sdc-zfs-$(_sdc_stamp).zfs.gz
 SDC_MANIFEST_BIT=$(BITS_DIR)/sdc/sdc-zfs-$(_sdc_stamp).imgmanifest
@@ -967,10 +967,10 @@ SDC_MANIFEST_BIT=$(BITS_DIR)/sdc/sdc-zfs-$(_sdc_stamp).imgmanifest
 .PHONY: sdc
 sdc: $(SDC_BITS) sdc_image
 
-$(SDC_BITS): build/sdc
-	@echo "# Build sdc: branch $(SDC_BRANCH), sha $(SDC_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(SDC_BITS): build/sdc-sdc
+	@echo "# Build sdc: branch $(SDC_SDC_BRANCH), sha $(SDC_SDC_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/sdc && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-sdc && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created sdc bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(SDC_BITS)
 	@echo ""
