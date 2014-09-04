@@ -140,7 +140,7 @@ clean_incr-upgrade:
 
 #---- amon
 
-_amon_stamp=$(AMON_BRANCH)-$(TIMESTAMP)-g$(AMON_SHA)
+_amon_stamp=$(SDC_AMON_BRANCH)-$(TIMESTAMP)-g$(SDC_AMON_SHA)
 AMON_BITS=$(BITS_DIR)/amon/amon-pkg-$(_amon_stamp).tar.bz2 \
 	$(BITS_DIR)/amon/amon-relay-$(_amon_stamp).tgz \
 	$(BITS_DIR)/amon/amon-agent-$(_amon_stamp).tgz
@@ -155,10 +155,10 @@ AMON_RELAY_MANIFEST_BIT=$(BITS_DIR)/amon/amon-relay-$(_amon_stamp).manifest
 .PHONY: amon
 amon: $(AMON_BITS_0) amon_image
 
-$(AMON_BITS): build/amon
-	@echo "# Build amon: branch $(AMON_BRANCH), sha $(AMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(AMON_BITS): build/sdc-amon
+	@echo "# Build amon: branch $(SDC_AMON_BRANCH), sha $(SDC_AMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/amon && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake clean all pkg publish)
+	(cd build/sdc-amon && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake clean all pkg publish)
 	@echo "# Created amon bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(AMON_BITS)
 	@echo ""
@@ -167,7 +167,7 @@ $(AMON_BITS): build/amon
 amon_image: $(AMON_IMAGE_BIT)
 
 $(AMON_IMAGE_BIT): $(AMON_BITS_0)
-	@echo "# Build amon_image: branch $(AMON_BRANCH), sha $(AMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build amon_image: branch $(SDC_AMON_BRANCH), sha $(SDC_AMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(AMON_IMAGE_UUID)" -t $(AMON_BITS_0) \
 		-o "$(AMON_IMAGE_BIT)" -p $(AMON_PKGSRC) \
 		-t $(AMON_EXTRA_TARBALLS) -n $(AMON_IMAGE_NAME) \
@@ -184,7 +184,7 @@ amon_publish_image: $(AMON_IMAGE_BIT)
 
 clean_amon:
 	$(RM) -rf $(BITS_DIR)/amon
-	(cd build/amon && gmake clean)
+	(cd build/sdc-amon && gmake clean)
 
 #---- cloud-analytics
 #TODO:
