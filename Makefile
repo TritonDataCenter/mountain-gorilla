@@ -22,7 +22,7 @@
 
 #---- Config
 
-include bits/config.mk
+-include bits/config.mk
 
 # Directories
 TOP := $(shell pwd)
@@ -2670,6 +2670,8 @@ manta_upload_jenkins:
 		&& exit 1 || true
 	TRACE=1 ./tools/mantaput-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(MANTA_UPLOAD_BASE)/$(JOB_NAME) $(JOB_NAME) $(UPLOAD_SUBDIRS)
 
+%_upload_manta: %
+	./tools/manta-upload "$*"
 
 # Publish the image for this Jenkins job to https://updates.joyent.com, if
 # appropriate. No-op if the current JOB_NAME doesn't have a "*_publish_image"

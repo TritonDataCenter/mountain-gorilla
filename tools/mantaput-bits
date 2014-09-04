@@ -24,7 +24,9 @@ PATH=$PATH:${TOP}/node_modules/manta/bin
 if [[ -z "$MANTA_KEY_ID" ]]; then
     export MANTA_KEY_ID=`ssh-keygen -l -f ~/.ssh/id_rsa.pub | awk '{print $2}' | tr -d '\n'`
 fi
-export MANTA_URL=https://us-east.manta.joyent.com
+if [[ -z "$MANTA_URL" ]]; then
+    export MANTA_URL=https://us-east.manta.joyent.com
+fi
 if [[ -z "$MANTA_USER" ]]; then
     export MANTA_USER="Joyent_Dev";
 fi
@@ -44,8 +46,8 @@ function print_help() {
     echo "Usage:"
     echo "  ./tools/mantaput-bits BRANCH TRY-BRANCH TIMESTAMP UPLOAD-BASE-DIR [SUBDIRS...]"
     echo ""
-    echo "Upload bits to Manta. The UPLOAD-BASE-DIR is presumed to be a subdir of"
-    echo "/stor/\${MANTA_USER}"
+    echo "Upload bits to Manta. The UPLOAD-BASE-DIR is presumed to be either a subdir of"
+    echo "\${MANTA_USER}/stor or (if starts with '/') a path under \${MANTA_USER}"
 }
 
 trap 'errexit $? $LINENO' EXIT
@@ -60,6 +62,12 @@ UPLOAD_BASE_DIR=$1
 shift
 SUBDIRS=$*
 
+if [[ ${UPLOAD_BASE_DIR:0:1} != '/' ]]; then
+    # if it starts with a / we assume it's /stor/<something> or
+    # /public/<something> if not, we prepend /stor
+    UPLOAD_BASE_DIR="/stor/${UPLOAD_BASE_DIR}"
+fi
+
 UPLOAD_BRANCH=$TRY_BRANCH
 if [[ -z "$UPLOAD_BRANCH" ]]; then
     UPLOAD_BRANCH=$BRANCH
@@ -68,7 +76,7 @@ fi
 upload_subdir=$UPLOAD_BRANCH-$TIMESTAMP
 
 start_time=$(date +%s)
-echo "Uploading bits to /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}"
+echo "Uploading bits to /${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}"
 
 # need to create the directory structure first
 if [[ -z "$SUBDIRS" ]]; then
@@ -84,13 +92,13 @@ else
 fi
 
 for sub in $subs; do
-    mmkdir -v -p /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/${sub#${BITS_DIR}}
+    mmkdir -v -p /${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}/${sub#${BITS_DIR}}
 done
 
 md5sums=""
 # now we can upload the files
 for file in $files; do
-    manta_object=/${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/${file#$BITS_DIR}
+    manta_object=/${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}/${file#$BITS_DIR}
 
     local_md5_line=$(md5sum ${file})
     local_md5=$(echo "${local_md5_line}" | cut -d ' ' -f1)
@@ -112,14 +120,14 @@ for file in $files; do
 done
 
 # upload the md5sums and config.mk
-echo -e $md5sums | mput -v -H 'content-type: text/plain' /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/md5sums.txt
-mput -v -f $BITS_DIR/config.mk /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}/config.mk
+echo -e $md5sums | mput -v -H 'content-type: text/plain' /${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}/md5sums.txt
+mput -v -f $BITS_DIR/config.mk /${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}/config.mk
 # now update the latest link
 
-echo "/${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}" | mput -v -H 'content-type: text/plain' /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${UPLOAD_BRANCH}-latest
+echo "/${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}" | mput -v -H 'content-type: text/plain' /${MANTA_USER}${UPLOAD_BASE_DIR}/${UPLOAD_BRANCH}-latest
 
-echo "Uploaded to /${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/${upload_subdir}"
+echo "Uploaded to /${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}"
 
 end_time=$(date +%s)
 elapsed=$((${end_time} - ${start_time}))
-echo "Upload took ${elapsed} seconds (Manta path=/${MANTA_USER}/stor/${UPLOAD_BASE_DIR}/$upload_subdir)."
+echo "Upload took ${elapsed} seconds (Manta path=/${MANTA_USER}${UPLOAD_BASE_DIR}/$upload_subdir)."

@@ -1,0 +1,57 @@
+#!/bin/bash
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+#
+# Copyright (c) 2014, Joyent, Inc.
+#
+
+#
+# This script uploads a single build's bits to a chosen manta path.
+#
+
+set -o errexit
+set -o xtrace
+
+TOP=$(cd $(dirname $0)/../ >/dev/null; pwd)
+ENV_MG_OUT_PATH=${MG_OUT_PATH}
+
+function fatal ()
+{
+    echo "$@" >&2
+    exit 1
+}
+
+JOB_NAME=$1
+if [[ -z ${JOB_NAME} || -n $2 ]]; then
+    fatal "Usage: $0 <job_name>"
+fi
+
+if [[ ! -f ${TOP}/bits/config.mk ]]; then
+    fatal "No ${TOP}/bits/config.mk found! Run ./configure and 'make <target>' first."
+fi
+
+. ${TOP}/bits/config.mk
+
+[[ -n ${BRANCH} ]] || fatal "Missing BRANCH. (check bits/config.mk)"
+[[ -n ${TIMESTAMP} ]] || fatal "Missing TIMESTAMP. (check bits/config.mk)"
+
+if [[ -n ${ENV_MG_OUT_PATH} ]]; then
+    echo "WARNING: MG_OUT_PATH='${ENV_MG_OUT_PATH}' set in environment, overriding config.mk value." >&2
+    MG_OUT_PATH=${ENV_MG_OUT_PATH}
+elif [[ -z ${MG_OUT_PATH} ]]; then
+    MG_OUT_PATH=/stor/builds
+fi
+
+${TOP}/tools/mantaput-bits \
+    "${BRANCH}" \
+    "${TRY_BRANCH}" \
+    "${TIMESTAMP}" \
+    ${MG_OUT_PATH}/${JOB_NAME} \
+    ${JOB_NAME} \
+    ${UPLOAD_SUBDIRS}
+
+exit 0
