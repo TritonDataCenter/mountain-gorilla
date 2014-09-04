@@ -56,9 +56,8 @@ zones like vmapi & napi, components that build both like amon and ca, and the
 usb-headnode.git build that puts together the final shipping products. MG is the
 meta-repo that knows how to fetch and build each of them.
 
-An MG build generally works as follows. The typical buildstep is
-<https://mo.joyent.com/mountain-gorilla/blob/master/tools/jenkins-build-step.sh>
-but some jobs have minor tweaks to that.
+An MG build generally works as follows (see ./tools/jenkins-build for more
+details).
 
 1. Clone mountain-gorilla.git
 2. Configure to build one component. This pre-fetches the relevant repo(s)
@@ -303,14 +302,13 @@ content minimally with:
 
     {"ref": "<pushed git ref, e.g. refs/heads/master>"}
 
-is passed. This is a subset of the Github webhook payload. Each jenkins job
-build step is [prefixed with some code that will set `BRANCH` and `TRY_BRANCH`
-for that
-ref](https://mo.joyent.com/mountain-gorilla/blob/master/tools/jenkins-build-step.sh#L19-45).
-It strictly uses "BRANCH=$branch" for release branches to ensure that a release
-branch is *just bits using that release branch*. For feature branches, it uses
-"TRY_BRANCH=$branch BRANCH=master" as a convenience to allow builds where only
-one or a subset of involved repos have that branch.
+is passed. This is a subset of the Github webhook payload. Each [jenkins job
+build step](./tools/jenkins-build) is prefixed with some code that will set
+`BRANCH` and `TRY_BRANCH` for that ref.  It strictly uses "BRANCH=$branch" for
+release branches to ensure that a release branch is *just bits using that
+release branch*. For feature branches, it uses "TRY_BRANCH=$branch
+BRANCH=master" as a convenience to allow builds where only one or a subset of
+involved repos have that branch.
 
 
 
