@@ -217,7 +217,7 @@ fi
 check_repo_url git@github.com:joyent/mountain-gorilla.git '(none)'
 check_repo_url git@github.com:joyent/registrar.git '(none)'
 check_repo_url git@github.com:joyent/sdc-config-agent.git '(none)'
-check_repo_url git@git.joyent.com:amon.git '(none)'
+check_repo_url git@github.com:joyent/sdc-amon.git '(none)'
 
 for targ in $TARGETS; do
   if [[ $targ == 'all' ]]; then
