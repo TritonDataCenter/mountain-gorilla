@@ -61,7 +61,8 @@ if [[ -z "$(echo $release | grep '^release-[0-9]\{8\}$' || true)" ]]; then
     usage "given release, '$release', doesn't match /release-\d{8}/"
 fi
 
-targets="$(json -f $TOP/targets.json agentsshar.deps | json -a | xargs) $(json -f $TOP/targets.json usbheadnode.deps | json -a | grep -v agentsshar-upgrade | xargs) usbheadnode"
+(cd $TOP && JOYENT_BUILD=true bash <targets.json.in >targets.json)
+targets=$(json -f $TOP/targets.json -ka | grep -v '^all$' | grep -v agentsshar-upgrade | grep -v usageapi | grep -v convertvm)
 for target in $targets; do
     latest_mpath=/Joyent_Dev/stor/builds/$target/$release-latest
     latest=$(mls $latest_mpath 2>/dev/null || true)
