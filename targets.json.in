@@ -4,11 +4,11 @@ set -o pipefail
 [[ -z $JOYENT_BUILD ]] && JOYENT_BUILD=false
 
 if [[ "${JOYENT_BUILD}" == "true" ]]; then
-	FIRMWARE_TOOLS_DEP='"firmware-tools",'
-	FIRMWARE_TOOLS_ENTRY='
+  FIRMWARE_TOOLS_DEP='"firmware-tools",'
+  FIRMWARE_TOOLS_ENTRY='
   "firmware-tools": {
     "repos": [
-	{"url": "git@git.joyent.com:firmware-tools.git"}
+        {"url": "git@git.joyent.com:firmware-tools.git"}
     ],
     "deps": []
   },'
@@ -22,7 +22,7 @@ cat <<EOF
 {
   "smartlogin": {
     "repos": [
-	{"url": "git@github.com:joyent/sdc-smart-login.git"}
+        {"url": "git@github.com:joyent/sdc-smart-login.git"}
     ],
     "deps": []
   },
@@ -112,7 +112,7 @@ cat <<EOF
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [],
     "repos": [
-	{"url": "git@github.com:joyent/sdc-adminui.git", "dir": "adminui"}
+        {"url": "git@github.com:joyent/sdc-adminui.git", "dir": "adminui"}
     ],
     "deps": [
       "amon",
@@ -136,7 +136,7 @@ cat <<EOF
       "tftp-hpa-5.2"
     ],
     "repos": [
-	{"url": "git@git.joyent.com:mockcn.git", "dir": "mockcn"}
+        {"url": "git@git.joyent.com:mockcn.git", "dir": "mockcn"}
     ],
     "deps": [],
     "tarballs": []
@@ -151,7 +151,7 @@ cat <<EOF
       "tftp-hpa-5.2"
     ],
     "repos": [
-	{"url": "git@github.com:joyent/sdc-booter.git", "dir": "dhcpd"}
+        {"url": "git@github.com:joyent/sdc-booter.git", "dir": "dhcpd"}
     ],
     "deps": [
       "amon",
@@ -365,7 +365,7 @@ cat <<EOF
       "python26-2.6.7nb2"
     ],
     "repos": [
-	{"url": "git@github.com:joyent/sdc-vmapi.git"}
+        {"url": "git@github.com:joyent/sdc-vmapi.git"}
     ],
     "deps": [
       "amon",
@@ -393,7 +393,7 @@ cat <<EOF
       "python26-2.6.7nb2"
     ],
     "repos": [
-	{"url": "git@github.com:joyent/sdc-papi.git"}
+        {"url": "git@github.com:joyent/sdc-papi.git"}
     ],
     "deps": [
       "amon",
@@ -436,7 +436,7 @@ cat <<EOF
     "image_description": "SDC tools/ops zone",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
-	"mtr-0.82"
+        "mtr-0.82"
     ],
     "repos": [
       {"url": "git@github.com:joyent/sdc-sdc.git"}
@@ -454,7 +454,7 @@ cat <<EOF
 
   "agents_core": {
     "repos": [
-	{"url": "git@github.com:joyent/sdc-agents-core.git"}
+        {"url": "git@github.com:joyent/sdc-agents-core.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -463,7 +463,7 @@ cat <<EOF
 
   "heartbeater": {
     "repos": [
-	{"url": "git@github.com:joyent/sdc-heartbeater-agent.git"}
+        {"url": "git@github.com:joyent/sdc-heartbeater-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -472,7 +472,7 @@ cat <<EOF
 
   "vm-agent": {
     "repos": [
-	{"url": "git@github.com:joyent/sdc-vm-agent.git"}
+        {"url": "git@github.com:joyent/sdc-vm-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -481,7 +481,7 @@ cat <<EOF
 
   "net-agent": {
     "repos": [
-	{"url": "git@github.com:joyent/sdc-net-agent.git"}
+        {"url": "git@github.com:joyent/sdc-net-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -490,7 +490,7 @@ cat <<EOF
 
   "cn-agent": {
     "repos": [
-	{"url": "git@github.com:joyent/sdc-cn-agent.git"}
+        {"url": "git@github.com:joyent/sdc-cn-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -499,7 +499,7 @@ cat <<EOF
 
   "provisioner": {
     "repos": [
-	{"url": "git@github.com:joyent/sdc-provisioner-agent.git"}
+        {"url": "git@github.com:joyent/sdc-provisioner-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -508,7 +508,7 @@ cat <<EOF
 
   "zonetracker": {
     "repos": [
-	{"url": "git@git.joyent.com:zonetracker.git"}
+        {"url": "git@git.joyent.com:zonetracker.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -517,7 +517,7 @@ cat <<EOF
 
   "config-agent": {
     "repos": [
-	{"url": "git@github.com:joyent/sdc-config-agent.git"}
+        {"url": "git@github.com:joyent/sdc-config-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -526,7 +526,7 @@ cat <<EOF
 
   "hagfish-watcher": {
     "repos": [
-	{"url": "git@github.com:joyent/sdc-hagfish-watcher.git"}
+        {"url": "git@github.com:joyent/sdc-hagfish-watcher.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -535,7 +535,7 @@ cat <<EOF
 
   "firewaller": {
     "repos": [
-	{"url": "git@github.com:joyent/sdc-firewaller-agent.git"}
+        {"url": "git@github.com:joyent/sdc-firewaller-agent.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -582,7 +582,7 @@ cat <<EOF
       "openldap-client-2.4.24"
     ],
     "repos": [
-	{"url": "git@github.com:joyent/sdc-fwapi.git"}
+        {"url": "git@github.com:joyent/sdc-fwapi.git"}
     ],
     "deps": [
       "amon",
@@ -635,7 +635,7 @@ cat <<EOF
       "python26-2.6.7nb2"
     ],
     "repos": [
-	{"url": "git@github.com:joyent/sdc-sapi.git"}
+        {"url": "git@github.com:joyent/sdc-sapi.git"}
     ],
     "deps": [
       "amon",
@@ -652,7 +652,7 @@ cat <<EOF
 
   "registrar": {
     "repos": [
-	{"url": "git@github.com:joyent/registrar.git"}
+        {"url": "git@github.com:joyent/registrar.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -661,7 +661,7 @@ cat <<EOF
 
   "minnow": {
     "repos": [
-	{"url": "git@github.com:joyent/manta-minnow.git"}
+        {"url": "git@github.com:joyent/manta-minnow.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -670,7 +670,7 @@ cat <<EOF
 
   "mackerel": {
     "repos": [
-	{"url": "git@github.com:joyent/manta-mackerel.git"}
+        {"url": "git@github.com:joyent/manta-mackerel.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -849,7 +849,7 @@ cat <<EOF
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-	{"url": "git@github.com:joyent/moray.git"}
+        {"url": "git@github.com:joyent/moray.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
@@ -873,7 +873,7 @@ cat <<EOF
       "haproxy-1.4.24"
     ],
     "repos": [
-	{"url": "git@github.com:joyent/electric-moray.git"}
+        {"url": "git@github.com:joyent/electric-moray.git"}
     ],
     "deps": [
       "registrar",
@@ -1119,18 +1119,17 @@ cat <<EOF
 
   "sdcadm": {
     "repos": [
-	{"url": "git@github.com:joyent/sdc-adm.git"}
+        {"url": "git@github.com:joyent/sdc-adm.git"}
     ],
     "deps": []
   },
 
   "agentsshar": {
     "repos": [
-	{"url": "git@github.com:joyent/sdc-agents-installer.git"}
+        {"url": "git@github.com:joyent/sdc-agents-installer.git"}
     ],
     "deps": [
       "agents_core",
-      "zonetracker",
       "provisioner",
       "hagfish-watcher",
       "heartbeater",
@@ -1147,7 +1146,7 @@ cat <<EOF
   },
   "convertvm": {
     "repos": [
-	{"url":  "git@github.com:joyent/convertvm.git" }
+        {"url":  "git@github.com:joyent/convertvm.git" }
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -1168,7 +1167,7 @@ cat <<EOF
       "python26-2.6.7nb2"
     ],
     "repos": [
-	{"url":  "git@github.com:joyent/sdcsso.git" }
+        {"url":  "git@github.com:joyent/sdcsso.git" }
     ],
     "deps": [
       "amon",
@@ -1193,7 +1192,7 @@ cat <<EOF
       "openldap-client-2.4.24"
     ],
     "repos": [
-	{"url": "git@github.com:joyent/sdc-manta.git"}
+        {"url": "git@github.com:joyent/sdc-manta.git"}
     ],
     "deps": [
       "amon",
@@ -1208,7 +1207,7 @@ cat <<EOF
 
   "sdc-system-tests": {
     "repos": [
-	{"url": "git@github.com:joyent/sdc-system-tests.git"}
+        {"url": "git@github.com:joyent/sdc-system-tests.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
@@ -1217,7 +1216,7 @@ cat <<EOF
 
   "sdcboot": {
     "repos": [
-	{"url": "git@github.com:joyent/sdcboot.git"}
+        {"url": "git@github.com:joyent/sdcboot.git"}
     ],
     "deps": []
   },
@@ -1226,27 +1225,27 @@ cat <<EOF
 
   "platform": {
     "repos": [
-	{"url": "git@github.com:joyent/smartos-live.git"},
-	{"url": "git@github.com:joyent/illumos-joyent.git"},
-	{"url": "git@github.com:joyent/illumos-extra.git"},
-	{"url": "git@github.com:joyent/sdc-ur-agent.git"},
-	{"url": "git@github.com:joyent/illumos-kvm.git"},
-	{"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
-	{"url": "git@github.com:joyent/sdc-platform.git"},
-	{"url": "git@github.com:joyent/mdata-client.git"}
+        {"url": "git@github.com:joyent/smartos-live.git"},
+        {"url": "git@github.com:joyent/illumos-joyent.git"},
+        {"url": "git@github.com:joyent/illumos-extra.git"},
+        {"url": "git@github.com:joyent/sdc-ur-agent.git"},
+        {"url": "git@github.com:joyent/illumos-kvm.git"},
+        {"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
+        {"url": "git@github.com:joyent/sdc-platform.git"},
+        {"url": "git@github.com:joyent/mdata-client.git"}
     ],
     "deps": []
   },
  "platform-debug": {
     "repos": [
-	{"url": "git@github.com:joyent/smartos-live.git"},
-	{"url": "git@github.com:joyent/illumos-joyent.git"},
-	{"url": "git@github.com:joyent/illumos-extra.git"},
-	{"url": "git@github.com:joyent/sdc-ur-agent.git"},
-	{"url": "git@github.com:joyent/illumos-kvm.git"},
-	{"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
-	{"url": "git@github.com:joyent/sdc-platform.git"},
-	{"url": "git@github.com:joyent/mdata-client.git"}
+        {"url": "git@github.com:joyent/smartos-live.git"},
+        {"url": "git@github.com:joyent/illumos-joyent.git"},
+        {"url": "git@github.com:joyent/illumos-extra.git"},
+        {"url": "git@github.com:joyent/sdc-ur-agent.git"},
+        {"url": "git@github.com:joyent/illumos-kvm.git"},
+        {"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
+        {"url": "git@github.com:joyent/sdc-platform.git"},
+        {"url": "git@github.com:joyent/mdata-client.git"}
     ],
     "deps": []
   },
