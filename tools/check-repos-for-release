@@ -171,7 +171,6 @@ while getopts "hac:t:T" c; do
 done
 shift $((OPTIND - 1))
 
-
 RELEASE=$1
 if [[ -z "$RELEASE" ]]; then
     usage "no RELEASE given"
@@ -206,7 +205,7 @@ if [[ -z "$CREDS" ]]; then
     usage "no mo.joyent.com crendentials: use '-c CREDS' or set MOLYBDENUM_CREDENTIALS"
 fi
 
-
+(cd $TOP && JOYENT_BUILD=true bash <targets.json.in >targets.json)
 if [[ -z "$TARGETS" ]]; then
     TARGETS=$(node -e "var fs = require('fs');
         var targets = JSON.parse(fs.readFileSync('$TOP/targets.json'));
