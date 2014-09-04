@@ -214,9 +214,9 @@ if [[ -z "$TARGETS" ]]; then
 fi
 
 # Get some "low on the food chain" repos first (RELENG-552).
-check_repo_url git@git.joyent.com:mountain-gorilla.git '(none)'
-check_repo_url git@git.joyent.com:registrar.git '(none)'
-check_repo_url git@git.joyent.com:config-agent.git '(none)'
+check_repo_url git@github.com:joyent/mountain-gorilla.git '(none)'
+check_repo_url git@github.com:joyent/registrar.git '(none)'
+check_repo_url git@github.com:joyent/sdc-config-agent.git '(none)'
 check_repo_url git@git.joyent.com:amon.git '(none)'
 
 for targ in $TARGETS; do

@@ -366,7 +366,7 @@ function preload_bits_from_manta() {
 # Usage:
 #   get_repo_cache REPO-URL REPO-DIR SUBMODULE-UPDATE
 # Example:
-#   get_repo_cache git@git.joyent.com:smart-login.git smart-login true
+#   get_repo_cache git@github.com:joyent/smart-login.git smart-login true
 function get_repo_cache() {
     local repo_url=$1
     local repo_dir=$2

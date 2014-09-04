@@ -36,13 +36,13 @@ HTML scraping, and ssh'ing. You've been warned.
 
 # INSTALLATION
 
-    git clone git@git.joyent.com:mountain-gorilla.git
+    git clone git@github.com:joyent/mountain-gorilla.git
     npm install -g mountain-gorilla/tools/jenkins/sdc-jenkins
 
 # REQUIREMENTS
 
 - Access to the 'automation' Jenkins user
-- SSH access to emy-jenkins (
+- SSH access to emy-jenkins
 
 
 # COMMANDS

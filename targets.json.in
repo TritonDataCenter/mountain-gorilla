@@ -1208,7 +1208,7 @@ cat <<EOF
 
   "sdc-system-tests": {
     "repos": [
-	{"url": "git@git.joyent.com:sdc-system-tests.git"}
+	{"url": "git@github.com:joyent/sdc-system-tests.git"}
     ],
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
