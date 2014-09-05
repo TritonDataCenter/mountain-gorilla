@@ -1119,7 +1119,7 @@ cat <<EOF
 
   "sdcadm": {
     "repos": [
-        {"url": "git@github.com:joyent/sdc-adm.git"}
+        {"url": "git@github.com:joyent/sdcadm.git"}
     ],
     "deps": []
   },
