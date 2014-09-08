@@ -103,6 +103,7 @@ exec > >(tee ${LOG}) 2>&1
 echo ""
 echo "#---------------------- env"
 
+echo "MG repo commit sha: $(git describe --all --long --dirty | awk -F'-g' '{print $NF}')"
 date
 pwd
 whoami
