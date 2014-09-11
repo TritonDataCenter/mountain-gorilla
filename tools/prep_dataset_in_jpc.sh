@@ -31,6 +31,7 @@ set -o errexit
 
 CREATED_MACHINE_UUID=
 CREATED_MACHINE_IMAGE_UUID=
+MG_OUT_PATH="/stor/builds"
 TOP=$(cd $(dirname $0)/../ >/dev/null; pwd)
 JSON=${TOP}/tools/json
 export PATH="${TOP}/node_modules/manta/bin:${TOP}/node_modules/smartdc/bin:${PATH}"
@@ -119,6 +120,8 @@ function usage() {
   echo "  -P PACKAGE      Package (instance / limit) name to use (eg sdc_256)"
   echo "  -o OUTPUT       Image output path. Should be of the form:"
   echo "                  '/path/to/name.manta'."
+  echo "  -O MANTA DIR    Output dir in Manta (under \${MANTA_USER}) default:"
+  echo "                  '/stor/builds'"
   echo "  -v VERSION      Version for produced image manifest."
   echo "  -n NAME         NAME for the produced image manifest."
   echo "  -d DESCRIPTION  DESCRIPTION for the produced image manifest."
@@ -131,7 +134,18 @@ function usage() {
 
 trap cleanup ERR
 
-while getopts ht:p:P:i:o:n:v:d:b: opt; do
+if [[ -n ${SDC_LOCAL_BUILD} ]]; then
+  if [[ -z ${SDC_IMGAPI_URL} ]]; then
+    fatal "When building without Manta, you need to set \${SDC_IMGAPI_URL}"
+  fi
+  if [[ -z ${SDC_IMAGE_PACKAGE} ]]; then
+    fatal "When building without JPC, you need to set \${SDC_IMAGE_PACKAGE}"
+  fi
+
+  image_package=${SDC_IMAGE_PACKAGE}
+fi
+
+while getopts ht:p:P:i:o:O:n:v:d:b: opt; do
   case ${opt} in
   h)
     usage
@@ -159,6 +173,11 @@ while getopts ht:p:P:i:o:n:v:d:b: opt; do
   o)
     if [[ -n ${OPTARG} ]]; then
         output="${OPTARG}"
+    fi
+    ;;
+  O)
+    if [[ -n ${OPTARG} ]]; then
+        MG_OUT_PATH="${OPTARG}"
     fi
     ;;
   b)
@@ -212,12 +231,12 @@ CREATED_MACHINE_UUID=${machine}
 
 echo "Wait up to 30 minutes for machine $machine to provision"
 for i in {1..360}; do
-    sleep 5
-    state=$(sdc-getmachine ${machine} | json state)
-    echo "Checking if machine $machine is provisioned (check $i of 360): $state"
-    if [[ $state != 'provisioning' ]]; then
-        break
-    fi
+  sleep 5
+  state=$(sdc-getmachine ${machine} | json state)
+  echo "Checking if machine $machine is provisioned (check $i of 360): $state"
+  if [[ $state != 'provisioning' ]]; then
+    break
+  fi
 done
 
 machine_json=$(sdc-getmachine ${machine})
@@ -332,50 +351,60 @@ if [[ "$(sdc-getimage ${image_id} | json 'state')" != "active" ]]; then
   exit 1
 fi
 
-mantapath=/${SDC_ACCOUNT}/stor/builds/${build_name}/$(echo ${image_version} | cut -d '-' -f1,2)/${build_name}
-mmkdir -p ${mantapath}
-
-manta_bits=/tmp/manta-exported-image.$$
-sdc-exportimage --mantaPath ${mantapath} ${image_id} > ${manta_bits}
-
 output_dir=$(dirname ${output})
-image_path=$(json image_path < ${manta_bits})
-manifest_path=$(json manifest_path < ${manta_bits})
 
-image_filename=$(basename ${image_path})
-image_manifest_filename=$(basename ${manifest_path})
+if [[ -n ${SDC_LOCAL_BUILD} ]]; then
+    echo "Downloading image ${image_id} from imgapi"
 
-# XXX See TOOLS-359, basically binder has image_name = manta-nameservice which breaks
-# backward compat when we switch to using JPC images. So I need to rename to the old
-# name here.
-if [[ ${image_name} != ${build_name} ]]; then
-  new_image_filename=$(echo ${image_filename} | sed -e "s/^${image_name}/${build_name}/")
-  new_image_manifest_filename=$(echo ${image_manifest_filename} | sed -e "s/^${image_name}/${build_name}/")
-  mln ${mantapath}/${image_filename} ${mantapath}/${new_image_filename}
-  mln ${mantapath}/${image_manifest_filename} ${mantapath}/${new_image_manifest_filename}
-  mrm ${mantapath}/${image_filename}
-  mrm ${mantapath}/${image_manifest_filename}
-  image_filename=${new_image_filename}
-  image_manifest_filename=${new_image_manifest_filename}
-  image_path=${mantapath}/${image_filename}
-  manifest_path=${mantapath}/${image_manifest_filename}
+    image_manifest_filename=${image_name}-${image_version}.imgmanifest
+    image_filename=${image_name}-${image_version}.zfs.gz
+    curl -sS -f -o ${output_dir}/${image_manifest_filename} ${SDC_IMGAPI_URL}/images/${image_id}
+    curl -sS -f -o ${output_dir}/${image_filename} ${SDC_IMGAPI_URL}/images/${image_id}/file
 
-  json \
-    -e "this.image_path='${image_path}'" \
-    -e "this.manifest_path='${manifest_path}'" \
-    < ${manta_bits} \
-    > ${manta_bits}.new \
-    && mv ${manta_bits}.new ${manta_bits}
+else
+    mantapath=/${SDC_ACCOUNT}${MG_OUT_PATH}/${build_name}/$(echo ${image_version} | cut -d '-' -f1,2)/${build_name}
+    mmkdir -p ${mantapath}
 
+    manta_bits=/tmp/manta-exported-image.$$
+    sdc-exportimage --mantaPath ${mantapath} ${image_id} > ${manta_bits}
+
+    image_path=$(json image_path < ${manta_bits})
+    manifest_path=$(json manifest_path < ${manta_bits})
+
+    image_filename=$(basename ${image_path})
+    image_manifest_filename=$(basename ${manifest_path})
+
+    # XXX See TOOLS-359, basically binder has image_name = manta-nameservice which breaks
+    # backward compat when we switch to using JPC images. So I need to rename to the old
+    # name here.
+    if [[ ${image_name} != ${build_name} ]]; then
+      new_image_filename=$(echo ${image_filename} | sed -e "s/^${image_name}/${build_name}/")
+      new_image_manifest_filename=$(echo ${image_manifest_filename} | sed -e "s/^${image_name}/${build_name}/")
+      mln ${mantapath}/${image_filename} ${mantapath}/${new_image_filename}
+      mln ${mantapath}/${image_manifest_filename} ${mantapath}/${new_image_manifest_filename}
+      mrm ${mantapath}/${image_filename}
+      mrm ${mantapath}/${image_manifest_filename}
+      image_filename=${new_image_filename}
+      image_manifest_filename=${new_image_manifest_filename}
+      image_path=${mantapath}/${image_filename}
+      manifest_path=${mantapath}/${image_manifest_filename}
+
+      json \
+        -e "this.image_path='${image_path}'" \
+        -e "this.manifest_path='${manifest_path}'" \
+        < ${manta_bits} \
+        > ${manta_bits}.new \
+        && mv ${manta_bits}.new ${manta_bits}
+    fi
+
+    # XXX we download back from manta now just so other scripts work and we can publish
+    # to updates. Obviously it makes more sense not to do this, but there is not time to
+    # fix everything at once.
+    mget -o ${output_dir}/${image_filename} ${image_path}
+    [[ -f ${output_dir}/${image_filename} ]] || fatal "Failed to download ${image_filename}"
+    mget -o ${output_dir}/${image_manifest_filename} ${manifest_path}
+    [[ -f ${output_dir}/${image_manifest_filename} ]] || fatal "Failed to download ${image_manifest_filename}"
 fi
-
-# XXX we download back from manta now just so other scripts work and we can publish
-# to updates. Obviously it makes more sense not to do this, but there is not time to
-# fix everything at once.
-mget -o ${output_dir}/${image_filename} ${image_path}
-[[ -f ${output_dir}/${image_filename} ]] || fatal "Failed to download ${image_filename}"
-mget -o ${output_dir}/${image_manifest_filename} ${manifest_path}
-[[ -f ${output_dir}/${image_manifest_filename} ]] || fatal "Failed to download ${image_manifest_filename}"
 
 # Image Notes:
 # - We need to add a requirement on the manifest for networks but CloudAPI does
@@ -402,7 +431,13 @@ cat ${output_dir}/${image_manifest_filename} \
     -e "this.uuid = '$(uuid)'" \
   > ${output_dir}/${image_manifest_filename}.new \
   && mv ${output_dir}/${image_manifest_filename}.new ${output_dir}/${image_manifest_filename} \
-  && mput -f ${output_dir}/${image_manifest_filename} ${manifest_path}
+
+if [[ -z ${SDC_LOCAL_BUILD} ]]; then
+  mput -f ${output_dir}/${image_manifest_filename} ${manifest_path}
+  cat ${manta_bits}
+else
+  echo "Image is in ${output_dir} (not pushed to Manta)"
+fi
 
 if [[ "$KEEP_INFRA_ON_FAILURE" == "true" || "$KEEP_INFRA_ON_FAILURE" == 1 ]]; then
     echo "$0: NOT deleting image (KEEP_INFRA_ON_FAILURE=$KEEP_INFRA_ON_FAILURE)"
@@ -410,6 +445,5 @@ else
     sdc-deleteimage ${image_id}
 fi
 
-cat ${manta_bits}
 
 exit 0

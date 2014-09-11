@@ -169,7 +169,7 @@ amon_image: $(AMON_IMAGE_BIT)
 $(AMON_IMAGE_BIT): $(AMON_BITS_0)
 	@echo "# Build amon_image: branch $(SDC_AMON_BRANCH), sha $(SDC_AMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(AMON_IMAGE_UUID)" -t $(AMON_BITS_0) \
-		-o "$(AMON_IMAGE_BIT)" -p $(AMON_PKGSRC) \
+		-o "$(AMON_IMAGE_BIT)" -p $(AMON_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(AMON_EXTRA_TARBALLS) -n $(AMON_IMAGE_NAME) \
 		-v $(_amon_stamp) -d $(AMON_IMAGE_DESCRIPTION)
 	@echo "# Created amon image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -224,7 +224,7 @@ ca_image: $(CA_IMAGE_BIT)
 $(CA_IMAGE_BIT): $(CA_BITS_0)
 	@echo "# Build ca_image: branch $(SDC_CLOUD_ANALYTICS_BRANCH), sha $(SDC_CLOUD_ANALYTICS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(CA_IMAGE_UUID)" -t $(CA_BITS_0) \
-		-o "$(CA_IMAGE_BIT)" -p $(CA_PKGSRC) \
+		-o "$(CA_IMAGE_BIT)" -p $(CA_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(CA_EXTRA_TARBALLS) -n $(CA_IMAGE_NAME) \
 		-v $(_ca_stamp) -d $(CA_IMAGE_DESCRIPTION)
 	@echo "# Created ca image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -272,7 +272,7 @@ ufds_image: $(UFDS_IMAGE_BIT)
 $(UFDS_IMAGE_BIT): $(UFDS_BITS)
 	@echo "# Build ufds_image: branch $(SDC_UFDS_BRANCH), sha $(SDC_UFDS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(UFDS_IMAGE_UUID)" -t $(UFDS_BITS) \
-		-o "$(UFDS_IMAGE_BIT)" -p $(UFDS_PKGSRC) \
+		-o "$(UFDS_IMAGE_BIT)" -p $(UFDS_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(UFDS_EXTRA_TARBALLS) -n $(UFDS_IMAGE_NAME) \
 		-v $(_ufds_stamp) -d $(UFDS_IMAGE_DESCRIPTION)
 	@echo "# Created ufds image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -316,7 +316,7 @@ usageapi_image: $(USAGEAPI_IMAGE_BIT)
 $(USAGEAPI_IMAGE_BIT): $(USAGEAPI_BITS)
 	@echo "# Build usageapi_image: branch $(USAGEAPI_BRANCH), sha $(USAGEAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(USAGEAPI_IMAGE_UUID)" -t $(USAGEAPI_BITS) \
-		-o "$(USAGEAPI_IMAGE_BIT)" -p $(USAGEAPI_PKGSRC) \
+		-o "$(USAGEAPI_IMAGE_BIT)" -p $(USAGEAPI_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(USAGEAPI_EXTRA_TARBALLS) -n $(USAGEAPI_IMAGE_NAME) \
 		-v $(_usageapi_stamp) -d $(USAGEAPI_IMAGE_DESCRIPTION)
 	@echo "# Created usageapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -359,7 +359,7 @@ assets_image: $(ASSETS_IMAGE_BIT)
 $(ASSETS_IMAGE_BIT): $(ASSETS_BITS)
 	@echo "# Build assets_image: branch $(ASSETS_BRANCH), sha $(ASSETS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(ASSETS_IMAGE_UUID)" -t $(ASSETS_BITS) \
-		-o "$(ASSETS_IMAGE_BIT)" -p $(ASSETS_PKGSRC) \
+		-o "$(ASSETS_IMAGE_BIT)" -p $(ASSETS_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(ASSETS_EXTRA_TARBALLS) -n $(ASSETS_IMAGE_NAME) \
 		-v $(_assets_stamp) -d $(ASSETS_IMAGE_DESCRIPTION)
 	@echo "# Created assets image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -398,7 +398,7 @@ adminui_image: $(ADMINUI_IMAGE_BIT)
 $(ADMINUI_IMAGE_BIT): $(ADMINUI_BITS)
 	@echo "# Build adminui_image: branch $(ADMINUI_BRANCH), sha $(ADMINUI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(ADMINUI_IMAGE_UUID)" -t $(ADMINUI_BITS) \
-		-o "$(ADMINUI_IMAGE_BIT)" -p $(ADMINUI_PKGSRC) \
+		-o "$(ADMINUI_IMAGE_BIT)" -p $(ADMINUI_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(ADMINUI_EXTRA_TARBALLS) -n $(ADMINUI_IMAGE_NAME) \
 		-v $(_adminui_stamp) -d $(ADMINUI_IMAGE_DESCRIPTION)
 	@echo "# Created adminui image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -438,7 +438,7 @@ redis_image: $(REDIS_IMAGE_BIT)
 $(REDIS_IMAGE_BIT): $(REDIS_BITS)
 	@echo "# Build redis_image: branch $(REDIS_BRANCH), sha $(REDIS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(REDIS_IMAGE_UUID)" -t $(REDIS_BITS) \
-		-o "$(REDIS_IMAGE_BIT)" -p $(REDIS_PKGSRC) \
+		-o "$(REDIS_IMAGE_BIT)" -p $(REDIS_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(REDIS_EXTRA_TARBALLS) -n $(REDIS_IMAGE_NAME) \
 		-v $(_redis_stamp) -d $(REDIS_IMAGE_DESCRIPTION)
 	@echo "# Created redis image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -478,7 +478,7 @@ amonredis_image: $(AMONREDIS_IMAGE_BIT)
 $(AMONREDIS_IMAGE_BIT): $(AMONREDIS_BITS)
 	@echo "# Build amonredis_image: branch $(AMONREDIS_BRANCH), sha $(AMONREDIS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(AMONREDIS_IMAGE_UUID)" -t $(AMONREDIS_BITS) \
-		-o "$(AMONREDIS_IMAGE_BIT)" -p $(AMONREDIS_PKGSRC) \
+		-o "$(AMONREDIS_IMAGE_BIT)" -p $(AMONREDIS_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(AMONREDIS_EXTRA_TARBALLS) -n $(AMONREDIS_IMAGE_NAME) \
 		-v $(_amonredis_stamp) -d $(AMONREDIS_IMAGE_DESCRIPTION)
 	@echo "# Created amonredis image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -518,7 +518,7 @@ rabbitmq_image: $(RABBITMQ_IMAGE_BIT)
 $(RABBITMQ_IMAGE_BIT): $(RABBITMQ_BITS)
 	@echo "# Build rabbitmq_image: branch $(RABBITMQ_BRANCH), sha $(RABBITMQ_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(RABBITMQ_IMAGE_UUID)" -t $(RABBITMQ_BITS) \
-		-o "$(RABBITMQ_IMAGE_BIT)" -p $(RABBITMQ_PKGSRC) \
+		-o "$(RABBITMQ_IMAGE_BIT)" -p $(RABBITMQ_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(RABBITMQ_EXTRA_TARBALLS) -n $(RABBITMQ_IMAGE_NAME) \
 		-v $(_rabbitmq_stamp) -d $(RABBITMQ_IMAGE_DESCRIPTION)
 	@echo "# Created rabbitmq image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -558,7 +558,7 @@ dhcpd_image: $(DHCPD_IMAGE_BIT)
 $(DHCPD_IMAGE_BIT): $(DHCPD_BITS)
 	@echo "# Build dhcpd_image: branch $(DHCPD_BRANCH), sha $(DHCPD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(DHCPD_IMAGE_UUID)" -t $(DHCPD_BITS) \
-		-o "$(DHCPD_IMAGE_BIT)" -p $(DHCPD_PKGSRC) \
+		-o "$(DHCPD_IMAGE_BIT)" -p $(DHCPD_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(DHCPD_EXTRA_TARBALLS) -n $(DHCPD_IMAGE_NAME) \
 		-v $(_dhcpd_stamp) -d $(DHCPD_IMAGE_DESCRIPTION)
 	@echo "# Created dhcpd image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -598,7 +598,7 @@ mockcn_image: $(MOCKCN_IMAGE_BIT)
 $(MOCKCN_IMAGE_BIT): $(MOCKCN_BITS)
 	@echo "# Build mockcn_image: branch $(MOCKCN_BRANCH), sha $(MOCKCN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MOCKCN_IMAGE_UUID)" -t $(MOCKCN_BITS) \
-		-o "$(MOCKCN_IMAGE_BIT)" -p $(MOCKCN_PKGSRC) \
+		-o "$(MOCKCN_IMAGE_BIT)" -p $(MOCKCN_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(MOCKCN_EXTRA_TARBALLS) -n $(MOCKCN_IMAGE_NAME) \
 		-v $(_mockcn_stamp) -d $(MOCKCN_IMAGE_DESCRIPTION)
 	@echo "# Created mockcn image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -640,7 +640,7 @@ cloudapi_image: $(CLOUDAPI_IMAGE_BIT)
 $(CLOUDAPI_IMAGE_BIT): $(CLOUDAPI_BITS)
 	@echo "# Build cloudapi_image: branch $(SDC_CLOUDAPI_BRANCH), sha $(SDC_CLOUDAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(CLOUDAPI_IMAGE_UUID)" -t $(CLOUDAPI_BITS) \
-		-o "$(CLOUDAPI_IMAGE_BIT)" -p $(CLOUDAPI_PKGSRC) \
+		-o "$(CLOUDAPI_IMAGE_BIT)" -p $(CLOUDAPI_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(CLOUDAPI_EXTRA_TARBALLS) -n $(CLOUDAPI_IMAGE_NAME) \
 		-v $(_cloudapi_stamp) -d $(CLOUDAPI_IMAGE_DESCRIPTION)
 	@echo "# Created cloudapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -683,7 +683,7 @@ manta-manatee_image: $(MANTA_MANATEE_IMAGE_BIT)
 $(MANTA_MANATEE_IMAGE_BIT): $(MANTA_MANATEE_BITS)
 	@echo "# Build manta-manatee_image: branch $(MANTA_MANATEE_BRANCH), sha $(MANTA_MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MANTA_MANATEE_IMAGE_UUID)" -t $(MANTA_MANATEE_BITS) \
-		-b "manta-manatee" \
+		-b "manta-manatee" -O "$(MG_OUT_PATH)" \
 		-o "$(MANTA_MANATEE_IMAGE_BIT)" -p $(MANTA_MANATEE_PKGSRC) \
 		-t $(MANTA_MANATEE_EXTRA_TARBALLS) -n $(MANTA_MANATEE_IMAGE_NAME) \
 		-v $(_manta-manatee_stamp) -d $(MANTA_MANATEE_IMAGE_DESCRIPTION)
@@ -725,7 +725,7 @@ $(SDC_MANATEE_IMAGE_BIT): $(SDC_MANATEE_BITS)
 	@echo "# Build sdc-manatee_image: branch $(SDC_MANATEE_BRANCH), sha $(SDC_MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(SDC_MANATEE_IMAGE_UUID)" -t $(SDC_MANATEE_BITS) \
 		-b "sdc-manatee" \
-		-o "$(SDC_MANATEE_IMAGE_BIT)" -p $(SDC_MANATEE_PKGSRC) \
+		-o "$(SDC_MANATEE_IMAGE_BIT)" -p $(SDC_MANATEE_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(SDC_MANATEE_EXTRA_TARBALLS) -n $(SDC_MANATEE_IMAGE_NAME) \
 		-v $(_sdc-manatee_stamp) -d $(SDC_MANATEE_IMAGE_DESCRIPTION)
 	@echo "# Created sdc-manatee image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -766,7 +766,7 @@ $(MANATEE_IMAGE_BIT): $(MANATEE_BITS)
 	@echo "# Build manatee_image: branch $(MANATEE_BRANCH), sha $(MANATEE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MANATEE_IMAGE_UUID)" -t $(MANATEE_BITS) \
 		-b "manatee" \
-		-o "$(MANATEE_IMAGE_BIT)" -p $(MANATEE_PKGSRC) \
+		-o "$(MANATEE_IMAGE_BIT)" -p $(MANATEE_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(MANATEE_EXTRA_TARBALLS) -n $(MANATEE_IMAGE_NAME) \
 		-v $(_manatee_stamp) -d $(MANATEE_IMAGE_DESCRIPTION)
 	@echo "# Created manatee image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -808,7 +808,7 @@ workflow_image: $(WORKFLOW_IMAGE_BIT)
 $(WORKFLOW_IMAGE_BIT): $(WORKFLOW_BITS)
 	@echo "# Build workflow_image: branch $(SDC_WORKFLOW_BRANCH), sha $(SDC_WORKFLOW_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(WORKFLOW_IMAGE_UUID)" -t $(WORKFLOW_BITS) \
-		-o "$(WORKFLOW_IMAGE_BIT)" -p $(WORKFLOW_PKGSRC) \
+		-o "$(WORKFLOW_IMAGE_BIT)" -p $(WORKFLOW_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(WORKFLOW_EXTRA_TARBALLS) -n $(WORKFLOW_IMAGE_NAME) \
 		-v $(_wf_stamp) -d $(WORKFLOW_IMAGE_DESCRIPTION)
 	@echo "# Created workflow image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -852,7 +852,7 @@ vmapi_image: $(VMAPI_IMAGE_BIT)
 $(VMAPI_IMAGE_BIT): $(VMAPI_BITS)
 	@echo "# Build vmapi_image: branch $(SDC_VMAPI_BRANCH), sha $(SDC_VMAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(VMAPI_IMAGE_UUID)" -t $(VMAPI_BITS) \
-		-o "$(VMAPI_IMAGE_BIT)" -p $(VMAPI_PKGSRC) \
+		-o "$(VMAPI_IMAGE_BIT)" -p $(VMAPI_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(VMAPI_EXTRA_TARBALLS) -n $(VMAPI_IMAGE_NAME) \
 		-v $(_vmapi_stamp) -d $(VMAPI_IMAGE_DESCRIPTION)
 	@echo "# Created vmapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -898,7 +898,7 @@ papi_image: $(PAPI_IMAGE_BIT)
 $(PAPI_IMAGE_BIT): $(PAPI_BITS)
 	@echo "# Build papi_image: branch $(SDC_PAPI_BRANCH), sha $(SDC_PAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(PAPI_IMAGE_UUID)" -t $(PAPI_BITS) \
-		-o "$(PAPI_IMAGE_BIT)" -p $(PAPI_PKGSRC) \
+		-o "$(PAPI_IMAGE_BIT)" -p $(PAPI_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(PAPI_EXTRA_TARBALLS) -n $(PAPI_IMAGE_NAME) \
 		-v $(_papi_stamp) -d $(PAPI_IMAGE_DESCRIPTION)
 	@echo "# Created papi image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -941,7 +941,7 @@ imgapi_image: $(IMGAPI_IMAGE_BIT)
 $(IMGAPI_IMAGE_BIT): $(IMGAPI_BITS)
 	@echo "# Build imgapi_image: branch $(SDC_IMGAPI_BRANCH), sha $(SDC_IMGAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(IMGAPI_IMAGE_UUID)" -t $(IMGAPI_BITS) \
-		-o "$(IMGAPI_IMAGE_BIT)" -p $(IMGAPI_PKGSRC) \
+		-o "$(IMGAPI_IMAGE_BIT)" -p $(IMGAPI_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(IMGAPI_EXTRA_TARBALLS) -n $(IMGAPI_IMAGE_NAME) \
 		-v $(_imgapi_stamp) -d $(IMGAPI_IMAGE_DESCRIPTION)
 	@echo "# Created imgapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -981,7 +981,7 @@ sdc_image: $(SDC_IMAGE_BIT)
 $(SDC_IMAGE_BIT): $(SDC_BITS)
 	@echo "# Build sdc_image: branch $(SDC_BRANCH), sha $(SDC_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(SDC_IMAGE_UUID)" -t $(SDC_BITS) \
-		-o "$(SDC_IMAGE_BIT)" -p $(SDC_PKGSRC) \
+		-o "$(SDC_IMAGE_BIT)" -p $(SDC_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(SDC_EXTRA_TARBALLS) -n $(SDC_IMAGE_NAME) \
 		-v $(_sdc_stamp) -d $(SDC_IMAGE_DESCRIPTION)
 	@echo "# Created sdc image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1347,7 +1347,7 @@ cnapi_image: $(CNAPI_IMAGE_BIT)
 $(CNAPI_IMAGE_BIT): $(CNAPI_BITS)
 	@echo "# Build cnapi_image: branch $(SDC_CNAPI_BRANCH), sha $(SDC_CNAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(CNAPI_IMAGE_UUID)" -t $(CNAPI_BITS) \
-		-o "$(CNAPI_IMAGE_BIT)" -p $(CNAPI_PKGSRC) \
+		-o "$(CNAPI_IMAGE_BIT)" -p $(CNAPI_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(CNAPI_EXTRA_TARBALLS) -n $(CNAPI_IMAGE_NAME) \
 		-v $(_cnapi_stamp) -d $(CNAPI_IMAGE_DESCRIPTION)
 	@echo "# Created cnapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1391,7 +1391,7 @@ sdcsso_image: $(SDCSSO_IMAGE_BIT)
 $(SDCSSO_IMAGE_BIT): $(SDCSSO_BITS)
 	@echo "# Build sdcsso_image: branch $(SDCSSO_BRANCH), sha $(SDCSSO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(SDCSSO_IMAGE_UUID)" -t $(SDCSSO_BITS) \
-		-o "$(SDCSSO_IMAGE_BIT)" -p $(SDCSSO_PKGSRC) \
+		-o "$(SDCSSO_IMAGE_BIT)" -p $(SDCSSO_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(SDCSSO_EXTRA_TARBALLS) -n $(SDCSSO_IMAGE_NAME) \
 		-v $(_sdcsso_stamp) -d $(SDCSSO_IMAGE_DESCRIPTION)
 	@echo "# Created sdcsso image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1435,7 +1435,7 @@ fwapi_image: $(FWAPI_IMAGE_BIT)
 $(FWAPI_IMAGE_BIT): $(FWAPI_BITS)
 	@echo "# Build fwapi_image: branch $(FWAPI_BRANCH), sha $(FWAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(FWAPI_IMAGE_UUID)" -t $(FWAPI_BITS) \
-		-o "$(FWAPI_IMAGE_BIT)" -p $(FWAPI_PKGSRC) \
+		-o "$(FWAPI_IMAGE_BIT)" -p $(FWAPI_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(FWAPI_EXTRA_TARBALLS) -n $(FWAPI_IMAGE_NAME) \
 		-v $(_fwapi_stamp) -d $(FWAPI_IMAGE_DESCRIPTION)
 	@echo "# Created fwapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1480,7 +1480,7 @@ napi_image: $(NAPI_IMAGE_BIT)
 $(NAPI_IMAGE_BIT): $(NAPI_BITS)
 	@echo "# Build napi_image: branch $(NAPI_BRANCH), sha $(NAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(NAPI_IMAGE_UUID)" -t $(NAPI_BITS) \
-		-o "$(NAPI_IMAGE_BIT)" -p $(NAPI_PKGSRC) \
+		-o "$(NAPI_IMAGE_BIT)" -p $(NAPI_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(NAPI_EXTRA_TARBALLS) -n $(NAPI_IMAGE_NAME) \
 		-v $(_napi_stamp) -d $(NAPI_IMAGE_DESCRIPTION)
 	@echo "# Created napi image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1526,7 +1526,7 @@ sapi_image: $(SAPI_IMAGE_BIT)
 $(SAPI_IMAGE_BIT): $(SAPI_BITS)
 	@echo "# Build sapi_image: branch $(SDC_SAPI_BRANCH), sha $(SDC_SAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(SAPI_IMAGE_UUID)" -t $(SAPI_BITS) \
-		-o "$(SAPI_IMAGE_BIT)" -p $(SAPI_PKGSRC) \
+		-o "$(SAPI_IMAGE_BIT)" -p $(SAPI_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(SAPI_EXTRA_TARBALLS) -n $(SAPI_IMAGE_NAME) \
 		-v $(_sapi_stamp) -d $(SAPI_IMAGE_DESCRIPTION)
 	@echo "# Created sapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1574,7 +1574,7 @@ $(MARLIN_IMAGE_BIT): $(MARLIN_BITS)
 	@echo "# Build marlin_image: branch $(MANTA_MARLIN_BRANCH), sha $(MANTA_MARLIN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MARLIN_IMAGE_UUID)" -t $(MARLIN_BITS) \
 		-b "marlin" \
-		-o "$(MARLIN_IMAGE_BIT)" -p $(MARLIN_PKGSRC) \
+		-o "$(MARLIN_IMAGE_BIT)" -p $(MARLIN_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(MARLIN_EXTRA_TARBALLS) -n $(MARLIN_IMAGE_NAME) \
 		-v $(_marlin_stamp) -d $(MARLIN_IMAGE_DESCRIPTION)
 	@echo "# Created marlin image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1616,7 +1616,7 @@ $(MEDUSA_IMAGE_BIT): $(MEDUSA_BITS)
 	@echo "# Build medusa_image: branch $(MANTA_MEDUSA_BRANCH), sha $(MANTA_MEDUSA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MEDUSA_IMAGE_UUID)" -t $(MEDUSA_BITS) \
 		-b "medusa" \
-		-o "$(MEDUSA_IMAGE_BIT)" -p $(MEDUSA_PKGSRC) \
+		-o "$(MEDUSA_IMAGE_BIT)" -p $(MEDUSA_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(MEDUSA_EXTRA_TARBALLS) -n $(MEDUSA_IMAGE_NAME) \
 		-v $(_medusa_stamp) -d $(MEDUSA_IMAGE_DESCRIPTION)
 	@echo "# Created medusa image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1657,7 +1657,7 @@ $(MAHI_IMAGE_BIT): $(MAHI_BITS)
 	@echo "# Build mahi_image: branch $(MAHI_BRANCH), sha $(MAHI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MAHI_IMAGE_UUID)" -t $(MAHI_BITS) \
 		-b "mahi" \
-		-o "$(MAHI_IMAGE_BIT)" -p $(MAHI_PKGSRC) \
+		-o "$(MAHI_IMAGE_BIT)" -p $(MAHI_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(MAHI_EXTRA_TARBALLS) -n $(MAHI_IMAGE_NAME) \
 		-v $(_mahi_stamp) -d $(MAHI_IMAGE_DESCRIPTION)
 	@echo "# Created mahi image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1700,7 +1700,7 @@ $(MOLA_IMAGE_BIT): $(MOLA_BITS)
 	@echo "# Build mola_image: branch $(MANTA_MOLA_BRANCH), sha $(MANTA_MOLA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MOLA_IMAGE_UUID)" -t $(MOLA_BITS) \
 		-b "mola" \
-		-o "$(MOLA_IMAGE_BIT)" -p $(MOLA_PKGSRC) \
+		-o "$(MOLA_IMAGE_BIT)" -p $(MOLA_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(MOLA_EXTRA_TARBALLS) -n $(MOLA_IMAGE_NAME) \
 		-v $(_mola_stamp) -d $(MOLA_IMAGE_DESCRIPTION)
 	@echo "# Created mola image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1743,7 +1743,7 @@ $(MADTOM_IMAGE_BIT): $(MADTOM_BITS)
 	@echo "# Build madtom_image: branch $(MANTA_MADTOM_BRANCH), sha $(MANTA_MADTOM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MADTOM_IMAGE_UUID)" -t $(MADTOM_BITS) \
 		-b "madtom" \
-		-o "$(MADTOM_IMAGE_BIT)" -p $(MADTOM_PKGSRC) \
+		-o "$(MADTOM_IMAGE_BIT)" -p $(MADTOM_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(MADTOM_EXTRA_TARBALLS) -n $(MADTOM_IMAGE_NAME) \
 		-v $(_madtom_stamp) -d $(MADTOM_IMAGE_DESCRIPTION)
 	@echo "# Created madtom image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1786,7 +1786,7 @@ $(MARLIN_DASHBOARD_IMAGE_BIT): $(MARLIN_DASHBOARD_BITS)
 	@echo "# Build marlin-dashboard_image: branch $(MANTA_MARLIN_DASHBOARD_BRANCH), sha $(MANTA_MARLIN_DASHBOARD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MARLIN_DASHBOARD_IMAGE_UUID)" -t $(MARLIN_DASHBOARD_BITS) \
 		-b "marlin-dashboard" \
-		-o "$(MARLIN_DASHBOARD_IMAGE_BIT)" -p $(MARLIN_DASHBOARD_PKGSRC) \
+		-o "$(MARLIN_DASHBOARD_IMAGE_BIT)" -p $(MARLIN_DASHBOARD_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(MARLIN_DASHBOARD_EXTRA_TARBALLS) -n $(MARLIN_DASHBOARD_IMAGE_NAME) \
 		-v $(_marlin-dashboard_stamp) -d $(MARLIN_DASHBOARD_IMAGE_DESCRIPTION)
 	@echo "# Created marlin-dashboard image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1829,7 +1829,7 @@ $(PROPELLER_IMAGE_BIT): $(PROPELLER_BITS)
 	@echo "# Build propeller_image: branch $(MANTA_PROPELLER_BRANCH), sha $(MANTA_PROPELLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(PROPELLER_IMAGE_UUID)" -t $(PROPELLER_BITS) \
 		-b "propeller" \
-		-o "$(PROPELLER_IMAGE_BIT)" -p $(PROPELLER_PKGSRC) \
+		-o "$(PROPELLER_IMAGE_BIT)" -p $(PROPELLER_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(PROPELLER_EXTRA_TARBALLS) -n $(PROPELLER_IMAGE_NAME) \
 		-v $(_propeller_stamp) -d $(PROPELLER_IMAGE_DESCRIPTION)
 	@echo "# Created propeller image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1872,7 +1872,7 @@ $(MORAY_IMAGE_BIT): $(MORAY_BITS)
 	@echo "# Build moray_image: branch $(MORAY_BRANCH), sha $(MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MORAY_IMAGE_UUID)" -t $(MORAY_BITS) \
 		-b "moray" \
-		-o "$(MORAY_IMAGE_BIT)" -p $(MORAY_PKGSRC) \
+		-o "$(MORAY_IMAGE_BIT)" -p $(MORAY_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(MORAY_EXTRA_TARBALLS) -n $(MORAY_IMAGE_NAME) \
 		-v $(_moray_stamp) -d $(MORAY_IMAGE_DESCRIPTION)
 	@echo "# Created moray image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -1914,7 +1914,7 @@ electric-moray_image: $(ELECTRIC_MORAY_IMAGE_BIT)
 $(ELECTRIC_MORAY_IMAGE_BIT): $(ELECTRIC_MORAY_BITS)
 	@echo "# Build electric-moray_image: branch $(ELECTRIC_MORAY_BRANCH), sha $(ELECTRIC_MORAY_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(ELECTRIC_MORAY_IMAGE_UUID)" -t $(ELECTRIC_MORAY_BITS) \
-		-b "electric-moray" \
+		-b "electric-moray" -O "$(MG_OUT_PATH)" \
 		-o "$(ELECTRIC_MORAY_IMAGE_BIT)" -p $(ELECTRIC_MORAY_PKGSRC) \
 		-t $(ELECTRIC_MORAY_EXTRA_TARBALLS) -n $(ELECTRIC_MORAY_IMAGE_NAME) \
 		-v $(_electric-moray_stamp) -d $(ELECTRIC_MORAY_IMAGE_DESCRIPTION)
@@ -1958,7 +1958,7 @@ $(MUSKIE_IMAGE_BIT): $(MUSKIE_BITS)
 	@echo "# Build muskie_image: branch $(MANTA_MUSKIE_BRANCH), sha $(MANTA_MUSKIE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MUSKIE_IMAGE_UUID)" -t $(MUSKIE_BITS) \
 		-b "muskie" \
-		-o "$(MUSKIE_IMAGE_BIT)" -p $(MUSKIE_PKGSRC) \
+		-o "$(MUSKIE_IMAGE_BIT)" -p $(MUSKIE_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(MUSKIE_EXTRA_TARBALLS) -n $(MUSKIE_IMAGE_NAME) \
 		-v $(_muskie_stamp) -d $(MUSKIE_IMAGE_DESCRIPTION)
 	@echo "# Created muskie image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -2001,7 +2001,7 @@ $(WRASSE_IMAGE_BIT): $(WRASSE_BITS)
 	@echo "# Build wrasse_image: branch $(MANTA_WRASSE_BRANCH), sha $(MANTA_WRASSE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(WRASSE_IMAGE_UUID)" -t $(WRASSE_BITS) \
 		-b "wrasse" \
-		-o "$(WRASSE_IMAGE_BIT)" -p $(WRASSE_PKGSRC) \
+		-o "$(WRASSE_IMAGE_BIT)" -p $(WRASSE_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(WRASSE_EXTRA_TARBALLS) -n $(WRASSE_IMAGE_NAME) \
 		-v $(_wrasse_stamp) -d $(WRASSE_IMAGE_DESCRIPTION)
 	@echo "# Created wrasse image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -2084,7 +2084,7 @@ $(BINDER_IMAGE_BIT): $(BINDER_BITS)
 	@echo "# Build binder_image: branch $(BINDER_BRANCH), sha $(BINDER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(BINDER_IMAGE_UUID)" -t $(BINDER_BITS) \
 		-b "binder" \
-		-o "$(BINDER_IMAGE_BIT)" -p $(BINDER_PKGSRC) \
+		-o "$(BINDER_IMAGE_BIT)" -p $(BINDER_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(BINDER_EXTRA_TARBALLS) -n $(BINDER_IMAGE_NAME) \
 		-v $(_binder_stamp) -d $(BINDER_IMAGE_DESCRIPTION)
 	@echo "# Created binder image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -2124,7 +2124,7 @@ sdc-zookeeper_image: $(SDC_ZOOKEEPER_IMAGE_BIT)
 $(SDC_ZOOKEEPER_IMAGE_BIT): $(SDC_ZOOKEEPER_BITS)
 	@echo "# Build sdc-zookeeper_image: branch $(SDC_ZOOKEEPER_BRANCH), sha $(SDC_ZOOKEEPER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(SDC_ZOOKEEPER_IMAGE_UUID)" -t $(SDC_ZOOKEEPER_BITS) \
-		-b "sdc-zookeeper" \
+		-b "sdc-zookeeper" -O "$(MG_OUT_PATH)" \
 		-o "$(SDC_ZOOKEEPER_IMAGE_BIT)" -p $(SDC_ZOOKEEPER_PKGSRC) \
 		-t $(SDC_ZOOKEEPER_EXTRA_TARBALLS) -n $(SDC_ZOOKEEPER_IMAGE_NAME) \
 		-v $(_sdc-zookeeper_stamp) -d $(SDC_ZOOKEEPER_IMAGE_DESCRIPTION)
@@ -2166,7 +2166,7 @@ $(MUPPET_IMAGE_BIT): $(MUPPET_BITS)
 	@echo "# Build muppet_image: branch $(MUPPET_BRANCH), sha $(MUPPET_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MUPPET_IMAGE_UUID)" -t $(MUPPET_BITS) \
 		-b "muppet" \
-		-o "$(MUPPET_IMAGE_BIT)" -p $(MUPPET_PKGSRC) \
+		-o "$(MUPPET_IMAGE_BIT)" -p $(MUPPET_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(MUPPET_EXTRA_TARBALLS) -n $(MUPPET_IMAGE_NAME) \
 		-v $(_muppet_stamp) -d $(MUPPET_IMAGE_DESCRIPTION)
 	@echo "# Created muppet image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -2227,7 +2227,7 @@ $(MAKO_IMAGE_BIT): $(MAKO_BITS)
 	@echo "# Build mako_image: branch $(MANTA_MAKO_BRANCH), sha $(MANTA_MAKO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(MAKO_IMAGE_UUID)" -t $(MAKO_BITS) \
 		-b "mako" \
-		-o "$(MAKO_IMAGE_BIT)" -p $(MAKO_PKGSRC) \
+		-o "$(MAKO_IMAGE_BIT)" -p $(MAKO_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(MAKO_EXTRA_TARBALLS) -n $(MAKO_IMAGE_NAME) \
 		-v $(_mako_stamp) -d $(MAKO_IMAGE_DESCRIPTION)
 	@echo "# Created mako image (time `date -u +%Y%m%dT%H%M%SZ`):"
@@ -2353,7 +2353,9 @@ manta-deployment_image: $(MANTA_DEPLOYMENT_IMAGE_BIT)
 
 $(MANTA_DEPLOYMENT_IMAGE_BIT): $(MANTA_DEPLOYMENT_BITS)
 	@echo "# Build manta-deployment_image: branch $(SDC_MANTA_BRANCH), sha $(SDC_MANTA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(MANTA_DEPLOYMENT_IMAGE_UUID)" -t $(MANTA_DEPLOYMENT_BITS) \
+	./tools/prep_dataset_in_jpc.sh \
+		-O "$(MG_OUT_PATH)" \
+		-i "$(MANTA_DEPLOYMENT_IMAGE_UUID)" -t $(MANTA_DEPLOYMENT_BITS) \
 		-o "$(MANTA_DEPLOYMENT_IMAGE_BIT)" -p $(MANTA_DEPLOYMENT_PKGSRC) \
 		-t $(MANTA_DEPLOYMENT_EXTRA_TARBALLS) -n $(MANTA_DEPLOYMENT_IMAGE_NAME) \
 		-v $(_manta_deployment_stamp) -d $(MANTA_DEPLOYMENT_IMAGE_DESCRIPTION)
