@@ -356,8 +356,8 @@ output_dir=$(dirname ${output})
 if [[ -n ${SDC_LOCAL_BUILD} ]]; then
     echo "Downloading image ${image_id} from imgapi"
 
-    image_manifest_filename=${image_name}-${image_version}.imgmanifest
-    image_filename=${image_name}-${image_version}.zfs.gz
+    image_manifest_filename=${build_name}-zfs-${image_version}.imgmanifest
+    image_filename=${build_name}-zfs-${image_version}.zfs.gz
     curl -sS -f -o ${output_dir}/${image_manifest_filename} ${SDC_IMGAPI_URL}/images/${image_id}
     curl -sS -f -o ${output_dir}/${image_filename} ${SDC_IMGAPI_URL}/images/${image_id}/file
 
