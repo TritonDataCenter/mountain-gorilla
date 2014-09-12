@@ -2675,6 +2675,9 @@ manta_upload_jenkins:
 %_upload_manta: %
 	./tools/manta-upload "$*"
 
+%_local_bits_dir: %
+	./tools/local-bitsdir-copy "$*"
+
 # Publish the image for this Jenkins job to https://updates.joyent.com, if
 # appropriate. No-op if the current JOB_NAME doesn't have a "*_publish_image"
 # target.

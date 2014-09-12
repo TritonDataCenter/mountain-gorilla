@@ -1,0 +1,36 @@
+#!/bin/bash
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+#
+# Copyright (c) 2014, Joyent, Inc.
+#
+
+#
+# This script copies a single build's bits to the directory pointed to by
+# LOCAL_BITS_DIR
+#
+
+set -o errexit
+set -o xtrace
+
+TOP=$(cd $(dirname $0)/../ >/dev/null; pwd)
+
+function fatal ()
+{
+    echo "$@" >&2
+    exit 1
+}
+
+JOB_NAME=$1
+if [[ -z ${JOB_NAME} || -n $2 ]]; then
+    fatal "Usage: $0 <job_name>"
+fi
+
+mkdir -p ${LOCAL_BITS_DIR}/${JOB_NAME}
+rsync -va ${TOP}/bits/${JOB_NAME}/* ${LOCAL_BITS_DIR}/${JOB_NAME}/
+
+exit 0

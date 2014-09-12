@@ -223,6 +223,13 @@ function preload_bits_from_manta() {
         return;
     fi
 
+    # If bit is in the LOCAL_BITS_CACHE, use that
+    if [[ -n ${LOCAL_BITS_DIR} && -d ${LOCAL_BITS_DIR}/${target_base} ]]; then
+        mkdir -p bits
+        cp -PR ${LOCAL_BITS_DIR}/${target_base} bits/${target_base}
+        return;
+    fi
+
     # This is a hack here for the case where we've got something like:
     #
     # https://download.joyent.com/pub/build/sdcnode
