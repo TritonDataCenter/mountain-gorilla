@@ -123,6 +123,8 @@ echo "Setting ~/.npmrc..."
 
 echo "registry = http://registry.npmjs.org/" > ~/.npmrc
 
+touch /opt/local/.dlj_license_accepted
+
 echo 'DONE!'
 
 exit 0
