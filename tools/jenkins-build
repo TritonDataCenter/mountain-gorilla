@@ -70,7 +70,8 @@ if [[ -z "$MG_JENKINS_BUILD_SECOND_PASS" ]]; then
 
     cd MG
     if [[ -n "$TRY_BRANCH" ]]; then
-        mg_has_try_branch=$(git branch | cut -c3- \
+        mg_has_try_branch=$(git branch -a | cut -c3- \
+            | awk '{print $1}' | xargs -n1 basename \
             | (grep "^$TRY_BRANCH\$" || true))
         if [[ -n "$mg_has_try_branch" ]]; then
             git checkout $TRY_BRANCH
