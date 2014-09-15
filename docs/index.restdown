@@ -15,13 +15,6 @@ apisections:
 
 # Mountain Gorilla
 
-
-||Repository||git@git.joyent.com:mountain-gorilla.git, <https://mo.joyent.com/mountain-gorilla>||
-||Who||Trent Mick||
-||Docs||<https://mo.joyent.com/docs/mg>||
-||Bugs||<https://devhub.joyent.com/jira/browse/RELENG>||
-||Builds||/Joyent_Dev/stor/builds in Manta||
-
 A single repo to build all the parts of SDC and Manta. This is just a *build
 driver* repo, all the components are still in their respective repos.
 Ideally this repo isn't necessary. Instead we should move to eng.git holding
@@ -70,7 +63,7 @@ details).
 
 Using vmapi as an example (see "Prerequisites" section below):
 
-    git clone git@git.joyent.com:mountain-gorilla.git    # 1.
+    git clone git@github.com:joyent/mountain-gorilla.git    # 1.
     cd mountain-gorilla
     ./configure -t vmapi -b master -d Joyent_Dev         # 2.
     gmake vmapi                                          # 3.
@@ -224,7 +217,7 @@ configuration.
 
 Simplified, what most of our jobs do here is:
 
-    git clone git@git.joyent.com:mountain-gorilla.git   # aka "MG"
+    git clone git@github.com:joyent/mountain-gorilla.git   # aka "MG"
     cd mountain-gorilla
     ./configure -t <job>
     gmake <job>
@@ -265,8 +258,7 @@ primary place where problems have been occurring.
 
 # Automatic builds (post-receive hooks)
 
-In general we use post-receive hooks (for repos hosted at git.joyent.com)
-and Github webhooks (for Github-hosted repos) to trigger the appropriate
+We use Github webhooks (for Github-hosted repos) to trigger the appropriate
 project build for pushes to any repository.
 
 An example of the former is:
@@ -390,7 +382,7 @@ section documents how to perform a release.
    Run the following on a machine with good connectivity (you'll be cloning
    all SDC's repos).
 
-        git clone git@git.joyent.com:mountain-gorilla.git
+        git clone git@github.com:joyent/mountain-gorilla.git
         cd mountain-gorilla
         RELDATE=$(date +%Y%m%d)
         ./tools/check-repos-for-release -h    # grok what this does

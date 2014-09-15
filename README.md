@@ -8,13 +8,11 @@
     Copyright (c) 2014, Joyent, Inc.
 -->
 
-# Mountain Gorilla
+# mountain-gorilla
 
-- Repository: git@git.joyent.com:mountain-gorilla.git, <https://mo.joyent.com/mountain-gorilla>
-- Who: Trent Mick, John Sonnenschein
-- Docs: <https://mo.joyent.com/docs/mg>
-- Bugs: <https://devhub.joyent.com/jira/browse/RELENG>
-- Builds: <https://jenkins.joyent.us>, `/Joyent_Dev/stor/build` in Manta
+This repository is part of the Joyent SmartDataCenter project (SDC).  For
+contribution guidelines, issues, and general documentation, visit the main
+[SDC](http://github.com/joyent/sdc) project page.
 
 A single repo to build all the parts of SDC. This is just a *build driver*
 repo, all the components are still in their respective repos.
@@ -28,7 +26,7 @@ the typical usage is to build one piece at a time. There is a make target
 (or targets) for each SDC component. So, for example, here is how you
 build VMAPI:
 
-    git clone git@git.joyent.com:mountain-gorilla.git
+    git clone git@github.com:joyent/mountain-gorilla.git
     cd mountain-gorilla
     ./configure -t vmapi -d Joyent_Dev  # generates bits/config.mk and fetches repo and deps
     make vmapi                          # builds in build/vmapi, bits in bits/...
@@ -95,7 +93,7 @@ manually run that user script (though that hasn't been tested).
 You should now be able to build mountain-gorilla (MG): i.e. all of SDC.
 Let's try that:
 
-    git clone git@git.joyent.com:mountain-gorilla.git
+    git clone git@github.com:joyent/mountain-gorilla.git
     cd mountain-gorilla
     time (./configure && gmake) >build.log 2>&1 &; tail -f build.log
 
