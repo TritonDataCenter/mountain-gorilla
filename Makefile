@@ -2559,6 +2559,7 @@ PLATFORM_BITS= \
 	$(BITS_DIR)/platform$(PLAT_SUFFIX)/platform$(PLAT_SUFFIX)-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz \
 	$(BITS_DIR)/platform$(PLAT_SUFFIX)/boot$(PLAT_SUFFIX)-$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP).tgz
 PLATFORM_BITS_0=$(shell echo $(PLATFORM_BITS) | awk '{print $$1}')
+PLATFORM_MANIFEST_BIT=platform.imgmanifest
 
 platform : PLAT_SUFFIX += ""
 platform : PLAT_CONF_ARGS += "no"
@@ -2606,6 +2607,21 @@ $(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-b
 	@echo "# Created platform bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(PLATFORM_BITS)
 	@echo ""
+
+TMPDIR := /var/tmp
+
+platform_publish_image: $(PLATFORM_BITS)
+	@echo "# Publish platform image to SDC Updates repo."
+	uuid -v4 > $(TMPDIR)/$(NAME)/image_uuid
+	cat platform.imgmanifest.in | sed \
+	    -e "s/UUID/$$(cat $(TMPDIR)/$(NAME)/image_uuid)/" \
+	    -e "s/VERSION_STAMP/$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP)/" \
+	    -e "s/BUILDSTAMP/$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP)/" \
+	    -e "s/SIZE/$$(stat --printf="%s" $(PLATFORM_BITS_0))/" \
+	    -e "s/SHA/$$(openssl sha1 $(PLATFORM_BITS_0) \
+	        | cut -d ' ' -f2)/" \
+	    > $(PLATFORM_MANIFEST_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(PLATFORM_MANIFEST_BIT) -f $(PLATFORM_BITS_0)
 
 clean_platform:
 	$(RM) -rf $(BITS_DIR)/platform
