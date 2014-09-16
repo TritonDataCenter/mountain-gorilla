@@ -2608,13 +2608,14 @@ $(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-b
 	@ls -l $(PLATFORM_BITS)
 	@echo ""
 
-TMPDIR := /var/tmp
+TMPDIR := /var/tmp/platform
 
 platform_publish_image: $(PLATFORM_BITS)
 	@echo "# Publish platform image to SDC Updates repo."
-	uuid -v4 > $(TMPDIR)/$(NAME)/image_uuid
+	mkdir -p $(TMPDIR)
+	uuid -v4 > $(TMPDIR)/image_uuid
 	cat platform.imgmanifest.in | sed \
-	    -e "s/UUID/$$(cat $(TMPDIR)/$(NAME)/image_uuid)/" \
+	    -e "s/UUID/$$(cat $(TMPDIR)/image_uuid)/" \
 	    -e "s/VERSION_STAMP/$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP)/" \
 	    -e "s/BUILDSTAMP/$(SMARTOS_LIVE_BRANCH)-$(TIMESTAMP)/" \
 	    -e "s/SIZE/$$(stat --printf="%s" $(PLATFORM_BITS_0))/" \
