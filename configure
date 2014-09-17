@@ -29,6 +29,7 @@ BRANCH=master
 TRY_BRANCH=
 MG_DEP_USER=
 MG_DEP_PATH=
+JOYENT_DEP_PATH=
 MG_OUT_PATH=
 
 ROOT=$(pwd)
@@ -254,6 +255,11 @@ function preload_bits_from_manta() {
 
     # Remember: target_base is something like 'agents-upgrade'
     local target_mpath=${manta_base_path}/${target_base}
+
+    # Allow to set JOYENT_DEP_PATH=/stor/builds for joyent bits
+    if [[ ${target_base} == "firmware-tools" && -n ${JOYENT_DEP_PATH} ]]; then
+        target_mpath="/${MG_DEP_USER}${JOYENT_DEP_PATH}/${target_base}"
+    fi
 
     # Branch dir: try $try_branch, then $branch.
     local best_branch=$try_branch
@@ -520,7 +526,9 @@ function print_help() {
     echo "               building as yourself, -d Joyent_Dev will pull deps "
     echo "               from normal builds."
     echo "  -D PATH      Alternate Manta path for dependencies. The default is"
-    echo "               '\${MANTA_USER}/stor/builds'."
+    echo "               '/stor/builds'."
+    echo "  -J PATH      Alternate manta path for joyent-only dependencies. The"
+    echo "               default is to use the -D path."
     echo "  -O PATH      Alternate Manta path for 'make <target>_upload_manta'."
     echo "               The default is '\${MANTA_USER}/stor/builds'."
     echo "  -j           Configure this workspace to build Joyent products."
@@ -545,8 +553,6 @@ function get_pkgsrc() {
     echo "# get pkgsrc packages for build/usb-headnode zones (to build/pkgsrc)"
 
     mkdir -p build/pkgsrc/
-
-    set -o xtrace
 
     shopt -s extglob
 
@@ -608,8 +614,6 @@ function get_pkgsrc() {
       done
     done
 
-    set +o xtrace
-
   fi
 }
 
@@ -631,7 +635,7 @@ MG_NODE=$(which node)
 if [[ "$1" == "--help" ]]; then
   print_help
 fi
-while getopts "b:B:d:D:O:hrft:c:j" opt; do
+while getopts "b:B:d:D:O:hrft:c:jJ:" opt; do
     case "$opt" in
         b) BRANCH=$OPTARG ;;
         B) TRY_BRANCH=$OPTARG ;;
@@ -645,6 +649,7 @@ while getopts "b:B:d:D:O:hrft:c:j" opt; do
         D) MG_DEP_PATH=${OPTARG} ;;
         O) MG_OUT_PATH=${OPTARG} ;;
         j) JOYENT_BUILD=true ;;
+        J) JOYENT_DEP_PATH=${OPTARG} ;;
         ?) fatal "unknown option: $opt" ;;
     esac
 done
@@ -654,7 +659,7 @@ shift $((OPTIND-1))
 [[ -z $JOYENT_BUILD ]] && JOYENT_BUILD=false
 export JOYENT_BUILD
 rm -f targets.json
-bash < targets.json.in > targets.json
+bash < targets.json.in | json > targets.json
 
 # Pre-condition: must have node >=0.10 first on path (see RELENG-266).
 echo "Ensure have a 'node' >= v0.10."
@@ -691,41 +696,22 @@ make distclean
 
 if [[ ! -z "$TARGET" ]]; then
     flush_bits_cache
-    if [[ "$TARGET" == "all-except-platform" ]]; then
-        preload_bits_from_manta "platform" "$BRANCH" "$TRY_BRANCH"
-        TARGETS=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))' | grep -v '^platform')
-        for targ in $TARGETS; do
-            get_target_repos $targ
-            for dep in `cat targets.json | $JSON $targ.deps | $JSON -a`; do
-                if [[ -n "$(echo $dep | egrep '^[^/]+/[^/]+$' || true)" ]]; then
-                    # Using the 'BRANCH/NAME' form to lock to a branch.
-                    dep_branch=$(echo $dep | cut -d/ -f1)
-                    dep=$(echo $dep | cut -d/ -f2)
-                    preload_bits_from_manta ${dep} "${dep_branch}"
-                else
-                    preload_bits_from_manta ${dep} "$BRANCH" "$TRY_BRANCH"
-                fi
-                dep_branch
-            done
-        done
-    else
-        # Validate target.
-        TARGETS=$TARGET
-        if [[ -z "$(cat targets.json | $JSON $TARGET)" ]]; then
-            fatal "Unknown target: $TARGET"
-        fi
-        get_target_repos $TARGET
-        for dep in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
-            if [[ -n "$(echo $dep | egrep '^[^/]+/[^/]+$' || true)" ]]; then
-                # Using the 'BRANCH/NAME' form to lock to a branch.
-                dep_branch=$(echo $dep | cut -d/ -f1)
-                dep=$(echo $dep | cut -d/ -f2)
-                preload_bits_from_manta ${dep} "${dep_branch}"
-            else
-                preload_bits_from_manta ${dep} "$BRANCH" "$TRY_BRANCH"
-            fi
-        done
+    # Validate target.
+    TARGETS=$TARGET
+    if [[ -z "$(cat targets.json | $JSON $TARGET)" ]]; then
+        fatal "Unknown target: $TARGET"
     fi
+    get_target_repos $TARGET
+    for dep in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
+        if [[ -n "$(echo $dep | egrep '^[^/]+/[^/]+$' || true)" ]]; then
+            # Using the 'BRANCH/NAME' form to lock to a branch.
+            dep_branch=$(echo $dep | cut -d/ -f1)
+            dep=$(echo $dep | cut -d/ -f2)
+            preload_bits_from_manta ${dep} "${dep_branch}"
+        else
+            preload_bits_from_manta ${dep} "$BRANCH" "$TRY_BRANCH"
+        fi
+    done
 else
     TARGETS=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))')
     for targ in $TARGETS; do
@@ -735,16 +721,16 @@ fi
 
 # "all" is a special target with deps to always preload.
 # I.e. for which "make all" doesn't build it.
-for dep in `cat targets.json | $JSON all.deps | $JSON -a`; do
-    if [[ -n "$(echo $dep | egrep '^[^/]+/[^/]+$' || true)" ]]; then
-        # Using the 'BRANCH/NAME' form to lock to a branch.
-        dep_branch=$(echo $dep | cut -d/ -f1)
-        dep=$(echo $dep | cut -d/ -f2)
-        preload_bits_from_manta ${dep} "${dep_branch}"
-    else
-        preload_bits_from_manta ${dep} "$BRANCH" "$TRY_BRANCH"
-    fi
-done
+#for dep in `cat targets.json | $JSON all.deps | $JSON -a`; do
+    #if [[ -n "$(echo $dep | egrep '^[^/]+/[^/]+$' || true)" ]]; then
+        ## Using the 'BRANCH/NAME' form to lock to a branch.
+        #dep_branch=$(echo $dep | cut -d/ -f1)
+        #dep=$(echo $dep | cut -d/ -f2)
+        #preload_bits_from_manta ${dep} "${dep_branch}"
+    #else
+        #preload_bits_from_manta ${dep} "$BRANCH" "$TRY_BRANCH"
+    #fi
+#done
 
 #get_pkgsrc
 

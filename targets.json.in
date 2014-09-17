@@ -3,6 +3,67 @@ set -o pipefail
 
 [[ -z $JOYENT_BUILD ]] && JOYENT_BUILD=false
 
+
+function build_headnode_target()
+{
+    local name=$1
+    local platform=$2
+    local firmware_tools=$3
+
+    local firmware=""
+
+    if [[ -n ${firmware_tools} ]]; then
+        firmware="\"${firmware_tools}\","
+    fi
+
+    cat <<EOF
+"${name}": {
+    "repos": [
+      {"url": "git@github.com:joyent/sdc-headnode.git"}
+    ],
+    "deps": [
+      "adminui",
+      "agentsshar",
+      "amon",
+      "amonredis",
+      "assets",
+      "registrar",
+      "binder",
+      "ca",
+      "cloudapi",
+      "cnapi",
+      "dhcpd",
+      ${firmware}
+      "fwapi",
+      "imgapi",
+      "sdc-manatee",
+      "mahi",
+      "manta-deployment",
+      "moray",
+      "napi",
+      "papi",
+      "${platform}",
+      "rabbitmq",
+      "redis",
+      "sapi",
+      "sdc",
+      "sdcadm",
+      "sdcboot",
+      "sdcsso",
+      "ufds",
+      "vmapi",
+      "workflow"
+    ]
+  },
+
+EOF
+
+}
+
+HEADNODE_TARGETS="";
+HEADNODE_TARGETS="${HEADNODE_TARGETS}$(build_headnode_target headnode platform '')"
+HEADNODE_TARGETS="${HEADNODE_TARGETS}$(build_headnode_target headnode-debug platform-debug '')"
+
 if [[ "${JOYENT_BUILD}" == "true" ]]; then
   FIRMWARE_TOOLS_DEP='"firmware-tools",'
   FIRMWARE_TOOLS_ENTRY='
@@ -12,6 +73,8 @@ if [[ "${JOYENT_BUILD}" == "true" ]]; then
     ],
     "deps": []
   },'
+  HEADNODE_TARGETS="${HEADNODE_TARGETS}$(build_headnode_target headnode-joyent platform 'firmware-tools')"
+  HEADNODE_TARGETS="${HEADNODE_TARGETS}$(build_headnode_target headnode-joyent-debug platform-debug 'firmware-tools')"
 elif [[ "${JOYENT_BUILD}" == "false" ]]; then
   echo "targets.json: Non-Joyent build; disabling ancillary repositories." >&2
 else
@@ -803,7 +866,7 @@ cat <<EOF
 
   "moray": {
     "appliance": "true",
-    "image_name": "manta-moray",
+    "image_name": "moray",
     "image_description": "Manta moray",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
@@ -1184,7 +1247,8 @@ cat <<EOF
     "deps": []
   },
 
-  $FIRMWARE_TOOLS_ENTRY
+  ${FIRMWARE_TOOLS_ENTRY}
+  ${HEADNODE_TARGETS}
 
   "platform": {
     "repos": [
@@ -1210,91 +1274,6 @@ cat <<EOF
         {"url": "git@github.com:joyent/sdc-platform.git"},
         {"url": "git@github.com:joyent/mdata-client.git"}
     ],
-    "deps": []
-  },
-
-  "usbheadnode": {
-    "repos": [
-      {"url": "git@github.com:joyent/sdc-headnode.git"}
-    ],
-    "deps": [
-      "adminui",
-      "agentsshar",
-      "master/agentsshar-upgrade",
-      "amon",
-      "amonredis",
-      "assets",
-      "registrar",
-      "binder",
-      "ca",
-      "cloudapi",
-      "cnapi",
-      "dhcpd",
-      $FIRMWARE_TOOLS_DEP
-      "fwapi",
-      "imgapi",
-      "sdc-manatee",
-      "mahi",
-      "manta-deployment",
-      "moray",
-      "napi",
-      "papi",
-      "platform",
-      "rabbitmq",
-      "redis",
-      "sapi",
-      "sdc",
-      "sdcadm",
-      "sdcboot",
-      "sdcsso",
-      "ufds",
-      "vmapi",
-      "workflow"
-    ]
-  },
-
-  "usbheadnode-debug": {
-    "repos": [
-      {"url": "git@github.com:joyent/sdc-headnode.git"}
-    ],
-    "deps": [
-      "adminui",
-      "agentsshar",
-      "agentsshar-upgrade",
-      "amon",
-      "amonredis",
-      "assets",
-      "registrar",
-      "binder",
-      "ca",
-      "cloudapi",
-      "cnapi",
-      "dhcpd",
-      $FIRMWARE_TOOLS_DEP
-      "fwapi",
-      "imgapi",
-      "sdc-manatee",
-      "mahi",
-      "manta-deployment",
-      "moray",
-      "napi",
-      "papi",
-      "platform-debug",
-      "rabbitmq",
-      "redis",
-      "sapi",
-      "sdc",
-      "sdcadm",
-      "sdcboot",
-      "sdcsso",
-      "ufds",
-      "vmapi",
-      "workflow"
-    ]
-  },
-
-
-  "all": {
     "deps": []
   }
 }

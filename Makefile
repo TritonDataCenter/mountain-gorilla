@@ -80,11 +80,9 @@ endif
 #---- Primary targets
 
 .PHONY: all
-all: smartlogin incr-upgrade amon amonredis sdc-ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako moray electric-moray registrar ufds platform usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
-
-.PHONY: all-except-platform
-all-except-platform: smartlogin incr-upgrade amon amonredis sdc-ca agents_core heartbeater zonetracker provisioner sdcadm agentsshar assets adminui redis rabbitmq dhcpd mockcn usageapi cloudapi workflow sdc-manatee manta-manatee manatee mahi imgapi sdc sdc-system-tests cnapi vmapi fwapi papi napi sapi binder mako registrar moray electric-moray ufds usbheadnode minnow mola mackerel madtom marlin-dashboard config-agent sdcboot manta-deployment $(FIRMWARE_TOOLS) hagfish-watcher firewaller propeller
-
+all:
+	@echo "You cannot build all targets on a single build zone at this time."
+	@exit 1
 
 #---- smartlogin
 # TODO:
@@ -2427,18 +2425,22 @@ endif	# $(JOYENT_BUILD) == true
 # - solution for datasets
 # - pkgsrc isolation
 
-.PHONY: usbheadnode usbheadnode-debug
-usbheadnode usbheadnode-debug: cleanimgcruft boot coal usb releasejson
+.PHONY: headnode headnode-debug headnode-joyent headnode-joyent-debug
+headnode headnode-debug headnode-joyent headnode-joyent-debug: cleanimgcruft boot coal usb releasejson
 
-usbheadnode: USB_HEADNODE_SUFFIX = ""
-usbheadnode-debug: USB_HEADNODE_SUFFIX = "-debug"
-usbheadnode: USE_DEBUG_PLATFORM = false
-usbheadnode-debug: USE_DEBUG_PLATFORM = true
+headnode: HEADNODE_SUFFIX = ""
+headnode: USE_DEBUG_PLATFORM = false
+headnode-debug: HEADNODE_SUFFIX = "-debug"
+headnode-debug: USE_DEBUG_PLATFORM = true
+headnode-joyent: HEADNODE_SUFFIX = "-joyent"
+headnode-joyent: USE_DEBUG_PLATFORM = false
+headnode-joyent-debug: HEADNODE_SUFFIX = "-joyent-debug"
+headnode-joyent-debug: USE_DEBUG_PLATFORM = true
 
-_usbheadnode_stamp=$(SDC_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(SDC_HEADNODE_SHA)
+_headnode_stamp=$(SDC_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(SDC_HEADNODE_SHA)
 
 USB_BUILD_DIR=$(BUILD_DIR)/sdc-headnode
-USB_BITS_DIR=$(BITS_DIR)/usbheadnode$(USB_HEADNODE_SUFFIX)
+USB_BITS_DIR=$(BITS_DIR)/headnode$(HEADNODE_SUFFIX)
 
 USB_BITS_SPEC=$(USB_BITS_DIR)/build.spec.local
 
@@ -2446,17 +2448,17 @@ USB_BUILD_SPEC_ENV = \
 	USE_DEBUG_PLATFORM=$(USE_DEBUG_PLATFORM) \
 	JOYENT_BUILD=$(JOYENT_BUILD)
 
-BOOT_BUILD=$(USB_BUILD_DIR)/boot-$(_usbheadnode_stamp).tgz
-BOOT_OUTPUT=$(USB_BITS_DIR)/boot$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).tgz
+BOOT_BUILD=$(USB_BUILD_DIR)/boot-$(_headnode_stamp).tgz
+BOOT_OUTPUT=$(USB_BITS_DIR)/boot$(HEADNODE_SUFFIX)-$(_headnode_stamp).tgz
 
 
 # Delete any failed image files that might be sitting around, this is safe
-# because only one usbheadnode build runs at a time. Also cleanup any unused
+# because only one headnode build runs at a time. Also cleanup any unused
 # lofi devices (used ones will just fail)
 .PHONY: cleanimgcruft
 cleanimgcruft:
 	$(RM) -vf /tmp/*4gb.img
-	for dev in $(shell lofiadm | cut -d ' ' -f1 | grep -v "^Block"); do pfexec lofiadm -d ${dev}; done
+	for dev in $(shell lofiadm | cut -d ' ' -f1 | grep -v "^Block"); do pfexec lofiadm -d $${dev}; done
 
 .PHONY: boot
 boot: $(BOOT_OUTPUT)
@@ -2475,8 +2477,8 @@ $(BOOT_OUTPUT): $(USB_BITS_SPEC) $(USB_BITS_DIR)
 	@echo ""
 
 
-COAL_BUILD=$(USB_BUILD_DIR)/coal-$(_usbheadnode_stamp)-4gb.tgz
-COAL_OUTPUT=$(USB_BITS_DIR)/coal$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp)-4gb.tgz
+COAL_BUILD=$(USB_BUILD_DIR)/coal-$(_headnode_stamp)-4gb.tgz
+COAL_OUTPUT=$(USB_BITS_DIR)/coal$(HEADNODE_SUFFIX)-$(_headnode_stamp)-4gb.tgz
 
 $(USB_BITS_SPEC): $(USB_BITS_DIR)
 	$(USB_BUILD_SPEC_ENV) bash <build.spec.in >$(USB_BITS_SPEC)
@@ -2495,8 +2497,8 @@ $(COAL_OUTPUT): $(USB_BITS_SPEC) $(USB_OUTPUT)
 	@ls -l $(COAL_OUTPUT)
 	@echo ""
 
-USB_BUILD=$(USB_BUILD_DIR)/usb-$(_usbheadnode_stamp).tgz
-USB_OUTPUT=$(USB_BITS_DIR)/usb$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).tgz
+USB_BUILD=$(USB_BUILD_DIR)/usb-$(_headnode_stamp).tgz
+USB_OUTPUT=$(USB_BITS_DIR)/usb$(HEADNODE_SUFFIX)-$(_headnode_stamp).tgz
 
 .PHONY: usb
 usb: $(USB_OUTPUT)
@@ -2512,13 +2514,13 @@ $(USB_OUTPUT): $(USB_BITS_SPEC) $(BOOT_OUTPUT)
 	@echo ""
 
 
-# A usbheadnode image that can be imported to an IMGAPI and used for
+# A headnode image that can be imported to an IMGAPI and used for
 # sdc-on-sdc.
 
-IMAGE_BUILD=$(USB_BUILD)/usb-$(_usbheadnode_stamp).zvol.bz2
-IMAGE_OUTPUT=$(USB_BITS_DIR)/usb$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).zvol.bz2
-MANIFEST_BUILD=$(USB_BUILD)/usb-$(_usbheadnode_stamp).dsmanifest
-MANIFEST_OUTPUT=$(USB_BITS_DIR)/usb$(USB_HEADNODE_SUFFIX)-$(_usbheadnode_stamp).dsmanifest
+IMAGE_BUILD=$(USB_BUILD)/usb-$(_headnode_stamp).zvol.bz2
+IMAGE_OUTPUT=$(USB_BITS_DIR)/usb$(HEADNODE_SUFFIX)-$(_headnode_stamp).zvol.bz2
+MANIFEST_BUILD=$(USB_BUILD)/usb-$(_headnode_stamp).dsmanifest
+MANIFEST_OUTPUT=$(USB_BITS_DIR)/usb$(HEADNODE_SUFFIX)-$(_headnode_stamp).dsmanifest
 
 .PHONY: image
 image: $(IMAGE_OUTPUT)
@@ -2548,8 +2550,8 @@ releasejson: $(USB_BITS_DIR)
 }" | $(JSON) >$(RELEASEJSON_BIT)
 
 
-clean_usbheadnode:
-	$(RM) -rf $(BITS_DIR)/usbheadnode $(BITS_DIR)/usbheadnode$(USB_HEADNODE_SUFFIX)
+clean_headnode:
+	$(RM) -rf $(BITS_DIR)/headnode*
 
 
 

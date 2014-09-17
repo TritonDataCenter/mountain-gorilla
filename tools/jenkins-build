@@ -122,7 +122,14 @@ if [[ "$CLEAN_CACHE" == "true" ]]; then
     rm -rf $CACHE_DIR
 fi
 
-TRACE=1 ./configure -j -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" -B "$TRY_BRANCH"
+# XXX On Sept 30th, we'll need to add -D /public/builds -O /public/builds unless
+# JOB_NAME is 'joyent-firmware', 'headnode-joyent', 'headnode-joyent-debug' in
+# which case we want -D /public/builds -O /stor/builds (TOOLS-650)
+if [[ -z ${JOYENT_BUILD} || ${JOYENT_BUILD} == "true" ]]; then
+    TRACE=1 ./configure -j -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" -J /stor/builds -B "$TRY_BRANCH"
+else
+    TRACE=1 ./configure -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" -B "$TRY_BRANCH"
+fi
 
 now_time=$(date +%s)
 elapsed=$((${now_time} - ${last_time}))
