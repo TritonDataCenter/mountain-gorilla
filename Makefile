@@ -139,20 +139,23 @@ clean_incr-upgrade:
 #---- gz-tools
 
 _gz_tools_stamp=$(SDC_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(SDC_HEADNODE_SHA)
-GZ_TOOLS_BITS=$(BITS_DIR)/gz-tools/gz-tools-$(_gz_tools_stamp).tgz
+GZ_TOOLS_BIT=$(BITS_DIR)/gz-tools/gz-tools-$(_gz_tools_stamp).tgz
+GZ_TOOLS_MANIFEST_BIT=$(BITS_DIR)/gz-tools/gz-tools-$(_gz_tools_stamp).manifest
 
 .PHONY: gz-tools
-gz-tools: $(GZ_TOOLS_BITS)
+gz-tools: $(GZ_TOOLS_BIT)
 
-$(GZ_TOOLS_BITS): build/sdc-headnode
+$(GZ_TOOLS_BIT): build/sdc-headnode
 	@echo "# Build gz-tools: branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/sdc-headnode && BRANCH="" TIMESTAMP=$(TIMESTAMP) gmake gz-tools)
-	mkdir -p $(BITS_DIR)/gz-tools
-	cp build/sdc-headnode/gz-tools-$(_gz_tools_stamp).tgz $(BITS_DIR)/gz-tools
+	(cd build/sdc-headnode && BRANCH="" TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake gz-tools gz-tools-publish)
 	@echo "# Created gz-tools bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(GZ_TOOLS_BITS)
+	@ls -l $(GZ_TOOLS_BIT) $(GZ_TOOLS_MANIFEST_BIT)
 	@echo ""
+
+gz-tools_publish_image: $(GZ_TOOLS_BIT)
+	@echo "# Publish gz-tools image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(GZ_TOOLS_MANIFEST_BIT) -f $(GZ_TOOLS_BIT)
 
 clean_gz-tools:
 	$(RM) -rf $(BITS_DIR)/gz-tools
