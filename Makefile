@@ -136,6 +136,29 @@ clean_incr-upgrade:
 
 
 
+#---- gz-tools
+
+_gz_tools_stamp=$(SDC_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(SDC_HEADNODE_SHA)
+GZ_TOOLS_BITS=$(BITS_DIR)/gz-tools/gz-tools-$(_gz_tools_stamp).tgz
+
+.PHONY: gz-tools
+gz-tools: $(GZ_TOOLS_BITS)
+
+$(GZ_TOOLS_BITS): build/sdc-headnode
+	@echo "# Build gz-tools: branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/sdc-headnode && BRANCH="" TIMESTAMP=$(TIMESTAMP) gmake gz-tools)
+	mkdir -p $(BITS_DIR)/gz-tools
+	cp build/sdc-headnode/gz-tools-$(_gz_tools_stamp).tgz $(BITS_DIR)/gz-tools
+	@echo "# Created gz-tools bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(GZ_TOOLS_BITS)
+	@echo ""
+
+clean_gz-tools:
+	$(RM) -rf $(BITS_DIR)/gz-tools
+
+
+
 #---- amon
 
 _amon_stamp=$(SDC_AMON_BRANCH)-$(TIMESTAMP)-g$(SDC_AMON_SHA)

@@ -95,6 +95,12 @@ cat <<EOF
     ],
     "deps": []
   },
+  "gz-tools": {
+    "repos": [
+      {"url": "git@github.com:joyent/sdc-headnode.git"}
+    ],
+    "deps": []
+  },
   "ca": {
     "appliance": "true",
     "image_name": "ca",
