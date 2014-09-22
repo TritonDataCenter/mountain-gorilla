@@ -2662,23 +2662,23 @@ deps/%/.git:
 	git submodule update --init deps/$*
 
 RESTDOWN_EXEC	?= deps/restdown/bin/restdown
-RESTDOWN	?= python2.6 $(RESTDOWN_EXEC)
+RESTDOWN	?= python $(RESTDOWN_EXEC)
 RESTDOWN_FLAGS	?=
-DOC_FILES	= design.restdown index.restdown
+DOC_FILES	= design.md index.md
 DOC_BUILD	= build/docs/public
 
 $(DOC_BUILD):
 	mkdir -p $@
 
-$(DOC_BUILD)/%.json $(DOC_BUILD)/%.html: docs/%.restdown | $(DOC_BUILD) $(RESTDOWN_EXEC)
+$(DOC_BUILD)/%.json $(DOC_BUILD)/%.html: docs/%.md | $(DOC_BUILD) $(RESTDOWN_EXEC)
 	$(RESTDOWN) $(RESTDOWN_FLAGS) -m $(DOC_BUILD) $<
-	mv $(<:%.restdown=%.json) $(DOC_BUILD)
-	mv $(<:%.restdown=%.html) $(DOC_BUILD)
+	mv $(<:%.md=%.json) $(DOC_BUILD)
+	mv $(<:%.md=%.html) $(DOC_BUILD)
 
 .PHONY: docs
 docs:							\
-	$(DOC_FILES:%.restdown=$(DOC_BUILD)/%.html)		\
-	$(DOC_FILES:%.restdown=$(DOC_BUILD)/%.json)
+	$(DOC_FILES:%.md=$(DOC_BUILD)/%.html)		\
+	$(DOC_FILES:%.md=$(DOC_BUILD)/%.json)
 
 $(RESTDOWN_EXEC): | deps/restdown/.git
 
