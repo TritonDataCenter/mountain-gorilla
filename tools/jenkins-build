@@ -39,6 +39,8 @@ if [[ -z "$MG_JENKINS_BUILD_SECOND_PASS" ]]; then
     echo ""
     echo "#---------------------- start first pass"
 
+    # Note: As of TOOLS-659, use of 'payload' in hooks is deprecated.
+    #
     # If "payload" is defined, we presume this is from a post-receive hook.
     # `payload.ref` will defined the git branch. For "release-YYYYMMDD" branches
     # (the Joyent engineering convention for release branches) we'll be strict
