@@ -1389,50 +1389,6 @@ clean_cnapi:
 	(cd build/sdc-cnapi && gmake clean)
 
 
-#---- SDCSSO
-
-_sdcsso_stamp=$(SDCSSO_BRANCH)-$(TIMESTAMP)-g$(SDCSSO_SHA)
-SDCSSO_BITS=$(BITS_DIR)/sdcsso/sdcsso-pkg-$(_sdcsso_stamp).tar.bz2
-SDCSSO_IMAGE_BIT=$(BITS_DIR)/sdcsso/sdcsso-zfs-$(_sdcsso_stamp).zfs.gz
-SDCSSO_MANIFEST_BIT=$(BITS_DIR)/sdcsso/sdcsso-zfs-$(_sdcsso_stamp).imgmanifest
-
-.PHONY: sdcsso
-sdcsso: $(SDCSSO_BITS) sdcsso_image
-
-# PATH for sdcsso build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
-$(SDCSSO_BITS): build/sdcsso
-	@echo "# Build sdcsso: branch $(KEYAPI_BRANCH), sha $(KEYAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/sdcsso && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created sdcsso bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(SDCSSO_BITS)
-	@echo ""
-
-.PHONY: sdcsso_image
-sdcsso_image: $(SDCSSO_IMAGE_BIT)
-
-$(SDCSSO_IMAGE_BIT): $(SDCSSO_BITS)
-	@echo "# Build sdcsso_image: branch $(SDCSSO_BRANCH), sha $(SDCSSO_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(SDCSSO_IMAGE_UUID)" -t $(SDCSSO_BITS) \
-		-o "$(SDCSSO_IMAGE_BIT)" -p $(SDCSSO_PKGSRC) -O "$(MG_OUT_PATH)" \
-		-t $(SDCSSO_EXTRA_TARBALLS) -n $(SDCSSO_IMAGE_NAME) \
-		-v $(_sdcsso_stamp) -d $(SDCSSO_IMAGE_DESCRIPTION)
-	@echo "# Created sdcsso image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(SDCSSO_IMAGE_BIT))
-	@echo ""
-
-sdcsso_publish_image: $(SDCSSO_IMAGE_BIT)
-	@echo "# Publish sdcsso image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(SDCSSO_MANIFEST_BIT) -f $(SDCSSO_IMAGE_BIT)
-
-# Warning: if SDCSSO's submodule deps change, this 'clean_sdcsso is insufficient. It would
-# then need to call 'gmake dist-clean'.
-clean_sdcsso:
-	$(RM) -rf $(BITS_DIR)/sdcsso
-	(cd build/sdcsso && gmake clean)
-
-
 #---- FWAPI
 
 _fwapi_stamp=$(SDC_FWAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_FWAPI_SHA)

@@ -63,7 +63,6 @@ cat <<HERE;
   "redis-image": "redis/$(ls bits/redis/redis-*manifest | xargs basename)",
   "sapi-image": "sapi/$(ls bits/sapi/sapi-*manifest | xargs basename)",
   "sdc-image": "sdc/$(ls bits/sdc/sdc-*manifest | xargs basename)",
-  "sdcsso-image": "sdcsso/$(ls bits/sdcsso/sdcsso-*manifest | xargs basename)",
   "ufds-image": "ufds/$(ls bits/ufds/ufds-*manifest | xargs basename)",
   "vmapi-image": "vmapi/$(ls bits/vmapi/vmapi-*manifest | xargs basename)",
   "workflow-image": "workflow/$(ls bits/workflow/workflow-*manifest | xargs basename)"
