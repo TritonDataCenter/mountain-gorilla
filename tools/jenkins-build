@@ -127,6 +127,9 @@ fi
 # Builds that are joyent-specific get uploaded to /stor/builds whereas all other
 # builds now go to /public/builds. So in either case, dependencies come from
 # /public/builds.
+if [[ ! -f targets.json ]]; then
+    bash < targets.json.in | json > targets.json
+fi
 IS_PUBLIC=$(json < targets.json headnode-joyent.public)
 if [[ ${IS_PUBLIC} == "true" ]]; then
     JENKINS_OUTPUT_OPTS="-O /public/builds"
