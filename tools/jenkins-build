@@ -124,13 +124,23 @@ if [[ "$CLEAN_CACHE" == "true" ]]; then
     rm -rf $CACHE_DIR
 fi
 
-# XXX On Sept 30th, we'll need to add -D /public/builds -O /public/builds unless
-# JOB_NAME is 'joyent-firmware', 'headnode-joyent', 'headnode-joyent-debug' in
-# which case we want -D /public/builds -O /stor/builds (TOOLS-650)
-if [[ -z ${JOYENT_BUILD} || ${JOYENT_BUILD} == "true" ]]; then
-    TRACE=1 ./configure -j -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" -J /stor/builds -B "$TRY_BRANCH"
+# Builds that are joyent-specific get uploaded to /stor/builds whereas all other
+# builds now go to /public/builds. So in either case, dependencies come from
+# /public/builds.
+IS_PUBLIC=$(json < targets.json headnode-joyent.public)
+if [[ ${IS_PUBLIC} == "true" ]]; then
+    JENKINS_OUTPUT_OPTS="-O /public/builds"
 else
-    TRACE=1 ./configure -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" -B "$TRY_BRANCH"
+    JENKINS_OUTPUT_OPTS="-O /stor/builds"
+fi
+
+if [[ -z ${JOYENT_BUILD} || ${JOYENT_BUILD} == "true" ]]; then
+    TRACE=1 ./configure -j -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" \
+        -J /stor/builds -D /public/builds ${JENKINS_OUTPUT_OPTS} \
+        -B "$TRY_BRANCH"
+else
+    TRACE=1 ./configure -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" \
+        -D /public/builds ${JENKINS_OUTPUT_OPTS} -B "$TRY_BRANCH"
 fi
 
 now_time=$(date +%s)
