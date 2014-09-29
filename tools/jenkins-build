@@ -130,7 +130,7 @@ fi
 if [[ ! -f targets.json ]]; then
     bash < targets.json.in | json > targets.json
 fi
-IS_PUBLIC=$(json < targets.json headnode-joyent.public)
+IS_PUBLIC=$(json < targets.json ${JOB_NAME}.public)
 if [[ ${IS_PUBLIC} == "true" ]]; then
     JENKINS_OUTPUT_OPTS="-O /public/builds"
 else
