@@ -62,8 +62,8 @@ ifeq ($(UPLOAD_LOCATION),)
 	UPLOAD_LOCATION=bits@bits.joyent.us:builds
 endif
 
-ifeq ($(MANTA_UPLOAD_BASE),)
-	MANTA_UPLOAD_BASE=builds
+ifeq ($(MG_OUT_PATH),)
+	MG_OUT_PATH=builds
 endif
 
 #
@@ -2671,7 +2671,7 @@ manta_upload_jenkins:
 	@[[ -z "$(JOB_NAME)" ]] \
 		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
 		&& exit 1 || true
-	TRACE=1 ./tools/mantaput-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(MANTA_UPLOAD_BASE)/$(JOB_NAME) $(JOB_NAME) $(UPLOAD_SUBDIRS)
+	TRACE=1 ./tools/mantaput-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(MG_OUT_PATH)/$(JOB_NAME) $(JOB_NAME) $(UPLOAD_SUBDIRS)
 
 %_upload_manta: %
 	./tools/manta-upload "$*"
