@@ -132,18 +132,18 @@ if [[ ! -f targets.json ]]; then
 fi
 IS_PUBLIC=$(json < targets.json ${JOB_NAME}.public)
 if [[ ${IS_PUBLIC} == "true" ]]; then
-    JENKINS_OUTPUT_OPTS="-O /public/builds"
+    JENKINS_OUTPUT_BASE="/public/builds"
 else
-    JENKINS_OUTPUT_OPTS="-O /stor/builds"
+    JENKINS_OUTPUT_BASE="/stor/builds"
 fi
 
 if [[ -z ${JOYENT_BUILD} || ${JOYENT_BUILD} == "true" ]]; then
     TRACE=1 ./configure -j -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" \
-        -J /stor/builds -D /public/builds ${JENKINS_OUTPUT_OPTS} \
+        -J /stor/builds -D /public/builds -O ${JENKINS_OUTPUT_BASE} \
         -B "$TRY_BRANCH"
 else
     TRACE=1 ./configure -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" \
-        -D /public/builds ${JENKINS_OUTPUT_OPTS} -B "$TRY_BRANCH"
+        -D /public/builds -O ${JENKINS_OUTPUT_BASE} -B "$TRY_BRANCH"
 fi
 
 now_time=$(date +%s)
@@ -169,7 +169,7 @@ echo ""
 echo "#---------------------- upload"
 
 cp $LOG bits/$JOB_NAME/
-gmake manta_upload_jenkins
+gmake -D MANTA_UPLOAD_BASE="${JENKINS_OUTPUT_BASE}" manta_upload_jenkins
 gmake jenkins_publish_image
 
 now_time=$(date +%s)
