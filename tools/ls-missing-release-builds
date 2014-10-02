@@ -62,9 +62,14 @@ if [[ -z "$(echo $release | grep '^release-[0-9]\{8\}$' || true)" ]]; then
 fi
 
 (cd $TOP && JOYENT_BUILD=true bash <targets.json.in >targets.json)
-targets=$(json -f $TOP/targets.json -ka | grep -v '^all$' | grep -v agentsshar-upgrade | grep -v usageapi | grep -v convertvm)
-for target in $targets; do
-    latest_mpath=/Joyent_Dev/stor/builds/$target/$release-latest
+targets=$($TOP/tools/json -f $TOP/targets.json -Ma key value.public \
+    | grep -v agentsshar-upgrade | grep -v usageapi | grep -v convertvm)
+echo "$targets" | while read target public; do
+    if [[ "$public" == "true" ]]; then
+        latest_mpath=/Joyent_Dev/public/builds/$target/$release-latest
+    else
+        latest_mpath=/Joyent_Dev/stor/builds/$target/$release-latest
+    fi
     latest=$(mls $latest_mpath 2>/dev/null || true)
     if [[ -z "$latest" ]]; then
         echo "$target  # '$latest_mpath' does not exist, use <https://jenkins.joyent.us/job/$target/buildWithParameters?BRANCH=$release> to start build"
