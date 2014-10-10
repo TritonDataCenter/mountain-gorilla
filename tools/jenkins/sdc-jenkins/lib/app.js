@@ -167,6 +167,7 @@ App.prototype.do_create_node = function (subcmd, opts, args, callback) {
         __dirname + '/../create-jenkins-slave/copy-and-start.sh',
         params,
         {
+            stdio: 'inherit',
             env: {
                 JENKINS_USER: opts.jenkins_user
             }
@@ -181,8 +182,6 @@ App.prototype.do_create_node = function (subcmd, opts, args, callback) {
             callback();
         }
     ];
-
-    console.dir(spawnArgs);
 
     spawn.apply(null, spawnArgs);
 };
