@@ -16,7 +16,7 @@
       "compression": "gzip"
     }
   ],
-  "description": "SmartDataCentre platform image",
+  "description": "SmartDataCenter platform image",
   "tags": {
     "smartdc_service": "true",
     "buildstamp": "BUILDSTAMP"
