@@ -978,11 +978,11 @@ cat <<EOF
     "appliance": "true",
     "image_name": "manta-loadbalancer",
     "image_description": "Manta loadbalancer",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "image_uuid": "de411e86-548d-11e4-a4b7-3bb60478632a",
     "pkgsrc": [
       "py27-curses",
-      "stud-0nb20120827",
-      "zookeeper-client-3.4.3"
+      "stud-0.3p53nb1",
+      "zookeeper-client-3.4.6"
     ],
     "repos": [
       {"url": "git@github.com:joyent/muppet.git"}
