@@ -683,6 +683,46 @@ clean_cloudapi:
 	(cd build/sdc-cloudapi && gmake clean)
 
 
+#---- DOCKER
+
+_docker_stamp=$(SDC_DOCKER_BRANCH)-$(TIMESTAMP)-g$(SDC_DOCKER_SHA)
+DOCKER_BITS=$(BITS_DIR)/docker/docker-pkg-$(_docker_stamp).tar.bz2
+DOCKER_IMAGE_BIT=$(BITS_DIR)/docker/docker-zfs-$(_docker_stamp).zfs.gz
+DOCKER_MANIFEST_BIT=$(BITS_DIR)/docker/docker-zfs-$(_docker_stamp).imgmanifest
+
+.PHONY: docker
+docker: $(DOCKER_BITS) docker_image
+
+$(DOCKER_BITS): build/sdc-docker
+	@echo "# Build docker: branch $(SDC_DOCKER_BRANCH), sha $(SDC_DOCKER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/sdc-docker && PATH=/opt/node/0.6.12/bin:$(PATH) NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created docker bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(DOCKER_BITS)
+	@echo ""
+
+.PHONY: docker_image
+docker_image: $(DOCKER_IMAGE_BIT)
+
+$(DOCKER_IMAGE_BIT): $(DOCKER_BITS)
+	@echo "# Build docker_image: branch $(SDC_DOCKER_BRANCH), sha $(SDC_DOCKER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(DOCKER_IMAGE_UUID)" -t $(DOCKER_BITS) \
+		-o "$(DOCKER_IMAGE_BIT)" -p $(DOCKER_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(DOCKER_EXTRA_TARBALLS) -n $(DOCKER_IMAGE_NAME) \
+		-v $(_docker_stamp) -d $(DOCKER_IMAGE_DESCRIPTION)
+	@echo "# Created docker image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(DOCKER_IMAGE_BIT))
+	@echo ""
+
+docker_publish_image: $(DOCKER_IMAGE_BIT)
+	@echo "# Publish docker image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(DOCKER_MANIFEST_BIT) -f $(DOCKER_IMAGE_BIT)
+
+clean_docker:
+	$(RM) -rf $(BITS_DIR)/docker
+	(cd build/sdc-docker && gmake clean)
+
+
 #---- MANTA_MANATEE
 
 _manta-manatee_stamp=$(MANTA_MANATEE_BRANCH)-$(TIMESTAMP)-g$(MANTA_MANATEE_SHA)
