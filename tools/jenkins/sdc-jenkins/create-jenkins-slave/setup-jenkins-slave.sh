@@ -132,7 +132,7 @@ EOF
 # by the MG builds to publish build images to updates.joyent.com).
 mkdir -p /root/opt
 (cd /root/opt \
-    && git clone git@git.joyent.com:imgapi-cli.git \
+    && git clone git@github.com:sdc-imgapi-cli.git imgapi-cli \
     && cd imgapi-cli \
     && NODE_PREBUILT_CC_VERSION=4.6.2 PATH=/root/opt/node/bin:/opt/local/bin:/opt/local/gnu/bin:$PATH gmake)
 echo '' >>/root/.bashrc
