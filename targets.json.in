@@ -1370,6 +1370,19 @@ cat <<EOF
     ],
     "public": true,
     "deps": []
+  },
+  "platform-smartos": {
+    "repos": [
+        {"url": "git@github.com:joyent/smartos-live.git"},
+        {"url": "git@github.com:joyent/illumos-joyent.git"},
+        {"url": "git@github.com:joyent/illumos-extra.git"},
+        {"url": "git@github.com:joyent/illumos-kvm.git"},
+        {"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
+        {"url": "git@github.com:joyent/smartos-overlay.git"},
+        {"url": "git@github.com:joyent/mdata-client.git"}
+    ],
+    "public": true,
+    "deps": []
   }
 }
 

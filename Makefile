@@ -2626,16 +2626,21 @@ PLATFORM_MANIFEST_BIT=platform.imgmanifest
 
 platform : PLAT_SUFFIX += ""
 platform : PLAT_CONF_ARGS += "no"
+platform : PLAT_FLAVOR = ""
 platform-debug : PLAT_SUFFIX += "-debug"
 platform-debug : PLAT_CONF_ARGS += "exclusive"
+platform-debug : PLAT_FLAVOR = ""
+platform-smartos : PLAT_SUFFIX += ""
+platform-smartos : PLAT_CONF_ARGS += "no"
+platform-smartos : PLAT_FLAVOR = "-smartos"
 
 
-.PHONY: platform platform-debug
-platform platform-debug: smartos_live_make_check $(PLATFORM_BITS_0)
+.PHONY: platform platform-debug platform-smartos
+platform platform-debug platform-smartos: smartos_live_make_check $(PLATFORM_BITS_0)
 
 build/smartos-live/configure.mg:
 	sed -e "s:GITCLONESOURCE:$(shell pwd)/build/:" \
-		<smartos-live-configure.mg.in >build/smartos-live/configure.mg
+		<smartos-live-configure$(PLAT_FLAVOR).mg.in >build/smartos-live/configure.mg
 
 build/smartos-live/configure-branches:
 	sed \
@@ -2646,7 +2651,8 @@ build/smartos-live/configure-branches:
 		-e "s:ILLUMOS_KVM_CMD_BRANCH:$(ILLUMOS_KVM_CMD_BRANCH):" \
 		-e "s:MDATA_CLIENT_BRANCH:$(MDATA_CLIENT_BRANCH):" \
 		-e "s:SDC_PLATFORM_BRANCH:$(SDC_PLATFORM_BRANCH):" \
-		<smartos-live-configure-branches.in >build/smartos-live/configure-branches
+		-e "s:SMARTOS_OVERLAY_BRANCH:$(SMARTOS_OVERLAY_BRANCH):" \
+		<smartos-live-configure-branches$(PLAT_FLAVOR).in >build/smartos-live/configure-branches
 
 .PHONY: smartos_live_make_check
 smartos_live_make_check:
