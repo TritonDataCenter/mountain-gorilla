@@ -2697,6 +2697,38 @@ clean_platform:
 	$(RM) -rf $(BITS_DIR)/platform
 	(cd build/smartos-live && gmake clean)
 
+#---- smartos target
+
+SMARTOS_BITS_DIR=$(BITS_DIR)/smartos
+
+SMARTOS_BITS= \
+	$(SMARTOS_BITS_DIR)/changelog.txt \
+	$(SMARTOS_BITS_DIR)/SINGLE_USER_ROOT_PASSWORD.txt \
+	$(SMARTOS_BITS_DIR)/platform-$(TIMESTAMP).tgz \
+	$(SMARTOS_BITS_DIR)/smartos-$(TIMESTAMP).iso \
+	$(SMARTOS_BITS_DIR)/smartos-$(TIMESTAMP)-USB.img.bz2 \
+	$(SMARTOS_BITS_DIR)/smartos-$(TIMESTAMP).vmwarevm.tar.bz2
+
+.PHONY: smartos
+smartos: platform-smartos $(SMARTOS_BITS)
+
+$(SMARTOS_BITS):
+	@echo "# Build smartos release: branch $(SMARTOS_LIVE_BRANCH), sha $(SMARTOS_LIVE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	(cd build/smartos-live \
+		&& ./tools/build_changelog \
+		&& ./tools/build_iso \
+		&& ./tools/build_usb \
+		&& ./tools/build_vmware)
+	mkdir -p $(SMARTOS_BITS_DIR)
+	cp build/smartos-live/output/changelog.txt $(SMARTOS_BITS_DIR)
+	cp build/smartos-live/output/platform-$(TIMESTAMP)/root.password $(SMARTOS_BITS_DIR)/SINGLE_USER_ROOT_PASSWORD.txt
+	cp build/smartos-live/output/platform-$(TIMESTAMP).tgz $(SMARTOS_BITS_DIR)
+	cp build/smartos-live/output-iso/platform-$(TIMESTAMP).iso $(SMARTOS_BITS_DIR)/smartos-$(TIMESTAMP).iso
+	cp build/smartos-live/output-usb/platform-$(TIMESTAMP).usb.bz2 $(SMARTOS_BITS_DIR)/smartos-$(TIMESTAMP)-USB.img.bz2
+	cp build/smartos-live/output-vmware/smartos-$(TIMESTAMP).vmwarevm.tar.bz2 $(SMARTOS_BITS_DIR)
+	(cd $(SMARTOS_BITS_DIR) && $(CURDIR)/tools/smartos-index $(TIMESTAMP) > index.html)
+	(cd $(SMARTOS_BITS_DIR) && /usr/bin/sum -x md5 * > md5sums.txt)
+
 #---- docs target (based on eng.git/tools/mk code for this)
 
 deps/%/.git:
