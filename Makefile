@@ -723,6 +723,45 @@ clean_docker:
 	(cd build/sdc-docker && gmake clean)
 
 
+#---- PORTOLAN
+
+_portolan_stamp=$(SDC_PORTOLAN_BRANCH)-$(TIMESTAMP)-g$(SDC_PORTOLAN_SHA)
+PORTOLAN_BITS=$(BITS_DIR)/portolan/portolan-pkg-$(_portolan_stamp).tar.bz2
+PORTOLAN_IMAGE_BIT=$(BITS_DIR)/portolan/portolan-zfs-$(_portolan_stamp).zfs.gz
+PORTOLAN_MANIFEST_BIT=$(BITS_DIR)/portolan/portolan-zfs-$(_portolan_stamp).imgmanifest
+
+.PHONY: portolan
+portolan: $(PORTOLAN_BITS) portolan_image
+
+$(PORTOLAN_BITS): build/sdc-portolan
+	@echo "# Build portolan: branch $(SDC_PORTOLAN_BRANCH), sha $(SDC_PORTOLAN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/sdc-portolan && PATH=/opt/node/0.6.12/bin:$(PATH) NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created portolan bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(PORTOLAN_BITS)
+	@echo ""
+
+.PHONY: portolan_image
+portolan_image: $(PORTOLAN_IMAGE_BIT)
+
+$(PORTOLAN_IMAGE_BIT): $(PORTOLAN_BITS)
+	@echo "# Build portolan_image: branch $(SDC_PORTOLAN_BRANCH), sha $(SDC_PORTOLAN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(PORTOLAN_IMAGE_UUID)" -t $(PORTOLAN_BITS) \
+		-o "$(PORTOLAN_IMAGE_BIT)" -p $(PORTOLAN_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(PORTOLAN_EXTRA_TARBALLS) -n $(PORTOLAN_IMAGE_NAME) \
+		-v $(_portolan_stamp) -d $(PORTOLAN_IMAGE_DESCRIPTION)
+	@echo "# Created portolan image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(PORTOLAN_IMAGE_BIT))
+	@echo ""
+
+portolan_publish_image: $(PORTOLAN_IMAGE_BIT)
+	@echo "# Publish portolan image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(PORTOLAN_MANIFEST_BIT) -f $(PORTOLAN_IMAGE_BIT)
+
+clean_portolan:
+	$(RM) -rf $(BITS_DIR)/portolan
+	(cd build/sdc-portolan && gmake clean)
+
 #---- MANTA_MANATEE
 
 _manta-manatee_stamp=$(MANTA_MANATEE_BRANCH)-$(TIMESTAMP)-g$(MANTA_MANATEE_SHA)
