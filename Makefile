@@ -2729,6 +2729,10 @@ $(SMARTOS_BITS):
 	(cd $(SMARTOS_BITS_DIR) && $(CURDIR)/tools/smartos-index $(TIMESTAMP) > index.html)
 	(cd $(SMARTOS_BITS_DIR) && /usr/bin/sum -x md5 * > md5sums.txt)
 
+.PHONY: smartos-release
+smartos-release:
+	TRACE=1 ./tools/smartos-release "$(BRANCH)" "$(TIMESTAMP)"
+
 #---- docs target (based on eng.git/tools/mk code for this)
 
 deps/%/.git:

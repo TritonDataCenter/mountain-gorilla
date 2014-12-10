@@ -170,6 +170,11 @@ echo "#---------------------- upload"
 
 cp $LOG bits/$JOB_NAME/
 gmake manta_upload_jenkins
+
+if [[ ${JOB_NAME} == "smartos" ]] && [[ ${BRANCH} == release* ]]; then
+    gmake smartos-release
+fi
+
 gmake jenkins_publish_image
 
 now_time=$(date +%s)
