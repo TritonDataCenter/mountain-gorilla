@@ -52,7 +52,6 @@ function build_headnode_target()
       "napi",
       "papi",
       "${platform}",
-      "portolan",
       "rabbitmq",
       "redis",
       "sapi",
