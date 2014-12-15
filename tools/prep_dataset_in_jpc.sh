@@ -70,6 +70,9 @@ image_uuid=""
 tarballs=""
 packages=""
 output=""
+branch=
+timestamp=
+commit=
 
 
 #---- functions
@@ -145,7 +148,7 @@ if [[ -n ${SDC_LOCAL_BUILD} ]]; then
   image_package=${SDC_IMAGE_PACKAGE}
 fi
 
-while getopts ht:p:P:i:o:O:n:v:d:b: opt; do
+while getopts ht:p:P:i:o:O:n:v:B:T:C:d:b: opt; do
   case ${opt} in
   h)
     usage
@@ -178,6 +181,9 @@ while getopts ht:p:P:i:o:O:n:v:d:b: opt; do
   O)
     if [[ -n ${OPTARG} ]]; then
         MG_OUT_PATH="${OPTARG}"
+        if [[ ${MG_OUT_PATH:0:1} != '/' ]]; then
+          fatal '"-O DIR" arg does not start with a "/"'
+        fi
     fi
     ;;
   b)
@@ -193,6 +199,21 @@ while getopts ht:p:P:i:o:O:n:v:d:b: opt; do
   v)
     if [[ -n ${OPTARG} ]]; then
         image_version=${OPTARG}
+    fi
+    ;;
+  B)
+    if [[ -n ${OPTARG} ]]; then
+        branch=${OPTARG}
+    fi
+    ;;
+  T)
+    if [[ -n ${OPTARG} ]]; then
+        timestamp=${OPTARG}
+    fi
+    ;;
+  C)
+    if [[ -n ${OPTARG} ]]; then
+        commit=${OPTARG}
     fi
     ;;
   d)
@@ -212,8 +233,10 @@ fi
 
 [[ -n ${image_name} ]] || fatal "No image name, use '-n NAME'."
 [[ -n ${image_version} ]] || fatal "No image version, use '-v VERSION'."
+[[ -n ${branch} ]] || fatal "No branch, use '-b BRANCH'."
+[[ -n ${timestamp} ]] || fatal "No timestamp, use '-T TIMESTAMP'."
 [[ -n ${image_description} ]] || image_description="${image_name}"
-[[ -n ${build_name} ]] || build_name=${image_name}
+[[ -n ${build_name} ]] || build_name="${image_name}"
 
 if [[ -z ${image_uuid} ]]; then
   fatal "No image_uuid provided. Use the '-i' option."
@@ -325,7 +348,16 @@ if [[ -n "${packages}" ]]; then
 fi
 
 # And then turn it in to an image
-image=$(sdc-createimagefrommachine --machine ${machine} --name ${image_name}-zfs --imageVersion ${image_version} --description ${image_description} --tags '{"smartdc_service": true}')
+tags=$(cat <<EOM
+{
+  "smartdc_service": true,
+  "branch": "$branch",
+  "timestamp": "$timestamp",
+  "commit": "$commit"
+}
+EOM
+)
+image=$(sdc-createimagefrommachine --machine ${machine} --name ${image_name}-zfs --imageVersion ${image_version} --description ${image_description} --tags "$tags")
 image_id=$(echo "${image}" | json -H 'id')
 
 # Set this here so from here out fatal() can try to destroy too.
@@ -362,7 +394,8 @@ if [[ -n ${SDC_LOCAL_BUILD} ]]; then
     curl -sS -f -o ${output_dir}/${image_filename} ${SDC_IMGAPI_URL}/images/${image_id}/file
 
 else
-    mantapath=/${SDC_ACCOUNT}${MG_OUT_PATH}/${build_name}/$(echo ${image_version} | cut -d '-' -f1,2)/${build_name}
+    # E.g.    /Joyent_Dev    /public/builds/imgapi       /$branch-$timestamp    /imgapi
+    mantapath=/${SDC_ACCOUNT}${MG_OUT_PATH}/${build_name}/${branch}-${timestamp}/${build_name}
     mmkdir -p ${mantapath}
 
     manta_bits=/tmp/manta-exported-image.$$

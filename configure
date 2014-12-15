@@ -1,5 +1,5 @@
 #!/bin/bash
-# vi: tabstop=4 expandtab shiftwidth=4
+# vi: tabstop=4 expandtab shiftwidth=4:
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -446,7 +446,9 @@ function get_repo2() {
 }
 
 function gen_config() {
-    local output
+    local targ
+    targ=$1
+
     mkdir -p bits
     cat <<EOF >bits/config.mk
 TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
@@ -466,30 +468,70 @@ EOF
       echo ${repo_mk_name}_SHA=$((cd build/${repo} && git log --pretty=format:'%h' -1 ) || echo "") >> ${ROOT}/bits/config.mk
   done
 
+  if [[ $(cat ${ROOT}/targets.json | $JSON ${targ} | $JSON appliance) != 'true' ]]; then
+    return
+  fi
+
   # Makefile vars for appliance builds (i.e. the "foo_image" targets).
-  for targ in $TARGETS; do
-      targ_mk_name=$(echo $targ | tr [:lower:] [:upper:] | tr - _)
-      if [[ $(cat ${ROOT}/targets.json | $JSON ${targ} | $JSON appliance) == 'true' ]]; then
-        echo ${targ_mk_name}_IMAGE_UUID=$(cat ${ROOT}/targets.json | $JSON ${targ}.image_uuid) >> ${ROOT}/bits/config.mk
-        echo ${targ_mk_name}_IMAGE_NAME=\"$(cat ${ROOT}/targets.json | $JSON ${targ}.image_name)\" >> ${ROOT}/bits/config.mk
-        echo ${targ_mk_name}_IMAGE_DESCRIPTION=\"$(cat ${ROOT}/targets.json | $JSON ${targ}.image_description)\" >> ${ROOT}/bits/config.mk
-        echo ${targ_mk_name}_PKGSRC=\"$(cat ${ROOT}/targets.json | $JSON ${targ}.pkgsrc | $JSON -a |  xargs)\" >> ${ROOT}/bits/config.mk
-        local num_tarballs=$(cat ${ROOT}/targets.json | $JSON ${targ}.tarballs.length)
-        local tarballs=""
-        local index=0
-        while [[ ${index} -lt ${num_tarballs} ]]; do
-            local tb_name=$(cat ${ROOT}/targets.json | $JSON ${targ}.tarballs.${index}.name)
-            local tb_tarball=$(cat ${ROOT}/targets.json | $JSON ${targ}.tarballs.${index}.tarball)
-            [[ -z "$tb_tarball" ]] && fatal "no '$targ.tarballs.$index.tarball' in targets.json"
-            tb_tarball=$ROOT/bits/$tb_tarball
-            local tb_sysroot=$(cat ${ROOT}/targets.json | $JSON ${targ}.tarballs.${index}.sysroot)
-            [[ -z "$tb_sysroot" ]] && fatal "no '$targ.tarballs.$index.sysroot' in targets.json"
-            tarballs="$tarballs $tb_tarball:$tb_sysroot"
-            index=$((${index} + 1))
-        done
-        echo ${targ_mk_name}_EXTRA_TARBALLS=\"${tarballs}\" >> ${ROOT}/bits/config.mk
-      fi
-  done
+
+  # Prefer the image info in the repo "package.json" if it has one.
+  local top_repo_url
+  top_repo_url=$($JSON -f targets.json $targ.repos.0.url)
+  local top_repo_dir
+  if [[ -z "$top_repo_dir" ]]; then
+    top_repo_dir=${top_repo_url##*/}    # strip to last '/'
+    top_repo_dir=${top_repo_dir##*:}    # strip to last ':'
+    top_repo_dir=${top_repo_dir%*.git}    # strip '.git' at tail
+  fi
+  local info_file=${ROOT}/build/$top_repo_dir/package.json
+
+  local image_uuid image_name image_desc version image_pkgsrc extra_tarballs
+  if [[ -f $info_file && -n "$($JSON -f $info_file sdcImageOrigin)" ]]; then
+    image_name=$($JSON -f $info_file name)
+    image_desc=$($JSON -f $info_file description)
+    version=$($JSON -f $info_file version)
+    image_uuid=$($JSON -f $info_file sdcImageOrigin)
+    image_pkgsrc="$($JSON -f $info_file sdcImagePkgsrc | $JSON -a | xargs)"
+    extra_tarballs=$($JSON -f $info_file sdcImageTarballs | $JSON -a -o jsony-0 \
+            | while read tb; do
+        local tb_tarball=$(echo "$tb" | $JSON tarball)
+        [[ -z "$tb_tarball" ]] && fatal "no 'tarball' key in one of the sdcImageTarballs in $info_file"
+        tb_tarball=$ROOT/bits/$tb_tarball
+        local tb_sysroot=$(echo "$tb" | $JSON sysroot)
+        [[ -z "$tb_sysroot" ]] && fatal "no 'sysroot' key in one of the sdcImageTarballs in $info_file"
+        echo " $tb_tarball:$tb_sysroot"
+    done | xargs)
+  else
+    image_uuid=$(cat ${ROOT}/targets.json | $JSON ${targ}.image_uuid)
+    image_name=$(cat ${ROOT}/targets.json | $JSON ${targ}.image_name)
+    image_desc=$(cat ${ROOT}/targets.json | $JSON ${targ}.image_description)
+    version=$(cat ${ROOT}/targets.json | $JSON ${targ}.image_version)
+    image_pkgsrc=$(cat ${ROOT}/targets.json | $JSON ${targ}.pkgsrc | $JSON -a | xargs)
+    local num_tarballs=$(cat ${ROOT}/targets.json | $JSON ${targ}.tarballs.length)
+    local tarballs=""
+    local index=0
+    while [[ ${index} -lt ${num_tarballs} ]]; do
+        local tb_tarball=$(cat ${ROOT}/targets.json | $JSON ${targ}.tarballs.${index}.tarball)
+        [[ -z "$tb_tarball" ]] && fatal "no '$targ.tarballs.$index.tarball' in targets.json"
+        tb_tarball=$ROOT/bits/$tb_tarball
+        local tb_sysroot=$(cat ${ROOT}/targets.json | $JSON ${targ}.tarballs.${index}.sysroot)
+        [[ -z "$tb_sysroot" ]] && fatal "no '$targ.tarballs.$index.sysroot' in targets.json"
+        tarballs="$tarballs $tb_tarball:$tb_sysroot"
+        index=$((${index} + 1))
+    done
+    extra_tarballs=${tarballs}
+  fi
+
+  # Write out the image config vars.
+  targ_mk_name=$(echo $targ | tr [:lower:] [:upper:] | tr - _)
+  echo ${targ_mk_name}_IMAGE_UUID=$image_uuid >> ${ROOT}/bits/config.mk
+  echo ${targ_mk_name}_IMAGE_NAME=\"$image_name\" >> ${ROOT}/bits/config.mk
+  echo ${targ_mk_name}_IMAGE_DESCRIPTION=\"$image_desc\" >> ${ROOT}/bits/config.mk
+  echo ${targ_mk_name}_PKGSRC=\"$image_pkgsrc\" >> ${ROOT}/bits/config.mk
+  echo ${targ_mk_name}_EXTRA_TARBALLS=\"${extra_tarballs}\" >> ${ROOT}/bits/config.mk
+  if [[ -n $version ]]; then
+      echo ${targ_mk_name}_VERSION=$version >> ${ROOT}/bits/config.mk
+  fi
 }
 
 
@@ -548,75 +590,6 @@ function get_target_repos() {
     done
 }
 
-function get_pkgsrc() {
-  if [[ -d ${ROOT}/build/usb-headnode ]]; then
-    echo "# get pkgsrc packages for build/usb-headnode zones (to build/pkgsrc)"
-
-    mkdir -p build/pkgsrc/
-
-    shopt -s extglob
-
-    for dataset in $(find ${ROOT}/build/usb-headnode/zones -name "dataset"); do
-      local ds=$(cat ${dataset})
-      local pkgsrc_url=$((${JSON} datasets | ${JSON} -a name pkgsrc_url \
-          | grep "$(basename ${ds%\.dsmanifest})" \
-          | cut -d ' ' -f2) < ${ROOT}/build/usb-headnode/build.spec)
-      if [[ ${pkgsrc_url:(-1)} != "/" ]]; then
-        pkgsrc_url=$pkgsrc_url/
-      fi
-      local pkgsrc_ver=$(echo "${pkgsrc_url}" | cut -d '/' -f5)
-      local gccver=$(echo "${pkgsrc_url}" | cut -d '/' -f6)
-
-      local cache_dir=$MG_CACHE_DIR/pkgsrc/$pkgsrc_ver/$gccver/All
-      local dest_dir=build/pkgsrc/${pkgsrc_ver}/${gccver}/All
-      mkdir -p $cache_dir
-      mkdir -p $dest_dir
-
-      if [[ ! -f $dest_dir/../SHA512.bz2 ]]; then
-        echo "# get ${pkgsrc_url}/../SHA512.bz2"
-        if ${CURL} -S -o $cache_dir/../SHA512.bz2 ${pkgsrc_url}/../SHA512.bz2; then
-          $CP_LINK $cache_dir/../SHA512.bz2 $dest_dir/../SHA512.bz2
-        elif [[ ! -f $dest_dir/md5sums.txt ]]; then
-          echo "# get ${pkgsrc_url}md5sums.txt"
-          ${CURL} -S -o $cache_dir/md5sums.txt ${pkgsrc_url}md5sums.txt
-          $CP_LINK $cache_dir/md5sums.txt $dest_dir/md5sums.txt
-        fi
-      fi
-
-      for file in $(cat $(dirname ${dataset})/pkgsrc); do
-        if [[ -f $dest_dir/$file.tgz ]]; then
-          true # pass through
-        else
-          if [[ ! -f $cache_dir/${file}.tgz ]]; then
-            echo "# get ${pkgsrc_url}${file}.tgz"
-            ${CURL} -S -o $cache_dir/$file.tgz ${pkgsrc_url}/${file}.tgz
-
-            if [[ -f $cache_dir/../SHA512.bz2 ]]; then
-              local correct_sha512=$(bzcat ${cache_dir}/../SHA512.bz2 | grep "/${file}.tgz)" | cut -d' ' -f4)
-              local actual_sha512=$(openssl dgst -sha512 < $cache_dir/$file.tgz | awk '{print $NF}')
-              if [[ $correct_sha512 != $actual_sha512 ]]; then
-                rm $cache_dir/$file.tgz
-                fatal "SHA512 check failure on $cache_dir/$file.tgz (actual $actual_sha512, from SHA512.bz2 $correct_sha512)"
-              fi
-            elif [[ -f $cache_dir/md5sums.txt ]]; then
-              local correct_md5=$(grep $file $cache_dir/md5sums.txt | cut -d ' ' -f1)
-              local actual_md5=$(openssl dgst -md5 < $cache_dir/$file.tgz | awk '{print $NF}')
-              if [[ $correct_md5 != $actual_md5 ]]; then
-                rm $cache_dir/$file.tgz
-                fatal "md5 check failure on $cache_dir/$file.tgz (actual $actual_md5, from md5sums $correct_md5)"
-              fi
-            fi
-          else
-            echo "# have $cache_dir/$file.tgz"
-          fi
-          $CP_LINK $cache_dir/$file.tgz $dest_dir/
-        fi
-      done
-    done
-
-  fi
-}
-
 
 
 
@@ -624,9 +597,6 @@ function get_pkgsrc() {
 
 trap 'errexit $? $LINENO' EXIT
 
-# Can be a target name to tell 'configure' to (a) limit prep to just that
-# target and (b) pre-load "bits/" with pre-built dependent target bits.
-# If empty it means that we are configuring for a full build.
 TARGET=
 REGENERATE='false'
 MG_NODE=$(which node)
@@ -655,6 +625,7 @@ while getopts "b:B:d:D:O:hrft:c:jJ:" opt; do
 done
 shift $((OPTIND-1))
 
+[[ -n "$TARGET" ]] || fatal "no '-t TARGET' was given, that is required now"
 [[ -z ${MG_DEP_PATH} ]] && MG_DEP_PATH=/stor/builds
 [[ -z $JOYENT_BUILD ]] && JOYENT_BUILD=false
 export JOYENT_BUILD
@@ -669,6 +640,14 @@ if [[ $NODE_VERSION -lt 10 ]]; then
 fi
 JSON="$MG_NODE $ROOT/tools/json"
 
+
+# '-r' regenerate early out.
+if [[ "$REGENERATE" == 'true' ]]; then
+    gen_config $TARGET
+    exit 0
+fi
+
+
 # make sure we clean out old versions before installing the new one
 for nodething in manta smartdc; do
     if [[ -f node_modules/${nodething}/package.json
@@ -682,56 +661,39 @@ done
 # Make sure npm stuff is installed
 npm install
 
-# '-r' regenerate early out.
-if [[ "$REGENERATE" == 'true' ]]; then
-    gen_config
-    exit 0
-fi
-
 
 # Else we are doing a full configure for a fresh build. Start fresh:
 mkdir -p bits
 touch bits/config.mk
 make distclean
+flush_bits_cache
 
-if [[ ! -z "$TARGET" ]]; then
-    flush_bits_cache
-    # Validate target.
-    TARGETS=$TARGET
-    if [[ -z "$(cat targets.json | $JSON $TARGET)" ]]; then
-        fatal "Unknown target: $TARGET"
-    fi
-    get_target_repos $TARGET
-    for dep in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
-        if [[ -n "$(echo $dep | egrep '^[^/]+/[^/]+$' || true)" ]]; then
-            # Using the 'BRANCH/NAME' form to lock to a branch.
-            dep_branch=$(echo $dep | cut -d/ -f1)
-            dep=$(echo $dep | cut -d/ -f2)
-            preload_bits_from_manta ${dep} "${dep_branch}"
-        else
-            preload_bits_from_manta ${dep} "$BRANCH" "$TRY_BRANCH"
-        fi
-    done
-else
-    TARGETS=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))')
-    for targ in $TARGETS; do
-        get_target_repos $targ
-    done
+# Validate target.
+TARGETS=$TARGET
+if [[ -z "$(cat targets.json | $JSON $TARGET)" ]]; then
+    fatal "Unknown target: $TARGET"
 fi
 
-# "all" is a special target with deps to always preload.
-# I.e. for which "make all" doesn't build it.
-#for dep in `cat targets.json | $JSON all.deps | $JSON -a`; do
-    #if [[ -n "$(echo $dep | egrep '^[^/]+/[^/]+$' || true)" ]]; then
-        ## Using the 'BRANCH/NAME' form to lock to a branch.
-        #dep_branch=$(echo $dep | cut -d/ -f1)
-        #dep=$(echo $dep | cut -d/ -f2)
-        #preload_bits_from_manta ${dep} "${dep_branch}"
-    #else
-        #preload_bits_from_manta ${dep} "$BRANCH" "$TRY_BRANCH"
-    #fi
-#done
+get_target_repos $TARGET
 
-#get_pkgsrc
+top_repo_dir=$($JSON -f targets.json $TARGET.repos.0.url)
+top_repo_dir=${top_repo_dir##*/}    # strip to last '/'
+top_repo_dir=${top_repo_dir##*:}    # strip to last ':'
+top_repo_dir=${top_repo_dir%*.git}    # strip '.git' at tail
+package_json=build/$top_repo_dir/package.json
+deps=$(test ! -f $package_json || $JSON -f $package_json sdcImageDeps | $JSON -a)
+if [[ -z "$deps" ]]; then
+    deps=$(cat targets.json | $JSON $TARGET.deps | $JSON -a)
+fi
+for dep in $deps; do
+    if [[ -n "$(echo $dep | egrep '^[^/]+/[^/]+$' || true)" ]]; then
+        # Using the 'BRANCH/NAME' form to lock to a branch.
+        dep_branch=$(echo $dep | cut -d/ -f1)
+        dep=$(echo $dep | cut -d/ -f2)
+        preload_bits_from_manta ${dep} "${dep_branch}"
+    else
+        preload_bits_from_manta ${dep} "$BRANCH" "$TRY_BRANCH"
+    fi
+done
 
-gen_config
+gen_config $TARGET

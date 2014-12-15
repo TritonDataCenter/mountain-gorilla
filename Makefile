@@ -1022,10 +1022,10 @@ clean_papi:
 
 #---- IMGAPI
 
-_imgapi_stamp=$(SDC_IMGAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_IMGAPI_SHA)
-IMGAPI_BITS=$(BITS_DIR)/imgapi/imgapi-pkg-$(_imgapi_stamp).tar.bz2
-IMGAPI_IMAGE_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_stamp).zfs.gz
-IMGAPI_MANIFEST_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_stamp).imgmanifest
+_imgapi_ver=$(IMGAPI_VERSION)-$(SDC_IMGAPI_BRANCH)-$(TIMESTAMP)-$(SDC_IMGAPI_SHA)
+IMGAPI_BITS=$(BITS_DIR)/imgapi/imgapi-pkg-$(_imgapi_ver).tar.bz2
+IMGAPI_IMAGE_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_ver).zfs.gz
+IMGAPI_MANIFEST_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_ver).imgmanifest
 
 .PHONY: imgapi
 imgapi: $(IMGAPI_BITS) imgapi_image
@@ -1046,9 +1046,13 @@ $(IMGAPI_IMAGE_BIT): $(IMGAPI_BITS)
 	./tools/prep_dataset_in_jpc.sh -i "$(IMGAPI_IMAGE_UUID)" -t $(IMGAPI_BITS) \
 		-o "$(IMGAPI_IMAGE_BIT)" -p $(IMGAPI_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(IMGAPI_EXTRA_TARBALLS) -n $(IMGAPI_IMAGE_NAME) \
-		-v $(_imgapi_stamp) -d $(IMGAPI_IMAGE_DESCRIPTION)
+		-v $(_imgapi_ver) \
+		-B $(SDC_IMGAPI_BRANCH) \
+		-T $(TIMESTAMP) \
+		-C $(SDC_IMGAPI_SHA) \
+		-d "$(IMGAPI_IMAGE_DESCRIPTION)"
 	@echo "# Created imgapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(IMGAPI_IMAGE_BIT))
+	@ls -l $(IMGAPI_IMAGE_BIT) $(IMGAPI_MANIFEST_BIT)
 	@echo ""
 
 imgapi_publish_image: $(IMGAPI_IMAGE_BIT)
