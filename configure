@@ -622,15 +622,14 @@ function get_pkgsrc() {
 
 #---- mainline
 
-trap 'errexit $? $LINENO' EXIT
-
 # Can be a target name to tell 'configure' to (a) limit prep to just that
 # target and (b) pre-load "bits/" with pre-built dependent target bits.
 # If empty it means that we are configuring for a full build.
 TARGET=
 REGENERATE='false'
-MG_NODE=$(which node)
+MG_NODE=$(which node) || fatal "node binary not found on PATH"
 
+trap 'errexit $? $LINENO' EXIT
 
 if [[ "$1" == "--help" ]]; then
   print_help
