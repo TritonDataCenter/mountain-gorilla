@@ -2783,8 +2783,8 @@ clean_null:
 .PHONY: distclean
 distclean:
 	$(PFEXEC) $(RM) -rf old/build old/bits
-	[[ ! -d build ]] || $(PFEXEC) mkdir -p old && $(PFEXEC) mv build old/
-	[[ ! -d bits ]] || $(PFEXEC) mkdir -p old && $(PFEXEC) mv bits old/
+	if [[ -d build ]]; then $(PFEXEC) mkdir -p old && $(PFEXEC) mv build old/; fi
+	if [[ -d bits ]]; then $(PFEXEC) mkdir -p old && $(PFEXEC) mv bits old/; fi
 
 .PHONY: cacheclean
 cacheclean: distclean
