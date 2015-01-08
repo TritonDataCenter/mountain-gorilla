@@ -2778,9 +2778,13 @@ clean: clean_docs
 .PHONY: clean_null
 clean_null:
 
+# Save the last 'build/' and 'bits/' to an 'old/' dir as a safety so an
+# accidental './configure ...' doesn't blow away local changes in 'build/'.
 .PHONY: distclean
 distclean:
-	$(PFEXEC) $(RM) -rf bits build
+	$(PFEXEC) $(RM) -rf old/build old/bits
+	[[ ! -d build ]] || $(PFEXEC) mkdir -p old && $(PFEXEC) mv build old/
+	[[ ! -d bits ]] || $(PFEXEC) mkdir -p old && $(PFEXEC) mv bits old/
 
 .PHONY: cacheclean
 cacheclean: distclean

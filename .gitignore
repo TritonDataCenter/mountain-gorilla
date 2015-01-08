@@ -5,6 +5,7 @@
 /build
 /cache
 /node_modules
+/old
 
 .mg.json
 targets.json
