@@ -430,7 +430,7 @@ cat ${output_dir}/${image_manifest_filename} \
     -e "this.name = '${image_name}'" \
     -e "this.uuid = '$(uuid)'" \
   > ${output_dir}/${image_manifest_filename}.new \
-  && mv ${output_dir}/${image_manifest_filename}.new ${output_dir}/${image_manifest_filename} \
+  && mv ${output_dir}/${image_manifest_filename}.new ${output_dir}/${image_manifest_filename}
 
 if [[ -z ${SDC_LOCAL_BUILD} ]]; then
   mput -f ${output_dir}/${image_manifest_filename} ${manifest_path}
