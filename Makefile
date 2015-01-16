@@ -1537,7 +1537,7 @@ $(NAPI_BITS): build/sdc-napi
 napi_image: $(NAPI_IMAGE_BIT)
 
 $(NAPI_IMAGE_BIT): $(NAPI_BITS)
-	@echo "# Build napi_image: branch $(NAPI_BRANCH), sha $(NAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	@echo "# Build napi_image: branch $(SDC_NAPI_BRANCH), sha $(SDC_NAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	./tools/prep_dataset_in_jpc.sh -i "$(NAPI_IMAGE_UUID)" -t $(NAPI_BITS) \
 		-o "$(NAPI_IMAGE_BIT)" -p $(NAPI_PKGSRC) -O "$(MG_OUT_PATH)" \
 		-t $(NAPI_EXTRA_TARBALLS) -n $(NAPI_IMAGE_NAME) \
