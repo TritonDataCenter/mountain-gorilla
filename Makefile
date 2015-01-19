@@ -696,7 +696,7 @@ docker: $(DOCKER_BITS) docker_image
 $(DOCKER_BITS): build/sdc-docker
 	@echo "# Build docker: branch $(SDC_DOCKER_BRANCH), sha $(SDC_DOCKER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/sdc-docker && PATH=/opt/node/0.6.12/bin:$(PATH) NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/sdc-docker && PATH=/opt/node/0.6.12/bin:$(PATH) NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release test publish)
 	@echo "# Created docker bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(DOCKER_BITS)
 	@echo ""
