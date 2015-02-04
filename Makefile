@@ -683,6 +683,46 @@ clean_cloudapi:
 	(cd build/sdc-cloudapi && gmake clean)
 
 
+#---- NFS
+
+_nfs_stamp=$(SDC_NFS_BRANCH)-$(TIMESTAMP)-g$(SDC_NFS_SHA)
+NFS_BITS=$(BITS_DIR)/nfs/nfs-pkg-$(_nfs_stamp).tar.bz2
+NFS_IMAGE_BIT=$(BITS_DIR)/nfs/nfs-zfs-$(_nfs_stamp).zfs.gz
+NFS_MANIFEST_BIT=$(BITS_DIR)/nfs/nfs-zfs-$(_nfs_stamp).imgmanifest
+
+.PHONY: nfs
+nfs: $(NFS_BITS) nfs_image
+
+$(NFS_BITS): build/sdc-nfs
+	@echo "# Build nfs: branch $(SDC_NFS_BRANCH), sha $(SDC_NFS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/sdc-nfs && PATH=/opt/node/0.6.12/bin:$(PATH) NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release test publish)
+	@echo "# Created nfs bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(NFS_BITS)
+	@echo ""
+
+.PHONY: nfs_image
+nfs_image: $(NFS_IMAGE_BIT)
+
+$(NFS_IMAGE_BIT): $(NFS_BITS)
+	@echo "# Build nfs_image: branch $(SDC_NFS_BRANCH), sha $(SDC_NFS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(NFS_IMAGE_UUID)" -t $(NFS_BITS) \
+		-o "$(NFS_IMAGE_BIT)" -p $(NFS_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(NFS_EXTRA_TARBALLS) -n $(NFS_IMAGE_NAME) \
+		-v $(_nfs_stamp) -d $(NFS_IMAGE_DESCRIPTION)
+	@echo "# Created nfs image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(NFS_IMAGE_BIT))
+	@echo ""
+
+nfs_publish_image: $(NFS_IMAGE_BIT)
+	@echo "# Publish nfs image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(NFS_MANIFEST_BIT) -f $(NFS_IMAGE_BIT)
+
+clean_nfs:
+	$(RM) -rf $(BITS_DIR)/nfs
+	(cd build/sdc-nfs && gmake clean)
+
+
 #---- DOCKER
 
 _docker_stamp=$(SDC_DOCKER_BRANCH)-$(TIMESTAMP)-g$(SDC_DOCKER_SHA)

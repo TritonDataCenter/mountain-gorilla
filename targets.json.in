@@ -353,6 +353,30 @@ cat <<EOF
       {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
     ]
   },
+
+  "nfs": {
+    "appliance": "true",
+    "image_name": "nfs",
+    "image_description": "SDC Manta-NFS zone",
+    "image_version": "1.0.0",
+    "image_uuid": "de411e86-548d-11e4-a4b7-3bb60478632a",
+    "repos": [
+      {"url": "git@github.com:joyent/sdc-nfs.git"}
+    ],
+    "public": true,
+    "deps": [
+      "amon",
+      "config-agent",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "pkgsrc": [],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+    ]
+  },
   "docker": {
     "appliance": "true",
     "image_name": "docker",
