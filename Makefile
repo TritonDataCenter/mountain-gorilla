@@ -63,7 +63,7 @@ ifeq ($(UPLOAD_LOCATION),)
 endif
 
 ifeq ($(MG_OUT_PATH),)
-	MG_OUT_PATH=builds
+	MG_OUT_PATH=/stor/builds
 endif
 
 #
@@ -681,6 +681,46 @@ cloudapi_publish_image: $(CLOUDAPI_IMAGE_BIT)
 clean_cloudapi:
 	$(RM) -rf $(BITS_DIR)/cloudapi
 	(cd build/sdc-cloudapi && gmake clean)
+
+
+#---- NAT
+
+_nat_stamp=$(SDC_NAT_BRANCH)-$(TIMESTAMP)-g$(SDC_NAT_SHA)
+NAT_BITS=$(BITS_DIR)/nat/nat-pkg-$(_nat_stamp).tar.bz2
+NAT_IMAGE_BIT=$(BITS_DIR)/nat/nat-zfs-$(_nat_stamp).zfs.gz
+NAT_MANIFEST_BIT=$(BITS_DIR)/nat/nat-zfs-$(_nat_stamp).imgmanifest
+
+.PHONY: nat
+nat: $(NAT_BITS) nat_image
+
+$(NAT_BITS): build/sdc-nat
+	@echo "# Build nat: branch $(SDC_NAT_BRANCH), sha $(SDC_NAT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/sdc-nat && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release test publish)
+	@echo "# Created nat bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(NAT_BITS)
+	@echo ""
+
+.PHONY: nat_image
+nat_image: $(NAT_IMAGE_BIT)
+
+$(NAT_IMAGE_BIT): $(NAT_BITS)
+	@echo "# Build nat_image: branch $(SDC_NAT_BRANCH), sha $(SDC_NAT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(NAT_IMAGE_UUID)" -t $(NAT_BITS) \
+		-o "$(NAT_IMAGE_BIT)" -p $(NAT_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(NAT_EXTRA_TARBALLS) -n $(NAT_IMAGE_NAME) \
+		-v $(_nat_stamp) -d $(NAT_IMAGE_DESCRIPTION)
+	@echo "# Created nat image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(NAT_IMAGE_BIT))
+	@echo ""
+
+nat_publish_image: $(NAT_IMAGE_BIT)
+	@echo "# Publish nat image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(NAT_MANIFEST_BIT) -f $(NAT_IMAGE_BIT)
+
+clean_nat:
+	$(RM) -rf $(BITS_DIR)/nat
+	(cd build/sdc-nat && gmake clean)
 
 
 #---- HOSTVOLUME
