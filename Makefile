@@ -736,7 +736,7 @@ hostvolume: $(HOSTVOLUME_BITS) hostvolume_image
 $(HOSTVOLUME_BITS): build/sdc-hostvolume
 	@echo "# Build hostvolume: branch $(SDC_HOSTVOLUME_BRANCH), sha $(SDC_HOSTVOLUME_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/sdc-hostvolume && PATH=/opt/node/0.6.12/bin:$(PATH) NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release test publish)
+	(cd build/sdc-hostvolume && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release test publish)
 	@echo "# Created hostvolume bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(HOSTVOLUME_BITS)
 	@echo ""
