@@ -2755,7 +2755,7 @@ $(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-b
 			gmake world \
 		&& PATH=/usr/sfw/bin:$(PATH) \
 			BUILDSTAMP=$(TIMESTAMP) \
-			gmake live)
+			gmake live pkgsrc)
 	(mkdir -p $(BITS_DIR)/platform$(PLAT_SUFFIX))
 	(cp build/smartos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/platform$(PLAT_SUFFIX)/platform$(PLAT_SUFFIX)-$(PLATFORM_TRY_BRANCH)-$(TIMESTAMP).tgz)
 	(cp build/smartos-live/output/boot-$(TIMESTAMP).tgz $(BITS_DIR)/platform$(PLAT_SUFFIX)/boot$(PLAT_SUFFIX)-$(PLATFORM_TRY_BRANCH)-$(TIMESTAMP).tgz)
