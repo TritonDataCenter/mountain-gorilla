@@ -1395,36 +1395,6 @@ clean_heartbeater:
 	(cd build/sdc-heartbeater-agent && gmake clean)
 
 
-#---- Zonetracker
-
-_zonetracker_stamp=$(ZONETRACKER_BRANCH)-$(TIMESTAMP)-g$(ZONETRACKER_SHA)
-ZONETRACKER_BIT=$(BITS_DIR)/zonetracker/zonetracker-$(_zonetracker_stamp).tgz
-ZONETRACKER_MANIFEST_BIT=$(BITS_DIR)/zonetracker/zonetracker-$(_zonetracker_stamp).manifest
-
-.PHONY: zonetracker
-zonetracker: $(ZONETRACKER_BIT)
-
-# PATH for zonetracker build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
-$(ZONETRACKER_BIT): build/zonetracker
-	@echo "# Build zonetracker: branch $(ZONETRACKER_BRANCH), sha $(ZONETRACKER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/zonetracker && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created zonetracker bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(ZONETRACKER_BIT) $(ZONETRACKER_MANIFEST_BIT)
-	@echo ""
-
-zonetracker_publish_image: $(ZONETRACKER_BIT)
-	@echo "# Publish zonetracker image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(ZONETRACKER_MANIFEST_BIT) -f $(ZONETRACKER_BIT)
-
-# Warning: if zonetracker's submodule deps change, this 'clean_zonetracker' is insufficient. It would
-# then need to call 'gmake dist-clean'.
-clean_zonetracker:
-	$(RM) -rf $(BITS_DIR)/zonetracker
-	(cd build/zonetracker && gmake clean)
-
-
 #---- Configuration Agent
 
 _config_agent_stamp=$(SDC_CONFIG_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_CONFIG_AGENT_SHA)
