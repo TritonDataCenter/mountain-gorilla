@@ -1047,7 +1047,7 @@ cat <<EOF
     "image_uuid": "de411e86-548d-11e4-a4b7-3bb60478632a",
     "pkgsrc": [
       "py27-curses",
-      "stud-0.3p53nb1",
+      "stud-0.3p53nb2",
       "zookeeper-client-3.4.6"
     ],
     "repos": [
