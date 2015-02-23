@@ -654,7 +654,7 @@ while getopts "b:B:d:D:O:hrft:c:jJ:" opt; do
 done
 shift $((OPTIND-1))
 
-[[ -z ${MG_DEP_PATH} ]] && MG_DEP_PATH=/stor/builds
+[[ -z ${MG_DEP_PATH} ]] && MG_DEP_PATH=/public/builds
 [[ -z $JOYENT_BUILD ]] && JOYENT_BUILD=false
 export JOYENT_BUILD
 rm -f targets.json
