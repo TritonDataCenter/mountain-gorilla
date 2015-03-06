@@ -73,6 +73,7 @@ echo "$targets" | while read target public; do
     fi
     latest=$(mls $latest_mpath 2>/dev/null || true)
     if [[ -z "$latest" ]]; then
-        echo "$target  # '$latest_mpath' does not exist, use <https://jenkins.joyent.us/job/$target/buildWithParameters?BRANCH=$release> to start build"
+        echo "# $target, '$latest_mpath' does not exist" >&2
+        echo "open \"https://jenkins.joyent.us/job/$target/buildWithParameters?BRANCH=$release\""
     fi
 done
