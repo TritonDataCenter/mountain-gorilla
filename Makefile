@@ -42,7 +42,7 @@ ifeq ($(UNAME), SunOS)
 	RM = grm
 endif
 JSON=$(MG_NODE) $(TOP)/tools/json
-UPDATES_IMGADM=$(HOME)/opt/imgapi-cli/bin/updates-imgadm -i $(HOME)/.ssh/automation.id_rsa -u mg
+UPDATES_IMGADM=$(HOME)/opt/imgapi-cli/bin/updates-imgadm -i $(HOME)/.ssh/automation.id_rsa -u mg -C "$(UPDATES_CHANNEL)"
 
 # Other
 # Is JOBS=16 reasonable here? The old bamboo plans used this (or higher).

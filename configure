@@ -448,6 +448,22 @@ function get_repo2() {
 function gen_config() {
     local output
     mkdir -p bits
+    local bra_name
+    # Determine UPDATES_CHANNEL based into branch name:
+    if [[ ! -z "$TRY_BRANCH" ]]; then
+        bra_name=${TRY_BRANCH}
+    else
+        bra_name=${BRANCH}
+    fi
+    if [[ -z "$TRY_BRANCH" && "$(echo ${BRANCH} | grep '^release-[0-9]\{8\}$' || true)" ]]; then
+        UPDATES_CHANNEL=staging
+    else
+        if [[ "${bra_name}" == "master" ]]; then
+            UPDATES_CHANNEL=dev
+        else
+            UPDATES_CHANNEL=experimental
+        fi
+    fi
     cat <<EOF >bits/config.mk
 TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
 BRANCH=$BRANCH
@@ -456,7 +472,7 @@ MG_NODE=$MG_NODE
 MG_CACHE_DIR=$(cd $MG_CACHE_DIR >/dev/null; pwd)
 JOYENT_BUILD=$JOYENT_BUILD
 MG_OUT_PATH=${MG_OUT_PATH}
-
+UPDATES_CHANNEL=${UPDATES_CHANNEL}
 EOF
   mkdir -p build
   for repo in $(ls -1 build/); do
