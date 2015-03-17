@@ -128,16 +128,6 @@ cat > /root/.npmrc <<EOF
 registry = http://registry.npmjs.org/
 EOF
 
-# Need 'updates-imgadm' from imgapi-cli.git on the PATH (this is used
-# by the MG builds to publish build images to updates.joyent.com).
-mkdir -p /root/opt
-(cd /root/opt \
-    && git clone git@github.com:sdc-imgapi-cli.git imgapi-cli \
-    && cd imgapi-cli \
-    && NODE_PREBUILT_CC_VERSION=4.6.2 PATH=/root/opt/node/bin:/opt/local/bin:/opt/local/gnu/bin:$PATH gmake)
-echo '' >>/root/.bashrc
-echo "export PATH=/root/opt/imgapi-cli/bin:$PATH" >>/root/.bashrc
-
 if [[ ${IS_163} -eq 0 ]]; then
     # Do the smartos-live setup
     mkdir -p /root/tmp

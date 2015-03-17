@@ -89,8 +89,6 @@ but the platform you will need:
   services are using 'sdc-smartos@1.6.3', and a few are using 'sdc-multiarch'.
 - [python, gcc, gmake, et al from
   pkgsrc](https://mo.joyent.com/mountain-gorilla/blob/master/tools/mk-jenkins-slave/jenkins-slave-setup.user-script#L107-119)
-- [an imgapi-cli.git install to get
-  "updates-imgadm"](https://mo.joyent.com/mountain-gorilla/blob/master/tools/mk-jenkins-slave/jenkins-slave-setup.user-script#L122-130)
 
 The platform build requires more setup. The best authority are the Jenkins
 build slave creation scripts here:
