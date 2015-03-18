@@ -42,7 +42,7 @@ ifeq ($(UNAME), SunOS)
 	RM = grm
 endif
 JSON=$(MG_NODE) $(TOP)/tools/json
-UPDATES_IMGADM=$(TOP)/node_modules/.bin/updates-imgadm -i $(HOME)/.ssh/automation.id_rsa -u mg -C "$(UPDATES_CHANNEL)"
+UPDATES_IMGADM=$(TOP)/node_modules/.bin/updates-imgadm -i $(HOME)/.ssh/automation.id_rsa -u mg --channel="$(UPDATES_CHANNEL)"
 
 # Other
 # Is JOBS=16 reasonable here? The old bamboo plans used this (or higher).
@@ -2379,7 +2379,7 @@ clean_sdcadm:
 
 sdcadm_publish_image: $(SDCADM_BITS)
 	@echo "# Publish sdcadm image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(SDCADM_MANIFEST_BIT) -f $(SDCADM_PKG_BIT) -c none
+	$(UPDATES_IMGADM) import -ddd -m $(SDCADM_MANIFEST_BIT) -f $(SDCADM_PKG_BIT)
 
 
 #---- agentsshar
