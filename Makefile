@@ -2379,7 +2379,7 @@ clean_sdcadm:
 
 sdcadm_publish_image: $(SDCADM_BITS)
 	@echo "# Publish sdcadm image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(SDCADM_MANIFEST_BIT) -f $(SDCADM_PKG_BIT)
+	$(UPDATES_IMGADM) import -ddd -m $(SDCADM_MANIFEST_BIT) -f $(SDCADM_PKG_BIT) --compression=none
 
 
 #---- agentsshar
