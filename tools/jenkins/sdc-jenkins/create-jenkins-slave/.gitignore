@@ -1,2 +1,3 @@
 automation.id_rsa
 jenkins.creds
+slave-create.log

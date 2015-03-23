@@ -1,27 +1,26 @@
 {
   "image_uuid": "IMAGE_UUID",
   "ram": 8192,
-  "owner_uuid": "930896af-bf8c-48d4-885c-6573a94b1853",
+  "owner_uuid": "ADMIN_UUID",
   "brand": "joyent",
   "alias": "jenkins-ALIAS-IMAGE_VERSION",
-  "server_uuid": "49fbb6b8-367b-0010-bed7-047d7bbb7863",
-  "billing_id": "16425b42-b818-11e2-90d4-87477f18a688",
+  "server_uuid": "SERVER_UUID",
+  "billing_id": "PACKAGE_UUID",
   "customer_metadata": {
     "jenkins_creds": "JENKINS_CREDS",
     "slave_name": "ALIAS"
   },
-  "mdata_exec_timeout": 0,
+  "mdata_exec_timeout": 3600,
   "cpu_cap": 3200,
   "max_lwps": 4000,
   "max_swap": 16384,
   "quota": 300,
-  "vcpus": 16,
   "fs_allowed": "ufs,pcfs,tmpfs",
   "zfs_io_priority": 1000,
   "zfs_root_compression": "lz4",
   "networks": [
     {
-      "uuid": "7561f1d6-588f-4dbf-9102-6b7aef1dec1c",
+      "uuid": "NETWORK_UUID",
       "primary": true
     }
   ]

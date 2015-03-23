@@ -6,23 +6,22 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright (c) 2015, Joyent, Inc.
 #
 
 #
 # Summary:
 #
-# This tool is used to create additional Jenkins slaves in EMY on the Jenkins
-# Rig.
+# This tool is used to create additional Jenkins slaves.
 #
 # Usage:
 #
-# create-slave.sh <name> [<dataset>]
+# create-slave.sh <name> <server> <dataset>
 #
-# default for dataset is sdc-smartos-1.6.3.
+# IMPORTANT:
 #
-# IMPORTANT: this script is intended to be run on the emy-jenkins HN. It won't
-# work elsewhere currently.
+# This script expects to be run from an SDC headnode. Running from elsewhere
+# is very unlikely to do what you expect.
 #
 
 set -o errexit
@@ -37,27 +36,60 @@ export BASH_XTRACEFD=4
 set -o xtrace
 
 SSH="ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
-DATACENTER="emy"
-DATASET="sdc-smartos-1.6.3"
+DATACENTER=$(sysinfo | json "Datacenter Name")
+
+if [[ -z ${JENKINS_USER} ]]; then
+    echo "You must set \${JENKINS_USER} in the environment" >&2
+    exit 3
+fi
+
+PACKAGE_UUID=$(sdc-papi /packages?name=sdc_8192 | json -Ha uuid)
+if [[ -z ${PACKAGE_UUID} ]]; then
+    echo "Cannot determine \${PACKAGE_UUID}" >&2
+    exit 3
+fi
+
+NETWORK_UUID=$(sdc-napi /networks?nic_tag=external | json -Ha uuid | head -1)
+if [[ -z ${NETWORK_UUID} ]]; then
+    echo "Cannot determine \${NETWORK_UUID}" >&2
+    exit 3
+fi
+
+ADMIN_UUID=$(grep "^ufds_admin_uuid=" /usbkey/config | cut -d'=' -f2)
+if [[ -z ${ADMIN_UUID} ]]; then
+    echo "Cannot determine \${ADMIN_UUID}" >&2
+    exit 3
+fi
 
 name=$1
-dataset=$2
+server=$2
+dataset=$3
 
-if [[ -z ${name} || -n $3 ]]; then
-    echo "Usage: $0 <name> [<dataset>]" >&2
+if [[ -z ${name} || -z ${server} || -z ${dataset} || -n $4 ]]; then
+    echo "Usage: $0 <name> <server> <dataset>" >&2
     exit 2
 fi
 
-if [[ -n ${dataset} ]]; then
-    DATASET=${dataset}
+IMAGE_UUID=${dataset}
+SERVER_UUID=${server}
+
+#IMAGE_UUID=$(imgadm avail -H -o uuid,name,version \
+    #| awk '{ print $1,$2 "-" $3 }' | grep "${DATASET}$" | cut -d' ' -f1)
+#if [[ -z ${IMAGE_UUID} ]]; then
+    #echo "Unable to find dataset '${DATASET}'" >&2
+    #exit 1
+#fi
+
+result=$(sdc-imgadm import -S https://updates.joyent.com ${IMAGE_UUID} 2>&1 || /bin/true)
+if [[ ${result} =~ "already exists" ]]; then
+    echo "Image ${IMAGE_UUID} already exists."
+elif [[ $? -ne 0 ]]; then
+    echo "Failed to import ${IMAGE_UUID}: ${result}" >&2
+    exit 4
 fi
 
-IMAGE_UUID=$(imgadm avail -H -o uuid,name,version \
-    | awk '{ print $1,$2 "-" $3 }' | grep "${DATASET}$" | cut -d' ' -f1)
-if [[ -z ${IMAGE_UUID} ]]; then
-    echo "Unable to find dataset '${DATASET}'" >&2
-    exit 1
-fi
+DATASET=$(imgadm avail -H -o uuid,name,version \
+    | awk '{ print $1,$2 "-" $3 }' | grep "^${IMAGE_UUID}" | cut -d ' ' -f2-)
 
 IMAGE_VERSION=$(imgadm show ${IMAGE_UUID} | json version)
 if [[ -z ${IMAGE_UUID} ]]; then
@@ -80,7 +112,11 @@ done
 
 /usr/vm/sbin/add-userscript setup-jenkins-slave.sh \
     < <(sed -e "s/ALIAS/${name}/" \
+        -e "s/ADMIN_UUID/${ADMIN_UUID}/" \
         -e "s/IMAGE_UUID/${IMAGE_UUID}/" \
+        -e "s/SERVER_UUID/${SERVER_UUID}/" \
+        -e "s/PACKAGE_UUID/${PACKAGE_UUID}/" \
+        -e "s/NETWORK_UUID/${NETWORK_UUID}/" \
         -e "s/IMAGE_VERSION/${IMAGE_VERSION}/" \
         -e "s/JENKINS_CREDS/$(cat jenkins.creds)/" \
         payload.json \
@@ -119,12 +155,13 @@ set -o errexit
 (cat ~/.ssh/known_hosts | grep -v '${ip} '; ssh-keyscan -t rsa,dsa ${ip}) > ~/.ssh/known_hosts.new
 mv ~/.ssh/known_hosts.new ~/.ssh/known_hosts
 EOF
+
+ssh-keyscan -t rsa,dsa jenkins.joyent.us >> ${HOME}/.ssh/known_hosts
+ssh-keyscan -p 31337 -t rsa,dsa jenkins.joyent.us \
+    >> ${HOME}/.ssh/known_hosts.jenkins-31337
+
 scp /var/tmp/fix_known_hosts.sh root@jenkins.joyent.us:/var/tmp/fix_known_hosts.sh
 ssh root@jenkins.joyent.us bash /var/tmp/fix_known_hosts.sh
-
-if [[ -z "${JENKINS_USER}" ]]; then
-    JENKINS_USER=guest
-fi
 
 ssh -o UserKnownHostsFile=$HOME/.ssh/known_hosts.jenkins-31337 \
         -p 31337 ${JENKINS_USER}@jenkins.joyent.us create-node ${name} <<EOF
@@ -137,7 +174,7 @@ ssh -o UserKnownHostsFile=$HOME/.ssh/known_hosts.jenkins-31337 \
   <mode>NORMAL</mode>
   <retentionStrategy class="hudson.slaves.RetentionStrategy\$Always"/>
   <launcher class="hudson.slaves.JNLPLauncher"/>
-  <label>${DATASET} sdc ${DATACENTER} ${name} oldest_jpc_platform</label>
+  <label>${DATASET} sdc ${DATACENTER} ${name}</label>
   <nodeProperties/>
   <userId>guest</userId>
 </slave>

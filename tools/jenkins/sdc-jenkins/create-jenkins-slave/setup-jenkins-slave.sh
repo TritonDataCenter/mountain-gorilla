@@ -107,12 +107,11 @@ if [[ ${IMAGE_UUID} == "01b2c898-945f-11e1-a523-af1afbe22822" ||    # old
       ${IMAGE_UUID} == "de411e86-548d-11e4-a4b7-3bb60478632a"       # sdc-base-14.2.0
    ]]; then
     # If smartos-1.6.3
-    NODEURL=https://download.joyent.com/pub/build/sdcnode/fd2cc906-8938-11e3-beab-4359c665ac99/master-20141010T195119Z/sdcnode/sdcnode-v0.10.26-zone-fd2cc906-8938-11e3-beab-4359c665ac99-master-20141010T171234Z-gcca0a36.tgz
-    #NODEURL=https://download.joyent.com/pub/build/sdcnode/fd2cc906-8938-11e3-beab-4359c665ac99/master-latest/sdcnode/sdcnode-v0.10.26-zone-fd2cc906-8938-11e3-beab-4359c665ac99-master-20140623T210420Z-g28c7f9f.tgz
+    NODEURL=https://download.joyent.com/pub/build/sdcnode/fd2cc906-8938-11e3-beab-4359c665ac99/master-20150315T023150Z/sdcnode/sdcnode-v0.10.26-zone-fd2cc906-8938-11e3-beab-4359c665ac99-master-20150314T232700Z-gd176204.tgz
     cd ~/opt && curl $NODEURL | tar zxvf -
 else
     # If multiarch
-    NODEURL=https://download.joyent.com/pub/build/sdcnode/b4bdc598-8939-11e3-bea4-8341f6861379/master-latest/sdcnode/sdcnode-v0.10.26-zone64-b4bdc598-8939-11e3-bea4-8341f6861379-master-20140623T210418Z-g28c7f9f.tgz
+    NODEURL=https://download.joyent.com/pub/build/sdcnode/b4bdc598-8939-11e3-bea4-8341f6861379/master-20150315T024811Z/sdcnode/sdcnode-v0.10.26-zone64-b4bdc598-8939-11e3-bea4-8341f6861379-master-20150314T232234Z-gd176204.tgz
     cd ~/opt && curl $NODEURL | tar zxvf -
 fi
 

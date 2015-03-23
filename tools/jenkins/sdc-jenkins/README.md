@@ -5,7 +5,7 @@
 -->
 
 <!--
-    Copyright (c) 2014, Joyent, Inc.
+    Copyright (c) 2015, Joyent, Inc.
 -->
 
 # NAME
@@ -61,11 +61,11 @@ certain details about igor, `sdc-jenkins` will perform `ssh igor ...`.
 
 ### create-node
 
-Create a new Jenkins SDC node in Emeryville. 
+Create a new Jenkins SDC node in Emeryville.
 
 - create directory in emy-jenkins (/var/tmp/jenkins-node-setup-XXX)
 - scp create-jenkins-slave files to directory
-- run `create-jenkins-slave` with parameters
+- run `create-jenkins-slave` with parameters (See create-jenkins-slave/README)
 - ensure machine shows up in jenkins
 
 
