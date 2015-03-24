@@ -11,7 +11,7 @@
     "slave_name": "ALIAS"
   },
   "mdata_exec_timeout": 3600,
-  "cpu_cap": 3200,
+  "cpu_cap": 4800,
   "max_lwps": 4000,
   "max_swap": 16384,
   "quota": 300,
