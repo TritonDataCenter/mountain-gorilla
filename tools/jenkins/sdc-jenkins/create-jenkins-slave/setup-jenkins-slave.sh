@@ -220,6 +220,9 @@ cat > /tmp/jenkins-slave-startup.xml <<EOF
     </exec_method>
     <exec_method name='stop' type='method' exec=':kill' timeout_seconds='60'/>
     <property_group name='application' type='application'/>
+    <property_group name='startd' type='framework'>
+      <propval name='ignore_error' type='astring' value='core,signal' />
+    </property_group>
   </service>
 </service_bundle>
 EOF
