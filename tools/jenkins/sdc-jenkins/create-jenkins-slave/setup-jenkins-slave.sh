@@ -78,8 +78,6 @@ if [[ ${IMAGE_UUID} == "01b2c898-945f-11e1-a523-af1afbe22822" || ${IMAGE_UUID} =
     IS_163=1
 fi
 
-pkgin -y install $(pkgin search sun | grep ^sun-j[dr][ke] | cut -d ' ' -f1 | xargs) || /bin/true
-
 # scmgit, gcc-*, gmake: needed by most parts of sdc build
 # png, GeoIP, GeoLiteCity, ghostscript: cloud-analytics (CA)
 # cscope: I (Trent) believe this is just for CA dev work
@@ -95,7 +93,6 @@ pkgin -y install gcc47 gcc-compiler gcc-runtime gcc-tools cscope gmake \
      binutils postgresql91-client-9.1.2 gsharutils build-essential \
      cdrtools \
      || /bin/true
-
 
 # Download our own (sdc) node 0.10
 pkgin -y rm nodejs || /bin/true
@@ -138,6 +135,12 @@ if [[ ${IS_163} -eq 0 ]]; then
     GIT_SSL_NO_VERIFY=true ./configure
     cd /root
     rm -rf /root/tmp
+fi
+
+# Now install openjdk which we do want
+pkgin install -y openjdk7 || /bin/true
+if [[ -z $(pkgin list | grep openjdk7) ]]; then
+    (cd / ; curl -k https://us-east.manta.joyent.com/Joyent_Dev/public/bits/openjdk7.tgz | tar -zxf -)
 fi
 
 sed -i "s/^export PATH=/export PATH=\\/root\\/opt\\/node\\/bin:/g" ~/.bashrc
@@ -190,7 +193,7 @@ rm -f /root/data/jenkins/slave.jnlp
 curl -k -o /root/data/jenkins/slave.jnlp \
     https://${JENKINS_CREDS}@jenkins.joyent.us/computer/${hostname}/slave-agent.jnlp
 
-nohup /opt/local/bin/java -jar /root/data/jenkins/slave.jar \
+nohup /opt/local/java/openjdk7/bin/java -jar /root/data/jenkins/slave.jar \
     -noCertificateCheck \
     -jnlpUrl file:///root/data/jenkins/slave.jnlp \
     2>&1 &
