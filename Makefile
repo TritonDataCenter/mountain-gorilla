@@ -5,7 +5,7 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright 2015 Joyent, Inc.
 #
 
 #
@@ -2706,8 +2706,6 @@ build/smartos-live/configure-branches:
 		-e "s:ILLUMOS_KVM_BRANCH:$(ILLUMOS_KVM_BRANCH):" \
 		-e "s:ILLUMOS_KVM_CMD_BRANCH:$(ILLUMOS_KVM_CMD_BRANCH):" \
 		-e "s:MDATA_CLIENT_BRANCH:$(MDATA_CLIENT_BRANCH):" \
-		-e "s:SDC_PLATFORM_BRANCH:$(SDC_PLATFORM_BRANCH):" \
-		-e "s:SMARTOS_OVERLAY_BRANCH:$(SMARTOS_OVERLAY_BRANCH):" \
 		<smartos-live-configure-branches$(PLAT_FLAVOR).in >build/smartos-live/configure-branches
 
 .PHONY: smartos_live_make_check

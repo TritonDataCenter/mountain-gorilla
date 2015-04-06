@@ -5,8 +5,6 @@ mkdir -p projects/local
     || git clone GITCLONESOURCEillumos-kvm-cmd kvm-cmd)
 (cd projects/local && [[ -d mdata-client ]] \
     || git clone GITCLONESOURCEmdata-client mdata-client)
-(cd overlay && [[ -d smartos ]] \
-    || git clone GITCLONESOURCEsmartos-overlay smartos)
 
 PUBLISHER="joyent"
 RELEASE_VER="joyent_147"
@@ -16,4 +14,4 @@ ON_CLOSED_BINS_ND_URL="https://download.joyent.com/pub/build/illumos/on-closed-b
 GET_ILLUMOS="(git clone GITCLONESOURCEillumos-joyent illumos)"
 GET_ILLUMOS_EXTRA="git clone GITCLONESOURCEillumos-extra illumos-extra"
 ILLUMOS_ADJUNCT_TARBALL_URL="https://download.joyent.com/pub/build/adjuncts/"
-OVERLAYS="smartos generic"
+OVERLAYS="generic"
