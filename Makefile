@@ -2787,6 +2787,7 @@ $(SMARTOS_BITS):
 smartos-release:
 	TRACE=1 ./tools/smartos-release "$(BRANCH)" "$(TIMESTAMP)"
 
+
 #---- docs target (based on eng.git/tools/mk code for this)
 
 deps/%/.git:

@@ -17,10 +17,11 @@ fi
 set -o errexit
 
 TOP=$(cd $(dirname $0)/../; pwd)
-BITS_DIR=bits/
 PATH=$PATH:${TOP}/node_modules/manta/bin
 
+
 # --- Manta config
+
 if [[ -z "$MANTA_KEY_ID" ]]; then
     export MANTA_KEY_ID=`ssh-keygen -l -f ~/.ssh/id_rsa.pub | awk '{print $2}' | tr -d '\n'`
 fi
@@ -31,6 +32,8 @@ if [[ -z "$MANTA_USER" ]]; then
     export MANTA_USER="Joyent_Dev";
 fi
 
+
+# --- support functions
 
 function fatal {
     echo "$(basename $0): error: $1"
@@ -49,6 +52,9 @@ function print_help() {
     echo "Create snaplinks under /\${MANTA_USER}/public/SmartOS/\${TIMESTAMP}"
     echo "pointing to objects under /\${MANTA_USER}/public/builds/smartos/\${BRANCH}-\${TIMESTAMP}/smartos/"
 }
+
+
+# --- mainline
 
 trap 'errexit $? $LINENO' EXIT
 
