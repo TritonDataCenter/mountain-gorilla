@@ -1371,7 +1371,6 @@ cat <<EOF
         {"url": "git@github.com:joyent/sdc-ur-agent.git"},
         {"url": "git@github.com:joyent/illumos-kvm.git"},
         {"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
-        {"url": "git@github.com:joyent/sdc-platform.git"},
         {"url": "git@github.com:joyent/mdata-client.git"}
     ],
     "public": true,
@@ -1385,7 +1384,6 @@ cat <<EOF
         {"url": "git@github.com:joyent/sdc-ur-agent.git"},
         {"url": "git@github.com:joyent/illumos-kvm.git"},
         {"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
-        {"url": "git@github.com:joyent/sdc-platform.git"},
         {"url": "git@github.com:joyent/mdata-client.git"}
     ],
     "public": true,
