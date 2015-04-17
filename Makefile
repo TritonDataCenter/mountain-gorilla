@@ -2209,47 +2209,6 @@ clean_binder:
 	(cd build/binder && gmake distclean)
 
 
-#---- sdc-zookeeper
-
-_sdc-zookeeper_stamp=$(SDC_ZOOKEEPER_BRANCH)-$(TIMESTAMP)-g$(SDC_ZOOKEEPER_SHA)
-SDC_ZOOKEEPER_BITS=$(BITS_DIR)/sdc-zookeeper/sdc-zookeeper-pkg-$(_sdc-zookeeper_stamp).tar.bz2
-SDC_ZOOKEEPER_IMAGE_BIT=$(BITS_DIR)/sdc-zookeeper/sdc-zookeeper-zfs-$(_sdc-zookeeper_stamp).zfs.gz
-SDC_ZOOKEEPER_MANIFEST_BIT=$(BITS_DIR)/sdc-zookeeper/sdc-zookeeper-zfs-$(_sdc-zookeeper_stamp).imgmanifest
-
-.PHONY: sdc-zookeeper
-sdc-zookeeper: $(SDC_ZOOKEEPER_BITS) sdc-zookeeper_image
-
-$(SDC_ZOOKEEPER_BITS): build/sdc-zookeeper
-	@echo "# Build sdc-zookeeper: branch $(SDC_ZOOKEEPER_BRANCH), sha $(SDC_ZOOKEEPER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/sdc-zookeeper && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created sdc-zookeeper bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(SDC_ZOOKEEPER_BITS)
-	@echo ""
-
-.PHONY: sdc-zookeeper_image
-sdc-zookeeper_image: $(SDC_ZOOKEEPER_IMAGE_BIT)
-
-$(SDC_ZOOKEEPER_IMAGE_BIT): $(SDC_ZOOKEEPER_BITS)
-	@echo "# Build sdc-zookeeper_image: branch $(SDC_ZOOKEEPER_BRANCH), sha $(SDC_ZOOKEEPER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(SDC_ZOOKEEPER_IMAGE_UUID)" -t $(SDC_ZOOKEEPER_BITS) \
-		-b "sdc-zookeeper" -O "$(MG_OUT_PATH)" \
-		-o "$(SDC_ZOOKEEPER_IMAGE_BIT)" -p $(SDC_ZOOKEEPER_PKGSRC) \
-		-t $(SDC_ZOOKEEPER_EXTRA_TARBALLS) -n $(SDC_ZOOKEEPER_IMAGE_NAME) \
-		-v $(_sdc-zookeeper_stamp) -d $(SDC_ZOOKEEPER_IMAGE_DESCRIPTION)
-	@echo "# Created sdc-zookeeper image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(SDC_ZOOKEEPER_IMAGE_BIT))
-	@echo ""
-
-sdc-zookeeper_publish_image: $(SDC_ZOOKEEPER_IMAGE_BIT)
-	@echo "# Publish sdc-zookeeper image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(SDC_ZOOKEEPER_MANIFEST_BIT) -f $(SDC_ZOOKEEPER_IMAGE_BIT)
-
-clean_sdc-zookeeper:
-	$(RM) -rf $(BITS_DIR)/sdc-zookeeper
-	(cd build/sdc-zookeeper && gmake distclean)
-
-
 #---- Muppet
 
 _muppet_stamp=$(MUPPET_BRANCH)-$(TIMESTAMP)-g$(MUPPET_SHA)

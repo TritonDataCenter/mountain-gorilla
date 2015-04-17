@@ -848,33 +848,6 @@ cat <<EOF
     ]
   },
 
-  "sdc-zookeeper": {
-    "appliance": "true",
-    "image_name": "sdc-zookeeper",
-    "image_description": "SDC Zookeeper",
-    "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
-    "pkgsrc": [
-      "sun-jre6-6.0.26",
-      "zookeeper-client-3.4.3",
-      "zookeeper-server-3.4.3"
-    ],
-    "repos": [
-       {"url": "git@github.com:joyent/sdc-zookeeper.git"}
-    ],
-    "public": true,
-    "deps": [
-      "registrar",
-      "amon",
-      "config-agent"
-    ],
-    "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
-    ]
-  },
-
   "manta-manatee": {
     "appliance": "true",
     "image_name": "manta-postgres",
