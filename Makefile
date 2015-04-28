@@ -1687,10 +1687,6 @@ $(SDCSSO_IMAGE_BIT): $(SDCSSO_BITS)
 	@ls -l $$(dirname $(SDCSSO_IMAGE_BIT))
 	@echo ""
 
-sdcsso_publish_image: $(SDCSSO_IMAGE_BIT)
-	@echo "# Publish sdcsso image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(SDCSSO_MANIFEST_BIT) -f $(SDCSSO_IMAGE_BIT)
-
 # Warning: if SAPI's submodule deps change, this 'clean_sdcsso' is insufficient. It would
 # then need to call 'gmake dist-clean'.
 clean_sdcsso:

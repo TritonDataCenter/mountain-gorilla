@@ -209,7 +209,9 @@ fi
 if [[ -z "$TARGETS" ]]; then
     TARGETS=$(node -e "var fs = require('fs');
         var targets = JSON.parse(fs.readFileSync('$TOP/targets.json'));
-        Object.keys(targets).forEach( function(targ) { console.log(targ) });" | xargs)
+        Object.keys(targets).forEach( function(targ) { console.log(targ) });" \
+        | grep -v sdcsso \
+        | xargs)
 fi
 
 # Get some "low on the food chain" repos first (RELENG-552).
