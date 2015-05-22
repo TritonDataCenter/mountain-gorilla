@@ -5,20 +5,11 @@ set -o pipefail
 if [[ -z "$USE_DEBUG_PLATFORM" ]]; then
     echo "build.spec.in error: you must define 'USE_DEBUG_PLATFORM=true|false'" >&2
     exit 2
-elif [[ "$USE_DEBUG_PLATFORM" == "true" ]]; then
-	PLATFORM_NAME="platform-debug"
-else
-	PLATFORM_NAME="platform"
 fi
 
 if [[ -z "$JOYENT_BUILD" ]]; then
 	echo "build.spec.in error: you must define 'JOYENT_BUILD=true|false'" >&2
 	exit 2
-elif [[ "$JOYENT_BUILD" == "true" ]]; then
-	FWT_PATH="$(ls bits/firmware-tools/firmware-tools*.tgz | xargs basename | sed -e "s/^firmware-tools-\(.*\)-[0-9]*T[0-9]*Z-g[0-9a-f]*\.tgz$/\1/")"
-	FIRMWARE_TOOLS='"firmware-tools-release": "'${FWT_PATH}'",'
-else
-	FIRMWARE_TOOLS=
 fi
 
 cat <<HERE;
@@ -26,45 +17,20 @@ cat <<HERE;
   "no-internet": "false",
 
   "build-tgz": "true",
-  "bits-url": "(unused because build passes in BITS_URL envvar)",
-  "bits-branch": "(unused because build uses a local dir BITS_URL)",
+  "bits-branch": ".*",
 
-  "debug-platform": $USE_DEBUG_PLATFORM,
-  "joyent-build": $JOYENT_BUILD,
+  "features": {
+    "debug-platform": {
+      "enabled": $USE_DEBUG_PLATFORM
+    },
+    "joyent-build": {
+      "enabled": $JOYENT_BUILD
+    }
+  },
 
   "manta-user": "Joyent_Dev",
   "manta-key-id": "de:e7:73:9a:b0:91:31:3e:72:8d:9f:62:ca:58:a2:ec",
 
-  "platform-release": "$(ls bits/$PLATFORM_NAME/platform*.tgz | xargs basename | sed -e "s/^$PLATFORM_NAME-\(.*\)-[0-9]*T[0-9]*Z\.tgz$/\1/")",
-  "sdcboot-release": "$(ls bits/sdcboot/sdcboot*.tgz | xargs basename | sed -e "s/^sdcboot-\(.*\)-[0-9]*T[0-9]*Z-g[0-9a-f]*\.tgz$/\1/")",
-  $FIRMWARE_TOOLS
-  "agents-shar": "$(ls bits/agentsshar/agents-*.sh | xargs basename | sed -e "s/^agents-\(.*\)-[0-9]*T[0-9]*Z-g[0-9a-f]*\.sh$/\1/")",
-  "sdcadm-release": "$(ls bits/sdcadm/sdcadm*.sh | xargs basename | sed -e "s/^sdcadm-\(.*\)-[0-9]*T[0-9]*Z-g[0-9a-f]*\.sh$/\1/")",
-
-  "// *-image": "This should be kept in sync with usb-headnode.git/build.spec",
-  "adminui-image": "adminui/$(ls bits/adminui/adminui-*manifest | xargs basename)",
-  "amon-image": "amon/$(ls bits/amon/amon-zfs-*manifest | xargs basename)",
-  "amonredis-image": "amonredis/$(ls bits/amonredis/amonredis-*manifest | xargs basename)",
-  "assets-image": "assets/$(ls bits/assets/assets-*manifest | xargs basename)",
-  "binder-image": "binder/$(ls bits/binder/binder-*manifest | xargs basename)",
-  "ca-image": "ca/$(ls bits/ca/ca-*manifest | xargs basename)",
-  "cloudapi-image": "cloudapi/$(ls bits/cloudapi/cloudapi-*manifest | xargs basename)",
-  "cnapi-image": "cnapi/$(ls bits/cnapi/cnapi-*manifest | xargs basename)",
-  "dhcpd-image": "dhcpd/$(ls bits/dhcpd/dhcpd-*manifest | xargs basename)",
-  "fwapi-image": "fwapi/$(ls bits/fwapi/fwapi-*manifest | xargs basename)",
-  "imgapi-image": "imgapi/$(ls bits/imgapi/imgapi-*manifest | xargs basename)",
-  "mahi-image": "mahi/$(ls bits/mahi/mahi-*manifest | xargs basename)",
-  "manatee-image": "sdc-manatee/$(ls bits/sdc-manatee/sdc-manatee-*manifest | xargs basename)",
-  "manta-image": "manta-deployment/$(ls bits/manta-deployment/manta-deployment-*manifest | xargs basename)",
-  "moray-image": "moray/$(ls bits/moray/moray-*manifest | xargs basename)",
-  "napi-image": "napi/$(ls bits/napi/napi-*manifest | xargs basename)",
-  "papi-image": "papi/$(ls bits/papi/papi-*manifest | xargs basename)",
-  "rabbitmq-image": "rabbitmq/$(ls bits/rabbitmq/rabbitmq-*manifest | xargs basename)",
-  "redis-image": "redis/$(ls bits/redis/redis-*manifest | xargs basename)",
-  "sapi-image": "sapi/$(ls bits/sapi/sapi-*manifest | xargs basename)",
-  "sdc-image": "sdc/$(ls bits/sdc/sdc-*manifest | xargs basename)",
-  "ufds-image": "ufds/$(ls bits/ufds/ufds-*manifest | xargs basename)",
-  "vmapi-image": "vmapi/$(ls bits/vmapi/vmapi-*manifest | xargs basename)",
-  "workflow-image": "workflow/$(ls bits/workflow/workflow-*manifest | xargs basename)"
+  "override-all-sources": "bits-dir"
 }
 HERE
