@@ -1,18 +1,30 @@
-set -o xtrace
+#!/bin/bash
+
 set -o errexit
 set -o pipefail
 
-if [[ -z "$USE_DEBUG_PLATFORM" ]]; then
-    echo "build.spec.in error: you must define 'USE_DEBUG_PLATFORM=true|false'" >&2
-    exit 2
-fi
+function fatal {
+	msg="$1"
+	shift
 
-if [[ -z "$JOYENT_BUILD" ]]; then
-	echo "build.spec.in error: you must define 'JOYENT_BUILD=true|false'" >&2
-	exit 2
-fi
+	printf "ERROR: ${msg}\n" "$@"
 
-cat <<HERE;
+	exit 1
+}
+
+function valid_bool {
+	if [[ "${2}" = "true" || "${2}" = "false" ]]; then
+		return 0
+	fi
+
+	fatal 'build.spec.in: $%s expected "true" or "false, got "%s"' \
+	    "${1}" "${2}"
+}
+
+valid_bool USE_DEBUG_PLATFORM "${USE_DEBUG_PLATFORM}"
+valid_bool JOYENT_BUILD "${JOYENT_BUILD}"
+
+cat <<JSON
 {
   "no-internet": "false",
 
@@ -33,4 +45,4 @@ cat <<HERE;
 
   "override-all-sources": "bits-dir"
 }
-HERE
+JSON

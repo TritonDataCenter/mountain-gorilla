@@ -2580,8 +2580,8 @@ $(USB_BITS_DIR):
 $(BOOT_OUTPUT): $(USB_BITS_SPEC) $(USB_BITS_DIR)
 	@echo "# Build boot: sdc-headnode branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	cd build/sdc-headnode && \
-		BITS_DIR=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
-		make tar
+	    BITS_DIR=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
+	    make tar
 	mv $(BOOT_BUILD) $(BOOT_OUTPUT)
 	@echo "# Created boot bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(BOOT_OUTPUT)
@@ -2601,8 +2601,8 @@ coal: usb $(COAL_OUTPUT)
 $(COAL_OUTPUT): $(USB_BITS_SPEC) $(USB_OUTPUT)
 	@echo "# Build coal: sdc-headnode branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	cd build/sdc-headnode && \
-		BITS_DIR=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
-		./bin/build-coal-image -c $(USB_OUTPUT)
+	    BITS_DIR=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
+	    ./bin/build-coal-image $(USB_OUTPUT)
 	mv $(COAL_BUILD) $(COAL_OUTPUT)
 	@echo "# Created coal bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(COAL_OUTPUT)
@@ -2617,8 +2617,8 @@ usb: $(USB_OUTPUT)
 $(USB_OUTPUT): $(USB_BITS_SPEC) $(BOOT_OUTPUT)
 	@echo "# Build usb: sdc-headnode branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	cd build/sdc-headnode && \
-		BITS_DIR=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
-		./bin/build-usb-image -c $(BOOT_OUTPUT)
+	    BITS_DIR=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
+	    ./bin/build-usb-image $(BOOT_OUTPUT)
 	mv $(USB_BUILD) $(USB_OUTPUT)
 	@echo "# Created usb bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(USB_OUTPUT)
