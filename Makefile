@@ -2623,7 +2623,7 @@ $(GZ_TOOLS_OUTPUT): $(USB_BITS_SPEC) $(BOOT_OUTPUT)
 	@echo ""
 
 .PHONY: gz-tools_publish_image
-gz-tools_publish_image: $(GZ_TOOLS_OUTPUT)
+gz-tools_publish_image:
 	@echo ""
 	@echo "# Publish gz-tools image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(GZ_TOOLS_MANIFEST_OUTPUT) -f $(GZ_TOOLS_OUTPUT)
