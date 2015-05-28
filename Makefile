@@ -113,52 +113,6 @@ clean_smartlogin:
 
 
 
-#---- incr-upgrade
-
-_incr_upgrade_stamp=$(SDC_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(SDC_HEADNODE_SHA)
-INCR_UPGRADE_BITS=$(BITS_DIR)/incr-upgrade/incr-upgrade-$(_incr_upgrade_stamp).tgz
-
-.PHONY: incr-upgrade
-incr-upgrade: $(INCR_UPGRADE_BITS)
-
-$(INCR_UPGRADE_BITS): build/sdc-headnode
-	@echo "# Build incr-upgrade: branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/sdc-headnode && BRANCH="" TIMESTAMP=$(TIMESTAMP) gmake incr-upgrade)
-	mkdir -p $(BITS_DIR)/incr-upgrade
-	cp build/sdc-headnode/incr-upgrade-$(_incr_upgrade_stamp).tgz $(BITS_DIR)/incr-upgrade
-	@echo "# Created incr-upgrade bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(INCR_UPGRADE_BITS)
-	@echo ""
-
-clean_incr-upgrade:
-	$(RM) -rf $(BITS_DIR)/incr-upgrade
-
-
-
-#---- gz-tools
-
-_gz_tools_stamp=$(SDC_HEADNODE_BRANCH)-$(TIMESTAMP)-g$(SDC_HEADNODE_SHA)
-GZ_TOOLS_BIT=$(BITS_DIR)/gz-tools/gz-tools-$(_gz_tools_stamp).tgz
-GZ_TOOLS_MANIFEST_BIT=$(BITS_DIR)/gz-tools/gz-tools-$(_gz_tools_stamp).manifest
-
-.PHONY: gz-tools
-gz-tools: $(GZ_TOOLS_BIT)
-
-$(GZ_TOOLS_BIT): build/sdc-headnode
-	@echo "# Build gz-tools: branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/sdc-headnode && BRANCH="" TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake gz-tools gz-tools-publish)
-	@echo "# Created gz-tools bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(GZ_TOOLS_BIT) $(GZ_TOOLS_MANIFEST_BIT)
-	@echo ""
-
-gz-tools_publish_image: $(GZ_TOOLS_BIT)
-	@echo "# Publish gz-tools image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(GZ_TOOLS_MANIFEST_BIT) -f $(GZ_TOOLS_BIT)
-
-clean_gz-tools:
-	$(RM) -rf $(BITS_DIR)/gz-tools
 
 
 
@@ -2536,8 +2490,29 @@ endif	# $(JOYENT_BUILD) == true
 # - solution for datasets
 # - pkgsrc isolation
 
-.PHONY: headnode headnode-debug headnode-joyent headnode-joyent-debug
-headnode headnode-debug headnode-joyent headnode-joyent-debug: cleanimgcruft boot coal usb releasejson
+#
+# These targets will be built for every member of the "headnode*" family
+# of MG jobs:
+#
+HEADNODE_TARGETS = \
+	cleanimgcruft \
+	boot \
+	coal \
+	usb \
+	releasejson
+
+#
+# These targets are only built for the base "headnode" job.
+#
+HEADNODE_BASE_ONLY_TARGETS = \
+	gz-tools \
+	incr-upgrade
+
+.PHONY: headnode
+headnode: $(HEADNODE_TARGETS) $(HEADNODE_BASE_ONLY_TARGETS)
+
+.PHONY: headnode-debug headnode-joyent headnode-joyent-debug
+headnode-debug headnode-joyent headnode-joyent-debug: $(HEADNODE_TARGETS)
 
 headnode: HEADNODE_SUFFIX = ""
 headnode: USE_DEBUG_PLATFORM = false
@@ -2578,6 +2553,7 @@ $(USB_BITS_DIR):
 	mkdir -p $(USB_BITS_DIR)
 
 $(BOOT_OUTPUT): $(USB_BITS_SPEC) $(USB_BITS_DIR)
+	@echo ""
 	@echo "# Build boot: sdc-headnode branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	cd build/sdc-headnode && \
 	    BITS_DIR=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
@@ -2599,6 +2575,7 @@ $(USB_BITS_SPEC): $(USB_BITS_DIR)
 coal: usb $(COAL_OUTPUT)
 
 $(COAL_OUTPUT): $(USB_BITS_SPEC) $(USB_OUTPUT)
+	@echo ""
 	@echo "# Build coal: sdc-headnode branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	cd build/sdc-headnode && \
 	    BITS_DIR=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
@@ -2615,6 +2592,7 @@ USB_OUTPUT=$(USB_BITS_DIR)/usb$(HEADNODE_SUFFIX)-$(_headnode_stamp).tgz
 usb: $(USB_OUTPUT)
 
 $(USB_OUTPUT): $(USB_BITS_SPEC) $(BOOT_OUTPUT)
+	@echo ""
 	@echo "# Build usb: sdc-headnode branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	cd build/sdc-headnode && \
 	    BITS_DIR=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
@@ -2624,6 +2602,55 @@ $(USB_OUTPUT): $(USB_BITS_SPEC) $(BOOT_OUTPUT)
 	@ls -l $(USB_OUTPUT)
 	@echo ""
 
+GZ_TOOLS_BUILD=$(USB_BUILD_DIR)/gz-tools-$(_headnode_stamp).tgz
+GZ_TOOLS_OUTPUT=$(USB_BITS_DIR)/gz-tools$(HEADNODE_SUFFIX)-$(_headnode_stamp).tgz
+GZ_TOOLS_MANIFEST_BUILD=$(USB_BUILD_DIR)/gz-tools-$(_headnode_stamp).manifest
+GZ_TOOLS_MANIFEST_OUTPUT=$(USB_BITS_DIR)/gz-tools$(HEADNODE_SUFFIX)-$(_headnode_stamp).manifest
+
+.PHONY: gz-tools
+gz-tools: $(GZ_TOOLS_OUTPUT)
+
+$(GZ_TOOLS_OUTPUT): $(USB_BITS_SPEC) $(BOOT_OUTPUT)
+	@echo ""
+	@echo "# Build gz-tools: sdc-headnode branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	cd "build/sdc-headnode" && \
+	    BITS_DIR=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
+	    gmake gz-tools gz-tools-publish
+	mv $(GZ_TOOLS_BUILD) $(GZ_TOOLS_OUTPUT)
+	mv $(GZ_TOOLS_MANIFEST_BUILD) $(GZ_TOOLS_MANIFEST_OUTPUT)
+	@echo "# Created gz-tools bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(GZ_TOOLS_OUTPUT) $(GZ_TOOLS_MANIFEST_OUTPUT)
+	@echo ""
+
+.PHONY: gz-tools_publish_image
+gz-tools_publish_image:
+	@echo ""
+	@echo "# Publish gz-tools image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(GZ_TOOLS_MANIFEST_OUTPUT) -f $(GZ_TOOLS_OUTPUT)
+	@echo ""
+
+INCR_UPGRADE_BUILD=$(USB_BUILD_DIR)/incr-upgrade-$(_headnode_stamp).tgz
+INCR_UPGRADE_OUTPUT=$(USB_BITS_DIR)/incr-upgrade$(HEADNODE_SUFFIX)-$(_headnode_stamp).tgz
+
+.PHONY: incr-upgrade
+incr-upgrade: $(INCR_UPGRADE_OUTPUT)
+
+$(INCR_UPGRADE_OUTPUT): $(USB_BITS_SPEC) $(BOOT_OUTPUT)
+	@echo "# Build incr-upgrade: sdc-headnode branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	cd "build/sdc-headnode" && \
+	    BITS_DIR=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
+	    gmake incr-upgrade
+	mv $(INCR_UPGRADE_BUILD) $(INCR_UPGRADE_OUTPUT)
+	@echo "# Created incr-upgrade bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(INCR_UPGRADE_OUTPUT)
+	@echo ""
+
+#
+# Of the "headnode*" family of builds, only the base "headnode" job currently
+# publishes any images using a "*_publish_image" target:
+#
+.PHONY: headnode_publish_image
+headnode_publish_image: gz-tools_publish_image
 
 # A headnode image that can be imported to an IMGAPI and used for
 # sdc-on-sdc.

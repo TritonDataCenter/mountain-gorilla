@@ -99,20 +99,6 @@ cat <<EOF
     "public": true,
     "deps": []
   },
-  "incr-upgrade": {
-    "repos": [
-      {"url": "git@github.com:joyent/sdc-headnode.git"}
-    ],
-    "public": true,
-    "deps": []
-  },
-  "gz-tools": {
-    "repos": [
-      {"url": "git@github.com:joyent/sdc-headnode.git"}
-    ],
-    "public": true,
-    "deps": []
-  },
   "ca": {
     "appliance": "true",
     "image_name": "ca",
