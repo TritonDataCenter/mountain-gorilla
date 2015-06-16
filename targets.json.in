@@ -365,7 +365,9 @@ cat <<EOF
     ],
     "public": true,
     "deps": [],
-    "pkgsrc": [],
+    "pkgsrc": [
+        "openssl-1.0.1o"
+    ],
     "tarballs": []
   },
   "docker": {
