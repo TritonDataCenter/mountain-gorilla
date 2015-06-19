@@ -5,6 +5,10 @@ pretty rough. It also expects:
    has your key (it tries to SSH to the new instance)
  - you have added your SSH key to Jenkins
    https://jenkins.joyent.us/user/<username>/configure (and you know your login)
+ - your SSH public key should also be added to the 'admin' user in the DC so
+   that you will be able to SSH into the newly created zone.
+ - your Jenkins user should have the 'Slave/Create permission' in Jenkins.
+   Permissions can be viewed at https://jenkins.joyent.us/configureSecurity/
 
 To setup a new slave run the following from the headnode in your target DC:
 
