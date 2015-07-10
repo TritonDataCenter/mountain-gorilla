@@ -366,7 +366,7 @@ cat <<EOF
     "public": true,
     "deps": [],
     "pkgsrc": [
-        "openssl-1.0.1o"
+        "openssl-1.0.1p"
     ],
     "tarballs": []
   },
