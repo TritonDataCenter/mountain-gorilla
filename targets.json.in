@@ -549,7 +549,9 @@ cat <<EOF
     "image_name": "imgapi",
     "image_description": "SDC IMGAPI",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
-    "pkgsrc": [],
+    "pkgsrc": [
+        "xz-5.0.3"
+    ],
     "repos": [
       {"url": "git@github.com:joyent/sdc-imgapi.git"}
     ],
