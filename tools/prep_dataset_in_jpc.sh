@@ -42,7 +42,7 @@ if [[ -z ${SDC_ACCOUNT} ]]; then
 fi
 if [[ -z ${SDC_URL} ]]; then
   # Manta locality, use east
-  export SDC_URL="https://us-east-1.api.joyentcloud.com"
+  export SDC_URL="https://us-east-2.api.joyent.com"
   # To test in us-beta-4 uncomment the following:
   #export SDC_URL=https://165.225.142.135
   #export SDC_TESTING=1
