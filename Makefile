@@ -551,45 +551,45 @@ clean_dhcpd:
 	$(RM) -rf $(BITS_DIR)/dhcpd
 	(cd build/dhcpd && gmake clean)
 
-#---- MOCKCN
+#---- MOCKCLOUD
 
-_mockcn_stamp=$(MOCKCN_BRANCH)-$(TIMESTAMP)-g$(MOCKCN_SHA)
-MOCKCN_BITS=$(BITS_DIR)/mockcn/mockcn-pkg-$(_mockcn_stamp).tar.bz2
-MOCKCN_IMAGE_BIT=$(BITS_DIR)/mockcn/mockcn-zfs-$(_mockcn_stamp).zfs.gz
-MOCKCN_MANIFEST_BIT=$(BITS_DIR)/mockcn/mockcn-zfs-$(_mockcn_stamp).imgmanifest
+_mockcloud_stamp=$(MOCKCLOUD_BRANCH)-$(TIMESTAMP)-g$(MOCKCLOUD_SHA)
+MOCKCLOUD_BITS=$(BITS_DIR)/mockcloud/mockcloud-pkg-$(_mockcloud_stamp).tar.bz2
+MOCKCLOUD_IMAGE_BIT=$(BITS_DIR)/mockcloud/mockcloud-zfs-$(_mockcloud_stamp).zfs.gz
+MOCKCLOUD_MANIFEST_BIT=$(BITS_DIR)/mockcloud/mockcloud-zfs-$(_mockcloud_stamp).imgmanifest
 
-.PHONY: mockcn
-mockcn: $(MOCKCN_BITS) mockcn_image
+.PHONY: mockcloud
+mockcloud: $(MOCKCLOUD_BITS) mockcloud_image
 
-$(MOCKCN_BITS): build/mockcn
-	@echo "# Build mockcn: branch $(MOCKCN_BRANCH), sha $(MOCKCN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+$(MOCKCLOUD_BITS): build/mockcloud
+	@echo "# Build mockcloud: branch $(MOCKCLOUD_BRANCH), sha $(MOCKCLOUD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/mockcn && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) \
+	(cd build/mockcloud && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) \
 		$(MAKE) release publish)
-	@echo "# Created mockcn bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(MOCKCN_BITS)
+	@echo "# Created mockcloud bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(MOCKCLOUD_BITS)
 	@echo ""
 
-.PHONY: mockcn_image
-mockcn_image: $(MOCKCN_IMAGE_BIT)
+.PHONY: mockcloud_image
+mockcloud_image: $(MOCKCLOUD_IMAGE_BIT)
 
-$(MOCKCN_IMAGE_BIT): $(MOCKCN_BITS)
-	@echo "# Build mockcn_image: branch $(MOCKCN_BRANCH), sha $(MOCKCN_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(MOCKCN_IMAGE_UUID)" -t $(MOCKCN_BITS) \
-		-o "$(MOCKCN_IMAGE_BIT)" -p $(MOCKCN_PKGSRC) -O "$(MG_OUT_PATH)" \
-		-t $(MOCKCN_EXTRA_TARBALLS) -n $(MOCKCN_IMAGE_NAME) \
-		-v $(_mockcn_stamp) -d $(MOCKCN_IMAGE_DESCRIPTION)
-	@echo "# Created mockcn image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(MOCKCN_IMAGE_BIT))
+$(MOCKCLOUD_IMAGE_BIT): $(MOCKCLOUD_BITS)
+	@echo "# Build mockcloud_image: branch $(MOCKCLOUD_BRANCH), sha $(MOCKCLOUD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MOCKCLOUD_IMAGE_UUID)" -t $(MOCKCLOUD_BITS) \
+		-o "$(MOCKCLOUD_IMAGE_BIT)" -p $(MOCKCLOUD_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(MOCKCLOUD_EXTRA_TARBALLS) -n $(MOCKCLOUD_IMAGE_NAME) \
+		-v $(_mockcloud_stamp) -d $(MOCKCLOUD_IMAGE_DESCRIPTION)
+	@echo "# Created mockcloud image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(MOCKCLOUD_IMAGE_BIT))
 	@echo ""
 
-mockcn_publish_image: $(MOCKCN_IMAGE_BIT)
-	@echo "# Publish mockcn image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(MOCKCN_MANIFEST_BIT) -f $(MOCKCN_IMAGE_BIT)
+mockcloud_publish_image: $(MOCKCLOUD_IMAGE_BIT)
+	@echo "# Publish mockcloud image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(MOCKCLOUD_MANIFEST_BIT) -f $(MOCKCLOUD_IMAGE_BIT)
 
-clean_mockcn:
-	$(RM) -rf $(BITS_DIR)/mockcn
-	(cd build/mockcn && gmake clean)
+clean_mockcloud:
+	$(RM) -rf $(BITS_DIR)/mockcloud
+	(cd build/mockcloud && gmake clean)
 
 
 #---- CLOUDAPI

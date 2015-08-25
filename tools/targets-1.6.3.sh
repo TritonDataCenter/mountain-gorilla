@@ -28,7 +28,7 @@ cd ${BASE}
 if [[ ! -f "targets.json" ]]; then
     bash < targets.json.in | json > targets.json
 fi
-node -e "var targets = require('./targets.json'); Object.keys(targets).forEach(function (t) { if (['all', 'usbheadnode', 'usbheadnode-debug', 'platform', 'platform-debug', 'agentsshar', 'minnow', 'amon', 'registar', 'config-agent', 'usageapi', 'convertvm', 'mockcn', 'incr-upgrade', 'zonetracker'].indexOf(t) !== -1) { return; }; if (targets[t].image_uuid !== 'b4bdc598-8939-11e3-bea4-8341f6861379') { console.log(t); } });" | sort
+node -e "var targets = require('./targets.json'); Object.keys(targets).forEach(function (t) { if (['all', 'usbheadnode', 'usbheadnode-debug', 'platform', 'platform-debug', 'agentsshar', 'minnow', 'amon', 'registar', 'config-agent', 'usageapi', 'convertvm', 'mockcloud', 'incr-upgrade', 'zonetracker'].indexOf(t) !== -1) { return; }; if (targets[t].image_uuid !== 'b4bdc598-8939-11e3-bea4-8341f6861379') { console.log(t); } });" | sort
 
 # This comes last as it depends on all the individual agents to be built first.
 echo "agentsshar"

@@ -197,17 +197,17 @@ cat <<EOF
       {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
     ]
   },
-  "mockcn": {
+  "mockcloud": {
     "appliance": "true",
-    "image_name": "mockcn",
-    "image_description": "SDC MOCK CN",
+    "image_name": "mockcloud",
+    "image_description": "SDC MOCK CLOUD",
     "image_version": "1.0.0",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [
       "tftp-hpa-5.2"
     ],
     "repos": [
-        {"url": "git@git.joyent.com:mockcn.git", "dir": "mockcn"}
+        {"url": "git@git.joyent.com:mockcloud.git", "dir": "mockcloud"}
     ],
     "public": false,
     "deps": [],
