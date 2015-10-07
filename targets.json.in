@@ -1312,7 +1312,10 @@ cat <<EOF
 
   "dockerlogger": {
     "repos": [
-        {"url": "git@github.com:joyent/sdc-dockerlogger.git"}
+        {
+            "url": "git@github.com:joyent/sdc-dockerlogger.git",
+            "dir": "dockerlogger"
+        }
     ],
     "public": true,
     "deps": [
