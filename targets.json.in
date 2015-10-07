@@ -1310,6 +1310,15 @@ cat <<EOF
     ]
   },
 
+  "dockerlogger": {
+    "repos": [
+        {"url": "git@github.com:joyent/dockerlogger.git"}
+    ],
+    "public": true,
+    "deps": [
+    ]
+  },
+
   "manta-deployment": {
     "appliance": "true",
     "image_name": "manta-deployment",

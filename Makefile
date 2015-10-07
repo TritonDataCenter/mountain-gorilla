@@ -2393,6 +2393,40 @@ clean_convertvm:
 	(cd build/convertvm && gmake clean)
 
 
+#---- dockerlogger
+
+ifeq ($(TRY_BRANCH),)
+DOCKERLOGGER_TRY_BRANCH=$(DOCKERLOGGER_BRANCH)
+_dl_stamp=$(DOCKERLOGGER_BRANCH)-$(TIMESTAMP)-g$(DOCKERLOGGER_SHA)
+else
+DOCKERLOGGER_TRY_BRANCH=$(TRY_BRANCH)
+_dl_stamp=$(TRY_BRANCH)-$(TIMESTAMP)-g$(DOCKERLOGGER_SHA)
+endif
+DOCKERLOGGER_BITS=$(BITS_DIR)/dockerlogger/dockerlogger-$(_dl_stamp).sh \
+	$(BITS_DIR)/dockerlogger/dockerlogger-$(_dl_stamp).md5sum
+DOCKERLOGGER_BITS_0=$(shell echo $(DOCKERLOGGER_BITS) | awk '{print $$1}')
+DOCKERLOGGER_MANIFEST_BIT=$(BITS_DIR)/dockerlogger/dockerlogger-$(_dl_stamp).manifest
+
+.PHONY: dockerlogger
+dockerlogger: $(DOCKERLOGGER_BITS_0)
+
+$(DOCKERLOGGER_BITS): build/dockerlogger
+	@echo "# Build dockerlogger: branch $(DOCKERLOGGER_BRANCH), sha $(DOCKERLOGGER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)/dockerlogger
+	(cd build/dockerlogger && make GOROOT=/root/opt/go TIMESTAMP=$(TIMESTAMP) DESTDIR=$(BITS_DIR)/dockerlogger BRANCH=$(DOCKERLOGGER_TRY_BRANCH) pkg)
+	@echo "# Created dockerlogger bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(DOCKERLOGGER_BITS)
+	@echo ""
+
+dockerlogger_publish_image: $(DOCKERLOGGER_BITS)
+	@echo "# Publish dockerlogger image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(DOCKERLOGGER_MANIFEST_BIT) -f $(DOCKERLOGGER_BITS_0)
+
+clean_dockerlogger:
+	$(RM) -rf $(BITS_DIR)/dockerlogger
+	(if [[ -d build/dockerlogger ]]; then cd build/dockerlogger && gmake clean; fi )
+
+
 #---- Manta deployment (the manta zone)
 
 _manta_deployment_stamp=$(SDC_MANTA_BRANCH)-$(TIMESTAMP)-g$(SDC_MANTA_SHA)
