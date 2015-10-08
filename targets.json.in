@@ -164,14 +164,10 @@ cat <<EOF
     ],
     "public": true,
     "deps": [
-      "amon",
-      "config-agent",
-      "registrar"
+      "amon"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"}
     ]
   },
   "adminui": {
