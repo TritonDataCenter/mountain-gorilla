@@ -6,13 +6,14 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright (c) 2015, Joyent, Inc.
 #
 
 #
 # Check if the SDC repos (those listed in targets.json) are prepared (branched
-# or tagged as appropriate) for an SDC release build. Will also apply
-# missing branch/tag with the '-a' flag.
+# as appropriate) for an SDC release build. Will also apply
+# missing branch with the '-a' flag.
+#
 #
 
 if [[ -n "$TRACE" ]]; then
@@ -36,23 +37,20 @@ function usage() {
         echo ""
     fi
     echo "Usage:"
-    echo "  check-repos-for-release [OPTIONS] RELEASE-DATE"
+    echo "  check-repos-for-release [<options>] [release-]YYYYMMDD"
     echo ""
     echo "Options:"
     echo "  -c CREDS        Provide creds for mo.joyent.com. If not given"
     echo "                  will use 'MOLYBDENUM_CREDENTIALS' envvar."
-    echo "  -a              *Apply* missing branch and/or tag (as appropriate)"
-    echo "                  The 'illumos-extra' repo is just tagged, all"
-    echo "                  others are just branched."
+    echo "  -a              Create branch (*A*pply) if it is missing"
     echo "  -t TARGET       Just run for the given MG target. If not given"
     echo "                  then all targets in 'targets.json' are used. Can be"
     echo "                  specified multiple times."
-    echo "  -T              no tagging, just branch"
     echo ""
     echo "Examples:"
     echo "  check-repos-for-release 20111020"
     echo "  check-repos-for-release -t usbheadnode 20111020"
-    echo "  check-repos-for-release -a 20111020"
+    echo "  check-repos-for-release -a release-20111020"
     exit 1
 }
 
@@ -78,10 +76,9 @@ function get_repo_name_from_url {
 
 function apply_missing_to_repo {
     local repo_url=$1
-    local tag=$2
-    local branch=$3
+    local branch=$2
 
-    echo "Prep repo $repo_url for release: branch '$branch', tag '$tag'."
+    echo "Branch repo $repo_url for release: branch '$branch'"
     mkdir -p $WORKDIR
     repo_name=$(get_repo_name_from_url $repo_url)
     cd $WORKDIR;
@@ -92,10 +89,6 @@ function apply_missing_to_repo {
     fi
     cd $repo_name
     git checkout master
-    if [[ ! -z "$tag" && -z "$NO_TAG" ]]; then
-      git tag -f -a "$tag" -m "$tag release"
-      git push -q --tags
-    fi
     if [[ ! -z "$branch" ]]; then
       # Consider '-B' to force reset of branch if already exists.
       git checkout -b $branch
@@ -122,7 +115,7 @@ function check_repo_url {
     if [[ -z "$hit" ]]; then
       if [[ $APPLY -eq 1 ]]; then
         echo "Repo $repo_url ('$targ' target): missing '$BRANCH' branch"
-        apply_missing_to_repo $repo_url "$TAG" "$BRANCH"
+        apply_missing_to_repo $repo_url "$BRANCH"
       else
         echo "Repo $repo_url ('$targ' target): FAIL (no '$BRANCH' branch, use -a to apply)"
       fi
@@ -142,12 +135,10 @@ function check_targ {
 
 #---- mainline
 
-APPLY=0   # whether to apply a branch/tag to repo
+APPLY=0   # whether to apply a branch to repo
 CREDS=
 TARGETS=
-NO_TAG=
-DO_SMARTOS_OVERLAY=
-while getopts "hac:t:T" c; do
+while getopts "hac:t:" c; do
     case "$c" in
     h)
         usage
@@ -161,9 +152,6 @@ while getopts "hac:t:T" c; do
     t)
         TARGETS="$TARGETS $OPTARG"
         ;;
-    T)
-        NO_TAG=1
-        ;;
     *)
         usage "illegal option -- $OPTARG"
         ;;
@@ -175,27 +163,13 @@ RELEASE=$1
 if [[ -z "$RELEASE" ]]; then
     usage "no RELEASE given"
 fi
-is_date=$(echo $RELEASE | grep '^[0-9]\{8\}$' || true)
-if [[ -z "$is_date" ]]; then
-    echo "* * *"
-    echo "* WARNING: given RELEASE, '$RELEASE', is not an 8-digit date"
-    echo "* * *"
-    echo ""
-    echo "Continue? (Hit Ctrl+C to abort.)"
-    read
-    echo "Continuing..."
-    echo ""
-    BRANCH=$RELEASE
-    TAG=$RELEASE
-else
-    if [[ -z "$TARGETS" ]]; then
-        DO_SMARTOS_OVERLAY=1
-    elif [[ "$TARGETS" == " smartos-overlay" ]]; then
-        DO_SMARTOS_OVERLAY=1
-        TARGETS=" "
-    fi
+if [[ -n "$(echo "$RELEASE" | grep '^[0-9]\{8\}$' || true)" ]]; then
+    # YYYYMMDD
     BRANCH=release-$RELEASE
-    TAG=$RELEASE
+elif [[ -n "$(echo "$RELEASE" | grep '^release-[0-9]\{8\}$' || true)" ]]; then
+    BRANCH=$RELEASE
+else
+    fatal "'$RELEASE' does not match '[release-]YYYYMMDD'"
 fi
 
 if [[ -z "$CREDS" ]]; then
@@ -226,6 +200,3 @@ for targ in $TARGETS; do
   fi
   check_targ $targ
 done
-if [[ -n "$DO_SMARTOS_OVERLAY" ]]; then
-    check_repo_url git@github.com:joyent/smartos-overlay.git '(none)'
-fi
