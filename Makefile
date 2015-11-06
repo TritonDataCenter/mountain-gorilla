@@ -1776,6 +1776,46 @@ clean_mahi:
 	$(RM) -rf $(BITS_DIR)/mahi
 	(cd build/mahi && gmake distclean)
 
+#---- Triton CNS
+
+_cns_stamp=$(TRITON_CNS_BRANCH)-$(TIMESTAMP)-g$(TRITON_CNS_SHA)
+CNS_BITS=$(BITS_DIR)/cns/cns-pkg-$(_cns_stamp).tar.bz2
+CNS_IMAGE_BIT=$(BITS_DIR)/cns/cns-zfs-$(_cns_stamp).zfs.gz
+CNS_MANIFEST_BIT=$(BITS_DIR)/tncs/cns-zfs-$(_cns_stamp).imgmanifest
+
+.PHONY: cns
+cns: $(CNS_BITS) cns_image
+
+$(CNS_BITS): build/triton-cns
+	@echo "# Build cns: branch $(TRITON_CNS_BRANCH), sha $(TRITON_CNS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/triton-cns && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created cns bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(CNS_BITS)
+	@echo ""
+
+.PHONY: cns_image
+cns_image: $(CNS_IMAGE_BIT)
+
+$(CNS_IMAGE_BIT): $(CNS_BITS)
+	@echo "# Build cns_image: branch $(TRITON_CNS_BRANCH), sha $(TRITON_CNS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(CNS_IMAGE_UUID)" -t $(CNS_BITS) \
+		-b "cns" \
+		-o "$(CNS_IMAGE_BIT)" -p $(CNS_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(CNS_EXTRA_TARBALLS) -n $(CNS_IMAGE_NAME) \
+		-v $(_cns_stamp) -d $(CNS_IMAGE_DESCRIPTION)
+	@echo "# Created cns image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(CNS_IMAGE_BIT))
+	@echo ""
+
+cns_publish_image: $(CNS_IMAGE_BIT)
+	@echo "# Publish CNS image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(CNS_MANIFEST_BIT) -f $(CNS_IMAGE_BIT)
+
+clean_cns:
+	$(RM) -rf $(BITS_DIR)/cns
+	(cd build/triton-cns && gmake distclean)
+
 
 #---- Mola
 
