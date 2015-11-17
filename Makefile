@@ -1781,7 +1781,7 @@ clean_mahi:
 _cns_stamp=$(TRITON_CNS_BRANCH)-$(TIMESTAMP)-g$(TRITON_CNS_SHA)
 CNS_BITS=$(BITS_DIR)/cns/cns-pkg-$(_cns_stamp).tar.bz2
 CNS_IMAGE_BIT=$(BITS_DIR)/cns/cns-zfs-$(_cns_stamp).zfs.gz
-CNS_MANIFEST_BIT=$(BITS_DIR)/tncs/cns-zfs-$(_cns_stamp).imgmanifest
+CNS_MANIFEST_BIT=$(BITS_DIR)/cns/cns-zfs-$(_cns_stamp).imgmanifest
 
 .PHONY: cns
 cns: $(CNS_BITS) cns_image
