@@ -623,16 +623,6 @@ cat <<EOF
     ]
   },
 
-  "heartbeater": {
-    "repos": [
-        {"url": "git@github.com:joyent/sdc-heartbeater-agent.git"}
-    ],
-    "public": true,
-    "deps": [
-      "https://download.joyent.com/pub/build/sdcnode"
-    ]
-  },
-
   "vm-agent": {
     "repos": [
         {"url": "git@github.com:joyent/sdc-vm-agent.git"}
@@ -656,16 +646,6 @@ cat <<EOF
   "cn-agent": {
     "repos": [
         {"url": "git@github.com:joyent/sdc-cn-agent.git"}
-    ],
-    "public": true,
-    "deps": [
-      "https://download.joyent.com/pub/build/sdcnode"
-    ]
-  },
-
-  "provisioner": {
-    "repos": [
-        {"url": "git@github.com:joyent/sdc-provisioner-agent.git"}
     ],
     "public": true,
     "deps": [
@@ -1307,9 +1287,7 @@ cat <<EOF
     "public": true,
     "deps": [
       "agents_core",
-      "provisioner",
       "hagfish-watcher",
-      "heartbeater",
       "cn-agent",
       "net-agent",
       "vm-agent",

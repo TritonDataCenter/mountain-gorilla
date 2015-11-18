@@ -1289,66 +1289,6 @@ clean_cn_agent:
 	(cd build/sdc-cn-agent && gmake clean)
 
 
-#---- Provisioner
-
-_provisioner_stamp=$(SDC_PROVISIONER_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_PROVISIONER_AGENT_SHA)
-PROVISIONER_BIT=$(BITS_DIR)/provisioner/provisioner-$(_provisioner_stamp).tgz
-PROVISIONER_MANIFEST_BIT=$(BITS_DIR)/provisioner/provisioner-$(_provisioner_stamp).manifest
-
-.PHONY: provisioner
-provisioner: $(PROVISIONER_BIT)
-
-# PATH for provisioner build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
-$(PROVISIONER_BIT): build/sdc-provisioner-agent
-	@echo "# Build provisioner: branch $(SDC_PROVISIONER_AGENT_BRANCH), sha $(PROVISIONER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/sdc-provisioner-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created provisioner bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(PROVISIONER_BIT) $(PROVISIONER_MANIFEST_BIT)
-	@echo ""
-
-provisioner_publish_image: $(PROVISIONER_BIT)
-	@echo "# Publish provisioner image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(PROVISIONER_MANIFEST_BIT) -f $(PROVISIONER_BIT)
-
-# Warning: if provisioner's submodule deps change, this 'clean_provisioner' is insufficient. It would
-# then need to call 'gmake dist-clean'.
-clean_provisioner:
-	$(RM) -rf $(BITS_DIR)/provisioner
-	(cd build/sdc-provisioner-agent && gmake clean)
-
-
-#---- Heartbeater
-
-_heartbeater_stamp=$(SDC_HEARTBEATER_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_HEARTBEATER_AGENT_SHA)
-HEARTBEATER_BIT=$(BITS_DIR)/heartbeater/heartbeater-$(_heartbeater_stamp).tgz
-HEARTBEATER_MANIFEST_BIT=$(BITS_DIR)/heartbeater/heartbeater-$(_heartbeater_stamp).manifest
-
-.PHONY: heartbeater
-heartbeater: $(HEARTBEATER_BIT)
-
-# PATH for heartbeater build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
-$(HEARTBEATER_BIT): build/sdc-heartbeater-agent
-	@echo "# Build heartbeater: branch $(SDC_HEARTBEATER_AGENT_BRANCH), sha $(SDC_HEARTBEATER_AGENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/sdc-heartbeater-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created heartbeater bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(HEARTBEATER_BIT)
-	@echo ""
-
-heartbeater_publish_image: $(HEARTBEATER_BIT)
-	@echo "# Publish heartbeater image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(HEARTBEATER_MANIFEST_BIT) -f $(HEARTBEATER_BIT)
-
-# Warning: if heartbeater's submodule deps change, this 'clean_heartbeater' is insufficient. It would
-# then need to call 'gmake dist-clean'.
-clean_heartbeater:
-	$(RM) -rf $(BITS_DIR)/heartbeater
-	(cd build/sdc-heartbeater-agent && gmake clean)
-
-
 #---- Configuration Agent
 
 _config_agent_stamp=$(SDC_CONFIG_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_CONFIG_AGENT_SHA)
