@@ -1789,7 +1789,7 @@ cns: $(CNS_BITS) cns_image
 $(CNS_BITS): build/triton-cns
 	@echo "# Build cns: branch $(TRITON_CNS_BRANCH), sha $(TRITON_CNS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/triton-cns && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/triton-cns && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created cns bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(CNS_BITS)
 	@echo ""
