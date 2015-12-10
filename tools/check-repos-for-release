@@ -79,9 +79,9 @@ function apply_missing_to_repo {
     local branch=$2
 
     echo "Branch repo $repo_url for release: branch '$branch'"
-    mkdir -p $WORKDIR
     repo_name=$(get_repo_name_from_url $repo_url)
-    cd $WORKDIR;
+    mkdir -p $WORKDIR
+    cd $WORKDIR
     if [[ -d "$repo_name" ]]; then
         (cd $repo_name && git checkout master && git pull --rebase origin master)
     else
@@ -89,9 +89,8 @@ function apply_missing_to_repo {
     fi
     cd $repo_name
     git checkout master
-    if [[ ! -z "$branch" ]]; then
-      # Consider '-B' to force reset of branch if already exists.
-      git checkout -b $branch
+    if [[ -n "$branch" ]]; then
+      git checkout -B $branch
       git push -q origin $branch
     fi
     git checkout master   # go back to master branch for subsequent runs
@@ -104,7 +103,7 @@ function check_repo_url {
     repo_name=$(get_repo_name_from_url $repo_url)
     local hit
     if [[ -d "$WORKDIR/$repo_name" ]]; then
-        hit=$(cd $WORKDIR/$repo_name && git branch | (grep $BRANCH || true))
+        hit=$(cd $WORKDIR/$repo_name && git branch -a | (grep remotes/origin/$BRANCH || true))
     fi
     if [[ -z "$hit" ]]; then
         hit=$(curl -sS https://mo.joyent.com/api/repos/$repo_name/refs -u $CREDS \
