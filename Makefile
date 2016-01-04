@@ -43,6 +43,7 @@ ifeq ($(UNAME), SunOS)
 endif
 JSON=$(MG_NODE) $(TOP)/tools/json
 UPDATES_IMGADM=$(TOP)/node_modules/.bin/updates-imgadm -i $(HOME)/.ssh/automation.id_rsa -u mg --channel="$(UPDATES_CHANNEL)"
+PKGIN = /opt/local/bin/pkgin
 
 # Other
 # Is JOBS=16 reasonable here? The old bamboo plans used this (or higher).
@@ -1271,6 +1272,11 @@ cn-agent: $(CN_AGENT_BIT)
 # PATH for cn-agent build: Ensure /opt/local/bin is first to put gcc 4.5 (from
 # pkgsrc) before other GCCs.
 $(CN_AGENT_BIT): build/sdc-cn-agent
+	@echo "# Ensuring build dependencies are installed from pkgsrc"
+	$(PKGIN) -y update
+	$(PKGIN) -y install autoconf
+	$(PKGIN) -y install automake
+	$(PKGIN) -y install libtool-base
 	@echo "# Build cn-agent: branch $(SDC_CN_AGENT_BRANCH), sha $(SDC_CN_AGENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
 	(cd build/sdc-cn-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
