@@ -2354,31 +2354,6 @@ clean_agentsshar:
 	(if [[ -d build/sdc-agents-installer ]]; then cd build/agents-installer && gmake clean; fi )
 
 
-#---- convertvm
-
-_convertvm_stamp=$(CONVERTVM_BRANCH)-$(TIMESTAMP)-g$(CONVERTVM_SHA)
-CONVERTVM_BITS=$(BITS_DIR)/convertvm/convertvm-$(_convertvm_stamp).tar.bz2
-
-.PHONY: convertvm
-convertvm: $(CONVERTVM_BITS)
-
-# PATH for convertvm build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
-$(CONVERTVM_BITS): build/convertvm
-	@echo "# Build convertvm: branch $(CONVERTVM_BRANCH), sha $(CONVERTVM_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/convertvm && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created convertvm bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(CONVERTVM_BITS)
-	@echo ""
-
-# Warning: if convertvm's submodule deps change, this 'clean_convertvm' is insufficient. It would
-# then need to call 'gmake dist-clean'.
-clean_convertvm:
-	$(RM) -rf $(BITS_DIR)/convertvm
-	(cd build/convertvm && gmake clean)
-
-
 #---- dockerlogger
 
 ifeq ($(TRY_BRANCH),)

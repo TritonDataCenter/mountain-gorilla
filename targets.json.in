@@ -1299,15 +1299,6 @@ cat <<EOF
       "config-agent"
     ]
   },
-  "convertvm": {
-    "repos": [
-        {"url":  "git@github.com:joyent/convertvm.git" }
-    ],
-    "public": false,
-    "deps": [
-      "https://download.joyent.com/pub/build/sdcnode"
-    ]
-  },
 
   "dockerlogger": {
     "repos": [
