@@ -64,7 +64,7 @@ fi
 (cd $TOP && JOYENT_BUILD=true bash <targets.json.in >targets.json)
 targets=$($TOP/tools/json -f $TOP/targets.json -Ma key value.public \
     | grep -v sdcsso \
-    | grep -v agentsshar-upgrade | grep -v usageapi | grep -v convertvm)
+    | grep -v agentsshar-upgrade | grep -v usageapi)
 echo "$targets" | while read target public; do
     if [[ "$public" == "true" ]]; then
         latest_mpath=/Joyent_Dev/public/builds/$target/$release-latest

@@ -18,7 +18,7 @@
 # optionally some other tarballs, and (c) make an image out of this.
 #
 
-export PS4='${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+export PS4='[\D{%FT%TZ}] ${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
 if [[ -z "$(echo "$*" | grep -- ' -h ' || /bin/true)" ]]; then
   # Try to avoid xtrace goop when print help/usage output.
   set -o xtrace
