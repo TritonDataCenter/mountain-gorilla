@@ -228,7 +228,7 @@ cat <<EOF
       "tftp-hpa-5.2"
     ],
     "repos": [
-        {"url": "git@git.joyent.com:mockcloud.git", "dir": "mockcloud"}
+        {"url": "git@github.com:joyent/sdc-mockcloud.git", "dir": "mockcloud"}
     ],
     "public": false,
     "deps": [],
