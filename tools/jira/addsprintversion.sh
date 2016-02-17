@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright (c) 2016, Joyent, Inc.
 #
 
 #
@@ -22,7 +22,6 @@
 set -e
 #set -x
 TOP=$(cd $(dirname "$0") >/dev/null; pwd)
-
 
 JIRACLI_OPTS="--server https://devhub.joyent.com/jira"
 JIRACLI_RC_PATH="$HOME/.jiraclirc"
@@ -40,7 +39,7 @@ if [[ -z "$1" ]]; then
 fi
 NEW_VERSION=$1
 
-YEAR=$(echo $NEW_VERSION | cut -c 3-4)
+YEAR=$(echo $NEW_VERSION | cut -c 1-4)
 MONTH=$(echo $NEW_VERSION | cut -c 6-7)
 DAY=$(echo $NEW_VERSION | cut -c 9-10)
 RELEASE_DATE=$MONTH/$DAY/$YEAR
@@ -60,5 +59,5 @@ for project in $PROJECTS
 do
   echo "# $project: add new version '$NEW_VERSION' with release date '$RELEASE_DATE'"
   $TOP/jira.sh $JIRACLI_OPTS --action addVersion  \
-    --project $project  --name "$NEW_VERSION" --date "$RELEASE_DATE" || true
+    --project $project  --name "$NEW_VERSION" --date "$RELEASE_DATE" --dateFormat "MM/dd/yyyy" || true
 done
