@@ -234,6 +234,23 @@ cat <<EOF
     "deps": [],
     "tarballs": []
   },
+  "nfsserver": {
+    "appliance": "true",
+    "image_name": "nfsserver",
+    "image_description": "SDC NFS Server",
+    "image_version": "1.0.0",
+    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
+    "pkgsrc": [
+    ],
+    "repos": [
+        {"url": "git@github.com:joyent/sdc-nfsserver.git", "dir": "nfsserver"}
+    ],
+    "public": true,
+    "deps": [
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": []
+  },
   "dhcpd": {
     "appliance": "true",
     "image_name": "dhcpd",
