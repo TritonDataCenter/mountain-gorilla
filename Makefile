@@ -1893,7 +1893,7 @@ clean_marlin-dashboard:
 
 #---- NFSSERVER
 
-_nfsserver_stamp=$(SDC_NFSSERVER_BRANCH)-$(TIMESTAMP)-g$(SDC_NFSSERVER_SHA)
+_nfsserver_stamp=$(NFSSERVER_BRANCH)-$(TIMESTAMP)-g$(NFSSERVER_SHA)
 NFSSERVER_BITS=$(BITS_DIR)/nfsserver/nfsserver-pkg-$(_nfsserver_stamp).tar.gz
 NFSSERVER_IMAGE_BIT=$(BITS_DIR)/nfsserver/nfsserver-zfs-$(_nfsserver_stamp).zfs.gz
 NFSSERVER_MANIFEST_BIT=$(BITS_DIR)/nfsserver/nfsserver-zfs-$(_nfsserver_stamp).imgmanifest
