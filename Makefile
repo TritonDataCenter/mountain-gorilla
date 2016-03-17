@@ -1894,17 +1894,17 @@ clean_marlin-dashboard:
 #---- NFSSERVER
 
 _nfsserver_stamp=$(SDC_NFSSERVER_BRANCH)-$(TIMESTAMP)-g$(SDC_NFSSERVER_SHA)
-NFSSERVER_BITS=$(BITS_DIR)/nfsserver/nfsserver-pkg-$(_nfsserver_stamp).tar.bz2
+NFSSERVER_BITS=$(BITS_DIR)/nfsserver/nfsserver-pkg-$(_nfsserver_stamp).tar.gz
 NFSSERVER_IMAGE_BIT=$(BITS_DIR)/nfsserver/nfsserver-zfs-$(_nfsserver_stamp).zfs.gz
 NFSSERVER_MANIFEST_BIT=$(BITS_DIR)/nfsserver/nfsserver-zfs-$(_nfsserver_stamp).imgmanifest
 
 .PHONY: nfsserver
 nfsserver: $(NFSSERVER_BITS) nfsserver_image
 
-$(NFSSERVER_BITS): build/sdc-nfsserver
+$(NFSSERVER_BITS): build/nfsserver
 	@echo "# Build nfsserver: branch $(NFSSERVER_BRANCH), sha $(NFSSERVER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/sdc-nfsserver && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	(cd build/nfsserver && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
 	@echo "# Created nfsserver bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(NFSSERVER_BITS)
 	@echo ""
@@ -1928,7 +1928,7 @@ nfsserver_publish_image: $(NFSSERVER_IMAGE_BIT)
 
 clean_nfsserver:
 	$(RM) -rf $(BITS_DIR)/nfsserver
-	(cd build/sdc-nfsserver && gmake clean)
+	(cd build/nfsserver && gmake clean)
 
 
 #---- Propeller
