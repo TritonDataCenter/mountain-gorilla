@@ -5,7 +5,7 @@
 #
 
 #
-# Copyright 2015 Joyent, Inc.
+# Copyright 2016 Joyent, Inc.
 #
 
 #
@@ -1890,6 +1890,45 @@ marlin-dashboard_publish_image: $(MARLIN_DASHBOARD_IMAGE_BIT)
 clean_marlin-dashboard:
 	$(RM) -rf $(BITS_DIR)/marlin-dashboard
 	(cd build/manta-marlin-dashboard && gmake distclean)
+
+#---- NFSSERVER
+
+_nfsserver_stamp=$(NFSSERVER_BRANCH)-$(TIMESTAMP)-g$(NFSSERVER_SHA)
+NFSSERVER_BITS=$(BITS_DIR)/nfsserver/nfsserver-pkg-$(_nfsserver_stamp).tar.gz
+NFSSERVER_IMAGE_BIT=$(BITS_DIR)/nfsserver/nfsserver-zfs-$(_nfsserver_stamp).zfs.gz
+NFSSERVER_MANIFEST_BIT=$(BITS_DIR)/nfsserver/nfsserver-zfs-$(_nfsserver_stamp).imgmanifest
+
+.PHONY: nfsserver
+nfsserver: $(NFSSERVER_BITS) nfsserver_image
+
+$(NFSSERVER_BITS): build/nfsserver
+	@echo "# Build nfsserver: branch $(NFSSERVER_BRANCH), sha $(NFSSERVER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/nfsserver && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) $(MAKE) release publish)
+	@echo "# Created nfsserver bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(NFSSERVER_BITS)
+	@echo ""
+
+.PHONY: nfsserver_image
+nfsserver_image: $(NFSSERVER_IMAGE_BIT)
+
+$(NFSSERVER_IMAGE_BIT): $(NFSSERVER_BITS)
+	@echo "# Build nfsserver_image: branch $(NFSSERVER_BRANCH), sha $(NFSSERVER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(NFSSERVER_IMAGE_UUID)" -t $(NFSSERVER_BITS) \
+		-o "$(NFSSERVER_IMAGE_BIT)" -p $(NFSSERVER_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(NFSSERVER_EXTRA_TARBALLS) -n $(NFSSERVER_IMAGE_NAME) \
+		-v $(_nfsserver_stamp) -d $(NFSSERVER_IMAGE_DESCRIPTION)
+	@echo "# Created nfsserver image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(NFSSERVER_IMAGE_BIT))
+	@echo ""
+
+nfsserver_publish_image: $(NFSSERVER_IMAGE_BIT)
+	@echo "# Publish nfsserver image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(NFSSERVER_MANIFEST_BIT) -f $(NFSSERVER_IMAGE_BIT)
+
+clean_nfsserver:
+	$(RM) -rf $(BITS_DIR)/nfsserver
+	(cd build/nfsserver && gmake clean)
 
 
 #---- Propeller
