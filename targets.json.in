@@ -432,6 +432,29 @@ cat <<EOF
       {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
     ]
   },
+  "volapi": {
+    "appliance": "true",
+    "image_name": "volapi",
+    "image_description": "SDC Volumes API",
+    "image_version": "1.0.0",
+    "image_uuid": "de411e86-548d-11e4-a4b7-3bb60478632a",
+    "repos": [
+      {"url": "git@github.com:joyent/sdc-volapi.git"}
+    ],
+    "public": true,
+    "deps": [
+      "amon",
+      "config-agent",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "pkgsrc": [],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+    ]
+  },
   "portolan": {
     "appliance": "true",
     "image_name": "portolan",

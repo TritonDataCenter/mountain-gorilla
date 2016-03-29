@@ -1930,6 +1930,49 @@ clean_nfsserver:
 	$(RM) -rf $(BITS_DIR)/nfsserver
 	(cd build/nfsserver && gmake clean)
 
+#---- VOLAPI
+
+_volapi_stamp=$(SDC_VOLAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_VOLAPI_SHA)
+VOLAPI_BITS=$(BITS_DIR)/volapi/volapi-pkg-$(_volapi_stamp).tar.bz2
+VOLAPI_IMAGE_BIT=$(BITS_DIR)/volapi/volapi-zfs-$(_volapi_stamp).zfs.gz
+VOLAPI_MANIFEST_BIT=$(BITS_DIR)/volapi/volapi-zfs-$(_volapi_stamp).imgmanifest
+
+.PHONY: volapi
+volapi: $(VOLAPI_BITS) volapi_image
+
+# PATH for volapi build: Ensure /opt/local/bin is first to put gcc 4.5 (from
+# pkgsrc) before other GCCs.
+$(VOLAPI_BITS): build/sdc-volapi
+	@echo "# Build volapi: branch $(SDC_VOLAPI_BRANCH), sha $(SDC_VOLAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/sdc-volapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created volapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(VOLAPI_BITS)
+	@echo ""
+
+.PHONY: volapi_image
+volapi_image: $(VOLAPI_IMAGE_BIT)
+
+$(VOLAPI_IMAGE_BIT): $(VOLAPI_BITS)
+	@echo "# Build volapi_image: branch $(SDC_VOLAPI_BRANCH), sha $(SDC_VOLAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(VOLAPI_IMAGE_UUID)" -t $(VOLAPI_BITS) \
+		-o "$(VOLAPI_IMAGE_BIT)" -p $(VOLAPI_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(VOLAPI_EXTRA_TARBALLS) -n $(VOLAPI_IMAGE_NAME) \
+		-v $(_volapi_stamp) -d $(VOLAPI_IMAGE_DESCRIPTION)
+	@echo "# Created volapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(VOLAPI_IMAGE_BIT))
+	@echo ""
+
+volapi_publish_image: $(VOLAPI_IMAGE_BIT)
+	@echo "# Publish volapi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(VOLAPI_MANIFEST_BIT) -f $(VOLAPI_IMAGE_BIT)
+
+# Warning: if volapi's submodule deps change, this 'clean_volapi' is insufficient. It would
+# then need to call 'gmake dist-clean'.
+clean_volapi:
+	$(RM) -rf $(BITS_DIR)/volapi
+	(cd build/sdc-volapi && gmake clean)
+
 
 #---- Propeller
 
