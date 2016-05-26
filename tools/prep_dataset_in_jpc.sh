@@ -35,7 +35,7 @@ MG_OUT_PATH="/stor/builds"
 TOP=$(cd $(dirname $0)/../ >/dev/null; pwd)
 JSON=${TOP}/tools/json
 export PATH="${TOP}/node_modules/manta/bin:${TOP}/node_modules/smartdc/bin:${PATH}"
-image_package="g3-standard-2-smartos"
+image_package="g4-highcpu-4G"
 
 if [[ -z ${SDC_ACCOUNT} ]]; then
   export SDC_ACCOUNT="Joyent_Dev"
