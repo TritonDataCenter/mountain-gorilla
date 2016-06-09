@@ -6,22 +6,53 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright (c) 2016, Joyent, Inc.
 #
 
 #
-# Update devhub Jira projects to say a sprint release is "released".
+# Release a version on Joyent Eng Jira projects.
 #
 # Usage:
-#   ./releaseversion.sh VERSION
+#   ./releaseversion.sh [-c] VERSION [PROJECTS...]
+#
+# Options:
+#       -c      Continue, even if there are earlier failures. This can
+#               be useful to do a run through even if some projects already
+#               have the version.
 #
 # Example:
 #   ./releaseversion.sh '2011-12-29 Duffman'
+#   ./releaseversion.sh '2011-12-29 Duffman' WORKFLOW
+#   ./releaseversion.sh -c '2011-12-29 Duffman'
 #
 
-set -e
-#set -x
+if [[ -n "$TRACE" ]]; then
+    export PS4='[\D{%FT%TZ}] ${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+    set -o xtrace
+fi
+set -o errexit
+set -o pipefail
+
+
 TOP=$(cd $(dirname "$0") >/dev/null; pwd)
+
+
+
+# ---- mainline
+
+optContinue=
+while getopts "c" opt; do
+    case "$opt" in
+        c)
+            optContinue=true
+            ;;
+        *)
+            echo "error: unknown option $opt" >&2
+            exit 1
+            ;;
+    esac
+done
+shift $((OPTIND - 1))
 
 
 JIRACLI_OPTS="--server https://devhub.joyent.com/jira"
@@ -34,26 +65,34 @@ fi
 JIRACLI_OPTS+=" $(cat $JIRACLI_RC_PATH)"
 
 
-# Check if version name was supplied as parameter to script
-if [ -z "$1" ]; then
-    echo "You must specify a version name e.g. '2011-12-29 Duffman' on the command line.";
+if [[ -z "$1" ]]; then
+    echo "Provide VERSION name, e.g. $0 '2012-03-22 Jimbo'";
     exit 1
 fi
-VERSION_TO_RELEASE=$1
+VERSION=$1
+
+PROJECTS=$*
+if [[ -z "$PROJECTS" ]]; then
+    PROJECTS=$($TOP/listengprojects.sh | xargs)
+fi
 
 
-echo "This will 'release' version '$VERSION_TO_RELEASE' for all devhub Jira projects."
+echo "This will *release* the following version to these Joyent Jira projects:"
+echo "        version: '$VERSION'"
+echo "       projects: $(echo "$PROJECTS" | xargs)"
+echo ""
 read -p "Hit Enter to continue..."
 echo
 
-PROJECTS=$($TOP/jira.sh `cat ~/.jiraclirc` --action getProjectList --server https://devhub.joyent.com/jira \
-    | python -c "import sys, csv; rows = list(csv.reader(sys.stdin)); projects = ['%s  %s' % (r[0], r[2]) for r in rows[2:] if r]; print '\n'.join(projects)" \
-    | grep -v Archived | cut -d' ' -f1 | xargs)
-
 for project in $PROJECTS
 do
-  echo "# $project: release version '$VERSION_TO_RELEASE'"
-  #$TOP/jira.sh $JIRACLI_OPTS --action getIssue --issue MON-1   # testing auth
-  $TOP/jira.sh $JIRACLI_OPTS --action releaseVersion  \
-    --project $project  --name "$VERSION_TO_RELEASE"  || true
+    echo "# $project: release version '$VERSION'"
+    if [[ "$optContinue" == "true" ]]; then
+        # Allow failures with '-c'.
+        $TOP/jira.sh $JIRACLI_OPTS --action releaseVersion  \
+          --project $project --name "$VERSION" || true
+    else
+        $TOP/jira.sh $JIRACLI_OPTS --action releaseVersion  \
+          --project $project --name "$VERSION"
+    fi
 done
