@@ -269,51 +269,6 @@ clean_ufds:
 	(cd build/sdc-ufds && gmake clean)
 
 
-#---- usageapi
-
-_usageapi_stamp=$(USAGEAPI_BRANCH)-$(TIMESTAMP)-g$(USAGEAPI_SHA)
-USAGEAPI_BITS=$(BITS_DIR)/usageapi/usageapi-pkg-$(_usageapi_stamp).tar.bz2
-USAGEAPI_IMAGE_BIT=$(BITS_DIR)/usageapi/usageapi-zfs-$(_usageapi_stamp).zfs.gz
-USAGEAPI_MANIFEST_BIT=$(BITS_DIR)/usageapi/usageapi-zfs-$(_usageapi_stamp).imgmanifest
-
-.PHONY: usageapi
-usageapi: $(USAGEAPI_BITS) usageapi_image
-
-# PATH for ufds build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
-$(USAGEAPI_BITS): build/usageapi
-	@echo "# Build usageapi: branch $(USAGEAPI_BRANCH), sha $(USAGEAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/usageapi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
-	@echo "# Created usageapi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(USAGEAPI_BITS)
-	@echo ""
-
-.PHONY: usageapi_image
-usageapi_image: $(USAGEAPI_IMAGE_BIT)
-
-$(USAGEAPI_IMAGE_BIT): $(USAGEAPI_BITS)
-	@echo "# Build usageapi_image: branch $(USAGEAPI_BRANCH), sha $(USAGEAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(USAGEAPI_IMAGE_UUID)" -t $(USAGEAPI_BITS) \
-		-o "$(USAGEAPI_IMAGE_BIT)" -p $(USAGEAPI_PKGSRC) -O "$(MG_OUT_PATH)" \
-		-t $(USAGEAPI_EXTRA_TARBALLS) -n $(USAGEAPI_IMAGE_NAME) \
-		-v $(_usageapi_stamp) -d $(USAGEAPI_IMAGE_DESCRIPTION)
-	@echo "# Created usageapi image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(USAGEAPI_IMAGE_BIT))
-	@echo ""
-
-usageapi_publish_image: $(USAGEAPI_IMAGE_BIT)
-	@echo "# Publish usageapi image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(USAGEAPI_MANIFEST_BIT) -f $(USAGEAPI_IMAGE_BIT)
-
-
-# Warning: if usageapi's submodule deps change, this 'clean_ufds' is insufficient. It would
-# then need to call 'gmake dist-clean'.
-clean_usageapi:
-	$(RM) -rf $(BITS_DIR)/usageapi
-	(cd build/usageapi && gmake clean)
-
-
 #---- ASSETS
 
 _assets_stamp=$(SDC_ASSETS_BRANCH)-$(TIMESTAMP)-g$(SDC_ASSETS_SHA)
