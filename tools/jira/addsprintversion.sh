@@ -70,6 +70,7 @@ if [[ -z "$1" ]]; then
     exit 1
 fi
 VERSION=$1
+shift
 
 YEAR=$(echo $VERSION | cut -c 1-4)
 MONTH=$(echo $VERSION | cut -c 6-7)
@@ -77,7 +78,7 @@ DAY=$(echo $VERSION | cut -c 9-10)
 RELEASE_DATE=$MONTH/$DAY/$YEAR
 # TODO: validate this?
 
-PROJECTS=$*
+PROJECTS="$*"
 if [[ -z "$PROJECTS" ]]; then
     PROJECTS=$($TOP/listengprojects.sh | xargs)
 fi

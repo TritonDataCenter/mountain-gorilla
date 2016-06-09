@@ -70,8 +70,9 @@ if [[ -z "$1" ]]; then
     exit 1
 fi
 VERSION=$1
+shift
 
-PROJECTS=$*
+PROJECTS="$*"
 if [[ -z "$PROJECTS" ]]; then
     PROJECTS=$($TOP/listengprojects.sh | xargs)
 fi
