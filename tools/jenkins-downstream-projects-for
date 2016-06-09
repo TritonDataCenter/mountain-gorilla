@@ -1,0 +1,52 @@
+#!/usr/bin/env /bin/bash
+#
+# List downstream projects for the give targets. This is intended to be used
+# to update the Jenkins job config:
+#
+#   Post-build Actions
+#       > Trigger parameteried build on other projects
+#           > Projects to build
+#
+# Assumption: MG target names match Jenkins job names. I think that is currently
+# always the case.
+#
+# Usage:
+#   ./tools/jenkins-downstream-projects-for TARGET
+#
+# Example:
+#   ./tools/jenkins-downstream-projects-for registrar
+#
+
+if [[ -n "$TRACE" ]]; then
+    export PS4='[\D{%FT%TZ}] ${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+    set -o xtrace
+fi
+set -o errexit
+set -o pipefail
+
+
+#---- support stuff
+
+function fatal
+{
+    echo "$0: fatal error: $*"
+    exit 1
+}
+
+#---- mainline
+
+
+TARGET=$1
+[[ -n "$TARGET" ]] || fatal "missing TARGET argument"
+
+
+echo "# Update 'Projects to build' at:" >&2
+echo "#     https://jenkins.joyent.us/job/$TARGET/configure" >&2
+echo "# with the following:" >&2
+
+JOYENT_BUILD=true bash targets.json.in >targets.json
+# Skip 'headnode*' builds because we just build them periodically. They are
+# huge and less often used.
+json -f targets.json -M -a key \
+    -c "~this.value.deps.indexOf('$TARGET') && this.key.indexOf('headnode') !== 0" \
+    | sort | xargs | sed -e 's/ /,/g'
