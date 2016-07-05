@@ -1459,7 +1459,7 @@ napi: $(NAPI_BITS) napi_image
 $(NAPI_BITS): build/sdc-napi
 	@echo "# Build napi: branch $(SDC_NAPI_BRANCH), sha $(SDC_NAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/sdc-napi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg test release publish)
+	(cd build/sdc-napi && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake pkg release publish)
 	@echo "# Created napi bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(NAPI_BITS)
 	@echo ""
