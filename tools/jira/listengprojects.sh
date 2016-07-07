@@ -40,5 +40,5 @@ PROJECTS=$($TOP/jira.sh $JIRACLI_OPTS --action getProjectList \
     | python -c "import sys, csv; rows = list(csv.reader(sys.stdin)); projects = ['%s  %s' % (r[0], r[2]) for r in rows[2:] if r]; print '\n'.join(projects)" \
     | grep -v Archived \
     | awk '{print $1}' \
-    | grep -v '^\(BILLOPS\|CFB\|CM\|COMM\|DASH\|DCOPS\|ELBAPI\|INC\|INCDEV\|JPC\|KFC\|MKTG\|NETOPS\|OPS\|PM\|QA\|RICHMOND\|SOLENG\|STOR\|SWSUP\|SYSSCI\|VICTORY\|ZUORA\)$')
+    | grep -v '^\(BILLOPS\|CFB\|CM\|COMM\|DASH\|DCOPS\|ELBAPI\|INC\|INCDEV\|JPC\|KFC\|MKTG\|NETOPS\|OPS\|PM\|PRODSUP\|QA\|RICHMOND\|SOLENG\|STOR\|SWSUP\|SYSSCI\|VICTORY\|ZUORA\)$')
 echo "$PROJECTS"
