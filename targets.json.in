@@ -77,7 +77,7 @@ if [[ "${JOYENT_BUILD}" == "true" ]]; then
   FIRMWARE_TOOLS_ENTRY='
   "firmware-tools": {
     "repos": [
-        {"url": "git@git.joyent.com:firmware-tools.git"}
+        {"url": "git@github.com:joyent/firmware-tools.git"}
     ],
     "public": false,
     "deps": []
