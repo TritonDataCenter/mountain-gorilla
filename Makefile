@@ -2815,6 +2815,7 @@ $(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-b
 		if [ $$? -eq 2 ]; then \
 			exit 0; \
 		fi; \
+		cd ../.. || exit 1; \
 		cp $(PLATFORM_BUILD_TAR_IMAGES) $(PLATFORM_BITS_TAR_IMAGES))
 	@echo "# Created platform bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(PLATFORM_BITS)
