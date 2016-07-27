@@ -2733,10 +2733,22 @@ else
 PLATFORM_TRY_BRANCH=$(TRY_BRANCH)
 endif
 
+PLATFORM_BUILD_DIR=build/smartos-live/output
+
+PLATFORM_BUILD_TAR_PLATFORM=$(PLATFORM_BUILD_DIR)/platform-$(TIMESTAMP).tgz
+PLATFORM_BUILD_TAR_BOOT=$(PLATFORM_BUILD_DIR)/boot-$(TIMESTAMP).tgz
+PLATFORM_BUILD_TAR_IMAGES=$(PLATFORM_BUILD_DIR)/images-$(TIMESTAMP).tgz
+
+PLATFORM_BITS_DIR=$(BITS_DIR)/platform$(PLAT_SUFFIX)
+PLATFORM_TAR_SUFFIX=$(PLAT_SUFFIX)-$(PLATFORM_TRY_BRANCH)-$(TIMESTAMP).tgz
+
+PLATFORM_BITS_TAR_PLATFORM=$(PLATFORM_BITS_DIR)/platform$(PLATFORM_TAR_SUFFIX)
+PLATFORM_BITS_TAR_BOOT=$(PLATFORM_BITS_DIR)/boot$(PLATFORM_TAR_SUFFIX)
+PLATFORM_BITS_TAR_IMAGES=$(PLATFORM_BITS_DIR)/images$(PLATFORM_TAR_SUFFIX)
+
 PLATFORM_BITS= \
-	$(BITS_DIR)/platform$(PLAT_SUFFIX)/platform$(PLAT_SUFFIX)-$(PLATFORM_TRY_BRANCH)-$(TIMESTAMP).tgz \
-	$(BITS_DIR)/platform$(PLAT_SUFFIX)/boot$(PLAT_SUFFIX)-$(PLATFORM_TRY_BRANCH)-$(TIMESTAMP).tgz
-PLATFORM_BITS_0=$(shell echo $(PLATFORM_BITS) | awk '{print $$1}')
+	$(PLATFORM_BITS_TAR_PLATFORM) \
+	$(PLATFORM_BITS_TAR_BOOT)
 PLATFORM_MANIFEST_BIT=platform.imgmanifest
 
 platform : PLAT_SUFFIX += ""
@@ -2751,11 +2763,11 @@ platform-smartos : PLAT_FLAVOR = "-smartos"
 
 
 .PHONY: platform platform-debug platform-smartos
-platform platform-debug platform-smartos: smartos_live_make_check $(PLATFORM_BITS_0)
+platform platform-debug platform-smartos: smartos_live_make_check $(PLATFORM_BITS_TAR_PLATFORM)
 
 build/smartos-live/configure.mg:
 	sed -e "s:GITCLONESOURCE:$(shell pwd)/build/:" \
-		<smartos-live-configure$(PLAT_FLAVOR).mg.in >build/smartos-live/configure.mg
+		<smartos-live-configure$(PLAT_FLAVOR).mg.in >$@
 
 build/smartos-live/configure-branches:
 	sed \
@@ -2765,7 +2777,7 @@ build/smartos-live/configure-branches:
 		-e "s:ILLUMOS_KVM_BRANCH:$(ILLUMOS_KVM_BRANCH):" \
 		-e "s:ILLUMOS_KVM_CMD_BRANCH:$(ILLUMOS_KVM_CMD_BRANCH):" \
 		-e "s:MDATA_CLIENT_BRANCH:$(MDATA_CLIENT_BRANCH):" \
-		<smartos-live-configure-branches$(PLAT_FLAVOR).in >build/smartos-live/configure-branches
+		<smartos-live-configure-branches$(PLAT_FLAVOR).in >$@
 
 .PHONY: smartos_live_make_check
 smartos_live_make_check:
@@ -2783,9 +2795,28 @@ $(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-b
 		&& PATH=/usr/sfw/bin:$(PATH) \
 			BUILDSTAMP=$(TIMESTAMP) \
 			gmake live pkgsrc)
+	#
+	# The "images-tar" target has not always existed, so we need to check
+	# if this version of the platform has it before blindly invoking it.
+	# GNU make has a "-q" flag that exits 0 or 1 if a target exists, or
+	# 2 otherwise.
+	#
+	(cd build/smartos-live || exit 1; \
+		gmake -q images-tar; \
+		if [ $$? -eq 2 ]; then \
+			exit 0; \
+		fi; \
+		BUILDSTAMP=$(TIMESTAMP) gmake images-tar)
 	(mkdir -p $(BITS_DIR)/platform$(PLAT_SUFFIX))
-	(cp build/smartos-live/output/platform-$(TIMESTAMP).tgz $(BITS_DIR)/platform$(PLAT_SUFFIX)/platform$(PLAT_SUFFIX)-$(PLATFORM_TRY_BRANCH)-$(TIMESTAMP).tgz)
-	(cp build/smartos-live/output/boot-$(TIMESTAMP).tgz $(BITS_DIR)/platform$(PLAT_SUFFIX)/boot$(PLAT_SUFFIX)-$(PLATFORM_TRY_BRANCH)-$(TIMESTAMP).tgz)
+	(cp $(PLATFORM_BUILD_TAR_PLATFORM) $(PLATFORM_BITS_TAR_PLATFORM))
+	(cp $(PLATFORM_BUILD_TAR_BOOT) $(PLATFORM_BITS_TAR_BOOT))
+	(cd build/smartos-live || exit 1; \
+		gmake -q images-tar; \
+		if [ $$? -eq 2 ]; then \
+			exit 0; \
+		fi; \
+		cd ../.. || exit 1; \
+		cp $(PLATFORM_BUILD_TAR_IMAGES) $(PLATFORM_BITS_TAR_IMAGES))
 	@echo "# Created platform bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(PLATFORM_BITS)
 	@echo ""
@@ -2800,11 +2831,12 @@ platform_publish_image: $(PLATFORM_BITS)
 	    -e "s/UUID/$$(cat $(TMPDIR)/image_uuid)/" \
 	    -e "s/VERSION_STAMP/$(PLATFORM_TRY_BRANCH)-$(TIMESTAMP)/" \
 	    -e "s/BUILDSTAMP/$(PLATFORM_TRY_BRANCH)-$(TIMESTAMP)/" \
-	    -e "s/SIZE/$$(stat --printf="%s" $(PLATFORM_BITS_0))/" \
-	    -e "s/SHA/$$(openssl sha1 $(PLATFORM_BITS_0) \
+	    -e "s/SIZE/$$(stat --printf="%s" $(PLATFORM_BITS_TAR_PLATFORM))/" \
+	    -e "s/SHA/$$(openssl sha1 $(PLATFORM_BITS_TAR_PLATFORM) \
 	        | cut -d ' ' -f2)/" \
 	    > $(PLATFORM_MANIFEST_BIT)
-	$(UPDATES_IMGADM) import -ddd -m $(PLATFORM_MANIFEST_BIT) -f $(PLATFORM_BITS_0)
+	$(UPDATES_IMGADM) import -ddd -m $(PLATFORM_MANIFEST_BIT) \
+	    -f $(PLATFORM_BITS_TAR_PLATFORM)
 
 clean_platform:
 	$(RM) -rf $(BITS_DIR)/platform
