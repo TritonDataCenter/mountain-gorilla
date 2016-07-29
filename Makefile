@@ -2802,16 +2802,16 @@ $(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-b
 	# 2 otherwise.
 	#
 	(cd build/smartos-live || exit 1; \
-		PATH=/usr/sfw/bin:$(PATH) gmake -q images-tar; \
+		gmake -q images-tar; \
 		if [ $$? -eq 2 ]; then \
 			exit 0; \
 		fi; \
-		PATH=/usr/sfw/bin:$(PATH) gmake images-tar)
+		BUILDSTAMP=$(TIMESTAMP) gmake images-tar)
 	(mkdir -p $(BITS_DIR)/platform$(PLAT_SUFFIX))
 	(cp $(PLATFORM_BUILD_TAR_PLATFORM) $(PLATFORM_BITS_TAR_PLATFORM))
 	(cp $(PLATFORM_BUILD_TAR_BOOT) $(PLATFORM_BITS_TAR_BOOT))
 	(cd build/smartos-live || exit 1; \
-		PATH=/usr/sfw/bin:$(PATH) gmake -q images-tar; \
+		gmake -q images-tar; \
 		if [ $$? -eq 2 ]; then \
 			exit 0; \
 		fi; \
