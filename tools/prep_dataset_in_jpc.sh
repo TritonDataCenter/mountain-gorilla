@@ -362,7 +362,7 @@ if [[ -n ${SDC_LOCAL_BUILD} ]]; then
     curl -sS -f -o ${output_dir}/${image_filename} ${SDC_IMGAPI_URL}/images/${image_id}/file
 
 else
-    mantapath=/${SDC_ACCOUNT}${MG_OUT_PATH}/${build_name}/$(echo ${image_version} | cut -d '-' -f1,2)/${build_name}
+    mantapath=/${SDC_ACCOUNT}${MG_OUT_PATH}/${build_name}/$(echo ${image_version} | sed -E 's/-g[a-f0-9]{7,40}$//')/${build_name}
     mmkdir -p ${mantapath}
 
     manta_bits=/tmp/manta-exported-image.$$
