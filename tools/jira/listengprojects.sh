@@ -10,8 +10,21 @@
 #
 
 #
-# List the Joyent Engineering Jira projects.
-# This definition is a little bit fluid.
+# List the Joyent Engineering Jira projects. This is defined as the set of
+# Jira projects on which we want the bi-weekly engineering release versions.
+# E.g., these ones:
+#
+#    $ jirash versions HEAD
+#    ...
+#    17529  2016-07-07 Super Stretch        released  archived
+#    17591  2016-07-21 Tangent Man          released         -
+#    17646  2016-08-04 Uncle Jumbo                 -         -
+#    ...
+#
+# When adding a new Jira project for eng the process is:
+# - add it to jira
+# - add it to the whitelist here
+# - manually add the upcoming sprint versions (see ./addsprintversion.sh) to it
 #
 
 if [[ -n "$TRACE" ]]; then
@@ -21,24 +34,49 @@ fi
 set -o errexit
 set -o pipefail
 
+ENG_PROJECTS="ADMINUI
+AGENT
+BILLING
+CAPI
+CMON
+CNAPI
+CNS
+DAPI
+DATASET
+DCAPI
+DOC
+DOCKER
+ENG
+FWAPI
+HEAD
+HVM
+IMAGE
+IMGAPI
+INTRO
+LAB
+MANATEE
+MANTA
+MON
+MORAY
+NAPI
+NET
+OS
+PAPI
+PORTAL
+PROV
+PUBAPI
+RBAC
+RELENG
+RICHMOND
+ROGUE
+SAPI
+SKATE
+SSO
+STG
+TOOLS
+VCAPI
+VOLAPI
+WORKFLOW
+ZAPI"
 
-TOP=$(cd $(dirname "$0") >/dev/null; pwd)
-
-JIRACLI_OPTS="--server https://devhub.joyent.com/jira"
-JIRACLI_RC_PATH="$HOME/.jiraclirc"
-if [ ! -f "$JIRACLI_RC_PATH" ]; then
-    echo "'$JIRACLI_RC_PATH' does not exist. You need one that looks like this:"
-    echo "    --user=joe.blow --password='his-jira-password'"
-    exit 1
-fi
-JIRACLI_OPTS+=" $(cat $JIRACLI_RC_PATH)"
-
-
-# Here we are blacklisting instead of whitelisting, on the theory that
-# automatically adding versions to new projects is preferred.
-PROJECTS=$($TOP/jira.sh $JIRACLI_OPTS --action getProjectList \
-    | python -c "import sys, csv; rows = list(csv.reader(sys.stdin)); projects = ['%s  %s' % (r[0], r[2]) for r in rows[2:] if r]; print '\n'.join(projects)" \
-    | grep -v Archived \
-    | awk '{print $1}' \
-    | grep -v '^\(BILLOPS\|CFB\|CM\|COMM\|DASH\|DCOPS\|ELBAPI\|INC\|INCDEV\|JPC\|KFC\|MKTG\|NETOPS\|OPS\|PM\|PRODSUP\|QA\|RICHMOND\|SOLENG\|STOR\|SWSUP\|SYSSCI\|VICTORY\|ZUORA\)$')
-echo "$PROJECTS"
+echo "$ENG_PROJECTS"
