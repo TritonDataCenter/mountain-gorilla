@@ -1,0 +1,348 @@
+#!/bin/bash
+#
+# This Source Code Form is subject to the terms of the Mozilla Public
+# License, v. 2.0. If a copy of the MPL was not distributed with this
+# file, You can obtain one at http://mozilla.org/MPL/2.0/.
+#
+
+#
+# Copyright 2016 Joyent, Inc.
+#
+
+#
+# Purge mountain-gorilla (MG) builds from Manta.
+#
+# Usage:
+#       purge-mg-builds -h                              # help output
+#       purge-mg-builds /Joyent_Dev/public/builds       # dry-run by default
+#       purge-mg-builds -f /Joyent_Dev/public/builds    # '-f' to actually del
+#
+# Builds build up in Manta. They need to eventually be purged so they don't
+# take up ever increasing space. This script knows how to remove old MG-style
+# builds from a given Manta dir. This script encodes retention policy for
+# Joyent builds per
+# [RFD 47](https://github.com/joyent/rfd/blob/master/rfd/0047/README.md#builds).
+#
+# Here "MG-style" means the typical build dir layout used by tooling in
+# mountain-gorilla.git (and some others) for Joyent engineering builds:
+#
+#                                   # Example:
+#   $basedir/                       #   /Joyent_Dev/public/builds/
+#       $name/                      #       imgapi/
+#           $branch-$timestamp/     #           master-20160720T031418Z
+#               ...
+#           $branch-latest          #           master-latest
+#
+# For example:
+#
+#   $ mls /Joyent_Dev/public/builds/imgapi
+#   ...
+#   HEAD-2308-20160719T063933Z/
+#   HEAD-2308-latest
+#   master-20140929T205512Z/
+#   ...
+#   master-20160720T033514Z/
+#   master-latest
+#   ...
+#   release-20160721-20160721T180146Z/
+#   release-20160721-latest
+#   release-20160804-20160804T172843Z/
+#   release-20160804-20160804T182751Z/
+#   release-20160804-latest
+#
+
+if [[ -n "$TRACE" ]]; then
+    if [[ -t 1 ]]; then
+        export PS4='\033[90m[\D{%FT%TZ}] ${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }\033[39m'
+    else
+        export PS4='[\D{%FT%TZ}] ${BASH_SOURCE}:${LINENO}: ${FUNCNAME[0]:+${FUNCNAME[0]}(): }'
+    fi
+    set -o xtrace
+fi
+set -o errexit
+set -o pipefail
+
+
+#---- globals, config
+
+#
+# A mapping from build name to the number of days' builds to keep.
+#
+# TTL (Time To Live) values are from RFD 47
+# (https://github.com/joyent/rfd/blob/master/rfd/0047/README.md#builds).
+#
+# Deliberately excluded build names for now (and the reason why):
+#    agentsshar-upgrade             paranoia
+#    incr-upgrade                   paranoia
+#    platform                       want to discuss with OS guys
+#    platform-debug                 want to discuss with OS guys
+#    sdcsso                         build story isn't clear, eng hands off here
+#
+TTL_DAYS_FROM_NAME='{
+    "headnode": 30,
+    "headnode-debug": 30,
+    "headnode-joyent": 30,
+    "headnode-joyent-debug": 30,
+
+    "adminui": 365,
+    "agents_core": 365,
+    "agentsshar": 365,
+    "amon": 365,
+    "amonredis": 365,
+    "assets": 365,
+    "binder": 365,
+    "ca": 365,
+    "cloudapi": 365,
+    "cn-agent": 365,
+    "cnapi": 365,
+    "cns": 365,
+    "config-agent": 365,
+    "dhcpd": 365,
+    "docker": 365,
+    "dockerlogger": 365,
+    "electric-moray": 365,
+    "firewaller": 365,
+    "firmware-tools": 365,
+    "fwapi": 365,
+    "gz-tools": 365,
+    "hagfish-watcher": 365,
+    "heartbeater": 365,
+    "hostvolume": 365,
+    "imgapi": 365,
+    "mackerel": 365,
+    "madtom": 365,
+    "mahi": 365,
+    "mako": 365,
+    "manta-deployment": 365,
+    "manta-manatee": 365,
+    "marlin": 365,
+    "marlin-dashboard": 365,
+    "medusa": 365,
+    "minnow": 365,
+    "mockcloud": 365,
+    "mockcn": 365,
+    "mola": 365,
+    "moray": 365,
+    "muppet": 365,
+    "muskie": 365,
+    "napi": 365,
+    "nat": 365,
+    "net-agent": 365,
+    "nfs": 365,
+    "nfsserver": 365,
+    "papi": 365,
+    "portolan": 365,
+    "propeller": 365,
+    "provisioner": 365,
+    "rabbitmq": 365,
+    "redis": 365,
+    "registrar": 365,
+    "sapi": 365,
+    "sdc": 365,
+    "sdc-manatee": 365,
+    "sdc-system-tests": 365,
+    "sdc-zookeeper": 365,
+    "sdcadm": 365,
+    "sdcboot": 365,
+    "smartlogin": 365,
+    "smartos": 365,
+    "ufds": 365,
+    "vapi": 365,
+    "vm-agent": 365,
+    "vmapi": 365,
+    "volapi": 365,
+    "workflow": 365,
+    "wrasse": 365
+}'
+
+
+opt_dryrun=yes    # Dry-run by default.
+opt_quiet=no
+
+
+#---- functions
+
+function usage() {
+    if [[ -n "$1" ]]; then
+        echo "error: $1"
+        echo ""
+    fi
+    echo 'Usage:'
+    echo '  purge-mg-builds [<options>] MANTA-BUILDS-DIR [NAMES...]'
+    echo ''
+    echo 'Options:'
+    echo '  -h          Print this help and exit.'
+    echo '  -q          Quiet output.'
+    echo '  -n          Dry-run (the default!).'
+    echo '  -f          Force actually doing deletions.'
+    echo ''
+    echo 'Examples:'
+    echo '  purge-mg-builds /Joyent_Dev/public/builds     # dry-run by default'
+    echo '  purge-mg-builds -f /Joyent_Dev/public/builds  # -f to actually rm'
+    echo '  purge-mg-builds -f /Joyent_Dev/public/builds vmapi   # limit subdir'
+    if [[ -n "$1" ]]; then
+        exit 1
+    else
+        exit 0
+    fi
+}
+
+function fatal {
+    echo "$(basename $0): error: $1" >&2
+    exit 1
+}
+
+function errexit
+{
+    [[ $1 -ne 0 ]] || exit 0
+    fatal "error exit status $1"
+}
+
+function log
+{
+    if [[ "$opt_quiet" == "no" ]]; then
+        echo "$*"
+    fi
+}
+
+function ttl_days_from_name
+{
+    local name
+    name=$1
+
+    echo "$TTL_DAYS_FROM_NAME" | json -- $name
+}
+
+function has_dir_expired
+{
+    local dir
+    local ttl_days
+    dir=$1
+    ttl_days=$2
+
+    echo "has_dir_expired $dir $ttl_days"
+}
+
+function purge_dir
+{
+    local dir
+    dir="$1"
+    log "mrm -r $dir"
+    if [[ "$opt_dryrun" == "no" ]]; then
+        mrm -r "$dir"
+    fi
+}
+
+function purge_file_if_exist
+{
+    local file
+    local exists
+
+    file="$1"
+
+    # TODO: would be nice to have an example in `man mls` on how to do exists
+    # TODO: would be nice to have mtest to have `mtest -f ...` etc.
+    set +o errexit
+    exists=$(mls $file 2>/dev/null)
+    set -o errexit
+
+    if [[ -n "$exists" ]]; then
+        log "mrm    $file"   # spacing to line up with purge_dir log line
+        if [[ "$opt_dryrun" == "no" ]]; then
+            mrm "$file"
+        fi
+    fi
+}
+
+function purge_mg_builds
+{
+    local builds_dir
+    local name
+    local ttl_days
+    local cutoff
+    local dir
+    local dirs
+    local branches
+    local branch_dirs
+    local purged_all_in_branch
+
+    builds_dir=$1
+    name=$2
+    ttl_days=$(ttl_days_from_name $name)
+
+    if [[ -z "$ttl_days" ]]; then
+        log "# skip $builds_dir/$name: do not have a TTL for '$name'"
+        return
+    fi
+
+    # The 'cutoff' is the current time minus the ttl_days number of days,
+    # in the same format as the datestamps in the build dirs: YYYYMMDDTHHMMSSZ.
+    cutoff=$(node -e "c=new Date();
+        c.setDate(c.getDate() - $ttl_days);
+        console.log(c.toISOString().replace(/-|:|\.\d{3}/g,''))")
+    dryrun_msg=
+    if [[ $opt_dryrun != "no" ]]; then
+        dryrun_msg=", dry-run"
+    fi
+    log "# purge-mg-builds in $builds_dir/$name older than $cutoff" \
+        "(ttl $ttl_days days$dryrun_msg)"
+    dir=$builds_dir/$name
+    dirs=$(mls --type d $dir | sed -E 's#/$##')
+    branches=$(echo "$dirs" | sed -E 's/-[0-9]{8}T[0-9]{6}Z$//' | sort | uniq)
+
+    for branch in $branches; do
+        branch_dirs=$(echo "$dirs" | grep "^$branch-")
+        purged_all_in_branch=yes
+        for branch_dir in $branch_dirs; do
+            if [[ "$branch_dir" < "$branch-$cutoff" ]]; then
+                #log "# $branch_dir has expired"
+                purge_dir $dir/$branch_dir
+            else
+                purged_all_in_branch=no
+            fi
+        done
+
+        if [[ $purged_all_in_branch == "yes" ]]; then
+            purge_file_if_exist $dir/$branch-latest
+        fi
+    done
+}
+
+
+#---- mainline
+
+trap 'errexit $?' EXIT
+
+while getopts "hqnf" ch; do
+    case "$ch" in
+    h)
+        usage
+        ;;
+    q)
+        opt_quiet=yes
+        ;;
+    n)
+        opt_dryrun=yes
+        ;;
+    f)
+        opt_dryrun=no
+        ;;
+    *)
+        usage "illegal option -- $OPTARG"
+        ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+BUILDS_DIR=$1
+[[ -n "$BUILDS_DIR" ]] || fatal "MANTA-BUILDS-DIR argument not given"
+shift
+NAMES="$*"
+
+if [[ -z "$NAMES" ]]; then
+    NAMES=$(mls --type d $BUILDS_DIR | sed -e 's#/$##' | xargs)
+fi
+
+for name in $NAMES; do
+    purge_mg_builds "$BUILDS_DIR" "$name"
+done
