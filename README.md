@@ -5,28 +5,29 @@
 -->
 
 <!--
-    Copyright (c) 2014, Joyent, Inc.
+    Copyright (c) 2016, Joyent, Inc.
 -->
 
 # mountain-gorilla
 
-This repository is part of the Joyent SmartDataCenter project (SDC).  For
-contribution guidelines, issues, and general documentation, visit the main
-[SDC](http://github.com/joyent/sdc) project page.
+This repository is part of the Joyent Triton project. See the [contribution
+guidelines](https://github.com/joyent/triton/blob/master/CONTRIBUTING.md) --
+*Triton does not use GitHub PRs* -- and general documentation at the main
+[Triton project](https://github.com/joyent/triton) page.
 
-A single repo to build all the parts of SDC. This is just a *build driver*
+A single repo to build all the parts of Triton. This is just a *build driver*
 repo, all the components are still in their respective repos.
 See <https://mo.joyent.com/docs/mg> for a more complete introduction.
 
 
 # Quick start
 
-While MG theoretically knows how to "build the world", i.e all of SDC,
+While MG theoretically knows how to "build the world", i.e all of Triton,
 the typical usage is to build one piece at a time. There is a make target
-(or targets) for each SDC component. So, for example, here is how you
+(or targets) for each Triton component. So, for example, here is how you
 build VMAPI:
 
-    git clone git@github.com:joyent/mountain-gorilla.git
+    git clone --origin=cr https://cr.joyent.us/joyent/mountain-gorilla.git
     cd mountain-gorilla
     ./configure -t vmapi -d Joyent_Dev  # generates bits/config.mk and fetches repo and deps
     make vmapi                          # builds in build/vmapi, bits in bits/...
@@ -79,7 +80,7 @@ Joyent products:
 # Prerequisites
 
 The "tools/mk-jenkins-slave/mk-jenkins-slave.sh" script is used to build
-new Jenkins (CI system) slaves and set them up for building SDC. Basically
+new Jenkins (CI system) slaves and set them up for building Triton. Basically
 it creates a new zone (current using the smartos-1.6.3 image) passing in
 "tools/mk-jenkins-slave/jenkins-slave-setup.user-script". See
 "tools/mk-jenkins-slave/README.md" for how to create a new build zone
@@ -90,7 +91,7 @@ for yourself, but basically it means running this from the GZ:
 If you already have a zone that you want to setup, you *should* be able to just
 manually run that user script (though that hasn't been tested).
 
-You should now be able to build mountain-gorilla (MG): i.e. all of SDC.
+You should now be able to build mountain-gorilla (MG): i.e. all of Triton.
 Let's try that:
 
     git clone git@github.com:joyent/mountain-gorilla.git
@@ -213,7 +214,7 @@ details.
 
 # Package Versioning
 
-Thou shalt name thy SDC constituent build bits as follows:
+Thou shalt name thy Triton constituent build bits as follows:
 
     NAME-BRANCH-TIMESTAMP[-GITDESCRIBE].TGZ
 
@@ -290,7 +291,7 @@ name so there shouldn't be a mismatch.
 
 ## Suggested Versioning Usage
 
-It is suggested that the SDC repos use something like this at the top of
+It is suggested that the Triton repos use something like this at the top of
 their Makefile to handle package naming (using the Joyent Engineering
 Guidelines, eng.git):
 
