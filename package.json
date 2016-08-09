@@ -5,7 +5,7 @@
   "author": "Joyent (joyent.com)",
   "private": true,
   "dependencies": {
-    "manta": "1.4.3",
+    "manta": "3.0.0",
     "smartdc": "7.3.0",
     "imgapi-cli": "git+ssh://git@github.com:joyent/sdc-imgapi-cli.git#38332b1"
   },

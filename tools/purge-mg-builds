@@ -65,6 +65,10 @@ set -o pipefail
 
 #---- globals, config
 
+# Get `mls` et al on the PATH.
+TOP=$(cd $(dirname $0)/../ >/dev/null; pwd)
+export PATH=$TOP/node_modules/.bin:$PATH
+
 #
 # A mapping from build name to the number of days' builds to keep.
 #
