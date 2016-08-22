@@ -31,6 +31,16 @@
 set -o errexit
 unset LD_LIBRARY_PATH   # ensure don't get Java's libs (see OS-703)
 
+#
+# Refuse to build if /tmp is tmpfs until OS-5608 is fixed.
+# Try to umount if mounted, if that fails: blow up.
+#
+if mount | grep ^/tmp; then
+    if ! umount /tmp; then
+        echo "FATAL: refusing to use mounted /tmp (See: RELENG-711)" >&2
+        exit 1
+    fi
+fi
 
 # ---- First pass:
 # 1. parse params
