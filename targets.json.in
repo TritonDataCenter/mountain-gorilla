@@ -584,9 +584,15 @@ cat <<EOF
     "appliance": "true",
     "image_name": "imgapi",
     "image_description": "SDC IMGAPI",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
+    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
     "pkgsrc": [
-        "xz-5.0.3"
+        "coreutils-8.23nb2",
+        "dateutils-0.3.1nb1",
+        "xz-5.2.2",
+        "haproxy-1.6.2",
+        "stud-0.3p53nb5",
+        "the_silver_searcher-0.31.0"
     ],
     "repos": [
       {"url": "git@github.com:joyent/sdc-imgapi.git"}
