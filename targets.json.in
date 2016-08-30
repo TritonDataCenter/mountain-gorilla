@@ -589,6 +589,7 @@ cat <<EOF
     "pkgsrc": [
         "coreutils-8.23nb2",
         "dateutils-0.3.1nb1",
+        "grep-2.22",
         "xz-5.2.2",
         "haproxy-1.6.2",
         "stud-0.3p53nb5",
