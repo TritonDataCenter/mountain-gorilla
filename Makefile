@@ -919,6 +919,46 @@ clean_workflow:
 	(cd build/sdc-workflow && gmake clean)
 
 
+#---- CMON
+
+_cmon_stamp=$(TRITON_CMON_BRANCH)-$(TIMESTAMP)-g$(TRITON_CMON_SHA)
+CMON_BITS=$(BITS_DIR)/cmon/cmon-pkg-$(_cmon_stamp).tar.bz2
+CMON_IMAGE_BIT=$(BITS_DIR)/cmon/cmon-zfs-$(_cmon_stamp).zfs.gz
+CMON_MANIFEST_BIT=$(BITS_DIR)/cmon/cmon-zfs-$(_cmon_stamp).imgmanifest
+
+.PHONY: cmon
+cmon: $(CMON_BITS) cmon_image
+
+$(CMON_BITS): build/triton-cmon
+	@echo "# Build cmon: branch $(TRITON_CMON_BRANCH), sha $(TRITON_CMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/triton-cmon && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created cmon bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(CMON_BITS)
+	@echo ""
+
+.PHONY: cmon_image
+cmon_image: $(CMON_IMAGE_BIT)
+
+$(CMON_IMAGE_BIT): $(CMON_BITS)
+	@echo "# Build cmon_image: branch $(TRITON_CMON_BRANCH), sha $(TRITON_CMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(CMON_IMAGE_UUID)" -t $(CMON_BITS) \
+		-o "$(CMON_IMAGE_BIT)" -p $(CMON_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(CMON_EXTRA_TARBALLS) -n $(CMON_IMAGE_NAME) \
+		-v $(_cmon_stamp) -d $(CMON_IMAGE_DESCRIPTION)
+	@echo "# Created cmon image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(CMON_IMAGE_BIT))
+	@echo ""
+
+cmon_publish_image: $(CMON_IMAGE_BIT)
+	@echo "# Publish cmon image to Triton Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(CMON_MANIFEST_BIT) -f $(CMON_IMAGE_BIT)
+
+clean_cmon:
+	$(RM) -rf $(BITS_DIR)/cmon
+	(cd build/triton-cmon && gmake clean)
+
+
 #---- VMAPI
 
 _vmapi_stamp=$(SDC_VMAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_VMAPI_SHA)

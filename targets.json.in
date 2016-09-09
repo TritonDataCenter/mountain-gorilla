@@ -532,6 +532,33 @@ cat <<EOF
     ]
   },
 
+  "cmon": {
+    "appliance": "true",
+    "image_name": "cmon",
+    "image_description": "Triton Container Monitor",
+    "image_version": "1.0.0",
+    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
+    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
+    "pkgsrc": [
+        "coreutils-8.23nb2",
+        "gsed-4.2.2nb4"
+    ],
+    "repos": [
+        {"url": "git@github.com:joyent/triton-cmon.git"}
+    ],
+    "public": true,
+    "deps": [
+      "config-agent",
+      "registrar",
+      "https://download.joyent.com/pub/build/sdcnode"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+    ]
+  },
+
+
   "vmapi": {
     "appliance": "true",
     "image_name": "vmapi",
