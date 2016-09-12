@@ -959,6 +959,32 @@ clean_cmon:
 	(cd build/triton-cmon && gmake clean)
 
 
+#---- cmon agent
+
+_cmon_agent_stamp=$(TRITON_CMON_AGENT_BRANCH)-$(TIMESTAMP)-g$(TRITON_CMON_AGENT_SHA)
+CMON_AGENT_BIT=$(BITS_DIR)/cmon-agent/cmon-agent-$(_cmon_agent_stamp).tgz
+CMON_AGENT_MANIFEST_BIT=$(BITS_DIR)/cmon-agent/cmon-agent-$(_cmon_agent_stamp).manifest
+
+.PHONY: cmon-agent
+cmon-agent: $(CMON_AGENT_BIT)
+
+$(CMON_AGENT_BIT): build/triton-cmon-agent
+	@echo "# Build cmon-agent: branch $(TRITON_CMON_AGENT_BRANCH), sha $(TRITON_CMON_AGENT_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/triton-cmon-agent && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created cmon-agent bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(CMON_AGENT_BIT) $(CMON_AGENT_MANIFEST_BIT)
+	@echo ""
+
+cmon-agent_publish_image: $(CMON_AGENT_BIT)
+	@echo "# Publish cmon-agent image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(CMON_AGENT_MANIFEST_BIT) -f $(CMON_AGENT_BIT)
+
+clean_cmon_agent:
+	$(RM) -rf $(BITS_DIR)/cmon-agent
+	(cd build/sdc-cmon-agent && gmake clean)
+
+
 #---- VMAPI
 
 _vmapi_stamp=$(SDC_VMAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_VMAPI_SHA)
