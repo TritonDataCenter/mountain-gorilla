@@ -97,6 +97,8 @@ TTL_DAYS_FROM_NAME='{
     "binder": 365,
     "ca": 365,
     "cloudapi": 365,
+    "cmon": 365,
+    "cmon-agent": 365,
     "cn-agent": 365,
     "cnapi": 365,
     "cns": 365,
