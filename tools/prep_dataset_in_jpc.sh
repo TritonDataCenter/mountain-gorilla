@@ -407,9 +407,9 @@ else
 fi
 
 # Image Notes:
-# - We need to add a requirement on the manifest for networks but CloudAPI does
-#   not allow us to do that, so we have to change locally and push over the
-#   original.
+# - requirements.networks: Feels right to have the images saying they need
+#   to be on the admin network. (However, it isn't required for either of
+#   headnode setup or 'sdcadm up'.)
 # - We also set the min_platform to the platform we just built the bits on,
 #   not the platform we created the image on, since that's where the binary
 #   dependency should come from.
