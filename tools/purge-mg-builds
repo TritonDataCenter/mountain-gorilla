@@ -113,7 +113,6 @@ TTL_DAYS_FROM_NAME='{
     "gz-tools": 365,
     "hagfish-watcher": 365,
     "heartbeater": 365,
-    "hostvolume": 365,
     "imgapi": 365,
     "mackerel": 365,
     "madtom": 365,

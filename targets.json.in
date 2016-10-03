@@ -394,22 +394,6 @@ cat <<EOF
     "pkgsrc": [],
     "tarballs": []
   },
-  "hostvolume": {
-    "appliance": "true",
-    "image_name": "hostvolume",
-    "image_description": "SDC Docker host volume support zone",
-    "image_version": "1.1.0",
-    "image_uuid": "1e81e08c-d406-11e4-aac9-6feb515aeb81",
-    "repos": [
-      {"url": "git@github.com:joyent/sdc-hostvolume.git"}
-    ],
-    "public": true,
-    "deps": [],
-    "pkgsrc": [
-        "openssl-1.0.1p"
-    ],
-    "tarballs": []
-  },
   "docker": {
     "appliance": "true",
     "image_name": "docker",
