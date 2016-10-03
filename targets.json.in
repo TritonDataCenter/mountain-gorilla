@@ -370,7 +370,8 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "pkgsrc": [
-      "stud-0.3p53"
+      "openssl-1.0.1u",
+      "stud-0.3p53nb2"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
@@ -595,6 +596,7 @@ cat <<EOF
         "patch-2.7.5",
         "xz-5.2.2",
         "haproxy-1.6.2",
+        "openssl-1.0.2j",
         "stud-0.3p53nb5",
         "sudo-1.8.15",
         "the_silver_searcher-0.31.0"
@@ -1037,7 +1039,7 @@ cat <<EOF
     "image_uuid": "de411e86-548d-11e4-a4b7-3bb60478632a",
     "pkgsrc": [
       "py27-curses",
-      "openssl-1.0.1t",
+      "openssl-1.0.1u",
       "stud-0.3p53nb2",
       "zookeeper-client-3.4.6"
     ],
