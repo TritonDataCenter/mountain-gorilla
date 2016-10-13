@@ -152,7 +152,6 @@ TTL_DAYS_FROM_NAME='{
     "smartlogin": 365,
     "smartos": 365,
     "ufds": 365,
-    "vapi": 365,
     "vm-agent": 365,
     "vmapi": 365,
     "volapi": 365,
@@ -297,17 +296,35 @@ function purge_mg_builds
 
     for branch in $branches; do
         branch_dirs=$(echo "$dirs" | grep "^$branch-")
-        purged_all_in_branch=yes
+
+        # Determine which dirs for this branch that we will be purging.
+        branch_dirs_to_purge=
         for branch_dir in $branch_dirs; do
             if [[ "$branch_dir" < "$branch-$cutoff" ]]; then
                 #log "# $branch_dir has expired"
-                purge_dir $dir/$branch_dir
-            else
-                purged_all_in_branch=no
+                branch_dirs_to_purge="$branch_dirs_to_purge $branch_dir"
             fi
         done
+        branch_dirs_to_purge=$(echo "$branch_dirs_to_purge" | xargs -n1)
 
-        if [[ $purged_all_in_branch == "yes" ]]; then
+        # The "master" branch is special: if we would end up purging *all*
+        # remaining master branch dirs, then save that latest one.
+        if [[ "$branch_dirs" == "$branch_dirs_to_purge" ]]; then
+            if [[ "$branch" == "master" ]]; then
+                log "#   retain last master branch build:" \
+                    $(echo "$branch_dirs_to_purge" | tail -1)
+                branch_dirs_to_purge=$(echo "$branch_dirs_to_purge" | sed '$ d')
+                purge_all_in_branch=no
+            else
+                purge_all_in_branch=yes
+            fi
+        fi
+
+        for branch_dir in $branch_dirs_to_purge; do
+            #log "# $branch_dir has expired"
+            purge_dir $dir/$branch_dir
+        done
+        if [[ $purge_all_in_branch == "yes" ]]; then
             purge_file_if_exist $dir/$branch-latest
         fi
     done
