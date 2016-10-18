@@ -372,7 +372,8 @@ cat <<EOF
     "image_name": "cloudapi",
     "image_description": "SDC CloudAPI",
     "image_version": "1.0.0",
-    "image_uuid": "de411e86-548d-11e4-a4b7-3bb60478632a",
+    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
+    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
     "repos": [
       {"url": "git@github.com:joyent/sdc-cloudapi.git"}
     ],
@@ -384,8 +385,15 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "pkgsrc": [
-      "openssl-1.0.1u",
-      "stud-0.3p53nb2"
+      "coreutils-8.23nb2",
+      "curl-7.47.1",
+      "gsed-4.2.2nb4",
+      "patch-2.7.5",
+      "sudo-1.8.15",
+
+      "openssl-1.0.2j",
+      "stud-0.3p53nb5",
+      "haproxy-1.6.2"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
@@ -393,7 +401,6 @@ cat <<EOF
       {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
     ]
   },
-
   "nat": {
     "appliance": "true",
     "build_platform": "20141030T081701Z",
