@@ -299,7 +299,7 @@ function purge_mg_builds
     branches=$(echo "$dirs" | sed -E 's/-[0-9]{8}T[0-9]{6}Z$//' | sort | uniq)
 
     for branch in $branches; do
-        branch_dirs=$(echo "$dirs" | grep "^$branch-")
+        branch_dirs=$(echo "$dirs" | (grep "^$branch-" || true))
 
         # Determine which dirs for this branch that we will be purging.
         branch_dirs_to_purge=
@@ -313,12 +313,12 @@ function purge_mg_builds
 
         # The "master" branch is special: if we would end up purging *all*
         # remaining master branch dirs, then save that latest one.
+        purge_all_in_branch=no
         if [[ "$branch_dirs" == "$branch_dirs_to_purge" ]]; then
             if [[ "$branch" == "master" ]]; then
                 log "#   retain last master branch build:" \
                     $(echo "$branch_dirs_to_purge" | tail -1)
                 branch_dirs_to_purge=$(echo "$branch_dirs_to_purge" | sed '$ d')
-                purge_all_in_branch=no
             else
                 purge_all_in_branch=yes
             fi
