@@ -233,7 +233,11 @@ function purge_dir
     dir="$1"
     log "mrm -r $dir"
     if [[ "$opt_dryrun" == "no" ]]; then
-        mrm -r "$dir"
+        if [[ -n "$TRACE" ]]; then
+            mrm -rv "$dir"
+        else
+            mrm -r "$dir"
+        fi
     fi
 }
 
