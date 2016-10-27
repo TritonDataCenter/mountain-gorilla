@@ -555,7 +555,6 @@ cat <<EOF
       "patch-2.7.5",
       "sudo-1.8.15"
     ],
-    "pkgsrc": [],
     "repos": [
         {"url": "git@github.com:joyent/sdc-papi.git"}
     ],
