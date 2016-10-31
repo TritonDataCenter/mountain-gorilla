@@ -588,16 +588,16 @@ cat <<EOF
     "pkgsrc": [
         "coreutils-8.23nb2",
         "curl-7.47.1",
-        "dateutils-0.3.1nb1",
-        "grep-2.22",
         "gsed-4.2.2nb4",
         "patch-2.7.5",
-        "xz-5.2.2",
+        "sudo-1.8.15",
+
+        "dateutils-0.3.1nb1",
         "haproxy-1.6.2",
         "openssl-1.0.2j",
         "stud-0.3p53nb5",
-        "sudo-1.8.15",
-        "the_silver_searcher-0.31.0"
+        "the_silver_searcher-0.31.0",
+        "xz-5.2.2"
     ],
     "repos": [
       {"url": "git@github.com:joyent/sdc-imgapi.git"}
