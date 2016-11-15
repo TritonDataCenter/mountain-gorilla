@@ -546,6 +546,9 @@ function print_help() {
     echo "  -O PATH      Alternate Manta path for 'make <target>_upload_manta'."
     echo "               The default is '\${MANTA_USER}/stor/builds'."
     echo "  -j           Configure this workspace to build Joyent products."
+    echo "  -P           Ignore the 'build_platform' check that is meant to ensure"
+    echo "               that a component is built on the exact platform version"
+    echo "               specified for it in 'targets.json' for release."
     exit 0
 }
 
@@ -560,6 +563,25 @@ function get_target_repos() {
         [[ -z "$submodule_update" ]] && submodule_update=true
         get_repo2 $repo_url $BRANCH "$submodule_update" "$repo_dir" "$TRY_BRANCH"
     done
+}
+
+# Ensure that we are building on the specified build_platform in targets.json.
+function ensure_build_platform() {
+    local target=$1
+    local build_platform
+    local errmsg
+    build_platform=$(cat targets.json | $JSON $target.build_platform)
+    if [[ -n "$build_platform" ]]; then
+        curr_platform=$(uname -v | cut -d_ -f2)
+        if [[ "$curr_platform" != "$build_platform" ]]; then
+            errmsg="current platform, $curr_platform, does not match the expected '$target.build_platform', $build_platform"
+            if [[ $IGNORE_BUILD_PLATFORM_CHECK == "yes" ]]; then
+                echo "warning: $errmsg (ignoring, per '-P' option)"
+            else
+                fatal "$errmsg"
+            fi
+        fi
+    fi
 }
 
 function get_pkgsrc() {
@@ -642,13 +664,14 @@ function get_pkgsrc() {
 TARGET=
 REGENERATE='false'
 MG_NODE=$(which node) || fatal "node binary not found on PATH"
+IGNORE_BUILD_PLATFORM_CHECK=no
 
 trap 'errexit $? $LINENO' EXIT
 
 if [[ "$1" == "--help" ]]; then
   print_help
 fi
-while getopts "b:B:d:D:O:hrft:c:jJ:" opt; do
+while getopts "b:B:d:D:O:hrft:c:jJ:P" opt; do
     case "$opt" in
         b) BRANCH=$OPTARG ;;
         B) TRY_BRANCH=$OPTARG ;;
@@ -663,6 +686,7 @@ while getopts "b:B:d:D:O:hrft:c:jJ:" opt; do
         O) MG_OUT_PATH=${OPTARG} ;;
         j) JOYENT_BUILD=true ;;
         J) JOYENT_DEP_PATH=${OPTARG} ;;
+        P) IGNORE_BUILD_PLATFORM_CHECK=yes ;;
         ?) fatal "unknown option: $opt" ;;
     esac
 done
@@ -676,9 +700,10 @@ bash < targets.json.in | json > targets.json
 
 # Pre-condition: must have node >=0.10 first on path (see RELENG-266).
 echo "Ensure have a 'node' >= v0.10."
-NODE_VERSION=$($MG_NODE --version | awk 'BEGIN{ FS="." } { print $2 }')
-if [[ $NODE_VERSION -lt 10 ]]; then
-    fatal "Incorrect node version, '${NODE_VERSION}'. MG needs a node v0.10 or later on your PATH."
+NODE_MAJOR_VERSION=$($MG_NODE --version | cut -c2- | awk 'BEGIN{ FS="." } { print $1 }')
+NODE_MINOR_VERSION=$($MG_NODE --version | awk 'BEGIN{ FS="." } { print $2 }')
+if [[ $NODE_MAJOR_VERSION -lt 1 && $NODE_MINOR_VERSION -lt 10 ]]; then
+    fatal "Incorrect node version, '${NODE_MAJOR_VERSION}.${NODE_MINOR_VERSION}'. MG needs a node v0.10 or later on your PATH."
 fi
 JSON="$MG_NODE $ROOT/tools/json"
 
@@ -693,7 +718,7 @@ for nodething in manta smartdc; do
 done
 
 # Make sure npm stuff is installed
-npm install
+#npm install
 
 # '-r' regenerate early out.
 if [[ "$REGENERATE" == 'true' ]]; then
@@ -714,6 +739,7 @@ if [[ ! -z "$TARGET" ]]; then
     if [[ -z "$(cat targets.json | $JSON $TARGET)" ]]; then
         fatal "Unknown target: $TARGET"
     fi
+    ensure_build_platform $TARGET
     get_target_repos $TARGET
     for dep in `cat targets.json | $JSON $TARGET.deps | $JSON -a`; do
         if [[ -n "$(echo $dep | egrep '^[^/]+/[^/]+$' || true)" ]]; then
@@ -728,6 +754,7 @@ if [[ ! -z "$TARGET" ]]; then
 else
     TARGETS=$(${MG_NODE} -e 'fs=require("fs"); c=fs.readFileSync("targets.json"); console.log(Object.keys(JSON.parse(c)).join("\n"))')
     for targ in $TARGETS; do
+        ensure_build_platform $targ
         get_target_repos $targ
     done
 fi

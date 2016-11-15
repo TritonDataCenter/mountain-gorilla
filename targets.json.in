@@ -76,6 +76,7 @@ if [[ "${JOYENT_BUILD}" == "true" ]]; then
   FIRMWARE_TOOLS_DEP='"firmware-tools",'
   FIRMWARE_TOOLS_ENTRY='
   "firmware-tools": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/firmware-tools.git"}
     ],
@@ -93,6 +94,7 @@ fi
 cat <<EOF
 {
   "smartlogin": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/sdc-smart-login.git"}
     ],
@@ -101,6 +103,7 @@ cat <<EOF
   },
   "ca": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "ca",
     "image_description": "SDC Cloud Analytics",
     "image_version": "1.0.0",
@@ -130,6 +133,7 @@ cat <<EOF
   },
   "amon": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "amon",
     "image_description": "SDC AMON",
     "image_version": "1.0.0",
@@ -152,6 +156,7 @@ cat <<EOF
   },
   "assets": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "assets",
     "image_description": "SDC Assets",
     "image_version": "1.0.0",
@@ -172,6 +177,7 @@ cat <<EOF
   },
   "cns": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "cns",
     "image_description": "Triton Container Naming Service",
     "image_version": "1.0.0",
@@ -197,6 +203,7 @@ cat <<EOF
   },
   "adminui": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "adminui",
     "image_description": "SDC AdminUI",
     "image_version": "1.0.0",
@@ -220,6 +227,7 @@ cat <<EOF
   },
   "mockcloud": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "mockcloud",
     "image_description": "SDC MOCK CLOUD",
     "image_version": "1.0.0",
@@ -236,6 +244,7 @@ cat <<EOF
   },
   "nfsserver": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "nfsserver",
     "image_description": "SDC NFS Server",
     "image_version": "1.0.0",
@@ -254,6 +263,7 @@ cat <<EOF
   },
   "dhcpd": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "dhcpd",
     "image_description": "SDC DHCPD",
     "image_version": "1.0.0",
@@ -280,6 +290,7 @@ cat <<EOF
   },
   "redis": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "redis",
     "image_description": "SDC Redis",
     "image_version": "1.0.0",
@@ -302,6 +313,7 @@ cat <<EOF
   },
   "amonredis": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "amonredis",
     "image_description": "SDC Amon Redis",
     "image_version": "1.0.0",
@@ -324,6 +336,7 @@ cat <<EOF
   },
   "rabbitmq": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "rabbitmq",
     "image_description": "SDC RabbitMQ",
     "image_version": "1.0.0",
@@ -355,6 +368,7 @@ cat <<EOF
   },
   "cloudapi": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "cloudapi",
     "image_description": "SDC CloudAPI",
     "image_version": "1.0.0",
@@ -382,6 +396,7 @@ cat <<EOF
 
   "nat": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "nat",
     "image_description": "SmartDataCenter per-user NAT zone",
     "image_version": "1.0.0",
@@ -396,6 +411,7 @@ cat <<EOF
   },
   "docker": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "docker",
     "image_description": "SDC Docker Engine",
     "image_version": "1.0.0",
@@ -419,6 +435,7 @@ cat <<EOF
   },
   "volapi": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "volapi",
     "image_description": "SDC Volumes API",
     "image_version": "1.0.0",
@@ -442,6 +459,7 @@ cat <<EOF
   },
   "portolan": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "portolan",
     "image_description": "SDC Portolan Service",
     "image_version": "1.0.0",
@@ -466,6 +484,7 @@ cat <<EOF
 
   "ufds": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "ufds",
     "image_description": "SDC UFDS",
     "image_version": "1.0.0",
@@ -493,6 +512,7 @@ cat <<EOF
 
   "workflow": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "workflow",
     "image_description": "SDC Workflow",
     "image_version": "1.0.0",
@@ -519,6 +539,7 @@ cat <<EOF
 
   "vmapi": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "vmapi",
     "image_description": "SDC VMAPI",
     "image_version": "1.0.0",
@@ -550,6 +571,7 @@ cat <<EOF
 
   "papi": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "papi",
     "image_description": "SDC PAPI",
     "image_version": "1.0.0",
@@ -581,6 +603,7 @@ cat <<EOF
 
   "imgapi": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "imgapi",
     "image_description": "SDC IMGAPI",
     "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
@@ -618,6 +641,7 @@ cat <<EOF
 
   "sdc": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "sdc",
     "image_description": "SDC tools/ops zone",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
@@ -640,6 +664,7 @@ cat <<EOF
   },
 
   "agents_core": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/sdc-agents-core.git"}
     ],
@@ -650,6 +675,7 @@ cat <<EOF
   },
 
   "vm-agent": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/sdc-vm-agent.git"}
     ],
@@ -660,6 +686,7 @@ cat <<EOF
   },
 
   "net-agent": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/sdc-net-agent.git"}
     ],
@@ -670,6 +697,7 @@ cat <<EOF
   },
 
   "cn-agent": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/sdc-cn-agent.git"}
     ],
@@ -680,6 +708,7 @@ cat <<EOF
   },
 
   "config-agent": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/sdc-config-agent.git"}
     ],
@@ -690,6 +719,7 @@ cat <<EOF
   },
 
   "hagfish-watcher": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/sdc-hagfish-watcher.git"}
     ],
@@ -700,6 +730,7 @@ cat <<EOF
   },
 
   "firewaller": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/sdc-firewaller-agent.git"}
     ],
@@ -711,6 +742,7 @@ cat <<EOF
 
   "cnapi": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "cnapi",
     "image_description": "SDC CNAPI",
     "image_version": "1.0.0",
@@ -735,6 +767,7 @@ cat <<EOF
 
   "fwapi": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "fwapi",
     "image_description": "SDC FWAPI",
     "image_version": "1.0.0",
@@ -761,6 +794,7 @@ cat <<EOF
 
   "napi": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "napi",
     "image_description": "SDC NAPI",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
@@ -786,6 +820,7 @@ cat <<EOF
 
   "sapi": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "sapi",
     "image_description": "SDC SAPI",
     "image_version": "1.0.0",
@@ -809,6 +844,7 @@ cat <<EOF
   },
 
   "registrar": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/registrar.git"}
     ],
@@ -819,6 +855,7 @@ cat <<EOF
   },
 
   "minnow": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/manta-minnow.git"}
     ],
@@ -829,6 +866,7 @@ cat <<EOF
   },
 
   "mackerel": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/manta-mackerel.git"}
     ],
@@ -840,6 +878,7 @@ cat <<EOF
 
   "binder": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-nameservice",
     "image_description": "Manta nameservice",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
@@ -867,6 +906,7 @@ cat <<EOF
 
   "manta-manatee": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-postgres",
     "image_description": "Manta manatee",
     "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
@@ -898,6 +938,7 @@ cat <<EOF
 
   "sdc-manatee": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "sdc-postgres",
     "image_description": "SDC manatee",
     "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
@@ -929,6 +970,7 @@ cat <<EOF
 
   "medusa": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-medusa",
     "image_description": "Manta medusa",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
@@ -954,6 +996,7 @@ cat <<EOF
 
   "mahi": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-authcache",
     "image_description": "Manta authcache",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
@@ -980,6 +1023,7 @@ cat <<EOF
 
   "moray": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-moray",
     "image_description": "Manta moray",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
@@ -1007,6 +1051,7 @@ cat <<EOF
 
   "electric-moray": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-electric-moray",
     "image_description": "Manta moray proxy",
     "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
@@ -1032,6 +1077,7 @@ cat <<EOF
 
   "muppet": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-loadbalancer",
     "image_description": "Manta loadbalancer",
     "image_uuid": "de411e86-548d-11e4-a4b7-3bb60478632a",
@@ -1060,6 +1106,7 @@ cat <<EOF
 
   "muskie": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-webapi",
     "image_description": "Manta webapi",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
@@ -1087,6 +1134,7 @@ cat <<EOF
 
   "mola": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-ops",
     "image_description": "Manta ops",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
@@ -1115,6 +1163,7 @@ cat <<EOF
 
   "madtom": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-madtom",
     "image_description": "Manta madtom",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
@@ -1142,6 +1191,7 @@ cat <<EOF
 
   "marlin-dashboard": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-marlin-dashboard",
     "image_description": "Manta marlin dashboard",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
@@ -1166,6 +1216,7 @@ cat <<EOF
 
   "mako": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-storage",
     "image_description": "Manta storage",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
@@ -1194,6 +1245,7 @@ cat <<EOF
 
   "marlin": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-jobsupervisor",
     "image_description": "Manta jobsupervisor",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
@@ -1219,6 +1271,7 @@ cat <<EOF
 
   "wrasse": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-jobpuller",
     "image_description": "Manta Job Puller",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
@@ -1244,6 +1297,7 @@ cat <<EOF
 
   "propeller": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-propeller",
     "image_description": "Manta propeller",
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
@@ -1270,6 +1324,7 @@ cat <<EOF
   },
 
   "sdcadm": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/sdcadm.git"}
     ],
@@ -1279,6 +1334,7 @@ cat <<EOF
 
   "sdcsso": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "sdcsso",
     "image_description": "SDC SSO",
     "image_version": "1.0.0",
@@ -1307,6 +1363,7 @@ cat <<EOF
   },
 
   "agentsshar": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/sdc-agents-installer.git"}
     ],
@@ -1327,6 +1384,7 @@ cat <<EOF
   },
 
   "dockerlogger": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {
             "url": "git@github.com:joyent/sdc-dockerlogger.git",
@@ -1340,6 +1398,7 @@ cat <<EOF
 
   "manta-deployment": {
     "appliance": "true",
+    "build_platform": "20141030T081701Z",
     "image_name": "manta-deployment",
     "image_description": "Manta deployment tools",
     "image_version": "1.0.0",
@@ -1363,6 +1422,7 @@ cat <<EOF
   },
 
   "sdc-system-tests": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/sdc-system-tests.git"}
     ],
@@ -1373,6 +1433,7 @@ cat <<EOF
   },
 
   "sdcboot": {
+    "build_platform": "20141030T081701Z",
     "repos": [
         {"url": "git@github.com:joyent/sdcboot.git"}
     ],
