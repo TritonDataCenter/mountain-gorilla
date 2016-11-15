@@ -718,7 +718,7 @@ for nodething in manta smartdc; do
 done
 
 # Make sure npm stuff is installed
-#npm install
+npm install
 
 # '-r' regenerate early out.
 if [[ "$REGENERATE" == 'true' ]]; then
