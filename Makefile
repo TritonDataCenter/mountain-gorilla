@@ -2291,11 +2291,7 @@ clean_mako:
 
 #---- sdcadm
 
-ifeq ($(TRY_BRANCH),)
 _sdcadm_stamp=$(SDCADM_BRANCH)-$(TIMESTAMP)-g$(SDCADM_SHA)
-else
-_sdcadm_stamp=$(TRY_BRANCH)-$(TIMESTAMP)-g$(SDCADM_SHA)
-endif
 SDCADM_PKG_BIT=$(BITS_DIR)/sdcadm/sdcadm-$(_sdcadm_stamp).sh
 SDCADM_MANIFEST_BIT=$(BITS_DIR)/sdcadm/sdcadm-$(_sdcadm_stamp).imgmanifest
 SDCADM_BITS=$(SDCADM_PKG_BIT) $(SDCADM_MANIFEST_BIT)
