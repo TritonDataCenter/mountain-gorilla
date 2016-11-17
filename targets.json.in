@@ -415,7 +415,8 @@ cat <<EOF
     "image_name": "docker",
     "image_description": "SDC Docker Engine",
     "image_version": "1.0.0",
-    "image_uuid": "de411e86-548d-11e4-a4b7-3bb60478632a",
+    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
+    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
     "repos": [
       {"url": "git@github.com:joyent/sdc-docker.git"}
     ],
@@ -426,7 +427,13 @@ cat <<EOF
       "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ],
-    "pkgsrc": [],
+    "pkgsrc": [
+        "coreutils-8.23nb2",
+        "curl-7.47.1",
+        "gsed-4.2.2nb4",
+        "patch-2.7.5",
+        "sudo-1.8.15"
+    ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
