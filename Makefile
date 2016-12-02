@@ -2532,7 +2532,12 @@ BOOT_OUTPUT=$(USB_BITS_DIR)/boot$(HEADNODE_SUFFIX)-$(_headnode_stamp).tgz
 .PHONY: cleanimgcruft
 cleanimgcruft:
 	$(RM) -vf /tmp/*4gb.img
-	for dev in $(shell lofiadm | cut -d ' ' -f1 | grep -v "^Block"); do pfexec lofiadm -d $${dev}; done
+	for dev in $(shell lofiadm | cut -d ' ' -f1 | grep -v "^Block"); do  \
+		mount | grep "on $${dev}" | cut -d' ' -f1 | while read mntpath; do \
+			umount $${mntpath}; \
+		done; \
+		pfexec lofiadm -d $${dev}; \
+	done
 
 .PHONY: boot
 boot: $(BOOT_OUTPUT)
