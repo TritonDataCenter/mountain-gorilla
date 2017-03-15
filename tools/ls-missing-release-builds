@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright 2017, Joyent, Inc.
 #
 
 #
@@ -73,6 +73,6 @@ echo "$targets" | while read target public; do
     latest=$(mls $latest_mpath 2>/dev/null || true)
     if [[ -z "$latest" ]]; then
         echo "# $target, '$latest_mpath' does not exist" >&2
-        echo "open \"https://jenkins.joyent.us/job/$target/buildWithParameters?BRANCH=$release\""
+        echo "./tools/launch-build -b $release $target"
     fi
 done
