@@ -22,7 +22,7 @@ function usage() {
 	if [[ -n $1 ]]; then
 		printf "%s: %s\n" "$PROGNAME" "$1" >&2
 	fi
-	printf "usage: $PROGNAME [-v] [-H url] [-b BRANCH] [-t TRY_BRANCH] [-u auth] project\n" >&2
+	printf "usage:\n    $PROGNAME [-v] [-H url] [-b BRANCH] [-t TRY_BRANCH] [-u auth] project\n" >&2
 	exit 2
 }
 
@@ -50,7 +50,7 @@ if [[ -z $JENKINS_URL ]]; then
 fi
 
 if [[ -z $JENKINS_AUTH ]]; then
-	usage "JENKINS_AUTH must be set to <user>:<api token>"
+	usage "JENKINS_AUTH must be set to <user>:<api token> (get it here: ${JENKINS_URL}/me/configure)"
 fi
 
 if [[ -n $BRANCH && -n $TRY_BRANCH ]]; then
