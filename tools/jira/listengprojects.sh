@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright (c) 2016, Joyent, Inc.
+# Copyright (c) 2017, Joyent, Inc.
 #
 
 #
@@ -73,6 +73,7 @@ SKATE
 SSO
 STG
 TOOLS
+TRITON
 VCAPI
 VOLAPI
 WORKFLOW
