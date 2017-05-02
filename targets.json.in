@@ -600,15 +600,9 @@ cat <<EOF
     "image_name": "vmapi",
     "image_description": "SDC VMAPI",
     "image_version": "1.0.0",
-    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
-    "pkgsrc": [
-      "coreutils-8.23nb2",
-      "curl-7.47.1",
-      "gsed-4.2.2nb4",
-      "patch-2.7.5",
-      "sudo-1.8.15"
-    ],
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.0",
+    "image_uuid": "e24bd5b7-f06b-4d6a-84f1-45c0b342e4d2",
+    "pkgsrc": [],
     "repos": [
         {"url": "git@github.com:joyent/sdc-vmapi.git"}
     ],
