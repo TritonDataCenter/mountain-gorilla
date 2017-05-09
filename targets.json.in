@@ -422,8 +422,8 @@ cat <<EOF
     "image_name": "docker",
     "image_description": "SDC Docker Engine",
     "image_version": "1.0.0",
-    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.0",
-    "image_uuid": "e24bd5b7-f06b-4d6a-84f1-45c0b342e4d2",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "repos": [
       {"url": "git@github.com:joyent/sdc-docker.git"}
     ],
@@ -594,8 +594,8 @@ cat <<EOF
     "image_name": "vmapi",
     "image_description": "SDC VMAPI",
     "image_version": "1.0.0",
-    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.0",
-    "image_uuid": "e24bd5b7-f06b-4d6a-84f1-45c0b342e4d2",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
         {"url": "git@github.com:joyent/sdc-vmapi.git"}
