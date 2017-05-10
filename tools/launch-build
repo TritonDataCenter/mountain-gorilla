@@ -61,7 +61,7 @@ if [[ -n $BRANCH ]]; then
 	printf "Building %s with BRANCH=%s\n" "$PROJECT" "$BRANCH"
 	BUILD_PARAM=`printf '{"name":"BRANCH", "value": "%s"}' $BRANCH`
 elif [[ -n $TRY_BRANCH ]]; then
-	printf "Building %s with TRY_BRANCH=%s\n" "$PROJECT" "$BRANCH"
+	printf "Building %s with TRY_BRANCH=%s\n" "$PROJECT" "$TRY_BRANCH"
 	BUILD_PARAM=`printf '{"name":"TRY_BRANCH", "value": "%s"}' $TRY_BRANCH`
 fi
 
