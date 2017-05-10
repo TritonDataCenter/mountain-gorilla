@@ -106,7 +106,8 @@ cat <<EOF
     "image_name": "ca",
     "image_description": "SDC Cloud Analytics",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "zlib-1.2.3",
       "png-1.5.9",
@@ -136,7 +137,8 @@ cat <<EOF
     "image_name": "amon",
     "image_description": "SDC AMON",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
       {"url": "git@github.com:joyent/sdc-amon.git"}
@@ -159,7 +161,8 @@ cat <<EOF
     "image_name": "assets",
     "image_description": "SDC Assets",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "nginx-1.0.10"
     ],
@@ -180,7 +183,8 @@ cat <<EOF
     "image_name": "cns",
     "image_description": "Triton Container Naming Service",
     "image_version": "1.0.0",
-    "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "redis-2.6.16"
     ],
@@ -206,7 +210,8 @@ cat <<EOF
     "image_name": "adminui",
     "image_description": "SDC AdminUI",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
         {"url": "git@github.com:joyent/sdc-adminui.git", "dir": "adminui"}
@@ -230,7 +235,8 @@ cat <<EOF
     "image_name": "mockcloud",
     "image_description": "SDC MOCK CLOUD",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "tftp-hpa-5.2"
     ],
@@ -247,7 +253,8 @@ cat <<EOF
     "image_name": "nfsserver",
     "image_description": "SDC NFS Server",
     "image_version": "1.0.0",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
         "gsed-4.2.2nb4"
     ],
@@ -266,7 +273,8 @@ cat <<EOF
     "image_name": "dhcpd",
     "image_description": "SDC DHCPD",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "nginx-1.0.10",
       "tftp-hpa-5.2"
@@ -293,7 +301,8 @@ cat <<EOF
     "image_name": "amonredis",
     "image_description": "SDC Amon Redis",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
       {"url": "git@github.com:joyent/sdc-amonredis.git"}
@@ -316,7 +325,8 @@ cat <<EOF
     "image_name": "rabbitmq",
     "image_description": "SDC RabbitMQ",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "perl-5.14.2nb3",
       "iodbc-3.52.7",
@@ -383,7 +393,8 @@ cat <<EOF
     "image_name": "nat",
     "image_description": "SmartDataCenter per-user NAT zone",
     "image_version": "1.0.0",
-    "image_uuid": "de411e86-548d-11e4-a4b7-3bb60478632a",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "repos": [
       {"url": "git@github.com:joyent/sdc-nat.git"}
     ],
@@ -429,8 +440,8 @@ cat <<EOF
     "image_name": "volapi",
     "image_description": "SDC Volumes API",
     "image_version": "1.0.0",
-    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "repos": [
       {"url": "git@github.com:joyent/sdc-volapi.git"}
     ],
@@ -460,7 +471,8 @@ cat <<EOF
     "image_name": "portolan",
     "image_description": "SDC Portolan Service",
     "image_version": "1.0.0",
-    "image_uuid": "de411e86-548d-11e4-a4b7-3bb60478632a",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "repos": [
       {"url": "git@github.com:joyent/sdc-portolan.git"}
     ],
@@ -485,7 +497,8 @@ cat <<EOF
     "image_name": "ufds",
     "image_description": "SDC UFDS",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "openldap-client-2.4.24",
       "postgresql91-client-9.1.2"
@@ -513,7 +526,8 @@ cat <<EOF
     "image_name": "workflow",
     "image_description": "SDC Workflow",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
+    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
     "pkgsrc": [
       "apg-2.2.3"
     ],
@@ -539,8 +553,8 @@ cat <<EOF
     "image_name": "cmon",
     "image_description": "Triton Container Monitor",
     "image_version": "1.0.0",
-    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
         "coreutils-8.23nb2",
         "gsed-4.2.2nb4"
@@ -608,8 +622,8 @@ cat <<EOF
     "image_name": "papi",
     "image_description": "SDC PAPI",
     "image_version": "1.0.0",
-    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "coreutils-8.23nb2",
       "curl-7.47.1",
@@ -639,8 +653,8 @@ cat <<EOF
     "build_platform": "20141030T081701Z",
     "image_name": "imgapi",
     "image_description": "SDC IMGAPI",
-    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
         "coreutils-8.23nb2",
         "curl-7.47.1",
@@ -677,7 +691,8 @@ cat <<EOF
     "build_platform": "20141030T081701Z",
     "image_name": "sdc",
     "image_description": "SDC tools/ops zone",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
         "mtr-0.82"
     ],
@@ -779,7 +794,8 @@ cat <<EOF
     "image_name": "cnapi",
     "image_description": "SDC CNAPI",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
         {"url": "git@github.com:joyent/sdc-cnapi.git"}
@@ -804,7 +820,8 @@ cat <<EOF
     "image_name": "fwapi",
     "image_description": "SDC FWAPI",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "openldap-client-2.4.24"
     ],
@@ -830,7 +847,8 @@ cat <<EOF
     "build_platform": "20141030T081701Z",
     "image_name": "napi",
     "image_description": "SDC NAPI",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "openldap-client-2.4.24"
     ],
@@ -857,7 +875,8 @@ cat <<EOF
     "image_name": "sapi",
     "image_description": "SDC SAPI",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
         {"url": "git@github.com:joyent/sdc-sapi.git"}
@@ -914,7 +933,8 @@ cat <<EOF
     "build_platform": "20141030T081701Z",
     "image_name": "manta-nameservice",
     "image_description": "Manta nameservice",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "sun-jre6-6.0.26",
       "zookeeper-client-3.4.3",
@@ -974,7 +994,8 @@ cat <<EOF
     "build_platform": "20141030T081701Z",
     "image_name": "sdc-postgres",
     "image_description": "SDC manatee",
-    "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
         "postgresql92-server-9.2.4nb1",
         "postgresql92-adminpack",
@@ -1032,7 +1053,8 @@ cat <<EOF
     "build_platform": "20141030T081701Z",
     "image_name": "manta-authcache",
     "image_description": "Manta authcache",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "redis-2.4.13",
       "zookeeper-client-3.4.3"
@@ -1059,7 +1081,8 @@ cat <<EOF
     "build_platform": "20141030T081701Z",
     "image_name": "manta-moray",
     "image_description": "Manta moray",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "haproxy-1.4.18",
       "postgresql91-client-9.1.2",
@@ -1436,7 +1459,8 @@ cat <<EOF
     "image_name": "manta-deployment",
     "image_description": "Manta deployment tools",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "openldap-client-2.4.24"
     ],
