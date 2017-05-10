@@ -53,7 +53,6 @@ function build_headnode_target()
       "papi",
       "${platform}",
       "rabbitmq",
-      "redis",
       "sapi",
       "sdc",
       "sdcadm",
@@ -281,29 +280,6 @@ cat <<EOF
       "config-agent",
       "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
-    ],
-    "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
-    ]
-  },
-  "redis": {
-    "appliance": "true",
-    "build_platform": "20141030T081701Z",
-    "image_name": "redis",
-    "image_description": "SDC Redis",
-    "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
-    "pkgsrc": [],
-    "repos": [
-      {"url": "git@github.com:joyent/sdc-redis.git"}
-    ],
-    "public": true,
-    "deps": [
-      "amon",
-      "config-agent",
-      "registrar"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
