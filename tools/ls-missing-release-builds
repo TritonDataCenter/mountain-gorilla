@@ -43,7 +43,7 @@ function usage() {
         echo ""
     fi
     echo "usage:"
-    echo "  ls-missing-release-builds <release>"
+    echo "  ls-missing-release-builds RELEASE [TARGETS...]"
     echo ""
     echo "example:"
     echo "  ls-missing-release-builds release-20140703"
@@ -55,15 +55,22 @@ function usage() {
 
 release=$1
 if [[ -z "$release" ]]; then
-    usage "no 'release' argument given"
+    usage "missing 'RELEASE' argument given"
 fi
 if [[ -z "$(echo $release | grep '^release-[0-9]\{8\}$' || true)" ]]; then
-    usage "given release, '$release', doesn't match /release-\d{8}/"
+    usage "given RELEASE, '$release', doesn't match /release-\d{8}/"
+fi
+shift
+
+targets="$*"
+if [[ -z "$targets" ]]; then
+    (cd $TOP && JOYENT_BUILD=true bash <targets.json.in >targets.json)
+    targets=$($TOP/tools/json -f $TOP/targets.json -Ma key value.public \
+        | grep -v '^sdcsso ' \
+        | grep -v '^headnode-debug ' \
+        | grep -v '^headnode-joyent-debug ')
 fi
 
-(cd $TOP && JOYENT_BUILD=true bash <targets.json.in >targets.json)
-targets=$($TOP/tools/json -f $TOP/targets.json -Ma key value.public \
-    | grep -v sdcsso)
 echo "$targets" | while read target public; do
     if [[ "$public" == "true" ]]; then
         latest_mpath=/Joyent_Dev/public/builds/$target/$release-latest
