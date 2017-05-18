@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright (c) 2017, Joyent, Inc.
 #
 
 #
@@ -30,6 +30,14 @@
 
 set -o errexit
 unset LD_LIBRARY_PATH   # ensure don't get Java's libs (see OS-703)
+
+
+#---- globals, config
+
+# The Manta directory that build artifacts are uploaded to.  The same
+# name is used for both public (under ~~/public) and private (under
+# ~~/stor) artifacts.
+MG_JENKINS_BUILDS_DIR=${MG_JENKINS_BUILDS_DIR:-builds}
 
 #
 # Refuse to build if /tmp is tmpfs until OS-5608 is fixed.
@@ -134,17 +142,18 @@ if [[ "$CLEAN_CACHE" == "true" ]]; then
     rm -rf $CACHE_DIR
 fi
 
-# Builds that are joyent-specific get uploaded to /stor/builds whereas all other
-# builds now go to /public/builds. So in either case, dependencies come from
-# /public/builds.
+# Builds that are joyent-specific get uploaded to a directory under
+# /stor whereas all other builds now go under /public.  The specific
+# directory is controlled by MG_JENKINS_BUILDS_DIR which defaults to
+# "builds". In either case, dependencies come from the public directory.
 if [[ ! -f targets.json ]]; then
     bash < targets.json.in | json > targets.json
 fi
 IS_PUBLIC=$(json < targets.json ${JOB_NAME}.public)
 if [[ ${IS_PUBLIC} == "true" ]]; then
-    JENKINS_OUTPUT_BASE="/public/builds"
+    JENKINS_OUTPUT_BASE="/public/${MG_JENKINS_BUILDS_DIR}"
 else
-    JENKINS_OUTPUT_BASE="/stor/builds"
+    JENKINS_OUTPUT_BASE="/stor/${MG_JENKINS_BUILDS_DIR}"
 fi
 
 if [[ -z ${JOYENT_BUILD} || ${JOYENT_BUILD} == "true" ]]; then
