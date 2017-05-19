@@ -7,7 +7,7 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright (c) 2017, Joyent, Inc.
 #
 
 #
@@ -37,18 +37,19 @@ JSON=${TOP}/tools/json
 export PATH="${TOP}/node_modules/manta/bin:${TOP}/node_modules/smartdc/bin:${PATH}"
 image_package="g4-highcpu-4G"
 
-if [[ -z ${SDC_ACCOUNT} ]]; then
+if [[ -n "${MG_SDC_ACCOUNT}" ]]; then
+  export SDC_ACCOUNT=$MG_SDC_ACCOUNT
+elif [[ -z ${SDC_ACCOUNT} ]]; then
   export SDC_ACCOUNT="Joyent_Dev"
 fi
-if [[ -z ${SDC_URL} ]]; then
-  # Manta locality, use east
+if [[ -n "${MG_SDC_URL}" ]]; then
+  export SDC_URL=$MG_SDC_URL
+elif [[ -z ${SDC_URL} ]]; then
   export SDC_URL="https://us-east-3.api.joyent.com"
-  # To test in us-beta-4 uncomment the following:
-  #export SDC_URL=https://165.225.142.135
-  #export SDC_TESTING=1
 fi
-
-if [[ -z ${SDC_KEY_ID} ]]; then
+if [[ -n "${MG_SDC_KEY_ID}" ]]; then
+  export SDC_KEY_ID=$MG_SDC_KEY_ID
+elif [[ -z ${SDC_KEY_ID} ]]; then
   export SDC_KEY_ID="$(ssh-keygen -l -f ~/.ssh/id_rsa.pub | awk '{print $2}' | tr -d '\n')"
 fi
 
@@ -125,6 +126,17 @@ function usage() {
   echo "  -v VERSION      Version for produced image manifest."
   echo "  -n NAME         NAME for the produced image manifest."
   echo "  -d DESCRIPTION  DESCRIPTION for the produced image manifest."
+  echo ""
+  echo "Environment variables:"
+  echo "  MG_SDC_URL      If defined, this cloudapi endpoint will be used for"
+  echo "                  image creation. Otherwise it falls back to SDC_URL"
+  echo "                  or to a hardcoded default."
+  echo "  MG_SDC_ACCOUNT  If defined, this account will be used for image "
+  echo "                  creation and for Manta uploads. Otherwise it "
+  echo "                  falls back to SDC_ACCOUNT, or to 'Joyent_Dev'."
+  echo "  MG_SDC_KEY_ID   If defined, this is used for cloudapi and manta"
+  echo "                  auth. Otherwise it falls back to SDC_KEY_ID, or "
+  echo "                  to using '~/.ssh/id_rsa.pub'."
   echo ""
   exit 1
 }
