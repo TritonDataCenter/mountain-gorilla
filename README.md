@@ -70,17 +70,9 @@ used only when building Joyent products.
 
 # Prerequisites
 
-The "tools/mk-jenkins-slave/mk-jenkins-slave.sh" script is used to build
-new Jenkins (CI system) slaves and set them up for building Triton. Basically
-it creates a new zone (current using the smartos-1.6.3 image) passing in
-"tools/mk-jenkins-slave/jenkins-slave-setup.user-script". See
-"tools/mk-jenkins-slave/README.md" for how to create a new build zone
-for yourself, but basically it means running this from the GZ:
-
-    ./tools/mk-jenkins-slave/mk-jenkins-slave.sh BUILD-ZONE-ALIAS
-
-If you already have a zone that you want to setup, you *should* be able to just
-manually run that user script (though that hasn't been tested).
+You need several components to build our images in Triton. The easiest way to
+get these is to use the (private repo) [jenkins-agent](https://github.com/joyent/jenkins-agent)
+builds but you can also manually install all the things from those images.
 
 You should now be able to build mountain-gorilla (MG): i.e. all of Triton.
 Let's try that:
