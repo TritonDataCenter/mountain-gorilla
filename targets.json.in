@@ -943,15 +943,10 @@ cat <<EOF
     "build_platform": "20141030T081701Z",
     "image_name": "manta-postgres",
     "image_description": "Manta manatee",
-    "image_uuid": "b4bdc598-8939-11e3-bea4-8341f6861379",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
-        "postgresql92-server-9.2.4nb1",
-        "postgresql92-adminpack",
-        "postgresql92-datatypes",
-        "postgresql92-pgcrypto",
-        "postgresql92-replicationtools",
-        "postgresql92-upgrade",
-        "lz4-120"
+        "lz4-131nb1"
     ],
     "repos": [
       {"url": "git@github.com:joyent/manta-manatee.git"}

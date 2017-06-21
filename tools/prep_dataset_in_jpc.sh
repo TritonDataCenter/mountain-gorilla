@@ -317,7 +317,7 @@ if [[ -n "${packages}" ]]; then
   ${SSH} "/opt/local/bin/pkgin -f -y update"
   ${SSH} "touch /opt/local/.dlj_license_accepted"
 
-  if [[ ${build_name} == "manatee" || ${build_name} == "sdc-manatee" || ${build_name} == "manta-manatee" ]]; then
+  if [[ ${build_name} == "manatee" || ${build_name} == "sdc-manatee" ]]; then
     ${SSH} "/opt/local/bin/pkgin -y remove libuuid"
   fi
 
