@@ -395,7 +395,9 @@ function get_repo_cache() {
         (cd $MG_CACHE_DIR/repos/$repo_dir; git pull)
     fi
     if [[ "$submodule_update" == "true" ]]; then
-        (cd $MG_CACHE_DIR/repos/$repo_dir; git submodule update --init --recursive)
+        (cd "$MG_CACHE_DIR/repos/$repo_dir" &&
+            git submodule sync &&
+            git submodule update --init --recursive)
     fi
 
     # Error out if the cached repo is dirty. These thigns should always
@@ -441,7 +443,9 @@ function get_repo2() {
         (cd build/$repo_dir ; git checkout $try_branch && git pull || true)
     fi
     if [[ "$submodule_update" == "true" ]]; then
-        (cd build/$repo_dir; git submodule update --init --recursive)
+        (cd "build/$repo_dir" &&
+            git submodule sync &&
+            git submodule update --init --recursive)
     fi
 }
 
