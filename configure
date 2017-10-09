@@ -7,7 +7,7 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright (c) 2017, Joyent, Inc.
 #
 
 #
@@ -56,6 +56,16 @@ else
     CP_LINK=$( (cp --version 2>/dev/null | grep GNU >/dev/null) && echo "cp --link" || echo "cp" )
 fi
 CURL="curl --fail --connect-timeout 10 -s"
+
+#
+# Git has not always supported the "--recursive" option to "git submodule sync".
+#
+GIT_SUBMODULE_SYNC_FLAGS=''
+if git submodule -h | grep 'git submodule .* sync .*--recursive' \
+    >/dev/null; then
+
+    GIT_SUBMODULE_SYNC_FLAGS='--recursive'
+fi
 
 
 #---- internal support functions
@@ -396,7 +406,7 @@ function get_repo_cache() {
     fi
     if [[ "$submodule_update" == "true" ]]; then
         (cd "$MG_CACHE_DIR/repos/$repo_dir" &&
-            git submodule sync --recursive &&
+            git submodule sync $GIT_SUBMODULE_SYNC_FLAGS &&
             git submodule update --init --recursive)
     fi
 
@@ -444,7 +454,7 @@ function get_repo2() {
     fi
     if [[ "$submodule_update" == "true" ]]; then
         (cd "build/$repo_dir" &&
-            git submodule sync --recursive &&
+            git submodule sync $GIT_SUBMODULE_SYNC_FLAGS &&
             git submodule update --init --recursive)
     fi
 }
