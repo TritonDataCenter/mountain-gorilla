@@ -524,6 +524,7 @@ cat <<EOF
       "curl-7.47.1",
       "gsed-4.2.2nb4",
       "patch-2.7.5",
+      "apg-2.3.0bnb3", // Required by vmapi provision workflow
       "sudo-1.8.15"
     ],
     "repos": [
