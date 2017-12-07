@@ -517,15 +517,10 @@ cat <<EOF
     "image_name": "workflow",
     "image_description": "SDC Workflow",
     "image_version": "1.0.0",
-    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
-      "coreutils-8.23nb2",
-      "curl-7.47.1",
-      "gsed-4.2.2nb4",
-      "patch-2.7.5",
-      "apg-2.3.0bnb3", // Required by vmapi provision workflow
-      "sudo-1.8.15"
+      "apg-2.3.0bnb3" // Required by vmapi provision workflow
     ],
     "repos": [
       {"url": "git@github.com:joyent/sdc-workflow.git"}
