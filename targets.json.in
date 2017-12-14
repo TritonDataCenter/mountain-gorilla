@@ -1142,11 +1142,11 @@ cat <<EOF
     "build_platform": "20141030T081701Z",
     "image_name": "manta-webapi",
     "image_description": "Manta webapi",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
-      "haproxy-1.4.18",
-      "sqlite3-3.7.9",
-      "zookeeper-client-3.4.3"
+      "haproxy-1.6.2",
+      "sqlite3-3.9.2",
+      "libzookeeper-3.4.6"
     ],
     "repos": [
       {"url": "git@github.com:joyent/manta-muskie.git"}
