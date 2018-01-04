@@ -5,7 +5,7 @@
 #
 
 #
-# Copyright 2016 Joyent, Inc.
+# Copyright (c) 2018, Joyent, Inc.
 #
 
 #
@@ -1742,6 +1742,48 @@ cns_publish_image: $(CNS_IMAGE_BIT)
 clean_cns:
 	$(RM) -rf $(BITS_DIR)/cns
 	(cd build/triton-cns && gmake distclean)
+
+
+#---- Manta Resharding System
+
+_manta-reshard_stamp=$(MANTA_RESHARD_BRANCH)-$(TIMESTAMP)-g$(MANTA_RESHARD_SHA)
+MANTA_RESHARD_BITS=$(BITS_DIR)/manta-reshard/manta-reshard-pkg-$(_manta-reshard_stamp).tar.bz2
+MANTA_RESHARD_IMAGE_BIT=$(BITS_DIR)/manta-reshard/manta-reshard-zfs-$(_manta-reshard_stamp).zfs.gz
+MANTA_RESHARD_MANIFEST_BIT=$(BITS_DIR)/manta-reshard/manta-reshard-zfs-$(_manta-reshard_stamp).imgmanifest
+
+.PHONY: manta-reshard
+manta-reshard: $(MANTA_RESHARD_BITS) manta-reshard_image
+
+$(MANTA_RESHARD_BITS): build/manta-reshard
+	@echo "# Build manta-reshard: branch $(MANTA_RESHARD_BRANCH), sha $(MANTA_RESHARD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	cd build/manta-reshard && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish
+	@echo "# Created manta-reshard bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(MANTA_RESHARD_BITS)
+	@echo ""
+
+.PHONY: manta-reshard_image
+manta-reshard_image: $(MANTA_RESHARD_IMAGE_BIT)
+
+$(MANTA_RESHARD_IMAGE_BIT): $(MANTA_RESHARD_BITS)
+	@echo "# Build manta-reshard_image: branch $(MANTA_RESHARD_BRANCH), sha $(MANTA_RESHARD_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MANTA_RESHARD_IMAGE_UUID)" -t $(MANTA_RESHARD_BITS) \
+		-b "manta-reshard" \
+		-o "$(MANTA_RESHARD_IMAGE_BIT)" -p $(MANTA_RESHARD_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(MANTA_RESHARD_EXTRA_TARBALLS) -n $(MANTA_RESHARD_IMAGE_NAME) \
+		-v $(_manta-reshard_stamp) -d $(MANTA_RESHARD_IMAGE_DESCRIPTION)
+	@echo "# Created manta-reshard image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(MANTA_RESHARD_IMAGE_BIT))
+	@echo ""
+
+manta-reshard_publish_image: $(MANTA_RESHARD_IMAGE_BIT)
+	@echo "# Publish manta-reshard image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(MANTA_RESHARD_MANIFEST_BIT) -f $(MANTA_RESHARD_IMAGE_BIT)
+
+
+clean_manta-reshard:
+	$(RM) -rf $(BITS_DIR)/manta-reshard
+	cd build/manta-reshard && gmake distclean
 
 
 #---- Mola

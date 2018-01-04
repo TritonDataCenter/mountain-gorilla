@@ -1430,6 +1430,33 @@ cat <<EOF
     ]
   },
 
+  "manta-reshard": {
+    "appliance": "true",
+    "build_platform": "20141030T081701Z",
+    "image_name": "manta-reshard",
+    "image_description": "Manta Resharding System",
+    "image_version": "1.0.0",
+    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
+    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
+    "pkgsrc": [
+      "coreutils-8.23nb2"
+    ],
+    "repos": [
+        {"url": "git@github.com:joyent/manta-reshard.git"}
+    ],
+    "public": true,
+    "deps": [
+      "amon",
+      "config-agent",
+      "registrar"
+    ],
+    "tarballs": [
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"},
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
+    ]
+  },
+
   "manta-deployment": {
     "appliance": "true",
     "build_platform": "20141030T081701Z",
