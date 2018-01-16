@@ -1371,13 +1371,10 @@ cat <<EOF
     "image_name": "sdcsso",
     "image_description": "SDC SSO",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
-      "gcc-runtime-4.6.2",
-      "curl-7.23.1nb1",
-      "openldap-client-2.4.24",
-      "pkg_alternatives-1.5",
-      "python26-2.6.7nb2"
+      "openssl-1.0.2k"
     ],
     "repos": [
         {"url":  "git@github.com:joyent/sdcsso.git" }
