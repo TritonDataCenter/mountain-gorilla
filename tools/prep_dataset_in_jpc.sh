@@ -298,7 +298,7 @@ for tb_info in ${tarballs}; do
     uncompress=gzcat
   fi
 
-  echo "Copying tarball '${tb_tarball}' to zone '${uuid}'."
+  echo "Copying tarball '${tb_tarball}' to zone '${CREATED_MACHINE_UUID}'."
   if [[ ${tb_sysroot} == "/" ]]; then
     # Special case: for tb_sysroot == '/' we presume these are fs-tarball
     # style tarballs with "/root/..." and "/site/...". We strip
