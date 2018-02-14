@@ -577,7 +577,7 @@ cat <<EOF
 
   "vmapi": {
     "appliance": "true",
-    "build_platform": "20141030T081701Z",
+    "build_platform": "20151126T062538Z",
     "image_name": "vmapi",
     "image_description": "SDC VMAPI",
     "image_version": "1.0.0",
