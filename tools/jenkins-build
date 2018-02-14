@@ -149,7 +149,7 @@ fi
 if [[ ! -f targets.json ]]; then
     bash < targets.json.in | json > targets.json
 fi
-IS_PUBLIC=$(json < targets.json ${JOB_NAME}.public)
+IS_PUBLIC=$(json < targets.json ${ACTUAL_JOB_NAME}.public)
 if [[ ${IS_PUBLIC} == "true" ]]; then
     JENKINS_OUTPUT_BASE="/public/${MG_JENKINS_BUILDS_DIR}"
 else
@@ -157,11 +157,11 @@ else
 fi
 
 if [[ -z ${JOYENT_BUILD} || ${JOYENT_BUILD} == "true" ]]; then
-    TRACE=1 ./configure -j -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" \
+    TRACE=1 ./configure -j -t $ACTUAL_JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" \
         -J /stor/builds -D /public/builds -O ${JENKINS_OUTPUT_BASE} \
         -B "$TRY_BRANCH"
 else
-    TRACE=1 ./configure -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" \
+    TRACE=1 ./configure -t $ACTUAL_JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" \
         -D /public/builds -O ${JENKINS_OUTPUT_BASE} -B "$TRY_BRANCH"
 fi
 
