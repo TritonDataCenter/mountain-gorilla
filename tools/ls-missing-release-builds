@@ -71,6 +71,10 @@ if [[ -z "$targets" ]]; then
         | grep -v '^headnode-joyent-debug ')
 fi
 
+# Ensure mls is setup properly at all.
+mls /Joyent_Dev/public/builds >/dev/null \
+    || fatal "cannot list /Joyent_Dev/public/builds"
+
 echo "$targets" | while read target public; do
     if [[ "$public" == "true" ]]; then
         latest_mpath=/Joyent_Dev/public/builds/$target/$release-latest
