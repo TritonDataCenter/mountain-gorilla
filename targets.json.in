@@ -460,7 +460,7 @@ cat <<EOF
   },
   "portolan": {
     "appliance": "true",
-    "build_platform": "20141030T081701Z",
+    "build_platform": "20151126T062538Z",
     "image_name": "portolan",
     "image_description": "SDC Portolan Service",
     "image_version": "1.0.0",
