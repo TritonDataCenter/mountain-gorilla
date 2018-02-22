@@ -325,6 +325,9 @@ if [[ -n "${packages}" ]]; then
       (echo ' === BEGIN /var/db/pkgin/pkg_install-err.log === '; \
       cat /var/db/pkgin/pkg_install-err.log; \
       echo '  === END /var/db/pkgin/pkg_install-err.log === '; \
+      echo '  === BEGIN pkg_info === '; \
+      pkg_info; \
+      echo '  === END pkg_info === '; \
       exit 1)"
 
   echo "Validating pkgsrc installation"
