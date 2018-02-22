@@ -836,10 +836,9 @@ cat <<EOF
     "build_platform": "20151126T062538Z",
     "image_name": "napi",
     "image_description": "SDC NAPI",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
-    "pkgsrc": [
-      "openldap-client-2.4.24"
-    ],
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
+    "pkgsrc": [],
     "repos": [
       {"url": "git@github.com:joyent/sdc-napi.git"}
     ],
