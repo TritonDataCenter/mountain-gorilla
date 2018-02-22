@@ -7,7 +7,7 @@
 #
 
 #
-# Copyright (c) 2017, Joyent, Inc.
+# Copyright (c) 2018, Joyent, Inc.
 #
 
 #
@@ -321,11 +321,7 @@ if [[ -n "${packages}" ]]; then
     ${SSH} "/opt/local/bin/pkgin -y remove libuuid"
   fi
 
-  # This pkgin can inscrutably fail with a pattern like this:
-  #     pkg_install warnings: 0, errors: 1
-  #     pkg_install error log can be found in /var/db/pkgin/pkg_install-err.log
-  # TODO: It would be nice to include the output of that error log.
-  ${SSH} "/opt/local/bin/pkgin -y in ${packages}"
+  ${SSH} "/opt/local/bin/pkgin -y in ${packages} || cat /var/db/pkgin/pkg_install-err.log"
 
   echo "Validating pkgsrc installation"
   for p in ${packages}
