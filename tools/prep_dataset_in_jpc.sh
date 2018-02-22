@@ -328,6 +328,9 @@ if [[ -n "${packages}" ]]; then
       echo '  === BEGIN pkg_info === '; \
       pkg_info; \
       echo '  === END pkg_info === '; \
+      echo '  === BEGIN /etc/pkgsrc_version === '; \
+      cat /etc/pkgsrc_version; \
+      echo '  === BEGIN /etc/pkgsrc_version === '; \
       exit 1)"
 
   echo "Validating pkgsrc installation"
