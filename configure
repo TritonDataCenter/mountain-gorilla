@@ -404,11 +404,6 @@ function get_repo_cache() {
     else
         (cd $MG_CACHE_DIR/repos/$repo_dir; git pull)
     fi
-    if [[ "$submodule_update" == "true" ]]; then
-        (cd "$MG_CACHE_DIR/repos/$repo_dir" &&
-            git submodule sync $GIT_SUBMODULE_SYNC_FLAGS &&
-            git submodule update --init --recursive)
-    fi
 
     # Error out if the cached repo is dirty. These thigns should always
     # be pristine.
