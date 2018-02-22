@@ -785,8 +785,14 @@ cat <<EOF
     "image_name": "cnapi",
     "image_description": "SDC CNAPI",
     "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
-    "pkgsrc": [],
+    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
+    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
+    "pkgsrc": [
+      "coreutils-8.23nb2",
+      "curl-7.47.1",
+      "gsed-4.2.2nb4",
+      "patch-2.7.5"
+    ],
     "repos": [
         {"url": "git@github.com:joyent/sdc-cnapi.git"}
     ],
