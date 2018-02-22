@@ -321,7 +321,11 @@ if [[ -n "${packages}" ]]; then
     ${SSH} "/opt/local/bin/pkgin -y remove libuuid"
   fi
 
-  ${SSH} "/opt/local/bin/pkgin -y in ${packages} || cat /var/db/pkgin/pkg_install-err.log"
+  ${SSH} "/opt/local/bin/pkgin -y in ${packages} || \
+      (echo ' === BEGIN /var/db/pkgin/pkg_install-err.log === '; \
+      cat /var/db/pkgin/pkg_install-err.log; \
+      echo '  === END /var/db/pkgin/pkg_install-err.log === '; \
+      exit 1)"
 
   echo "Validating pkgsrc installation"
   for p in ${packages}
