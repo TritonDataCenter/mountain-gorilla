@@ -7,7 +7,7 @@
 #
 
 #
-# Copyright (c) 2017, Joyent, Inc.
+# Copyright (c) 2018, Joyent, Inc.
 #
 
 #
@@ -321,11 +321,24 @@ if [[ -n "${packages}" ]]; then
     ${SSH} "/opt/local/bin/pkgin -y remove libuuid"
   fi
 
-  # This pkgin can inscrutably fail with a pattern like this:
-  #     pkg_install warnings: 0, errors: 1
-  #     pkg_install error log can be found in /var/db/pkgin/pkg_install-err.log
-  # TODO: It would be nice to include the output of that error log.
-  ${SSH} "/opt/local/bin/pkgin -y in ${packages}"
+  #
+  # When pkgin fails, it ridiculously tells you that there are errors, but not
+  # what the errors are (those are hidden in a log file). Since we destroy the
+  # temporary VM, we are not able to access those log files. So whe pkgin fails,
+  # we want to grab some data about the pkgsrc setup to help figure out what
+  # went wrong.
+  #
+  ${SSH} "/opt/local/bin/pkgin -y in ${packages} || \
+      (echo ' === BEGIN /var/db/pkgin/pkg_install-err.log === '; \
+      cat /var/db/pkgin/pkg_install-err.log; \
+      echo '  === END /var/db/pkgin/pkg_install-err.log === '; \
+      echo '  === BEGIN pkg_info === '; \
+      pkg_info; \
+      echo '  === END pkg_info === '; \
+      echo '  === BEGIN /etc/pkgsrc_version === '; \
+      cat /etc/pkgsrc_version; \
+      echo '  === END /etc/pkgsrc_version === '; \
+      exit 1)"
 
   echo "Validating pkgsrc installation"
   for p in ${packages}
