@@ -277,43 +277,65 @@ function preload_bits_from_manta() {
         best_branch=$branch
     fi
 
+    local builds_subdir="public"
+    local consider_prev_releases=0
+    local delay=0
+    local dirnames=
     #
     # Each build dir has a "${branch}-latest" file, e.g.
     # "/Joyent_Dev/stor/builds/amon/master-latest" that contains the name
     # of the actual latest path. Something similar but with a "-<buildstamp>"
     # instead of "-latest" and we'll grab that into latest_dir.
     #
-    local count=0
     local latest_dir=
-    local delay=0
+    local previous_releases=
     local success=
 
+    if [[ $(cat ${ROOT}/targets.json | $JSON ${target_base}.public) == 'false' \
+        ]]; then
+        builds_subdir="stor"
+    fi
+
+    dirnames[${#dirnames[@]}]="${best_branch}-latest"
+    if [[ "$branch" != "$best_branch" ]]; then
+        dirnames[${#dirnames[@]}]="${branch}-latest"
+    fi
+
+    consider_prev_releases=$(echo ",${CONSIDER_PREV_RELEASES_FOR}," | \
+        grep ",$target_base,") || true
+    if [[ "$consider_prev_releases" != "" ]]; then
+        dirnames[${#dirnames[@]}]=$(mls /Joyent_Dev/${builds_subdir}/builds/${target_base} | \
+            grep -E 'release-\d{8}-latest' | sort | tail -1)
+    fi;
+
     set +o errexit  # want to do our own error-handling here
-    while [[ ${count} -lt ${MANTA_MAX_RETRIES} && -z ${success} ]]; do
+    for dir_name in ${dirnames[@]}; do
+        local count=0
+        while [[ ${count} -lt ${MANTA_MAX_RETRIES} && -z ${success} ]]; do
 
-        if [[ ${count} -gt 0 ]]; then
-            cat /tmp/mget-output.$$
-            delay=$((${count} * 20))
-            if [[ $delay -gt 60 ]]; then
-                delay=60
+            if [[ ${count} -gt 0 ]]; then
+                cat /tmp/mget-output.$$
+                delay=$((${count} * 20))
+                if [[ $delay -gt 60 ]]; then
+                    delay=60
+                fi
+                echo "Could not get latest dir for target ${target}, retrying in ${delay}s"
+                sleep ${delay}
             fi
-            echo "Could not get latest dir for target ${target}, retrying in ${delay}s"
-            sleep ${delay}
-        fi
 
-        latest_dir=$(mget -v -q ${target_mpath}/${best_branch}-latest 2> /tmp/mget-output.$$)
+            latest_dir=$(mget -v -q ${target_mpath}/${dir_name} 2> /tmp/mget-output.$$)
 
-        if [[ $? == 0 ]]; then
-            success=1
-        elif [[ "$branch" != "$best_branch" ]]; then
-            # Try "branch" as a fallback, if we've specified "try_branch".
-            latest_dir=$(mget -v -q ${target_mpath}/${branch}-latest)
             if [[ $? == 0 ]]; then
                 success=1
+                break;
             fi
-        fi
 
-        count=$((${count} + 1))
+            count=$((${count} + 1))
+        done
+
+        if [[ $success -eq 1 ]]; then
+            break;
+        fi
     done
     set -o errexit  # back to errexit
 
@@ -563,6 +585,9 @@ function print_help() {
     echo "  -P           Ignore the 'build_platform' check that is meant to ensure"
     echo "               that a component is built on the exact platform version"
     echo "               specified for it in 'targets.json' for release."
+    echo "  -R [COMPONENT_NAME1,COMPONENT_NAME2,...]"
+    echo "               Consider using previous releases if latest release is not"
+    echo "               available."
     exit 0
 }
 
@@ -685,7 +710,7 @@ trap 'errexit $? $LINENO' EXIT
 if [[ "$1" == "--help" ]]; then
   print_help
 fi
-while getopts "b:B:d:D:O:hrft:c:jJ:P" opt; do
+while getopts "b:B:d:D:O:hrft:c:jJ:R:P" opt; do
     case "$opt" in
         b) BRANCH=$OPTARG ;;
         B) TRY_BRANCH=$OPTARG ;;
@@ -701,6 +726,7 @@ while getopts "b:B:d:D:O:hrft:c:jJ:P" opt; do
         j) JOYENT_BUILD=true ;;
         J) JOYENT_DEP_PATH=${OPTARG} ;;
         P) IGNORE_BUILD_PLATFORM_CHECK=yes ;;
+        R) CONSIDER_PREV_RELEASES_FOR=${OPTARG} ;;
         ?) fatal "unknown option: $opt" ;;
     esac
 done

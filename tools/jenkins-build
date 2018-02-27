@@ -156,10 +156,14 @@ else
     JENKINS_OUTPUT_BASE="/stor/${MG_JENKINS_BUILDS_DIR}"
 fi
 
+if [[ -z ${USE_PREV_RELEASES_FOR} ]]; then
+    USE_PREV_RELEASES_FOR=""
+fi
+
 if [[ -z ${JOYENT_BUILD} || ${JOYENT_BUILD} == "true" ]]; then
     TRACE=1 ./configure -j -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" \
         -J /stor/builds -D /public/builds -O ${JENKINS_OUTPUT_BASE} \
-        -B "$TRY_BRANCH"
+        -B "$TRY_BRANCH" -R ${USE_PREV_RELEASES_FOR}
 else
     TRACE=1 ./configure -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" \
         -D /public/builds -O ${JENKINS_OUTPUT_BASE} -B "$TRY_BRANCH"
