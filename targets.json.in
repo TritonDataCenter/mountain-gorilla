@@ -922,11 +922,11 @@ cat <<EOF
     "build_platform": "20151126T062538Z",
     "image_name": "manta-nameservice",
     "image_description": "Manta nameservice",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "sun-jre6-6.0.26",
-      "zookeeper-client-3.4.3",
-      "zookeeper-server-3.4.3"
+      "zookeeper-3.4.6nb1"
     ],
     "repos": [
       {"url": "git@github.com:joyent/binder.git"}
