@@ -301,7 +301,7 @@ function preload_bits_from_manta() {
         dirnames[${#dirnames[@]}]="${branch}-latest"
     fi
 
-    consider_prev_releases=$(echo ,${CONSIDER_PREV_RELEASES_FOR}, | \
+    consider_prev_releases=$(echo ,"${CONSIDER_PREV_RELEASES_FOR}", | \
         grep ",$target_base,") || true
     if [[ "$consider_prev_releases" != "" ]]; then
         dirnames[${#dirnames[@]}]=$(mls /Joyent_Dev/${builds_subdir}/builds/${target_base} | \
