@@ -301,11 +301,11 @@ function preload_bits_from_manta() {
         dirnames[${#dirnames[@]}]="${branch}-latest"
     fi
 
-    consider_prev_releases=$(echo ",${CONSIDER_PREV_RELEASES_FOR}," | \
+    consider_prev_releases=$(echo ,"${CONSIDER_PREV_RELEASES_FOR}", | \
         grep ",$target_base,") || true
     if [[ "$consider_prev_releases" != "" ]]; then
         dirnames[${#dirnames[@]}]=$(mls /Joyent_Dev/${builds_subdir}/builds/${target_base} | \
-            grep -E 'release-\d{8}-latest' | sort | tail -1)
+            grep -E 'release-[[:digit:]]{8}-latest' | sort | tail -1)
     fi;
 
     set +o errexit  # want to do our own error-handling here
