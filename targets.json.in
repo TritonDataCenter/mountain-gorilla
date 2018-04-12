@@ -373,7 +373,7 @@ cat <<EOF
       "patch-2.7.5",
       "sudo-1.8.15",
 
-      "openssl-1.0.2nnb1",
+      "openssl-1.0.2o",
       "stud-0.3p53nb5",
       "haproxy-1.6.2"
     ],
@@ -657,7 +657,7 @@ cat <<EOF
 
         "dateutils-0.3.1nb1",
         "haproxy-1.6.2",
-        "openssl-1.0.2nnb1",
+        "openssl-1.0.2o",
         "smtools-20160926",
         "stud-0.3p53nb5",
         "the_silver_searcher-0.31.0",
@@ -1115,7 +1115,7 @@ cat <<EOF
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
       "py27-curses",
-      "openssl-1.0.2nnb1",
+      "openssl-1.0.2o",
       "stud-0.3p53nb5",
       "libzookeeper-3.4.6"
     ],
@@ -1372,7 +1372,7 @@ cat <<EOF
     "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
-      "openssl-1.0.2nnb1",
+      "openssl-1.0.2o",
       "postfix-3.0.2nb2"
     ],
     "repos": [
