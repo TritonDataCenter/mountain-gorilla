@@ -1426,6 +1426,25 @@ cat <<EOF
     ]
   },
 
+  "pgstatsmon": {
+    "appliance": "true",
+    "build_platform": "20151126T062538Z",
+    "image_name": "manta-pgstatsmon",
+    "image_description": "Postgres Monitoring Service",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
+    "repos": [
+        {"url": "git@github.com:joyent/pgstatsmon.git"}
+    ],
+    "public": true,
+    "deps": [
+      "config-agent"
+    ],
+    "tarballs": [
+      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+    ]
+  },
+
   "manta-reshard": {
     "appliance": "true",
     "build_platform": "20151126T062538Z",

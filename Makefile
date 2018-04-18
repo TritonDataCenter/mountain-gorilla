@@ -1785,6 +1785,46 @@ clean_manta-reshard:
 	$(RM) -rf $(BITS_DIR)/manta-reshard
 	cd build/manta-reshard && gmake distclean
 
+#---- pgstatsmon
+
+_pgstatsmon_stamp=$(PGSTATSMON_BRANCH)-$(TIMESTAMP)-g$(PGSTATSMON_SHA)
+PGSTATSMON_BITS=$(BITS_DIR)/pgstatsmon/pgstatsmon-pkg-$(_pgstatsmon_stamp).tar.bz2
+PGSTATSMON_IMAGE_BIT=$(BITS_DIR)/pgstatsmon/pgstatsmon-zfs-$(_pgstatsmon_stamp).zfs.gz
+PGSTATSMON_MANIFEST_BIT=$(BITS_DIR)/pgstatsmon/pgstatsmon-zfs-$(_pgstatsmon_stamp).imgmanifest
+
+.PHONY: pgstatsmon
+pgstatsmon: $(PGSTATSMON_BITS) pgstatsmon_image
+
+$(PGSTATSMON_BITS): build/pgstatsmon
+	@echo "# Build pgstatsmon: branch $(PGSTATSMON_BRANCH), sha $(PGSTATSMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	cd build/pgstatsmon && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish
+	@echo "# Created pgstatsmon bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(PGSTATSMON_BITS)
+	@echo ""
+
+.PHONY: pgstatsmon-image
+pgstatsmon_image: $(PGSTATSMON_IMAGE_BIT)
+
+$(PGSTATSMON_IMAGE_BIT): $(PGSTATSMON_BITS)
+	@echo "# Build pgstatsmon_image: branch $(PGSTATSMON_BRANCH), sha $(PGSTATSMON_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(PGSTATSMON_IMAGE_UUID)" -t $(PGSTATSMON_BITS) \
+		-b "pgstatsmon" \
+		-o "$(PGSTATSMON_IMAGE_BIT)" -p $(PGSTATSMON_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(PGSTATSMON_EXTRA_TARBALLS) -n $(PGSTATSMON_IMAGE_NAME) \
+		-v $(_pgstatsmon_stamp) -d $(PGSTATSMON_IMAGE_DESCRIPTION)
+	@echo "# Created pgstatsmon image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(PGSTATSMON_IMAGE_BIT))
+	@echo ""
+
+pgstatsmon_publish_image: $(PGSTATSMON_IMAGE_BIT)
+	@echo "# Publish pgstatsmon image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(PGSTATSMON_MANIFEST_BIT) -f $(PGSTATSMON_IMAGE_BIT)
+
+
+clean_pgstatsmon:
+	$(RM) -rf $(BITS_DIR)/pgstatsmon
+	cd build/pgstatsmon && gmake distclean
 
 #---- Mola
 
