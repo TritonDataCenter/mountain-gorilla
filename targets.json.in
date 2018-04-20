@@ -1438,9 +1438,11 @@ cat <<EOF
     ],
     "public": true,
     "deps": [
+      "amon",
       "config-agent"
     ],
     "tarballs": [
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
     ]
   },
