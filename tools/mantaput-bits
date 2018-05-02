@@ -122,9 +122,13 @@ done
 # upload the md5sums and config.mk
 echo -e $md5sums | mput -v -H 'content-type: text/plain' /${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}/md5sums.txt
 mput -v -f $BITS_DIR/config.mk /${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}/config.mk
-# now update the latest link
 
+# now update the branch latest link
 echo "/${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}" | mput -v -H 'content-type: text/plain' /${MANTA_USER}${UPLOAD_BASE_DIR}/${UPLOAD_BRANCH}-latest
+# If this is a bi-weekly release branch, also update latest-release link
+if [[ $UPLOAD_BRANCH =~ ^release- ]]; then
+    echo "/${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}" | mput -v -H 'content-type: text/plain' /${MANTA_USER}${UPLOAD_BASE_DIR}/latest-release
+fi
 
 echo "Uploaded to /${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}"
 
