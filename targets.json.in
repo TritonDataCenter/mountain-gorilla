@@ -207,11 +207,9 @@ cat <<EOF
     "image_name": "adminui",
     "image_description": "SDC AdminUI",
     "image_version": "1.0.0",
-    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
-    "pkgsrc": [
-      "patch-2.7.5"
-    ],
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
+    "pkgsrc": [],
     "repos": [
         {"url": "git@github.com:joyent/sdc-adminui.git", "dir": "adminui"}
     ],
@@ -251,10 +249,9 @@ cat <<EOF
     "image_name": "nfsserver",
     "image_description": "SDC NFS Server",
     "image_version": "1.0.0",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
-    "pkgsrc": [
-        "gsed-4.2.2nb4"
-    ],
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
+    "pkgsrc": [],
     "repos": [
         {"url": "git@github.com:joyent/sdc-nfsserver.git", "dir": "nfsserver"}
     ],
@@ -354,8 +351,8 @@ cat <<EOF
     "image_name": "cloudapi",
     "image_description": "SDC CloudAPI",
     "image_version": "1.0.0",
-    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "repos": [
       {"url": "git@github.com:joyent/sdc-cloudapi.git"}
     ],
@@ -367,12 +364,6 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "pkgsrc": [
-      "coreutils-8.23nb2",
-      "curl-7.47.1",
-      "gsed-4.2.2nb4",
-      "patch-2.7.5",
-      "sudo-1.8.15",
-
       "openssl-1.0.2o",
       "stud-0.3p53nb5",
       "haproxy-1.6.2"
@@ -404,8 +395,8 @@ cat <<EOF
     "image_name": "docker",
     "image_description": "SDC Docker Engine",
     "image_version": "1.0.0",
-    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "repos": [
       {"url": "git@github.com:joyent/sdc-docker.git"}
     ],
@@ -416,13 +407,7 @@ cat <<EOF
       "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ],
-    "pkgsrc": [
-        "coreutils-8.23nb2",
-        "curl-7.47.1",
-        "gsed-4.2.2nb4",
-        "patch-2.7.5",
-        "sudo-1.8.15"
-    ],
+    "pkgsrc": [],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
@@ -435,8 +420,8 @@ cat <<EOF
     "image_name": "volapi",
     "image_description": "SDC Volumes API",
     "image_version": "1.0.0",
-    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "repos": [
       {"url": "git@github.com:joyent/sdc-volapi.git"}
     ],
@@ -447,13 +432,7 @@ cat <<EOF
       "registrar",
       "https://download.joyent.com/pub/build/sdcnode"
     ],
-    "pkgsrc": [
-        "coreutils-8.23nb2",
-        "curl-7.47.1",
-        "gsed-4.2.2nb4",
-        "patch-2.7.5",
-        "sudo-1.8.15"
-    ],
+    "pkgsrc": [],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
@@ -546,12 +525,9 @@ cat <<EOF
     "image_name": "cmon",
     "image_description": "Triton Container Monitor",
     "image_version": "1.0.0",
-    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
-    "pkgsrc": [
-        "coreutils-8.23nb2",
-        "gsed-4.2.2nb4"
-    ],
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
+    "pkgsrc": [],
     "repos": [
         {"url": "git@github.com:joyent/triton-cmon.git"}
     ],
@@ -583,15 +559,9 @@ cat <<EOF
     "image_name": "vmapi",
     "image_description": "SDC VMAPI",
     "image_version": "1.0.0",
-    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
-    "pkgsrc": [
-      "coreutils-8.23nb2",
-      "curl-7.47.1",
-      "gsed-4.2.2nb4",
-      "patch-2.7.5",
-      "sudo-1.8.15"
-    ],
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
+    "pkgsrc": [],
     "repos": [
         {"url": "git@github.com:joyent/sdc-vmapi.git"}
     ],
@@ -615,15 +585,9 @@ cat <<EOF
     "image_name": "papi",
     "image_description": "SDC PAPI",
     "image_version": "1.0.0",
-    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
-    "pkgsrc": [
-      "coreutils-8.23nb2",
-      "curl-7.47.1",
-      "gsed-4.2.2nb4",
-      "patch-2.7.5",
-      "sudo-1.8.15"
-    ],
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
+    "pkgsrc": [],
     "repos": [
         {"url": "git@github.com:joyent/sdc-papi.git"}
     ],
@@ -646,15 +610,9 @@ cat <<EOF
     "build_platform": "20151126T062538Z",
     "image_name": "imgapi",
     "image_description": "SDC IMGAPI",
-    "// image_uuid": "sdc-minimal-multiarch-lts@15.4.1",
-    "image_uuid": "18b094b0-eb01-11e5-80c1-175dac7ddf02",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
-        "coreutils-8.23nb2",
-        "curl-7.47.1",
-        "gsed-4.2.2nb4",
-        "patch-2.7.5",
-        "sudo-1.8.15",
-
         "dateutils-0.3.1nb1",
         "haproxy-1.6.2",
         "openssl-1.0.2o",
