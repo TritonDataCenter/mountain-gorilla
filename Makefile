@@ -2273,6 +2273,26 @@ clean_registrar:
 	(cd build/registrar && gmake distclean)
 
 
+#---- waferlock
+
+_waferlock_stamp=$(WAFERLOCK_BRANCH)-$(TIMESTAMP)-g$(WAFERLOCK_SHA)
+WAFERLOCK_BITS=$(BITS_DIR)/waferlock/waferlock-pkg-$(_waferlock_stamp).tar.bz2
+
+.PHONY: waferlock
+waferlock: $(WAFERLOCK_BITS)
+
+$(WAFERLOCK_BITS): build/waferlock
+	@echo "# Build waferlock: branch $(WAFERLOCK_BRANCH), sha $(WAFERLOCK_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/waferlock && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created waferlock bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(WAFERLOCK_BITS)
+	@echo ""
+
+clean_waferlock:
+	$(RM) -rf $(BITS_DIR)/waferlock
+	(cd build/waferlock && gmake distclean)
+
 #---- mackerel
 
 _mackerel_stamp=$(MANTA_MACKEREL_BRANCH)-$(TIMESTAMP)-g$(MANTA_MACKEREL_SHA)
