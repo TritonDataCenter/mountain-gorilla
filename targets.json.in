@@ -854,6 +854,17 @@ cat <<EOF
     ]
   },
 
+  "waferlock": {
+    "build_platform": "20151126T062538Z",
+    "repos": [
+        {"url": "git@github.com:joyent/waferlock.git"}
+    ],
+    "public": true,
+    "deps": [
+      "https://download.joyent.com/pub/build/sdcnode"
+    ]
+  },
+
   "minnow": {
     "build_platform": "20151126T062538Z",
     "repos": [
@@ -921,11 +932,13 @@ cat <<EOF
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
+      "waferlock",
       "amon",
       "config-agent"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "waferlock/waferlock-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
     ]
@@ -948,11 +961,13 @@ cat <<EOF
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
       "registrar",
+      "waferlock",
       "amon",
       "config-agent"
     ],
     "tarballs": [
       {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "waferlock/waferlock-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
     ]
