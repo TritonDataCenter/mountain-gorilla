@@ -1070,7 +1070,6 @@ cat <<EOF
     "public": true,
     "deps": [
       "registrar",
-      "moray",
       "amon",
       "config-agent"
     ],
