@@ -230,12 +230,11 @@ cat <<EOF
     "appliance": "true",
     "build_platform": "20151126T062538Z",
     "image_name": "mockcloud",
-    "image_description": "SDC MOCK CLOUD",
-    "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
-    "pkgsrc": [
-      "tftp-hpa-5.2"
-    ],
+    "image_description": "Triton Mockcloud",
+    "image_version": "2.0.0",
+    "// image_uuid": "triton-origin-multiarch-18.1.0@1.0.1",
+    "image_uuid": "b6ea7cb4-6b90-48c0-99e7-1d34c2895248",
+    "pkgsrc": [],
     "repos": [
         {"url": "git@github.com:joyent/sdc-mockcloud.git", "dir": "mockcloud"}
     ],
