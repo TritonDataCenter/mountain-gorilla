@@ -1826,6 +1826,47 @@ clean_pgstatsmon:
 	$(RM) -rf $(BITS_DIR)/pgstatsmon
 	cd build/pgstatsmon && gmake distclean
 
+#---- Manta Garbage Collector
+
+_manta-garbage-collector_stamp=$(MANTA_GARBAGE_COLLECTOR_BRANCH)-$(TIMESTAMP)-g$(MANTA_GARBAGE_COLLECTOR_SHA)
+MANTA_GARBAGE_COLLECTOR_BITS=$(BITS_DIR)/manta-garbage-collector/manta-garbage-collector-pkg-$(_manta-garbage-collector_stamp).tar.bz2
+MANTA_GARBAGE_COLLECTOR_IMAGE_BIT=$(BITS_DIR)/manta-garbage-collector/manta-garbage-collector-zfs-$(_manta-garbage-collector_stamp).zfs.gz
+MANTA_GARBAGE_COLLECTOR_MANIFEST_BIT=$(BITS_DIR)/manta-garbage-collector/manta-garbage-collector-zfs-$(_manta-garbage-collector_stamp).imgmanifest
+
+.PHONY: manta-garbage-collector
+manta-garbage-collector: $(MANTA_GARBAGE_COLLECTOR_BITS) manta-garbage-collector_image
+
+$(MANTA_GARBAGE_COLLECTOR_BITS): build/manta-garbage-collector
+	@echo "# Build manta-garbage-collector: branch $(MANTA_GARBAGE_COLLECTOR_BRANCH), sha $(MANTA_GARBAGE_COLLECTOR_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	cd build/manta-garbage-collector && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish
+	@echo "# Created manta-garbage-collector bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(MANTA_GARBAGE_COLLECTOR_BITS)
+	@echo ""
+
+.PHONY: manta-garbage-collector_image
+manta-garbage-collector_image: $(MANTA_GARBAGE_COLLECTOR_IMAGE_BIT)
+
+$(MANTA_GARBAGE_COLLECTOR_IMAGE_BIT): $(MANTA_GARBAGE_COLLECTOR_BITS)
+	@echo "# Build manta-garbage-collector_image: branch $(MANTA_GARBAGE_COLLECTOR_BRANCH), sha $(MANTA_GARBAGE_COLLECTOR_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(MANTA_GARBAGE_COLLECTOR_IMAGE_UUID)" -t $(MANTA_GARBAGE_COLLECTOR_BITS) \
+		-b "manta-garbage-collector" \
+		-o "$(MANTA_GARBAGE_COLLECTOR_IMAGE_BIT)" -p $(MANTA_GARBAGE_COLLECTOR_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(MANTA_GARBAGE_COLLECTOR_EXTRA_TARBALLS) -n $(MANTA_GARBAGE_COLLECTOR_IMAGE_NAME) \
+		-v $(_manta-garbage-collector_stamp) -d $(MANTA_GARBAGE_COLLECTOR_IMAGE_DESCRIPTION)
+	@echo "# Created manta-garbage-collector image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(MANTA_GARBAGE_COLLECTOR_IMAGE_BIT))
+	@echo ""
+
+manta-garbage-collector_publish_image: $(MANTA_GARBAGE_COLLECTOR_IMAGE_BIT)
+	@echo "# Publish manta-garbage-collector image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(MANTA_GARBAGE_COLLECTOR_MANIFEST_BIT) -f $(MANTA_GARBAGE_COLLECTOR_IMAGE_BIT)
+
+
+clean_manta-garbage-collector:
+	$(RM) -rf $(BITS_DIR)/manta-garbage-collector
+	cd build/manta-garbage-collector && gmake distclean
+
 #---- Mola
 
 _mola_stamp=$(MANTA_MOLA_BRANCH)-$(TIMESTAMP)-g$(MANTA_MOLA_SHA)
