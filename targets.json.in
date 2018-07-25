@@ -1449,6 +1449,29 @@ cat <<EOF
     ]
   },
 
+  "manta-garbage-collector": {
+    "appliance": "true",
+    "build_platform": "20151126T062538Z",
+    "image_name": "manta-garbage-collector",
+    "image_description": "Manta Garbage Collector",
+    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
+    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
+    "repos": [
+        {"url": "git@github.com:joyent/manta-garbage-collector.git"}
+    ],
+    "public": true,
+    "deps": [
+        "amon",
+        "config-agent",
+        "registrar"
+    ],
+    "tarballs": [
+      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
+      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+    ]
+  },
+
   "manta-deployment": {
     "appliance": "true",
     "build_platform": "20151126T062538Z",
