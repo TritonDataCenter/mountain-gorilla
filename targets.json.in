@@ -1223,8 +1223,8 @@ cat <<EOF
     "build_platform": "20151126T062538Z",
     "image_name": "manta-storage",
     "image_description": "Manta storage",
-    "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
-    "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
+    "// image_uuid": "triton-origin-multiarch-18.1.0@1.0.1",
+    "image_uuid": "b6ea7cb4-6b90-48c0-99e7-1d34c2895248",
     "pkgsrc": [
       "pcre-8.38"
     ],
