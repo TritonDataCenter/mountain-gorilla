@@ -1226,6 +1226,7 @@ cat <<EOF
     "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [
+      "findutils-4.4.2"
     ],
     "repos": [
       {"url": "git@github.com:joyent/manta-mako.git"}
