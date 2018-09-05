@@ -1036,6 +1036,48 @@ clean_papi:
 
 
 
+#---- Prometheus
+
+_prometheus_stamp=$(TRITON_PROMETHEUS_BRANCH)-$(TIMESTAMP)-g$(TRITON_PROMETHEUS_SHA)
+PROMETHEUS_BITS=$(BITS_DIR)/prometheus/prometheus-pkg-$(_prometheus_stamp).tar.bz2
+PROMETHEUS_IMAGE_BIT=$(BITS_DIR)/prometheus/prometheus-zfs-$(_prometheus_stamp).zfs.gz
+PROMETHEUS_MANIFEST_BIT=$(BITS_DIR)/prometheus/prometheus-zfs-$(_prometheus_stamp).imgmanifest
+
+
+.PHONY: prometheus
+prometheus: $(PROMETHEUS_BITS) prometheus_image
+
+$(PROMETHEUS_BITS): build/triton-prometheus
+	@echo "# Build prometheus: branch $(TRITON_PROMETHEUS_BRANCH), sha $(TRITON_PROMETHEUS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/triton-prometheus && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created prometheus bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(PROMETHEUS_BITS)
+	@echo ""
+
+.PHONY: prometheus_image
+prometheus_image: $(PROMETHEUS_IMAGE_BIT)
+
+$(PROMETHEUS_IMAGE_BIT): $(PROMETHEUS_BITS)
+	@echo "# Build prometheus_image: branch $(TRITON_PROMETHEUS_BRANCH), sha $(TRITON_PROMETHEUS_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(PROMETHEUS_IMAGE_UUID)" -t $(PROMETHEUS_BITS) \
+		-o "$(PROMETHEUS_IMAGE_BIT)" -p $(PROMETHEUS_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(PROMETHEUS_EXTRA_TARBALLS) -n $(PROMETHEUS_IMAGE_NAME) \
+		-v $(_prometheus_stamp) -d $(PROMETHEUS_IMAGE_DESCRIPTION)
+	@echo "# Created prometheus image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(PROMETHEUS_IMAGE_BIT))
+	@echo ""
+
+prometheus_publish_image: $(PROMETHEUS_IMAGE_BIT)
+	@echo "# Publish prometheus image to Triton updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(PROMETHEUS_MANIFEST_BIT) -f $(PROMETHEUS_IMAGE_BIT)
+
+clean_prometheus:
+	$(RM) -rf $(BITS_DIR)/prometheus
+	(cd build/triton-prometheus && gmake clean)
+
+
+
 #---- IMGAPI
 
 _imgapi_stamp=$(SDC_IMGAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_IMGAPI_SHA)
