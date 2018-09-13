@@ -2702,8 +2702,7 @@ HEADNODE_TARGETS = \
 # These targets are only built for the base "headnode" job.
 #
 HEADNODE_BASE_ONLY_TARGETS = \
-	gz-tools \
-	incr-upgrade
+	gz-tools
 
 .PHONY: headnode
 headnode: $(HEADNODE_TARGETS) $(HEADNODE_BASE_ONLY_TARGETS)
@@ -2831,21 +2830,6 @@ gz-tools_publish_image:
 	$(UPDATES_IMGADM) import -ddd -m $(GZ_TOOLS_MANIFEST_OUTPUT) -f $(GZ_TOOLS_OUTPUT)
 	@echo ""
 
-INCR_UPGRADE_BUILD=$(USB_BUILD_DIR)/incr-upgrade-$(_headnode_stamp).tgz
-INCR_UPGRADE_OUTPUT=$(USB_BITS_DIR)/incr-upgrade$(HEADNODE_SUFFIX)-$(_headnode_stamp).tgz
-
-.PHONY: incr-upgrade
-incr-upgrade: $(INCR_UPGRADE_OUTPUT)
-
-$(INCR_UPGRADE_OUTPUT): $(USB_BITS_SPEC) $(BOOT_OUTPUT)
-	@echo "# Build incr-upgrade: sdc-headnode branch $(SDC_HEADNODE_BRANCH), sha $(SDC_HEADNODE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	cd "build/sdc-headnode" && \
-	    BITS_DIR=$(BITS_DIR) TIMESTAMP=$(TIMESTAMP) \
-	    gmake incr-upgrade
-	mv $(INCR_UPGRADE_BUILD) $(INCR_UPGRADE_OUTPUT)
-	@echo "# Created incr-upgrade bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(INCR_UPGRADE_OUTPUT)
-	@echo ""
 
 #
 # Of the "headnode*" family of builds, only the base "headnode" job currently

@@ -77,7 +77,6 @@ export PATH=$TOP/node_modules/.bin:$PATH
 #
 # Deliberately excluded build names for now (and the reason why):
 #    agentsshar-upgrade             paranoia
-#    incr-upgrade                   paranoia
 #    platform                       want to discuss with OS guys
 #    platform-debug                 want to discuss with OS guys
 #    sdcsso                         build story isn't clear, eng hands off here
