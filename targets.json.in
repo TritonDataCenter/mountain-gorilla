@@ -1234,14 +1234,10 @@ cat <<EOF
     "public": true,
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode",
-      "minnow",
-      "registrar",
       "amon",
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "minnow/minnow-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
     ]
