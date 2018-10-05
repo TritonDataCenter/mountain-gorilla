@@ -1558,6 +1558,22 @@ cat <<EOF
     ],
     "public": true,
     "deps": []
+  },
+  "kbmapi": {
+      "appliance": "true",
+      "build_platform": : "20151126T062538",
+      "image_name": "triton-kbmapi",
+      "image_description": "Triton Key Backup and Management",
+      "image_version": "0.42.42",
+      "// image_uuid": "triton-origin-multiarch-18.1.0@1.0.1",
+      "image_uuid": "b6ea7cb4-6b90-48c0-99e7-1d34c2895248",
+      "pkgsrc": [],
+      "repos": [
+          {"url": "git@github.com:joyent/triton-kbmapi.git"}
+      ],
+      "public": true,
+      "deps": [],
+      "tarballs": []
   }
 }
 
