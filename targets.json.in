@@ -1561,7 +1561,7 @@ cat <<EOF
   },
   "kbmapi": {
       "appliance": "true",
-      "build_platform": : "20151126T062538",
+      "build_platform": "20151126T062538",
       "image_name": "triton-kbmapi",
       "image_description": "Triton Key Backup and Management",
       "image_version": "0.42.42",
