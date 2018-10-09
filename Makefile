@@ -2532,10 +2532,10 @@ KBMAPI_MANIFEST_BIT=$(BITS_DIR)/kbmapi/kbmapi-zfs-$(_kbmapi_stamp).imgmanifest
 .PHONY: kbmapi
 kbmapi: $(KBMAPI_BITS) kbmapi_image
 
-$(KBMAPI_BITS): build/kbmapi
+$(KBMAPI_BITS): build/triton-kbmapi
 	@echo "# Build kbmapi: branch $(KBMAPI_BRANCH), sha $(TRITON_KBMAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/kbmapi && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/triton-kbmapi && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created kbmapi bits (time `date -u %Y%m%dT%H%M%SZ`):"
 	@ls -l $(KBMAPI_BITS)
 	@echo ""
