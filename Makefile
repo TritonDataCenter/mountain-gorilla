@@ -2523,6 +2523,45 @@ sdcadm_publish_image: $(SDCADM_BITS)
 	@echo "# Publish sdcadm image to SDC Updates repo."
 	$(UPDATES_IMGADM) import -ddd -m $(SDCADM_MANIFEST_BIT) -f $(SDCADM_PKG_BIT) --compression=none
 
+#---- KMBAPI
+_kbmapi_stamp=$(KBMAPI_BRANCH)_$(TIMESTAMP)-g$(TRITON_KBMAPI_SHA)
+KBMAPI_BITS=$(BITS_DIR)/kbmapi/kbmapi-pkg-$(_kbmapi_stamp).tar.bz2
+KBMAPI_IMAGE_BIT=$(BITS_DIR)/kbmapi/kbmapi-zfs-$(_kbmapi_stamp).zfs.gz
+KBMAPI_MANIFEST_BIT=$(BITS_DIR)/kbmapi/kbmapi-zfs-$(_kbmapi_stamp).imgmanifest
+
+.PHONY: kbmapi
+kbmapi: $(KBMAPI_BITS) kbmapi_image
+
+$(KBMAPI_BITS): build/kbmapi
+	@echo "# Build kbmapi: branch $(KBMAPI_BRANCH), sha $(TRITON_KBMAPI_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/kbmapi && LDFLAGS="-L/opt/local/lib -R/opt/local/lib" NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created kbmapi bits (time `date -u %Y%m%dT%H%M%SZ`):"
+	@ls -l $(KBMAPI_BITS)
+	@echo ""
+
+.PHONY: kbmapi_image
+kbmapi_image: $(KBMAPI_IMAGE_BIT)
+
+$(KBMAPI_IMAGE_BIT): $(KBMAPI_BITS)
+	@echo "# Build kbmapi_image: branch $(KBMAPI_BRANCH), sha $(TRITON_KBMAPI_SHA), time `date -u %Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(KBMAPI_IMAGE_UUID)" -t $(KBMAPI_BITS) \
+		-b "kbmapi" \
+		-o "$(KBMAPI_IMAGE_BIT)" -p $(KBMAPI_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(KBMAPI_EXTRA_TARBALLS) -n $(KBMAPI_IMAGE_NAME) \
+		-v $(_kbmapi_stamp) -d "$(KBMAPI_IMAGE_DESCRIPTION)"
+	@echo "# Created KBMAPI image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(BINDER_IMAGE_BIT))
+	@echo ""
+
+kbmapi_publish_image: $(KBMAPI_IMAGE_BIT)
+	@echo "# Publish kbmapi image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(KBMAPI_MANIFEST_BIT) -f $(KBMAPI_IMAGE_BIT)
+
+clean_kbmapi:
+	$(RM) -rf $(BITS_DIR)/kbmapi
+	(cd build/kbmapi && gmake distclean)
+
 
 #---- agentsshar
 
