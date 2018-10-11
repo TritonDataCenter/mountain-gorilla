@@ -1036,6 +1036,47 @@ clean_papi:
 
 
 
+#---- Grafana
+
+_grafana_stamp=$(TRITON_GRAFANA_BRANCH)-$(TIMESTAMP)-g$(TRITON_GRAFANA_SHA)
+GRAFANA_BITS=$(BITS_DIR)/grafana/grafana-pkg-$(_grafana_stamp).tar.bz2
+GRAFANA_IMAGE_BIT=$(BITS_DIR)/grafana/grafana-zfs-$(_grafana_stamp).zfs.gz
+GRAFANA_MANIFEST_BIT=$(BITS_DIR)/grafana/grafana-zfs-$(_grafana_stamp).imgmanifest
+
+.PHONY: grafana
+grafana: $(GRAFANA_BITS) grafana_image
+
+$(GRAFANA_BITS): build/triton-dashboards
+	@echo "# Build grafana: branch $(TRITON_GRAFANA_BRANCH), sha $(TRITON_GRAFANA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	mkdir -p $(BITS_DIR)
+	(cd build/triton-dashboards && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	@echo "# Created grafana bits (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $(GRAFANA_BITS)
+	@echo ""
+
+.PHONY: grafana_image
+grafana_image: $(GRAFANA_IMAGE_BIT)
+
+$(GRAFANA_IMAGE_BIT): $(GRAFANA_BITS)
+	@echo "# Build grafana_image: branch $(TRITON_GRAFANA_BRANCH), sha $(TRITON_GRAFANA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	./tools/prep_dataset_in_jpc.sh -i "$(GRAFANA_IMAGE_UUID)" -t $(GRAFANA_BITS) \
+		-o "$(GRAFANA_IMAGE_BIT)" -p $(GRAFANA_PKGSRC) -O "$(MG_OUT_PATH)" \
+		-t $(GRAFANA_EXTRA_TARBALLS) -n $(GRAFANA_IMAGE_NAME) \
+		-v $(_grafana_stamp) -d $(GRAFANA_IMAGE_DESCRIPTION)
+	@echo "# Created grafana image (time `date -u +%Y%m%dT%H%M%SZ`):"
+	@ls -l $$(dirname $(GRAFANA_IMAGE_BIT))
+	@echo ""
+
+grafana_publish_image: $(GRAFANA_IMAGE_BIT)
+	@echo "# Publish grafana image to SDC Updates repo."
+	$(UPDATES_IMGADM) import -ddd -m $(GRAFANA_MANIFEST_BIT) -f $(GRAFANA_IMAGE_BIT)
+
+clean_grafana:
+	$(RM) -rf $(BITS_DIR)/grafana
+	(cd build/triton-dashboards && gmake clean)
+
+
+
 #---- IMGAPI
 
 _imgapi_stamp=$(SDC_IMGAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_IMGAPI_SHA)
