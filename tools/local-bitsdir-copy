@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright (c) 2018, Joyent, Inc.
 #
 
 #
@@ -25,12 +25,12 @@ function fatal ()
     exit 1
 }
 
-JOB_NAME=$1
-if [[ -z ${JOB_NAME} || -n $2 ]]; then
+MG_TARGET=$1
+if [[ -z ${MG_TARGET} || -n $2 ]]; then
     fatal "Usage: $0 <job_name>"
 fi
 
-mkdir -p ${LOCAL_BITS_DIR}/${JOB_NAME}
-rsync -va ${TOP}/bits/${JOB_NAME}/* ${LOCAL_BITS_DIR}/${JOB_NAME}/
+mkdir -p ${LOCAL_BITS_DIR}/${MG_TARGET}
+rsync -va ${TOP}/bits/${MG_TARGET}/* ${LOCAL_BITS_DIR}/${MG_TARGET}/
 
 exit 0

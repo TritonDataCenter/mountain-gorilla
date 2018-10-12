@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright (c) 2018, Joyent, Inc.
 #
 
 # Upload the bits dir to Manta
@@ -19,6 +19,7 @@ set -o errexit
 TOP=$(cd $(dirname $0)/../; pwd)
 BITS_DIR=bits/
 PATH=$PATH:${TOP}/node_modules/manta/bin
+UPLOAD_LOG=${TOP}/upload.log
 
 # --- Manta config
 if [[ -z "$MANTA_KEY_ID" ]]; then
@@ -50,6 +51,10 @@ function print_help() {
     echo "\${MANTA_USER}/stor or (if starts with '/') a path under \${MANTA_USER}"
 }
 
+function msg() {
+    echo $* | tee -a $UPLOAD_LOG
+}
+
 trap 'errexit $? $LINENO' EXIT
 
 BRANCH=$1
@@ -76,7 +81,7 @@ fi
 upload_subdir=$UPLOAD_BRANCH-$TIMESTAMP
 
 start_time=$(date +%s)
-echo "Uploading bits to /${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}"
+msg "Uploading bits to /${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}"
 
 # need to create the directory structure first
 if [[ -z "$SUBDIRS" ]]; then
@@ -111,10 +116,11 @@ for file in $files; do
     if [[ -z ${manta_md5} ]]; then
         # file doesn't exist, upload it
 
+        echo ${MANTA_URL}/${manta_object} >>$UPLOAD_LOG
         mput -v -f ${file} ${manta_object}
         [[ $? == 0 ]] || fatal "Failed to upload ${file} to ${manta_object}"
     else
-        echo "${manta_object} already exists and matches local file, skipping upload."
+        msg "${manta_object} already exists and matches local file, skipping upload."
     fi
     md5sums="${md5sums}${local_md5_line}\n"
 done
@@ -130,8 +136,6 @@ if [[ $UPLOAD_BRANCH =~ ^release- ]]; then
     echo "/${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}" | mput -v -H 'content-type: text/plain' /${MANTA_USER}${UPLOAD_BASE_DIR}/latest-release
 fi
 
-echo "Uploaded to /${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir}"
-
 end_time=$(date +%s)
 elapsed=$((${end_time} - ${start_time}))
-echo "Upload took ${elapsed} seconds (Manta path=/${MANTA_USER}${UPLOAD_BASE_DIR}/$upload_subdir)."
+msg "Uploaded to /${MANTA_USER}${UPLOAD_BASE_DIR}/${upload_subdir} in ${elapsed} seconds"

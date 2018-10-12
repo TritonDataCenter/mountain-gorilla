@@ -13,7 +13,7 @@
 #
 # Environment variables used:
 #
-# - JOB_NAME (typically set by the Jenkins jobs that run this) is used for
+# - MG_TARGET (typically set by the Jenkins jobs that run this) is used for
 #   some targets.
 # - UPLOAD_SUBDIRS can be used to specify extra bits subdirs to upload
 #   in the "upload_jenkins" target.
@@ -28,6 +28,12 @@
 TOP := $(shell pwd)
 BUILD_DIR=$(TOP)/build
 BITS_DIR=$(TOP)/bits
+
+#
+# We used to treat $JOB_NAME from Jenkins as the target, so default back to that
+# if $MG_TARGET is not set.
+#
+MG_TARGET ?= $(JOB_NAME)
 
 # Tools
 MAKE = make
@@ -2689,7 +2695,7 @@ endif	# $(JOYENT_BUILD) == true
 
 #
 # These targets will be built for every member of the "headnode*" family
-# of MG jobs:
+# of MG targets:
 #
 HEADNODE_TARGETS = \
 	cleanimgcruft \
@@ -2699,7 +2705,7 @@ HEADNODE_TARGETS = \
 	releasejson
 
 #
-# These targets are only built for the base "headnode" job.
+# These targets are only built for the base "headnode" target.
 #
 HEADNODE_BASE_ONLY_TARGETS = \
 	gz-tools
@@ -2905,14 +2911,11 @@ PLATFORM_BITS= \
 	$(PLATFORM_BITS_TAR_BOOT)
 PLATFORM_MANIFEST_BIT=platform.imgmanifest
 
-platform : PLAT_SUFFIX += ""
-platform : PLAT_CONF_ARGS += "no"
-platform : PLAT_FLAVOR = ""
+ILLUMOS_ENABLE_DEBUG="no"
+PLAT_FLAVOR=""
+
 platform-debug : PLAT_SUFFIX += "-debug"
-platform-debug : PLAT_CONF_ARGS += "exclusive"
-platform-debug : PLAT_FLAVOR = ""
-platform-smartos : PLAT_SUFFIX += ""
-platform-smartos : PLAT_CONF_ARGS += "no"
+platform-debug : ILLUMOS_ENABLE_DEBUG = "exclusive"
 platform-smartos : PLAT_FLAVOR = "-smartos"
 
 
@@ -2940,9 +2943,14 @@ smartos_live_make_check:
 # PATH: Ensure using GCC from SFW as require for platform build.
 $(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-branches
 	@echo "# Build platform: branch $(SMARTOS_LIVE_BRANCH), sha $(SMARTOS_LIVE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
+	#
+	# We could use -d in PLAT_CONFIGURE_ARGS, but historically, we
+	# enabled a debug build via the environment variable, so we'll keep that
+	# around for building older platforms as needed.
+	#
 	(cd build/smartos-live \
-		&& PATH=/usr/sfw/bin:$(PATH) \
-			ILLUMOS_ENABLE_DEBUG=$(PLAT_CONF_ARGS) ./configure \
+		&& PATH=/usr/sfw/bin:$(PATH) ILLUMOS_ENABLE_DEBUG=$(ILLUMOS_ENABLE_DEBUG) \
+			./configure $(PLAT_CONFIGURE_ARGS) \
 		&& PATH=/usr/sfw/bin:$(PATH) \
 			BUILDSTAMP=$(TIMESTAMP) \
 			gmake world \
@@ -3093,10 +3101,10 @@ upload_jenkins:
 
 # Upload bits we want to keep for a Jenkins build to manta
 manta_upload_jenkins:
-	@[[ -z "$(JOB_NAME)" ]] \
-		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
+	@[[ -z "$(MG_TARGET)" ]] \
+		&& echo "error: MG_TARGET isn't set (is this being run under Jenkins?)" \
 		&& exit 1 || true
-	TRACE=1 ./tools/mantaput-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(MG_OUT_PATH)/$(JOB_NAME) $(JOB_NAME) $(UPLOAD_SUBDIRS)
+	TRACE=1 ./tools/mantaput-bits "$(BRANCH)" "$(TRY_BRANCH)" "$(TIMESTAMP)" $(MG_OUT_PATH)/$(MG_TARGET) $(MG_TARGET) $(UPLOAD_SUBDIRS)
 
 %_upload_manta: %
 	./tools/manta-upload "$*"
@@ -3105,11 +3113,11 @@ manta_upload_jenkins:
 	./tools/local-bitsdir-copy "$*"
 
 # Publish the image for this Jenkins job to https://updates.joyent.com, if
-# appropriate. No-op if the current JOB_NAME doesn't have a "*_publish_image"
+# appropriate. No-op if the current MG_TARGET doesn't have a "*_publish_image"
 # target.
 jenkins_publish_image:
-	@[[ -z "$(JOB_NAME)" ]] \
-		&& echo "error: JOB_NAME isn't set (is this being run under Jenkins?)" \
+	@[[ -z "$(MG_TARGET)" ]] \
+		&& echo "error: MG_TARGET isn't set (is this being run under Jenkins?)" \
 		&& exit 1 || true
-	@[[ -z "$(shell grep '^$(JOB_NAME)_publish_image\>' Makefile || true)" ]] \
-		|| make $(JOB_NAME)_publish_image
+	@[[ -z "$(shell grep '^$(MG_TARGET)_publish_image\>' Makefile || true)" ]] \
+		|| make $(MG_TARGET)_publish_image

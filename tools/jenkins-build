@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright (c) 2017, Joyent, Inc.
+# Copyright (c) 2018, Joyent, Inc.
 #
 
 #
@@ -135,6 +135,12 @@ env
 echo ""
 echo "#---------------------- configure"
 
+#
+# The target defaults to the job name (e.g. platform-debug), but a job can also
+# directly specify MG_TARGET as a parameter to over-ride this.
+#
+[[ -z "$MG_TARGET" ]] && MG_TARGET=$JOB_NAME
+
 [[ -z "$BRANCH" ]] && BRANCH=master
 # Note the "-c" to use a cache dir one up, i.e. shared between builds of this job.
 CACHE_DIR=$(cd ../; pwd)/cache
@@ -149,7 +155,7 @@ fi
 if [[ ! -f targets.json ]]; then
     bash < targets.json.in | json > targets.json
 fi
-IS_PUBLIC=$(json < targets.json ${JOB_NAME}.public)
+IS_PUBLIC=$(json < targets.json ${MG_TARGET}.public)
 if [[ ${IS_PUBLIC} == "true" ]]; then
     JENKINS_OUTPUT_BASE="/public/${MG_JENKINS_BUILDS_DIR}"
 else
@@ -163,11 +169,11 @@ if [[ ! -z ${USE_PREV_RELEASES_FOR} ]]; then
 fi
 
 if [[ -z ${JOYENT_BUILD} || ${JOYENT_BUILD} == "true" ]]; then
-    TRACE=1 ./configure -j -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" \
+    TRACE=1 ./configure -j -t $MG_TARGET -c "$CACHE_DIR" -b "$BRANCH" \
         -J /stor/builds -D /public/builds -O ${JENKINS_OUTPUT_BASE} \
         -B "$TRY_BRANCH" ${EXTRA_ARGS}
 else
-    TRACE=1 ./configure -t $JOB_NAME -c "$CACHE_DIR" -b "$BRANCH" \
+    TRACE=1 ./configure -t $MG_TARGET -c "$CACHE_DIR" -b "$BRANCH" \
         -D /public/builds -O ${JENKINS_OUTPUT_BASE} -B "$TRY_BRANCH" \
         ${EXTRA_ARGS}
 fi
@@ -182,7 +188,7 @@ echo "TIME: MG configure took ${elapsed} seconds"
 echo ""
 echo "#---------------------- make"
 
-V=1 gmake $JOB_NAME
+V=1 gmake $MG_TARGET
 
 now_time=$(date +%s)
 elapsed=$((${now_time} - ${last_time}))
@@ -194,10 +200,10 @@ echo "TIME: build took ${elapsed} seconds"
 echo ""
 echo "#---------------------- upload"
 
-cp $LOG bits/$JOB_NAME/
+cp $LOG bits/$MG_TARGET/
 gmake manta_upload_jenkins
 
-if [[ ${JOB_NAME} == "smartos" ]] && [[ ${BRANCH} == release* ]]; then
+if [[ ${MG_TARGET} == "smartos" ]] && [[ ${BRANCH} == release* ]]; then
     gmake smartos-release
 fi
 

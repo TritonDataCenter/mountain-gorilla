@@ -10,7 +10,7 @@ apisections:
 -->
 
 <!--
-    Copyright (c) 2017, Joyent, Inc.
+    Copyright (c) 2018, Joyent, Inc.
 -->
 
 # Mountain Gorilla
@@ -67,9 +67,9 @@ Using vmapi as an example (see "Prerequisites" section below):
     cd mountain-gorilla
     ./configure -t vmapi -b master -d Joyent_Dev         # 2.
     gmake vmapi                                          # 3.
-    JOB_NAME=vmapi gmake manta_upload_jenkins            # 4.
+    MG_TARGET=vmapi gmake manta_upload_jenkins            # 4.
         # New bits at /Joyent_Dev/stor/builds/vmapi/$branch-$timestamp/
-    JOB_NAME=vmapi gmake jenkins_publish_image           # 5.
+    MG_TARGET=vmapi gmake jenkins_publish_image           # 5.
         # `updates-imgadm list name=vmapi` to see added VMAPI image.
 
 The full set of targets that MG supports is both in
@@ -202,14 +202,14 @@ Simplified, what most of our jobs do here is:
 
     git clone git@github.com:joyent/mountain-gorilla.git   # aka "MG"
     cd mountain-gorilla
-    ./configure -t <job>
-    gmake <job>
+    ./configure -t <target>
+    gmake <target>
     gmake manta_upload_jenkins  # which runs mountain-gorilla.git/tools/mantaput-bits
     gmake jenkins_publish_image # which uploads to updates.joyent.com
 
-The `configure -t <job>` here usually clones the repo(s) required and pulls down
-dependencies from npm and Manta. This is mountain-gorilla.git/configure in case
-you need to look at it.
+The `configure -t <target>` here usually clones the repo(s) required and pulls
+down dependencies from npm and Manta. This is mountain-gorilla.git/configure in
+case you need to look at it.
 
 With all the components downloaded `gmake <job>` builds all the bits that will
 end up in /opt/smartdc/$app in the zone. This is the part that's critical to
