@@ -1046,10 +1046,10 @@ GRAFANA_MANIFEST_BIT=$(BITS_DIR)/grafana/grafana-zfs-$(_grafana_stamp).imgmanife
 .PHONY: grafana
 grafana: $(GRAFANA_BITS) grafana_image
 
-$(GRAFANA_BITS): build/triton-dashboards
+$(GRAFANA_BITS): build/triton-grafana
 	@echo "# Build grafana: branch $(TRITON_GRAFANA_BRANCH), sha $(TRITON_GRAFANA_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	mkdir -p $(BITS_DIR)
-	(cd build/triton-dashboards && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
+	(cd build/triton-grafana && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
 	@echo "# Created grafana bits (time `date -u +%Y%m%dT%H%M%SZ`):"
 	@ls -l $(GRAFANA_BITS)
 	@echo ""
@@ -1073,7 +1073,7 @@ grafana_publish_image: $(GRAFANA_IMAGE_BIT)
 
 clean_grafana:
 	$(RM) -rf $(BITS_DIR)/grafana
-	(cd build/triton-dashboards && gmake clean)
+	(cd build/triton-grafana && gmake clean)
 
 
 

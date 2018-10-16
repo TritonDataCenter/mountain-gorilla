@@ -614,7 +614,7 @@ cat <<EOF
     "image_uuid": "b6ea7cb4-6b90-48c0-99e7-1d34c2895248",
     "pkgsrc": [],
     "repos": [
-        {"url": "git@github.com:joyent/triton-dashboards.git"}
+        {"url": "git@github.com:joyent/triton-grafana.git"}
     ],
     "public": true,
     "deps": [
