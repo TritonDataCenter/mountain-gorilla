@@ -612,7 +612,9 @@ cat <<EOF
     "image_version": "1.0.0",
     "// image_uuid": "triton-origin-multiarch-18.1.0@1.0.1",
     "image_uuid": "b6ea7cb4-6b90-48c0-99e7-1d34c2895248",
-    "pkgsrc": [],
+    "pkgsrc": [
+      "pcre-8.42"
+    ],
     "repos": [
         {"url": "git@github.com:joyent/triton-grafana.git"}
     ],
