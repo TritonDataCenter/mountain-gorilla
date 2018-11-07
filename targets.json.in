@@ -2,7 +2,7 @@ set -o errexit
 set -o pipefail
 
 [[ -z $JOYENT_BUILD ]] && JOYENT_BUILD=false
-
+[[ -z $MG_GIT_PREFIX ]] && MG_GIT_PREFIX=git@github.com:joyent
 
 function build_headnode_target()
 {
@@ -27,7 +27,7 @@ function build_headnode_target()
     cat <<EOF
 "${name}": {
     "repos": [
-      {"url": "git@github.com:joyent/sdc-headnode.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-headnode.git"}
     ],
     ${public}
     "deps": [
@@ -77,7 +77,7 @@ if [[ "${JOYENT_BUILD}" == "true" ]]; then
   "firmware-tools": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/firmware-tools.git"}
+        {"url": "$MG_GIT_PREFIX/firmware-tools.git"}
     ],
     "public": false,
     "deps": []
@@ -95,7 +95,7 @@ cat <<EOF
   "smartlogin": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/sdc-smart-login.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-smart-login.git"}
     ],
     "public": true,
     "deps": []
@@ -115,7 +115,7 @@ cat <<EOF
       "GeoLiteCity-201203"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/sdc-cloud-analytics.git", "submodule-update": false}
+      {"url": "$MG_GIT_PREFIX/sdc-cloud-analytics.git", "submodule-update": false}
     ],
     "public": true,
     "deps": [
@@ -139,7 +139,7 @@ cat <<EOF
     "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
     "pkgsrc": [],
     "repos": [
-      {"url": "git@github.com:joyent/sdc-amon.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-amon.git"}
     ],
     "public": true,
     "deps": [
@@ -165,7 +165,7 @@ cat <<EOF
       "nginx-1.11.1nb1"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/sdc-assets.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-assets.git"}
     ],
     "public": true,
     "deps": [
@@ -186,7 +186,7 @@ cat <<EOF
       "redis-2.6.16"
     ],
     "repos": [
-        {"url": "git@github.com:joyent/triton-cns.git", "dir": "triton-cns"}
+        {"url": "$MG_GIT_PREFIX/triton-cns.git", "dir": "triton-cns"}
     ],
     "public": true,
     "deps": [
@@ -211,7 +211,7 @@ cat <<EOF
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
-        {"url": "git@github.com:joyent/sdc-adminui.git", "dir": "adminui"}
+        {"url": "$MG_GIT_PREFIX/sdc-adminui.git", "dir": "adminui"}
     ],
     "public": true,
     "deps": [
@@ -236,7 +236,7 @@ cat <<EOF
     "image_uuid": "b6ea7cb4-6b90-48c0-99e7-1d34c2895248",
     "pkgsrc": [],
     "repos": [
-        {"url": "git@github.com:joyent/triton-mockcloud.git", "dir": "mockcloud"}
+        {"url": "$MG_GIT_PREFIX/triton-mockcloud.git", "dir": "mockcloud"}
     ],
     "public": false,
     "deps": [],
@@ -252,7 +252,7 @@ cat <<EOF
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
-        {"url": "git@github.com:joyent/sdc-nfsserver.git", "dir": "nfsserver"}
+        {"url": "$MG_GIT_PREFIX/sdc-nfsserver.git", "dir": "nfsserver"}
     ],
     "public": true,
     "deps": [
@@ -273,7 +273,7 @@ cat <<EOF
       "tftp-hpa-5.2"
     ],
     "repos": [
-        {"url": "git@github.com:joyent/sdc-booter.git", "dir": "dhcpd"}
+        {"url": "$MG_GIT_PREFIX/sdc-booter.git", "dir": "dhcpd"}
     ],
     "public": true,
     "deps": [
@@ -298,7 +298,7 @@ cat <<EOF
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
-      {"url": "git@github.com:joyent/sdc-amonredis.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-amonredis.git"}
     ],
     "public": true,
     "deps": [
@@ -330,7 +330,7 @@ cat <<EOF
       "rabbitmq-2.7.1"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/sdc-rabbitmq.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-rabbitmq.git"}
     ],
     "public": true,
     "deps": [
@@ -353,7 +353,7 @@ cat <<EOF
     "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "repos": [
-      {"url": "git@github.com:joyent/sdc-cloudapi.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-cloudapi.git"}
     ],
     "public": true,
     "deps": [
@@ -381,7 +381,7 @@ cat <<EOF
     "image_version": "1.0.0",
     "image_uuid": "de411e86-548d-11e4-a4b7-3bb60478632a",
     "repos": [
-      {"url": "git@github.com:joyent/sdc-nat.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-nat.git"}
     ],
     "public": true,
     "deps": [],
@@ -397,7 +397,7 @@ cat <<EOF
     "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "repos": [
-      {"url": "git@github.com:joyent/sdc-docker.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-docker.git"}
     ],
     "public": true,
     "deps": [
@@ -422,7 +422,7 @@ cat <<EOF
     "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "repos": [
-      {"url": "git@github.com:joyent/sdc-volapi.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-volapi.git"}
     ],
     "public": true,
     "deps": [
@@ -446,7 +446,7 @@ cat <<EOF
     "image_version": "1.0.0",
     "image_uuid": "de411e86-548d-11e4-a4b7-3bb60478632a",
     "repos": [
-      {"url": "git@github.com:joyent/sdc-portolan.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-portolan.git"}
     ],
     "public": true,
     "deps": [
@@ -475,7 +475,7 @@ cat <<EOF
       "postgresql91-client-9.1.2"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/sdc-ufds.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-ufds.git"}
     ],
     "public": true,
     "deps": [
@@ -503,7 +503,7 @@ cat <<EOF
       "apg-2.3.0bnb3"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/sdc-workflow.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-workflow.git"}
     ],
     "public": true,
     "deps": [
@@ -528,7 +528,7 @@ cat <<EOF
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
-        {"url": "git@github.com:joyent/triton-cmon.git"}
+        {"url": "$MG_GIT_PREFIX/triton-cmon.git"}
     ],
     "public": true,
     "deps": [
@@ -544,7 +544,7 @@ cat <<EOF
 
   "cmon-agent": {
     "repos": [
-        {"url": "git@github.com:joyent/triton-cmon-agent.git"}
+        {"url": "$MG_GIT_PREFIX/triton-cmon-agent.git"}
     ],
     "public": true,
     "deps": [
@@ -562,7 +562,7 @@ cat <<EOF
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
-        {"url": "git@github.com:joyent/sdc-vmapi.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-vmapi.git"}
     ],
     "public": true,
     "deps": [
@@ -588,7 +588,7 @@ cat <<EOF
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
-        {"url": "git@github.com:joyent/sdc-papi.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-papi.git"}
     ],
     "public": true,
     "deps": [
@@ -621,7 +621,7 @@ cat <<EOF
         "xz-5.2.2"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/sdc-imgapi.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-imgapi.git"}
     ],
     "public": true,
     "deps": [
@@ -648,7 +648,7 @@ cat <<EOF
         "mtr-0.86nb3"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/sdc-sdc.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-sdc.git"}
     ],
     "public": true,
     "deps": [
@@ -665,7 +665,7 @@ cat <<EOF
   "agents_core": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/sdc-agents-core.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-agents-core.git"}
     ],
     "public": true,
     "deps": [
@@ -676,7 +676,7 @@ cat <<EOF
   "vm-agent": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/sdc-vm-agent.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-vm-agent.git"}
     ],
     "public": true,
     "deps": [
@@ -687,7 +687,7 @@ cat <<EOF
   "net-agent": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/sdc-net-agent.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-net-agent.git"}
     ],
     "public": true,
     "deps": [
@@ -698,7 +698,7 @@ cat <<EOF
   "cn-agent": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/sdc-cn-agent.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-cn-agent.git"}
     ],
     "public": true,
     "deps": [
@@ -709,7 +709,7 @@ cat <<EOF
   "config-agent": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/sdc-config-agent.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-config-agent.git"}
     ],
     "public": true,
     "deps": [
@@ -720,7 +720,7 @@ cat <<EOF
   "hagfish-watcher": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/sdc-hagfish-watcher.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-hagfish-watcher.git"}
     ],
     "public": true,
     "deps": [
@@ -731,7 +731,7 @@ cat <<EOF
   "firewaller": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/sdc-firewaller-agent.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-firewaller-agent.git"}
     ],
     "public": true,
     "deps": [
@@ -749,7 +749,7 @@ cat <<EOF
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
-        {"url": "git@github.com:joyent/sdc-cnapi.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-cnapi.git"}
     ],
     "public": true,
     "deps": [
@@ -775,7 +775,7 @@ cat <<EOF
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
-        {"url": "git@github.com:joyent/sdc-fwapi.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-fwapi.git"}
     ],
     "public": true,
     "deps": [
@@ -800,7 +800,7 @@ cat <<EOF
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
-      {"url": "git@github.com:joyent/sdc-napi.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-napi.git"}
     ],
     "public": true,
     "deps": [
@@ -826,7 +826,7 @@ cat <<EOF
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "pkgsrc": [],
     "repos": [
-        {"url": "git@github.com:joyent/sdc-sapi.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-sapi.git"}
     ],
     "public": true,
     "deps": [
@@ -845,7 +845,7 @@ cat <<EOF
   "registrar": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/registrar.git"}
+        {"url": "$MG_GIT_PREFIX/registrar.git"}
     ],
     "public": true,
     "deps": [
@@ -856,7 +856,7 @@ cat <<EOF
   "waferlock": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/waferlock.git"}
+        {"url": "$MG_GIT_PREFIX/waferlock.git"}
     ],
     "public": true,
     "deps": [
@@ -867,7 +867,7 @@ cat <<EOF
   "minnow": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/manta-minnow.git"}
+        {"url": "$MG_GIT_PREFIX/manta-minnow.git"}
     ],
     "public": true,
     "deps": [
@@ -878,7 +878,7 @@ cat <<EOF
   "mackerel": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/manta-mackerel.git"}
+        {"url": "$MG_GIT_PREFIX/manta-mackerel.git"}
     ],
     "public": true,
     "deps": [
@@ -898,7 +898,7 @@ cat <<EOF
       "zookeeper-server-3.4.3"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/binder.git"}
+      {"url": "$MG_GIT_PREFIX/binder.git"}
     ],
     "public": true,
     "deps": [
@@ -925,7 +925,7 @@ cat <<EOF
         "lz4-131nb1"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/manta-manatee.git"}
+      {"url": "$MG_GIT_PREFIX/manta-manatee.git"}
     ],
     "public": true,
     "deps": [
@@ -954,7 +954,7 @@ cat <<EOF
         "lz4-131nb1"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/sdc-manatee.git"}
+      {"url": "$MG_GIT_PREFIX/sdc-manatee.git"}
     ],
     "public": true,
     "deps": [
@@ -982,7 +982,7 @@ cat <<EOF
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/manta-medusa.git"}
+      {"url": "$MG_GIT_PREFIX/manta-medusa.git"}
     ],
     "public": true,
     "deps": [
@@ -1009,7 +1009,7 @@ cat <<EOF
       "redis-3.0.5"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/mahi.git"}
+      {"url": "$MG_GIT_PREFIX/mahi.git"}
     ],
     "public": true,
     "deps": [
@@ -1037,7 +1037,7 @@ cat <<EOF
       "postgresql92-client-9.2.19"
     ],
     "repos": [
-        {"url": "git@github.com:joyent/moray.git"}
+        {"url": "$MG_GIT_PREFIX/moray.git"}
     ],
     "public": true,
     "deps": [
@@ -1064,7 +1064,7 @@ cat <<EOF
       "haproxy-1.6.2"
     ],
     "repos": [
-        {"url": "git@github.com:joyent/electric-moray.git"}
+        {"url": "$MG_GIT_PREFIX/electric-moray.git"}
     ],
     "public": true,
     "deps": [
@@ -1093,7 +1093,7 @@ cat <<EOF
       "libzookeeper-3.4.6"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/muppet.git"}
+      {"url": "$MG_GIT_PREFIX/muppet.git"}
     ],
     "public": true,
     "deps": [
@@ -1120,7 +1120,7 @@ cat <<EOF
       "haproxy-1.6.2"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/manta-muskie.git"}
+      {"url": "$MG_GIT_PREFIX/manta-muskie.git"}
     ],
     "public": true,
     "deps": [
@@ -1147,7 +1147,7 @@ cat <<EOF
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/manta-mola.git"}
+      {"url": "$MG_GIT_PREFIX/manta-mola.git"}
     ],
     "public": true,
     "deps": [
@@ -1177,7 +1177,7 @@ cat <<EOF
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/manta-madtom.git"}
+      {"url": "$MG_GIT_PREFIX/manta-madtom.git"}
     ],
     "public": true,
     "deps": [
@@ -1202,7 +1202,7 @@ cat <<EOF
     "pkgsrc": [
     ],
     "repos": [
-      {"url": "git@github.com:joyent/manta-marlin-dashboard.git"}
+      {"url": "$MG_GIT_PREFIX/manta-marlin-dashboard.git"}
     ],
     "public": true,
     "deps": [
@@ -1231,7 +1231,7 @@ cat <<EOF
       "gawk-4.1.4nb1"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/manta-mako.git"}
+      {"url": "$MG_GIT_PREFIX/manta-mako.git"}
     ],
     "public": true,
     "deps": [
@@ -1259,7 +1259,7 @@ cat <<EOF
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/manta-marlin.git"}
+      {"url": "$MG_GIT_PREFIX/manta-marlin.git"}
     ],
     "public": true,
     "deps": [
@@ -1285,7 +1285,7 @@ cat <<EOF
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/manta-wrasse.git"}
+      {"url": "$MG_GIT_PREFIX/manta-wrasse.git"}
     ],
     "public": true,
     "deps": [
@@ -1313,7 +1313,7 @@ cat <<EOF
       "zookeeper-client-3.4.3"
     ],
     "repos": [
-      {"url": "git@github.com:joyent/manta-propeller.git"}
+      {"url": "$MG_GIT_PREFIX/manta-propeller.git"}
     ],
     "public": false,
     "deps": [
@@ -1332,7 +1332,7 @@ cat <<EOF
   "sdcadm": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/sdcadm.git"}
+        {"url": "$MG_GIT_PREFIX/sdcadm.git"}
     ],
     "public": true,
     "deps": []
@@ -1351,7 +1351,7 @@ cat <<EOF
       "postfix-3.0.2nb2"
     ],
     "repos": [
-        {"url":  "git@github.com:joyent/sdcsso.git" }
+        {"url":  "$MG_GIT_PREFIX/sdcsso.git" }
     ],
     "deps": [
       "amon",
@@ -1369,7 +1369,7 @@ cat <<EOF
   "agentsshar": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/sdc-agents-installer.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-agents-installer.git"}
     ],
     "public": true,
     "deps": [
@@ -1392,7 +1392,7 @@ cat <<EOF
     "build_platform": "20151126T062538Z",
     "repos": [
         {
-            "url": "git@github.com:joyent/sdc-dockerlogger.git",
+            "url": "$MG_GIT_PREFIX/sdc-dockerlogger.git",
             "dir": "dockerlogger"
         }
     ],
@@ -1409,7 +1409,7 @@ cat <<EOF
     "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "repos": [
-        {"url": "git@github.com:joyent/pgstatsmon.git"}
+        {"url": "$MG_GIT_PREFIX/pgstatsmon.git"}
     ],
     "public": true,
     "deps": [
@@ -1436,7 +1436,7 @@ cat <<EOF
       "coreutils-8.23nb2"
     ],
     "repos": [
-        {"url": "git@github.com:joyent/manta-reshard.git"}
+        {"url": "$MG_GIT_PREFIX/manta-reshard.git"}
     ],
     "public": true,
     "deps": [
@@ -1459,7 +1459,7 @@ cat <<EOF
     "// image_uuid": "triton-origin-multiarch-15.4.1@1.0.1",
     "image_uuid": "04a48d7d-6bb5-4e83-8c3b-e60a99e0f48f",
     "repos": [
-        {"url": "git@github.com:joyent/manta-garbage-collector.git"}
+        {"url": "$MG_GIT_PREFIX/manta-garbage-collector.git"}
     ],
     "public": true,
     "deps": [
@@ -1486,7 +1486,7 @@ cat <<EOF
       "openldap-client-2.4.44nb2"
     ],
     "repos": [
-        {"url": "git@github.com:joyent/sdc-manta.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-manta.git"}
     ],
     "public": true,
     "deps": [
@@ -1503,7 +1503,7 @@ cat <<EOF
   "sdc-system-tests": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/sdc-system-tests.git"}
+        {"url": "$MG_GIT_PREFIX/sdc-system-tests.git"}
     ],
     "public": false,
     "deps": [
@@ -1514,7 +1514,7 @@ cat <<EOF
   "sdcboot": {
     "build_platform": "20151126T062538Z",
     "repos": [
-        {"url": "git@github.com:joyent/sdcboot.git"}
+        {"url": "$MG_GIT_PREFIX/sdcboot.git"}
     ],
     "public": true,
     "deps": []
@@ -1525,38 +1525,38 @@ cat <<EOF
 
   "platform": {
     "repos": [
-        {"url": "git@github.com:joyent/smartos-live.git"},
-        {"url": "git@github.com:joyent/illumos-joyent.git"},
-        {"url": "git@github.com:joyent/illumos-extra.git"},
-        {"url": "git@github.com:joyent/sdc-ur-agent.git"},
-        {"url": "git@github.com:joyent/illumos-kvm.git"},
-        {"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
-        {"url": "git@github.com:joyent/mdata-client.git"}
+        {"url": "$MG_GIT_PREFIX/smartos-live.git"},
+        {"url": "$MG_GIT_PREFIX/illumos-joyent.git"},
+        {"url": "$MG_GIT_PREFIX/illumos-extra.git"},
+        {"url": "$MG_GIT_PREFIX/sdc-ur-agent.git"},
+        {"url": "$MG_GIT_PREFIX/illumos-kvm.git"},
+        {"url": "$MG_GIT_PREFIX/illumos-kvm-cmd.git"},
+        {"url": "$MG_GIT_PREFIX/mdata-client.git"}
     ],
     "public": true,
     "deps": []
   },
  "platform-debug": {
     "repos": [
-        {"url": "git@github.com:joyent/smartos-live.git"},
-        {"url": "git@github.com:joyent/illumos-joyent.git"},
-        {"url": "git@github.com:joyent/illumos-extra.git"},
-        {"url": "git@github.com:joyent/sdc-ur-agent.git"},
-        {"url": "git@github.com:joyent/illumos-kvm.git"},
-        {"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
-        {"url": "git@github.com:joyent/mdata-client.git"}
+        {"url": "$MG_GIT_PREFIX/smartos-live.git"},
+        {"url": "$MG_GIT_PREFIX/illumos-joyent.git"},
+        {"url": "$MG_GIT_PREFIX/illumos-extra.git"},
+        {"url": "$MG_GIT_PREFIX/sdc-ur-agent.git"},
+        {"url": "$MG_GIT_PREFIX/illumos-kvm.git"},
+        {"url": "$MG_GIT_PREFIX/illumos-kvm-cmd.git"},
+        {"url": "$MG_GIT_PREFIX/mdata-client.git"}
     ],
     "public": true,
     "deps": []
   },
   "smartos": {
     "repos": [
-        {"url": "git@github.com:joyent/smartos-live.git"},
-        {"url": "git@github.com:joyent/illumos-joyent.git"},
-        {"url": "git@github.com:joyent/illumos-extra.git"},
-        {"url": "git@github.com:joyent/illumos-kvm.git"},
-        {"url": "git@github.com:joyent/illumos-kvm-cmd.git"},
-        {"url": "git@github.com:joyent/mdata-client.git"}
+        {"url": "$MG_GIT_PREFIX/smartos-live.git"},
+        {"url": "$MG_GIT_PREFIX/illumos-joyent.git"},
+        {"url": "$MG_GIT_PREFIX/illumos-extra.git"},
+        {"url": "$MG_GIT_PREFIX/illumos-kvm.git"},
+        {"url": "$MG_GIT_PREFIX/illumos-kvm-cmd.git"},
+        {"url": "$MG_GIT_PREFIX/mdata-client.git"}
     ],
     "public": true,
     "deps": []

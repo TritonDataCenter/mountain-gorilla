@@ -426,13 +426,19 @@ function get_repo_cache() {
     else
         (cd $MG_CACHE_DIR/repos/$repo_dir; git pull)
     fi
+
+    if [[ -n "$MG_GERRIT_CR" ]]; then
+        (cd $MG_CACHE_DIR/repos/$repo_dir && git fetch origin \
+        +refs/heads/*:refs/remotes/origin/* +refs/changes/*:refs/remotes/origin/changes/*)
+    fi
+
     if [[ "$submodule_update" == "true" ]]; then
         (cd "$MG_CACHE_DIR/repos/$repo_dir" &&
             git submodule sync $GIT_SUBMODULE_SYNC_FLAGS &&
             git submodule update --init --recursive)
     fi
 
-    # Error out if the cached repo is dirty. These thigns should always
+    # Error out if the cached repo is dirty. These things should always
     # be pristine.
     if [[ "$(cd $MG_CACHE_DIR/repos/$repo_dir && git describe --all --dirty | grep dirty)" != "" ]]; then
         fatal "Repo '$repo_dir' cache, $MG_CACHE_DIR/repos/$repo_dir, is dirty!"
@@ -474,6 +480,14 @@ function get_repo2() {
     if [[ ! -z "$try_branch" ]]; then
         (cd build/$repo_dir ; git checkout $try_branch && git pull || true)
     fi
+
+    if [[ ! -z "$MG_GERRIT_CR" ]]; then
+        # 4920/2 -> remotes/origin/changes/20/4920/2
+        ref=$(echo $MG_GERRIT_CR | \
+            sed 's+\(.*\)\(..\)/+remotes/origin/changes/\2/\1\2/+')
+        (cd build/$repo_dir ; git checkout $ref || true)
+    fi
+
     if [[ "$submodule_update" == "true" ]]; then
         (cd "build/$repo_dir" &&
             git submodule sync $GIT_SUBMODULE_SYNC_FLAGS &&
@@ -504,6 +518,7 @@ function gen_config() {
 TIMESTAMP=$(TZ=UTC date "+%Y%m%dT%H%M%SZ")
 BRANCH=$BRANCH
 TRY_BRANCH=$TRY_BRANCH
+MG_GERRIT_CR=$MG_GERRIT_CR
 MG_NODE=$MG_NODE
 MG_CACHE_DIR=$(cd $MG_CACHE_DIR >/dev/null; pwd)
 JOYENT_BUILD=$JOYENT_BUILD
@@ -553,21 +568,25 @@ function print_help() {
     echo "  ./configure [OPTIONS]"
     echo ""
     echo "Options:"
-    echo "  -h, --help   Print this help and exit."
-    echo ""
-    echo "  -n NODE_EXE  Path to node exe for MG to use."
-    echo ""
-    echo "  -b BRANCH    Branch to checkout. Defaults to 'master'."
-    echo "               Note that this is for *all* core repositories."
     echo "  -B TRY-BRANCH"
     echo "               Branch to try to checkout (if it exists). '-b' value"
     echo "               is used as the default. This is useful for building"
     echo "               a feature branch on one of the many repos used for"
     echo "               a target."
-    echo "  -t TARGET    Prepare to build only this target. Valid targets are"
-    echo "               the keys of 'targets.json'."
-    echo "  -r           Regenerate config.mk. This doesn't touch repos in"
-    echo "               'build/' or preload in 'bits/'."
+    echo "  -D PATH      Alternate Manta path for dependencies. The default is"
+    echo "               '/stor/builds'."
+    echo "  -J PATH      Alternate manta path for joyent-only dependencies. The"
+    echo "               default is to use the -D path."
+    echo "  -O PATH      Alternate Manta path for 'make <target>_upload_manta'."
+    echo "               The default is '\${MANTA_USER}/stor/builds'."
+    echo "  -P           Ignore the 'build_platform' check that is meant to ensure"
+    echo "               that a component is built on the exact platform version"
+    echo "               specified for it in 'targets.json' for release."
+    echo "  -R [COMPONENT_NAME1,COMPONENT_NAME2,...]"
+    echo "               Consider using previous releases if latest release is not"
+    echo "               available."
+    echo "  -b BRANCH    Branch to checkout. Defaults to 'master'."
+    echo "               Note that this is for *all* core repositories."
     echo "  -c CACHE-DIR Specify a cache directory. Default: './cache'."
     echo "               The cache is used for caching git clones, preloaded"
     echo "               bits and npm downloads. The 'bits cache' is"
@@ -575,19 +594,13 @@ function print_help() {
     echo "  -d USER      Alternate Manta user to pull dependencies from. eg. if"
     echo "               building as yourself, -d Joyent_Dev will pull deps "
     echo "               from normal builds."
-    echo "  -D PATH      Alternate Manta path for dependencies. The default is"
-    echo "               '/stor/builds'."
-    echo "  -J PATH      Alternate manta path for joyent-only dependencies. The"
-    echo "               default is to use the -D path."
-    echo "  -O PATH      Alternate Manta path for 'make <target>_upload_manta'."
-    echo "               The default is '\${MANTA_USER}/stor/builds'."
+    echo "  -g [gerrit]  build using the given Gerrit CR changeset"
+    echo "  -h, --help   Print this help and exit."
     echo "  -j           Configure this workspace to build Joyent products."
-    echo "  -P           Ignore the 'build_platform' check that is meant to ensure"
-    echo "               that a component is built on the exact platform version"
-    echo "               specified for it in 'targets.json' for release."
-    echo "  -R [COMPONENT_NAME1,COMPONENT_NAME2,...]"
-    echo "               Consider using previous releases if latest release is not"
-    echo "               available."
+    echo "  -r           Regenerate config.mk. This doesn't touch repos in"
+    echo "               'build/' or preload in 'bits/'."
+    echo "  -t TARGET    Prepare to build only this target. Valid targets are"
+    echo "               the keys of 'targets.json'."
     exit 0
 }
 
@@ -710,27 +723,36 @@ trap 'errexit $? $LINENO' EXIT
 if [[ "$1" == "--help" ]]; then
   print_help
 fi
-while getopts "b:B:d:D:O:hrft:c:jJ:R:P" opt; do
+while getopts "B:D:J:O:PR:b:c:d:g:hjrt:" opt; do
     case "$opt" in
-        b) BRANCH=$OPTARG ;;
         B) TRY_BRANCH=$OPTARG ;;
-        h) print_help ;;
-        r)
-            REGENERATE='true'
-            ;;
-        t) TARGET=${OPTARG} ;;
-        c) MG_CACHE_DIR=${OPTARG} ;;
-        d) MG_DEP_USER=${OPTARG} ;;
         D) MG_DEP_PATH=${OPTARG} ;;
-        O) MG_OUT_PATH=${OPTARG} ;;
-        j) JOYENT_BUILD=true ;;
         J) JOYENT_DEP_PATH=${OPTARG} ;;
+        O) MG_OUT_PATH=${OPTARG} ;;
         P) IGNORE_BUILD_PLATFORM_CHECK=yes ;;
         R) CONSIDER_PREV_RELEASES_FOR=${OPTARG} ;;
+        b) BRANCH=$OPTARG ;;
+        c) MG_CACHE_DIR=${OPTARG} ;;
+        d) MG_DEP_USER=${OPTARG} ;;
+        g) MG_GERRIT_CR=${OPTARG} ;;
+        h) print_help ;;
+        j) JOYENT_BUILD=true ;;
+        r) REGENERATE='true' ;;
+        t) TARGET=${OPTARG} ;;
         ?) fatal "unknown option: $opt" ;;
     esac
 done
 shift $((OPTIND-1))
+
+[[ -n "$MG_GERRIT_CR" ]] && {
+    [[ -n "$TRY_BRANCH" ]] && {
+        echo "Can't use -g with -B" >&2
+        exit 1
+    }
+
+    export MG_GERRIT_CR
+    export MG_GIT_PREFIX=http://cr.joyent.us/joyent
+}
 
 [[ -z ${MG_DEP_PATH} ]] && MG_DEP_PATH=/public/builds
 [[ -z $JOYENT_BUILD ]] && JOYENT_BUILD=false

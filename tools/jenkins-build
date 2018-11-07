@@ -89,18 +89,18 @@ if [[ -z "$MG_JENKINS_BUILD_SECOND_PASS" ]]; then
     echo "TRY_BRANCH: $TRY_BRANCH"
 
     cd MG
-    if [[ -n "$TRY_BRANCH" ]]; then
-        mg_has_try_branch=$(git branch -a | cut -c3- \
-            | awk '{print $1}' | xargs -n1 basename \
-            | (grep "^$TRY_BRANCH\$" || true))
-        if [[ -n "$mg_has_try_branch" ]]; then
-            git checkout $TRY_BRANCH
-        else
-            git checkout $BRANCH
-        fi
-    else
-        git checkout $BRANCH
-    fi
+    #if [[ -n "$TRY_BRANCH" ]]; then
+    #    mg_has_try_branch=$(git branch -a | cut -c3- \
+    #        | awk '{print $1}' | xargs -n1 basename \
+    #        | (grep "^$TRY_BRANCH\$" || true))
+    #    if [[ -n "$mg_has_try_branch" ]]; then
+    #        git checkout $TRY_BRANCH
+    #    else
+    #        git checkout $BRANCH
+    #    fi
+    #else
+    #    git checkout $BRANCH
+    #fi
 
     # Restart jenkins-build now on the correct MG branch.
     export MG_JENKINS_BUILD_SECOND_PASS=1
@@ -171,10 +171,11 @@ fi
 if [[ -z ${JOYENT_BUILD} || ${JOYENT_BUILD} == "true" ]]; then
     TRACE=1 ./configure -j -t $MG_TARGET -c "$CACHE_DIR" -b "$BRANCH" \
         -J /stor/builds -D /public/builds -O ${JENKINS_OUTPUT_BASE} \
-        -B "$TRY_BRANCH" ${EXTRA_ARGS}
+        -g "$MG_GERRIT_CR" -B "$TRY_BRANCH" ${EXTRA_ARGS}
 else
     TRACE=1 ./configure -t $MG_TARGET -c "$CACHE_DIR" -b "$BRANCH" \
-        -D /public/builds -O ${JENKINS_OUTPUT_BASE} -B "$TRY_BRANCH" \
+        -D /public/builds -O ${JENKINS_OUTPUT_BASE} \
+        -g "$MG_GERRIT_CR" -B "$TRY_BRANCH" \
         ${EXTRA_ARGS}
 fi
 
