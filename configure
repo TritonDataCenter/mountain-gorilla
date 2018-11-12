@@ -7,7 +7,7 @@
 #
 
 #
-# Copyright (c) 2017, Joyent, Inc.
+# Copyright (c) 2018, Joyent, Inc.
 #
 
 #
@@ -477,11 +477,11 @@ function get_repo2() {
     cp -PR $MG_CACHE_DIR/repos/$repo_dir build/$repo_dir
     (cd build/$repo_dir ; git checkout $branch)
 
-    if [[ ! -z "$try_branch" ]]; then
+    if [[ -n "$try_branch" ]]; then
         (cd build/$repo_dir ; git checkout $try_branch && git pull || true)
     fi
 
-    if [[ ! -z "$MG_GERRIT_CR" ]]; then
+    if [[ -n "$MG_GERRIT_CR" ]]; then
         # 4920/2 -> remotes/origin/changes/20/4920/2
         ref=$(echo $MG_GERRIT_CR | \
             sed 's+\(.*\)\(..\)/+remotes/origin/changes/\2/\1\2/+')

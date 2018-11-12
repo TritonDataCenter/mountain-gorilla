@@ -115,6 +115,17 @@ or using the UI in jenkins:
     BRANCH:     master
     TRY_BRANCH: CNAPI-123
 
+# Gerrit integration
+
+Mountain Gorilla also supports building a particular patchset from the Joyent
+Gerrit instance http://cr.joyent.us/ with the `-g` option:
+
+    ./configure -t cnapi -g 5013/11
+
+or `MG_GERRIT_CR` in Jenkins.  This will translate from the given patchset
+version into the necessary refspec, and use it in the same manner as
+`TRY_BRANCH` above.  (As a consequence, this doesn't support building from
+multiple different Gerrit CRs.)
 
 # Bits directory structure
 
