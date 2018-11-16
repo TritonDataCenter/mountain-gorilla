@@ -448,7 +448,7 @@ function get_repo_cache() {
 
 # Get the requested repo.
 # Usage:
-#   get_repo2 REPO-URL BRANCH SUBMODULE-UPDATE [NAME] [TRY-BRANCH]
+#   get_repo2 REPO-URL BRANCH SUBMODULE-UPDATE [NAME] [TRY-BRANCH] [GERRIT-CR]
 #
 # If "SUBMODULE-UPDATE" is "true", then "git submodule update ..." is
 # used on the repo.
@@ -456,12 +456,15 @@ function get_repo_cache() {
 # If "NAME" is given, that subdir under "build/" will be used as the
 # clone dir. Else it is inferred from the REPO-URL.
 #
+# Only one of TRY-BRANCH or GERRIT_CR should be set.
+#
 function get_repo2() {
     local repo_url=$1
     local branch=$2
     local submodule_update=$3
     local repo_dir=$4
     local try_branch=$5
+    local gerrit_cr=$6
 
     if [[ -z "$repo_dir" ]]; then
         repo_dir=${repo_url##*/}    # strip to last '/'
@@ -481,9 +484,9 @@ function get_repo2() {
         (cd build/$repo_dir ; git checkout $try_branch && git pull || true)
     fi
 
-    if [[ -n "$MG_GERRIT_CR" ]]; then
+    if [[ -n "$gerrit_cr" ]]; then
         # 4920/2 -> remotes/origin/changes/20/4920/2
-        ref=$(echo $MG_GERRIT_CR | \
+        ref=$(echo $gerrit_cr | \
             sed 's+\(.*\)\(..\)/+remotes/origin/changes/\2/\1\2/+')
         (cd build/$repo_dir ; git checkout $ref || true)
     fi
@@ -613,7 +616,8 @@ function get_target_repos() {
         local repo_dir=$(echo "$info" | cut -d, -f 2)
         local submodule_update=$(echo "$info" | cut -d, -f 3)
         [[ -z "$submodule_update" ]] && submodule_update=true
-        get_repo2 $repo_url $BRANCH "$submodule_update" "$repo_dir" "$TRY_BRANCH"
+        get_repo2 $repo_url $BRANCH "$submodule_update" \
+            "$repo_dir" "$TRY_BRANCH" "$MG_GERRIT_CR"
     done
 }
 
