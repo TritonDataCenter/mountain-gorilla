@@ -2926,22 +2926,12 @@ build/smartos-live/configure.mg:
 	sed -e "s:GITCLONESOURCE:$(shell pwd)/build/:" \
 		<smartos-live-configure$(PLAT_FLAVOR).mg.in >$@
 
-build/smartos-live/configure-branches:
-	sed \
-		-e "s:ILLUMOS_EXTRA_BRANCH:$(ILLUMOS_EXTRA_BRANCH):" \
-		-e "s:ILLUMOS_JOYENT_BRANCH:$(ILLUMOS_JOYENT_BRANCH):" \
-		-e "s:UR_AGENT_BRANCH:$(SDC_UR_AGENT_BRANCH):" \
-		-e "s:ILLUMOS_KVM_BRANCH:$(ILLUMOS_KVM_BRANCH):" \
-		-e "s:ILLUMOS_KVM_CMD_BRANCH:$(ILLUMOS_KVM_CMD_BRANCH):" \
-		-e "s:MDATA_CLIENT_BRANCH:$(MDATA_CLIENT_BRANCH):" \
-		<smartos-live-configure-branches$(PLAT_FLAVOR).in >$@
-
 .PHONY: smartos_live_make_check
 smartos_live_make_check:
 	(cd build/smartos-live && make check)
 
 # PATH: Ensure using GCC from SFW as require for platform build.
-$(PLATFORM_BITS): build/smartos-live/configure.mg build/smartos-live/configure-branches
+$(PLATFORM_BITS): build/smartos-live/configure.mg
 	@echo "# Build platform: branch $(SMARTOS_LIVE_BRANCH), sha $(SMARTOS_LIVE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	#
 	# We could use -d in PLAT_CONFIGURE_ARGS, but historically, we

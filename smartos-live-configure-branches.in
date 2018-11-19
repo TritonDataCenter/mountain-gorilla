@@ -1,6 +1,0 @@
-illumos-extra: ILLUMOS_EXTRA_BRANCH
-illumos-joyent: ILLUMOS_JOYENT_BRANCH
-ur-agent: UR_AGENT_BRANCH
-kvm: ILLUMOS_KVM_BRANCH
-kvm-cmd: ILLUMOS_KVM_CMD_BRANCH
-mdata-client: MDATA_CLIENT_BRANCH

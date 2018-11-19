@@ -171,10 +171,11 @@ fi
 if [[ -z ${JOYENT_BUILD} || ${JOYENT_BUILD} == "true" ]]; then
     TRACE=1 ./configure -j -t $MG_TARGET -c "$CACHE_DIR" -b "$BRANCH" \
         -J /stor/builds -D /public/builds -O ${JENKINS_OUTPUT_BASE} \
-        -B "$TRY_BRANCH" ${EXTRA_ARGS}
+        -g "$MG_GERRIT_CR" -B "$TRY_BRANCH" ${EXTRA_ARGS}
 else
     TRACE=1 ./configure -t $MG_TARGET -c "$CACHE_DIR" -b "$BRANCH" \
-        -D /public/builds -O ${JENKINS_OUTPUT_BASE} -B "$TRY_BRANCH" \
+        -D /public/builds -O ${JENKINS_OUTPUT_BASE} \
+        -g "$MG_GERRIT_CR" -B "$TRY_BRANCH" \
         ${EXTRA_ARGS}
 fi
 
