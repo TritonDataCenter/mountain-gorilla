@@ -409,39 +409,35 @@ function preload_bits_from_manta() {
 
 # Clone/update the given git repo in the repo cache.
 # Usage:
-#   get_repo_cache REPO-URL REPO-DIR SUBMODULE-UPDATE
+#   get_repo_cache REPO-URL REPO-DIR [GERRIT-CR]
 # Example:
-#   get_repo_cache git@github.com:joyent/smart-login.git smart-login true
+#   get_repo_cache git@github.com:joyent/smart-login.git \
+#     $MG_CACHE_DIR/repos/smart-login 4095/2
 function get_repo_cache() {
     local repo_url=$1
-    local repo_dir=$2
-    local dst_dir=$MG_CACHE_DIR/repos/$repo_dir
+    local cache_dir=$2
+    local gerrit_cr=$3
 
-    if [[ ! -d "$MG_CACHE_DIR/repos/$repo_dir" ]]; then
-        mkdir -p $MG_CACHE_DIR/repos
-        local tmp_dir=$MG_CACHE_DIR/repos/.tmp.$repo_dir
+    if [[ ! -d "$cache_dir" ]]; then
+        local parent_dir=$(dirname $cache_dir)
+        local tmp_dir=$parent_dir/.tmp.$repo_dir
+        mkdir -p $parent_dir
         rm -rf $tmp_dir
         git clone $repo_url $tmp_dir
-        mv $tmp_dir $MG_CACHE_DIR/repos/$repo_dir
+        mv $tmp_dir $cache_dir
     else
-        (cd $MG_CACHE_DIR/repos/$repo_dir; git pull)
+        (cd $cache_dir; git pull)
     fi
 
-    if [[ -n "$MG_GERRIT_CR" ]]; then
-        (cd $MG_CACHE_DIR/repos/$repo_dir && git fetch origin \
+    if [[ -n "$gerrit_cr" ]]; then
+        (cd $cache_dir && git fetch origin \
         +refs/heads/*:refs/remotes/origin/* +refs/changes/*:refs/remotes/origin/changes/*)
-    fi
-
-    if [[ "$submodule_update" == "true" ]]; then
-        (cd "$MG_CACHE_DIR/repos/$repo_dir" &&
-            git submodule sync $GIT_SUBMODULE_SYNC_FLAGS &&
-            git submodule update --init --recursive)
     fi
 
     # Error out if the cached repo is dirty. These things should always
     # be pristine.
-    if [[ "$(cd $MG_CACHE_DIR/repos/$repo_dir && git describe --all --dirty | grep dirty)" != "" ]]; then
-        fatal "Repo '$repo_dir' cache, $MG_CACHE_DIR/repos/$repo_dir, is dirty!"
+    if [[ "$(cd $cache_dir && git describe --all --dirty | grep dirty)" != "" ]]; then
+        fatal "Repo cache $cache_dir is dirty!"
     fi
 }
 
@@ -472,12 +468,17 @@ function get_repo2() {
         repo_dir=${repo_dir%*.git}    # strip '.git' at tail
     fi
 
-    echo "# get '$repo_url' to repo cache ($MG_CACHE_DIR/repos)"
-    get_repo_cache ${repo_url} ${repo_dir} ${submodule_update}
+    local cache_dir=$MG_CACHE_DIR/repos/$repo_dir
+    if [[ -n "$gerrit_cr" ]]; then
+        cache_dir=$MG_CACHE_DIR/repos.cr/$repo_dir
+    fi
 
-    echo "# copy '$MG_CACHE_DIR/repos/$repo_dir' to 'build/$repo_dir'"
+    echo "# get '$repo_url' to repo cache dir '$cache_dir'"
+    get_repo_cache ${repo_url} ${cache_dir} ${gerrit_cr}
+
+    echo "# copy '$cache_dir' to 'build/$repo_dir'"
     mkdir -p build
-    cp -PR $MG_CACHE_DIR/repos/$repo_dir build/$repo_dir
+    cp -PR $cache_dir build/$repo_dir
     (cd build/$repo_dir ; git checkout $branch)
 
     if [[ -n "$try_branch" ]]; then
