@@ -419,7 +419,8 @@ function get_repo_cache() {
     local gerrit_cr=$3
 
     if [[ ! -d "$cache_dir" ]]; then
-        mkdir -p $(dirname $cache_dir)
+        parent_dir=$(dirname $cache_dir)
+        mkdir -p $parent_dir
         local tmp_dir=$parent_dir/.tmp.$repo_dir
         rm -rf $tmp_dir
         git clone $repo_url $tmp_dir
