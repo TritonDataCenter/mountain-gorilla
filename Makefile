@@ -126,7 +126,7 @@ clean_smartlogin:
 #---- amon
 
 _amon_stamp=$(SDC_AMON_BRANCH)-$(TIMESTAMP)-g$(SDC_AMON_SHA)
-AMON_BITS=$(BITS_DIR)/amon/amon-pkg-$(_amon_stamp).tar.bz2 \
+AMON_BITS=$(BITS_DIR)/amon/amon-pkg-$(_amon_stamp).tar.gz \
 	$(BITS_DIR)/amon/amon-relay-$(_amon_stamp).tgz \
 	$(BITS_DIR)/amon/amon-agent-$(_amon_stamp).tgz
 AMON_BITS_0=$(shell echo $(AMON_BITS) | awk '{print $$1}')
@@ -476,7 +476,7 @@ clean_rabbitmq:
 #---- DHCPD
 
 _dhcpd_stamp=$(DHCPD_BRANCH)-$(TIMESTAMP)-g$(DHCPD_SHA)
-DHCPD_BITS=$(BITS_DIR)/dhcpd/dhcpd-pkg-$(_dhcpd_stamp).tar.bz2
+DHCPD_BITS=$(BITS_DIR)/dhcpd/dhcpd-pkg-$(_dhcpd_stamp).tar.gz
 DHCPD_IMAGE_BIT=$(BITS_DIR)/dhcpd/dhcpd-zfs-$(_dhcpd_stamp).zfs.gz
 DHCPD_MANIFEST_BIT=$(BITS_DIR)/dhcpd/dhcpd-zfs-$(_dhcpd_stamp).imgmanifest
 
@@ -999,7 +999,7 @@ clean_vmapi:
 #---- PAPI
 
 _papi_stamp=$(SDC_PAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_PAPI_SHA)
-PAPI_BITS=$(BITS_DIR)/papi/papi-pkg-$(_papi_stamp).tar.bz2
+PAPI_BITS=$(BITS_DIR)/papi/papi-pkg-$(_papi_stamp).tar.gz
 PAPI_IMAGE_BIT=$(BITS_DIR)/papi/papi-zfs-$(_papi_stamp).zfs.gz
 PAPI_MANIFEST_BIT=$(BITS_DIR)/papi/papi-zfs-$(_papi_stamp).imgmanifest
 
@@ -1045,7 +1045,7 @@ clean_papi:
 #---- IMGAPI
 
 _imgapi_stamp=$(SDC_IMGAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_IMGAPI_SHA)
-IMGAPI_BITS=$(BITS_DIR)/imgapi/imgapi-pkg-$(_imgapi_stamp).tar.bz2
+IMGAPI_BITS=$(BITS_DIR)/imgapi/imgapi-pkg-$(_imgapi_stamp).tar.gz
 IMGAPI_IMAGE_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_stamp).zfs.gz
 IMGAPI_MANIFEST_BIT=$(BITS_DIR)/imgapi/imgapi-zfs-$(_imgapi_stamp).imgmanifest
 
@@ -1285,7 +1285,7 @@ clean_cn_agent:
 #---- Configuration Agent
 
 _config_agent_stamp=$(SDC_CONFIG_AGENT_BRANCH)-$(TIMESTAMP)-g$(SDC_CONFIG_AGENT_SHA)
-CONFIG_AGENT_BIT=$(BITS_DIR)/config-agent/config-agent-pkg-$(_config_agent_stamp).tar.bz2
+CONFIG_AGENT_BIT=$(BITS_DIR)/config-agent/config-agent-pkg-$(_config_agent_stamp).tar.gz
 CONFIG_AGENT_MANIFEST_BIT=$(BITS_DIR)/config-agent/config-agent-pkg-$(_config_agent_stamp).manifest
 
 .PHONY: config-agent
@@ -2302,7 +2302,7 @@ clean_wrasse:
 #---- Registrar
 
 _registrar_stamp=$(REGISTRAR_BRANCH)-$(TIMESTAMP)-g$(REGISTRAR_SHA)
-REGISTRAR_BITS=$(BITS_DIR)/registrar/registrar-pkg-$(_registrar_stamp).tar.bz2
+REGISTRAR_BITS=$(BITS_DIR)/registrar/registrar-pkg-$(_registrar_stamp).tar.gz
 
 .PHONY: registrar
 registrar: $(REGISTRAR_BITS)
@@ -2323,7 +2323,7 @@ clean_registrar:
 #---- waferlock
 
 _waferlock_stamp=$(WAFERLOCK_BRANCH)-$(TIMESTAMP)-g$(WAFERLOCK_SHA)
-WAFERLOCK_BITS=$(BITS_DIR)/waferlock/waferlock-pkg-$(_waferlock_stamp).tar.bz2
+WAFERLOCK_BITS=$(BITS_DIR)/waferlock/waferlock-pkg-$(_waferlock_stamp).tar.gz
 
 .PHONY: waferlock
 waferlock: $(WAFERLOCK_BITS)
@@ -2343,7 +2343,7 @@ clean_waferlock:
 #---- mackerel
 
 _mackerel_stamp=$(MANTA_MACKEREL_BRANCH)-$(TIMESTAMP)-g$(MANTA_MACKEREL_SHA)
-MACKEREL_BITS=$(BITS_DIR)/mackerel/mackerel-pkg-$(_mackerel_stamp).tar.bz2
+MACKEREL_BITS=$(BITS_DIR)/mackerel/mackerel-pkg-$(_mackerel_stamp).tar.gz
 
 .PHONY: mackerel
 mackerel: $(MACKEREL_BITS)
@@ -2445,7 +2445,7 @@ clean_muppet:
 #---- Minnow
 
 _minnow_stamp=$(MANTA_MINNOW_BRANCH)-$(TIMESTAMP)-g$(MANTA_MINNOW_SHA)
-MINNOW_BITS=$(BITS_DIR)/minnow/minnow-pkg-$(_minnow_stamp).tar.bz2
+MINNOW_BITS=$(BITS_DIR)/minnow/minnow-pkg-$(_minnow_stamp).tar.gz
 
 .PHONY: minnow
 minnow: $(MINNOW_BITS)

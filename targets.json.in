@@ -125,9 +125,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
   "amon": {
@@ -148,9 +148,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
   "assets": {
@@ -196,9 +196,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
   "adminui": {
@@ -221,9 +221,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
   "mockcloud": {
@@ -283,9 +283,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
   "amonredis": {
@@ -307,9 +307,9 @@ cat <<EOF
       "registrar"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
   "rabbitmq": {
@@ -339,9 +339,9 @@ cat <<EOF
       "registrar"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
   "cloudapi": {
@@ -368,9 +368,9 @@ cat <<EOF
       "haproxy-1.6.2"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
   "nat": {
@@ -408,9 +408,9 @@ cat <<EOF
     ],
     "pkgsrc": [],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
   "volapi": {
@@ -433,9 +433,9 @@ cat <<EOF
     ],
     "pkgsrc": [],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
   "portolan": {
@@ -457,9 +457,9 @@ cat <<EOF
     ],
     "pkgsrc": [],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -485,9 +485,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -513,9 +513,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -537,8 +537,8 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -572,9 +572,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -598,9 +598,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -631,9 +631,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -658,7 +658,7 @@ cat <<EOF
     ],
     "tarballs": [
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -759,9 +759,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -785,9 +785,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -810,9 +810,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -836,9 +836,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -908,9 +908,9 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -936,10 +936,10 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "waferlock/waferlock-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
+      {"tarball": "waferlock/waferlock-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -965,10 +965,10 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "waferlock/waferlock-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
+      {"tarball": "waferlock/waferlock-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -992,9 +992,9 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1019,9 +1019,9 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1047,9 +1047,9 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1074,9 +1074,9 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1103,9 +1103,9 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1130,9 +1130,9 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1158,10 +1158,10 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "mackerel/mackerel-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
+      {"tarball": "mackerel/mackerel-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1187,9 +1187,9 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1212,9 +1212,9 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1242,10 +1242,10 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "minnow/minnow-pkg-*.tar.bz2", "sysroot": "/"},
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "minnow/minnow-pkg-*.tar.gz", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1269,9 +1269,9 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1295,9 +1295,9 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1323,9 +1323,9 @@ cat <<EOF
       "config-agent"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1360,9 +1360,9 @@ cat <<EOF
       "https://download.joyent.com/pub/build/sdcnode"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1418,9 +1418,9 @@ cat <<EOF
       "registrar"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1446,8 +1446,8 @@ cat <<EOF
     ],
     "tarballs": [
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"},
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"}
     ]
   },
 
@@ -1468,9 +1468,9 @@ cat <<EOF
         "registrar"
     ],
     "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
@@ -1496,7 +1496,7 @@ cat <<EOF
     ],
     "tarballs": [
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
   },
 
