@@ -622,8 +622,8 @@ cat <<EOF
       "registrar"
     ],
     "tarballs": [
-      {"tarball": "config-agent/config-agent-*.tar.bz2", "sysroot": "/opt/smartdc"},
-      {"tarball": "registrar/registrar-pkg-*.tar.bz2", "sysroot": "/"}
+      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"},
+      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"}
     ]
   },
 
