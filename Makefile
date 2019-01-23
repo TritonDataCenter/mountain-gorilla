@@ -2084,49 +2084,6 @@ clean_volapi:
 	(cd build/sdc-volapi && gmake clean)
 
 
-#---- Propeller
-
-_propeller_stamp=$(MANTA_PROPELLER_BRANCH)-$(TIMESTAMP)-g$(MANTA_PROPELLER_SHA)
-PROPELLER_BITS=$(BITS_DIR)/propeller/propeller-pkg-$(_propeller_stamp).tar.bz2
-PROPELLER_IMAGE_BIT=$(BITS_DIR)/propeller/propeller-zfs-$(_propeller_stamp).zfs.gz
-PROPELLER_MANIFEST_BIT=$(BITS_DIR)/propeller/propeller-zfs-$(_propeller_stamp).imgmanifest
-
-.PHONY: propeller
-propeller: $(PROPELLER_BITS) propeller_image
-
-# PATH for propeller build: Ensure /opt/local/bin is first to put gcc 4.5 (from
-# pkgsrc) before other GCCs.
-$(PROPELLER_BITS): build/manta-propeller
-	@echo "# Build propeller: branch $(MANTA_PROPELLER_BRANCH), sha $(MANTA_PROPELLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	mkdir -p $(BITS_DIR)
-	(cd build/manta-propeller && NPM_CONFIG_CACHE=$(MG_CACHE_DIR)/npm TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) gmake release publish)
-	@echo "# Created propeller bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(PROPELLER_BITS)
-	@echo ""
-
-.PHONY: propeller_image
-propeller_image: $(PROPELLER_IMAGE_BIT)
-
-$(PROPELLER_IMAGE_BIT): $(PROPELLER_BITS)
-	@echo "# Build propeller_image: branch $(MANTA_PROPELLER_BRANCH), sha $(MANTA_PROPELLER_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
-	./tools/prep_dataset_in_jpc.sh -i "$(PROPELLER_IMAGE_UUID)" -t $(PROPELLER_BITS) \
-		-b "propeller" \
-		-o "$(PROPELLER_IMAGE_BIT)" -p $(PROPELLER_PKGSRC) -O "$(MG_OUT_PATH)" \
-		-t $(PROPELLER_EXTRA_TARBALLS) -n $(PROPELLER_IMAGE_NAME) \
-		-v $(_propeller_stamp) -d $(PROPELLER_IMAGE_DESCRIPTION)
-	@echo "# Created propeller image (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $$(dirname $(PROPELLER_IMAGE_BIT))
-	@echo ""
-
-propeller_publish_image: $(PROPELLER_IMAGE_BIT)
-	@echo "# Publish propeller image to SDC Updates repo."
-	$(UPDATES_IMGADM) import -ddd -m $(PROPELLER_MANIFEST_BIT) -f $(PROPELLER_IMAGE_BIT)
-
-clean_propeller:
-	$(RM) -rf $(BITS_DIR)/propeller
-	(cd build/manta-propeller && gmake distclean)
-
-
 #---- Moray
 
 _moray_stamp=$(MORAY_BRANCH)-$(TIMESTAMP)-g$(MORAY_SHA)

@@ -136,7 +136,6 @@ TTL_DAYS_FROM_NAME='{
     "nfsserver": 365,
     "papi": 365,
     "portolan": 365,
-    "propeller": 365,
     "provisioner": 365,
     "rabbitmq": 365,
     "redis": 365,
