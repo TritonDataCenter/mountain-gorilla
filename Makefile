@@ -5,7 +5,7 @@
 #
 
 #
-# Copyright (c) 2018, Joyent, Inc.
+# Copyright (c) 2019, Joyent, Inc.
 #
 
 #
@@ -179,7 +179,7 @@ clean_amon:
 #   for env setup. Might be demons in there. (RELENG-192)
 
 _ca_stamp=$(SDC_CLOUD_ANALYTICS_BRANCH)-$(TIMESTAMP)-g$(SDC_CLOUD_ANALYTICS_SHA)
-CA_BITS=$(BITS_DIR)/ca/ca-pkg-$(_ca_stamp).tar.bz2 \
+CA_BITS=$(BITS_DIR)/ca/ca-pkg-$(_ca_stamp).tar.gz \
 	$(BITS_DIR)/ca/cabase-$(_ca_stamp).tar.gz \
 	$(BITS_DIR)/ca/cainstsvc-$(_ca_stamp).tar.gz
 CA_BITS_0=$(shell echo $(CA_BITS) | awk '{print $$1}')
@@ -234,7 +234,7 @@ clean_ca:
 
 
 _ufds_stamp=$(SDC_UFDS_BRANCH)-$(TIMESTAMP)-g$(SDC_UFDS_SHA)
-UFDS_BITS=$(BITS_DIR)/ufds/ufds-pkg-$(_ufds_stamp).tar.bz2
+UFDS_BITS=$(BITS_DIR)/ufds/ufds-pkg-$(_ufds_stamp).tar.gz
 UFDS_IMAGE_BIT=$(BITS_DIR)/ufds/ufds-zfs-$(_ufds_stamp).zfs.gz
 UFDS_MANIFEST_BIT=$(BITS_DIR)/ufds/ufds-zfs-$(_ufds_stamp).imgmanifest
 
@@ -278,7 +278,7 @@ clean_ufds:
 #---- ASSETS
 
 _assets_stamp=$(SDC_ASSETS_BRANCH)-$(TIMESTAMP)-g$(SDC_ASSETS_SHA)
-ASSETS_BITS=$(BITS_DIR)/assets/assets-pkg-$(_assets_stamp).tar.bz2
+ASSETS_BITS=$(BITS_DIR)/assets/assets-pkg-$(_assets_stamp).tar.gz
 ASSETS_IMAGE_BIT=$(BITS_DIR)/assets/assets-zfs-$(_assets_stamp).zfs.gz
 ASSETS_MANIFEST_BIT=$(BITS_DIR)/assets/assets-zfs-$(_assets_stamp).imgmanifest
 
@@ -317,7 +317,7 @@ clean_assets:
 #---- ADMINUI
 
 _adminui_stamp=$(ADMINUI_BRANCH)-$(TIMESTAMP)-g$(ADMINUI_SHA)
-ADMINUI_BITS=$(BITS_DIR)/adminui/adminui-pkg-$(_adminui_stamp).tar.bz2
+ADMINUI_BITS=$(BITS_DIR)/adminui/adminui-pkg-$(_adminui_stamp).tar.gz
 ADMINUI_IMAGE_BIT=$(BITS_DIR)/adminui/adminui-zfs-$(_adminui_stamp).zfs.gz
 ADMINUI_MANIFEST_BIT=$(BITS_DIR)/adminui/adminui-zfs-$(_adminui_stamp).imgmanifest
 
@@ -397,7 +397,7 @@ clean_redis:
 #---- amonredis
 
 _amonredis_stamp=$(SDC_AMONREDIS_BRANCH)-$(TIMESTAMP)-g$(SDC_AMONREDIS_SHA)
-AMONREDIS_BITS=$(BITS_DIR)/amonredis/amonredis-pkg-$(_amonredis_stamp).tar.bz2
+AMONREDIS_BITS=$(BITS_DIR)/amonredis/amonredis-pkg-$(_amonredis_stamp).tar.gz
 AMONREDIS_IMAGE_BIT=$(BITS_DIR)/amonredis/amonredis-zfs-$(_amonredis_stamp).zfs.gz
 AMONREDIS_MANIFEST_BIT=$(BITS_DIR)/amonredis/amonredis-zfs-$(_amonredis_stamp).imgmanifest
 
@@ -437,7 +437,7 @@ clean_amonredis:
 #---- RABBITMQ
 
 _rabbitmq_stamp=$(SDC_RABBITMQ_BRANCH)-$(TIMESTAMP)-g$(SDC_RABBITMQ_SHA)
-RABBITMQ_BITS=$(BITS_DIR)/rabbitmq/rabbitmq-pkg-$(_rabbitmq_stamp).tar.bz2
+RABBITMQ_BITS=$(BITS_DIR)/rabbitmq/rabbitmq-pkg-$(_rabbitmq_stamp).tar.gz
 RABBITMQ_IMAGE_BIT=$(BITS_DIR)/rabbitmq/rabbitmq-zfs-$(_rabbitmq_stamp).zfs.gz
 RABBITMQ_MANIFEST_BIT=$(BITS_DIR)/rabbitmq/rabbitmq-zfs-$(_rabbitmq_stamp).imgmanifest
 
@@ -516,7 +516,7 @@ clean_dhcpd:
 #---- MOCKCLOUD
 
 _mockcloud_stamp=$(MOCKCLOUD_BRANCH)-$(TIMESTAMP)-g$(MOCKCLOUD_SHA)
-MOCKCLOUD_BITS=$(BITS_DIR)/mockcloud/mockcloud-pkg-$(_mockcloud_stamp).tar.bz2
+MOCKCLOUD_BITS=$(BITS_DIR)/mockcloud/mockcloud-pkg-$(_mockcloud_stamp).tar.gz
 MOCKCLOUD_IMAGE_BIT=$(BITS_DIR)/mockcloud/mockcloud-zfs-$(_mockcloud_stamp).zfs.gz
 MOCKCLOUD_MANIFEST_BIT=$(BITS_DIR)/mockcloud/mockcloud-zfs-$(_mockcloud_stamp).imgmanifest
 
@@ -557,7 +557,7 @@ clean_mockcloud:
 #---- CLOUDAPI
 
 _cloudapi_stamp=$(SDC_CLOUDAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_CLOUDAPI_SHA)
-CLOUDAPI_BITS=$(BITS_DIR)/cloudapi/cloudapi-pkg-$(_cloudapi_stamp).tar.bz2
+CLOUDAPI_BITS=$(BITS_DIR)/cloudapi/cloudapi-pkg-$(_cloudapi_stamp).tar.gz
 CLOUDAPI_IMAGE_BIT=$(BITS_DIR)/cloudapi/cloudapi-zfs-$(_cloudapi_stamp).zfs.gz
 CLOUDAPI_MANIFEST_BIT=$(BITS_DIR)/cloudapi/cloudapi-zfs-$(_cloudapi_stamp).imgmanifest
 
@@ -602,7 +602,7 @@ clean_cloudapi:
 #---- NAT
 
 _nat_stamp=$(SDC_NAT_BRANCH)-$(TIMESTAMP)-g$(SDC_NAT_SHA)
-NAT_BITS=$(BITS_DIR)/nat/nat-pkg-$(_nat_stamp).tar.bz2
+NAT_BITS=$(BITS_DIR)/nat/nat-pkg-$(_nat_stamp).tar.gz
 NAT_IMAGE_BIT=$(BITS_DIR)/nat/nat-zfs-$(_nat_stamp).zfs.gz
 NAT_MANIFEST_BIT=$(BITS_DIR)/nat/nat-zfs-$(_nat_stamp).imgmanifest
 
@@ -642,7 +642,7 @@ clean_nat:
 #---- DOCKER
 
 _docker_stamp=$(SDC_DOCKER_BRANCH)-$(TIMESTAMP)-g$(SDC_DOCKER_SHA)
-DOCKER_BITS=$(BITS_DIR)/docker/docker-pkg-$(_docker_stamp).tar.bz2
+DOCKER_BITS=$(BITS_DIR)/docker/docker-pkg-$(_docker_stamp).tar.gz
 DOCKER_IMAGE_BIT=$(BITS_DIR)/docker/docker-zfs-$(_docker_stamp).zfs.gz
 DOCKER_MANIFEST_BIT=$(BITS_DIR)/docker/docker-zfs-$(_docker_stamp).imgmanifest
 
@@ -682,7 +682,7 @@ clean_docker:
 #---- PORTOLAN
 
 _portolan_stamp=$(SDC_PORTOLAN_BRANCH)-$(TIMESTAMP)-g$(SDC_PORTOLAN_SHA)
-PORTOLAN_BITS=$(BITS_DIR)/portolan/portolan-pkg-$(_portolan_stamp).tar.bz2
+PORTOLAN_BITS=$(BITS_DIR)/portolan/portolan-pkg-$(_portolan_stamp).tar.gz
 PORTOLAN_IMAGE_BIT=$(BITS_DIR)/portolan/portolan-zfs-$(_portolan_stamp).zfs.gz
 PORTOLAN_MANIFEST_BIT=$(BITS_DIR)/portolan/portolan-zfs-$(_portolan_stamp).imgmanifest
 
@@ -762,7 +762,7 @@ clean_manta-manatee:
 #---- SDC_MANATEE
 
 _sdc-manatee_stamp=$(SDC_MANATEE_BRANCH)-$(TIMESTAMP)-g$(SDC_MANATEE_SHA)
-SDC_MANATEE_BITS=$(BITS_DIR)/sdc-manatee/sdc-manatee-pkg-$(_sdc-manatee_stamp).tar.bz2
+SDC_MANATEE_BITS=$(BITS_DIR)/sdc-manatee/sdc-manatee-pkg-$(_sdc-manatee_stamp).tar.gz
 SDC_MANATEE_IMAGE_BIT=$(BITS_DIR)/sdc-manatee/sdc-manatee-zfs-$(_sdc-manatee_stamp).zfs.gz
 SDC_MANATEE_MANIFEST_BIT=$(BITS_DIR)/sdc-manatee/sdc-manatee-zfs-$(_sdc-manatee_stamp).imgmanifest
 
@@ -844,7 +844,7 @@ clean_manatee:
 #---- WORKFLOW
 
 _wf_stamp=$(SDC_WORKFLOW_BRANCH)-$(TIMESTAMP)-g$(SDC_WORKFLOW_SHA)
-WORKFLOW_BITS=$(BITS_DIR)/workflow/workflow-pkg-$(_wf_stamp).tar.bz2
+WORKFLOW_BITS=$(BITS_DIR)/workflow/workflow-pkg-$(_wf_stamp).tar.gz
 WORKFLOW_IMAGE_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).zfs.gz
 WORKFLOW_MANIFEST_BIT=$(BITS_DIR)/workflow/workflow-zfs-$(_wf_stamp).imgmanifest
 
@@ -888,7 +888,7 @@ clean_workflow:
 #---- CMON
 
 _cmon_stamp=$(TRITON_CMON_BRANCH)-$(TIMESTAMP)-g$(TRITON_CMON_SHA)
-CMON_BITS=$(BITS_DIR)/cmon/cmon-pkg-$(_cmon_stamp).tar.bz2
+CMON_BITS=$(BITS_DIR)/cmon/cmon-pkg-$(_cmon_stamp).tar.gz
 CMON_IMAGE_BIT=$(BITS_DIR)/cmon/cmon-zfs-$(_cmon_stamp).zfs.gz
 CMON_MANIFEST_BIT=$(BITS_DIR)/cmon/cmon-zfs-$(_cmon_stamp).imgmanifest
 
@@ -954,7 +954,7 @@ clean_cmon_agent:
 #---- VMAPI
 
 _vmapi_stamp=$(SDC_VMAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_VMAPI_SHA)
-VMAPI_BITS=$(BITS_DIR)/vmapi/vmapi-pkg-$(_vmapi_stamp).tar.bz2
+VMAPI_BITS=$(BITS_DIR)/vmapi/vmapi-pkg-$(_vmapi_stamp).tar.gz
 VMAPI_IMAGE_BIT=$(BITS_DIR)/vmapi/vmapi-zfs-$(_vmapi_stamp).zfs.gz
 VMAPI_MANIFEST_BIT=$(BITS_DIR)/vmapi/vmapi-zfs-$(_vmapi_stamp).imgmanifest
 
@@ -1085,7 +1085,7 @@ clean_imgapi:
 #---- sdc
 
 _sdc_stamp=$(SDC_SDC_BRANCH)-$(TIMESTAMP)-g$(SDC_SDC_SHA)
-SDC_BITS=$(BITS_DIR)/sdc/sdc-pkg-$(_sdc_stamp).tar.bz2
+SDC_BITS=$(BITS_DIR)/sdc/sdc-pkg-$(_sdc_stamp).tar.gz
 SDC_IMAGE_BIT=$(BITS_DIR)/sdc/sdc-zfs-$(_sdc_stamp).zfs.gz
 SDC_MANIFEST_BIT=$(BITS_DIR)/sdc/sdc-zfs-$(_sdc_stamp).imgmanifest
 
@@ -1364,7 +1364,7 @@ clean_firewaller:
 #---- CNAPI
 
 _cnapi_stamp=$(SDC_CNAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_CNAPI_SHA)
-CNAPI_BITS=$(BITS_DIR)/cnapi/cnapi-pkg-$(_cnapi_stamp).tar.bz2
+CNAPI_BITS=$(BITS_DIR)/cnapi/cnapi-pkg-$(_cnapi_stamp).tar.gz
 CNAPI_IMAGE_BIT=$(BITS_DIR)/cnapi/cnapi-zfs-$(_cnapi_stamp).zfs.gz
 CNAPI_MANIFEST_BIT=$(BITS_DIR)/cnapi/cnapi-zfs-$(_cnapi_stamp).imgmanifest
 
@@ -1408,7 +1408,7 @@ clean_cnapi:
 #---- FWAPI
 
 _fwapi_stamp=$(SDC_FWAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_FWAPI_SHA)
-FWAPI_BITS=$(BITS_DIR)/fwapi/fwapi-pkg-$(_fwapi_stamp).tar.bz2
+FWAPI_BITS=$(BITS_DIR)/fwapi/fwapi-pkg-$(_fwapi_stamp).tar.gz
 FWAPI_IMAGE_BIT=$(BITS_DIR)/fwapi/fwapi-zfs-$(_fwapi_stamp).zfs.gz
 FWAPI_MANIFEST_BIT=$(BITS_DIR)/fwapi/fwapi-zfs-$(_fwapi_stamp).imgmanifest
 
@@ -1453,7 +1453,7 @@ clean_fwapi:
 #---- NAPI
 
 _napi_stamp=$(SDC_NAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_NAPI_SHA)
-NAPI_BITS=$(BITS_DIR)/napi/napi-pkg-$(_napi_stamp).tar.bz2
+NAPI_BITS=$(BITS_DIR)/napi/napi-pkg-$(_napi_stamp).tar.gz
 NAPI_IMAGE_BIT=$(BITS_DIR)/napi/napi-zfs-$(_napi_stamp).zfs.gz
 NAPI_MANIFEST_BIT=$(BITS_DIR)/napi/napi-zfs-$(_napi_stamp).imgmanifest
 
@@ -1498,7 +1498,7 @@ clean_napi:
 #---- SAPI
 
 _sapi_stamp=$(SDC_SAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_SAPI_SHA)
-SAPI_BITS=$(BITS_DIR)/sapi/sapi-pkg-$(_sapi_stamp).tar.bz2
+SAPI_BITS=$(BITS_DIR)/sapi/sapi-pkg-$(_sapi_stamp).tar.gz
 SAPI_IMAGE_BIT=$(BITS_DIR)/sapi/sapi-zfs-$(_sapi_stamp).zfs.gz
 SAPI_MANIFEST_BIT=$(BITS_DIR)/sapi/sapi-zfs-$(_sapi_stamp).imgmanifest
 
@@ -1712,7 +1712,7 @@ clean_mahi:
 #---- Triton CNS
 
 _cns_stamp=$(TRITON_CNS_BRANCH)-$(TIMESTAMP)-g$(TRITON_CNS_SHA)
-CNS_BITS=$(BITS_DIR)/cns/cns-pkg-$(_cns_stamp).tar.bz2
+CNS_BITS=$(BITS_DIR)/cns/cns-pkg-$(_cns_stamp).tar.gz
 CNS_IMAGE_BIT=$(BITS_DIR)/cns/cns-zfs-$(_cns_stamp).zfs.gz
 CNS_MANIFEST_BIT=$(BITS_DIR)/cns/cns-zfs-$(_cns_stamp).imgmanifest
 
@@ -2043,7 +2043,7 @@ clean_nfsserver:
 #---- VOLAPI
 
 _volapi_stamp=$(SDC_VOLAPI_BRANCH)-$(TIMESTAMP)-g$(SDC_VOLAPI_SHA)
-VOLAPI_BITS=$(BITS_DIR)/volapi/volapi-pkg-$(_volapi_stamp).tar.bz2
+VOLAPI_BITS=$(BITS_DIR)/volapi/volapi-pkg-$(_volapi_stamp).tar.gz
 VOLAPI_IMAGE_BIT=$(BITS_DIR)/volapi/volapi-zfs-$(_volapi_stamp).zfs.gz
 VOLAPI_MANIFEST_BIT=$(BITS_DIR)/volapi/volapi-zfs-$(_volapi_stamp).imgmanifest
 
@@ -2556,7 +2556,7 @@ clean_dockerlogger:
 #---- Manta deployment (the manta zone)
 
 _manta_deployment_stamp=$(SDC_MANTA_BRANCH)-$(TIMESTAMP)-g$(SDC_MANTA_SHA)
-MANTA_DEPLOYMENT_BITS=$(BITS_DIR)/manta-deployment/manta-deployment-pkg-$(_manta_deployment_stamp).tar.bz2
+MANTA_DEPLOYMENT_BITS=$(BITS_DIR)/manta-deployment/manta-deployment-pkg-$(_manta_deployment_stamp).tar.gz
 MANTA_DEPLOYMENT_IMAGE_BIT=$(BITS_DIR)/manta-deployment/manta-deployment-zfs-$(_manta_deployment_stamp).zfs.gz
 MANTA_DEPLOYMENT_MANIFEST_BIT=$(BITS_DIR)/manta-deployment/manta-deployment-zfs-$(_manta_deployment_stamp).imgmanifest
 
