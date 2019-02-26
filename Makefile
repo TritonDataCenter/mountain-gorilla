@@ -1045,7 +1045,7 @@ clean_papi:
 #---- Prometheus
 
 _prometheus_stamp=$(TRITON_PROMETHEUS_BRANCH)-$(TIMESTAMP)-g$(TRITON_PROMETHEUS_SHA)
-PROMETHEUS_BITS=$(BITS_DIR)/prometheus/prometheus-pkg-$(_prometheus_stamp).tar.bz2
+PROMETHEUS_BITS=$(BITS_DIR)/prometheus/prometheus-pkg-$(_prometheus_stamp).tar.gz
 PROMETHEUS_IMAGE_BIT=$(BITS_DIR)/prometheus/prometheus-zfs-$(_prometheus_stamp).zfs.gz
 PROMETHEUS_MANIFEST_BIT=$(BITS_DIR)/prometheus/prometheus-zfs-$(_prometheus_stamp).imgmanifest
 
