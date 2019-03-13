@@ -721,7 +721,7 @@ clean_portolan:
 #---- MANTA_MANATEE
 
 _manta-manatee_stamp=$(MANTA_MANATEE_BRANCH)-$(TIMESTAMP)-g$(MANTA_MANATEE_SHA)
-MANTA_MANATEE_BITS=$(BITS_DIR)/manta-manatee/manta-manatee-pkg-$(_manta-manatee_stamp).tar.bz2
+MANTA_MANATEE_BITS=$(BITS_DIR)/manta-manatee/manta-manatee-pkg-$(_manta-manatee_stamp).tar.gz
 MANTA_MANATEE_IMAGE_BIT=$(BITS_DIR)/manta-manatee/manta-manatee-zfs-$(_manta-manatee_stamp).zfs.gz
 MANTA_MANATEE_MANIFEST_BIT=$(BITS_DIR)/manta-manatee/manta-manatee-zfs-$(_manta-manatee_stamp).imgmanifest
 
@@ -1585,7 +1585,7 @@ clean_sdcsso:
 #---- Marlin
 
 _marlin_stamp=$(MANTA_MARLIN_BRANCH)-$(TIMESTAMP)-g$(MANTA_MARLIN_SHA)
-MARLIN_BITS=$(BITS_DIR)/marlin/marlin-pkg-$(_marlin_stamp).tar.bz2
+MARLIN_BITS=$(BITS_DIR)/marlin/marlin-pkg-$(_marlin_stamp).tar.gz
 MARLIN_IMAGE_BIT=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).zfs.gz
 MARLIN_MANIFEST_BIT=$(BITS_DIR)/marlin/marlin-zfs-$(_marlin_stamp).imgmanifest
 MARLIN_AGENT_BIT=$(BITS_DIR)/marlin/marlin-$(_marlin_stamp).tar.gz
@@ -1630,7 +1630,7 @@ clean_marlin:
 #---- MEDUSA
 
 _medusa_stamp=$(MANTA_MEDUSA_BRANCH)-$(TIMESTAMP)-g$(MANTA_MEDUSA_SHA)
-MEDUSA_BITS=$(BITS_DIR)/medusa/medusa-pkg-$(_medusa_stamp).tar.bz2
+MEDUSA_BITS=$(BITS_DIR)/medusa/medusa-pkg-$(_medusa_stamp).tar.gz
 MEDUSA_IMAGE_BIT=$(BITS_DIR)/medusa/medusa-zfs-$(_medusa_stamp).zfs.gz
 MEDUSA_MANIFEST_BIT=$(BITS_DIR)/medusa/medusa-zfs-$(_medusa_stamp).imgmanifest
 
@@ -1672,7 +1672,7 @@ clean_medusa:
 #---- MAHI
 
 _mahi_stamp=$(MAHI_BRANCH)-$(TIMESTAMP)-g$(MAHI_SHA)
-MAHI_BITS=$(BITS_DIR)/mahi/mahi-pkg-$(_mahi_stamp).tar.bz2
+MAHI_BITS=$(BITS_DIR)/mahi/mahi-pkg-$(_mahi_stamp).tar.gz
 MAHI_IMAGE_BIT=$(BITS_DIR)/mahi/mahi-zfs-$(_mahi_stamp).zfs.gz
 MAHI_MANIFEST_BIT=$(BITS_DIR)/mahi/mahi-zfs-$(_mahi_stamp).imgmanifest
 
@@ -1753,7 +1753,7 @@ clean_cns:
 #---- Manta Resharding System
 
 _manta-reshard_stamp=$(MANTA_RESHARD_BRANCH)-$(TIMESTAMP)-g$(MANTA_RESHARD_SHA)
-MANTA_RESHARD_BITS=$(BITS_DIR)/manta-reshard/manta-reshard-pkg-$(_manta-reshard_stamp).tar.bz2
+MANTA_RESHARD_BITS=$(BITS_DIR)/manta-reshard/manta-reshard-pkg-$(_manta-reshard_stamp).tar.gz
 MANTA_RESHARD_IMAGE_BIT=$(BITS_DIR)/manta-reshard/manta-reshard-zfs-$(_manta-reshard_stamp).zfs.gz
 MANTA_RESHARD_MANIFEST_BIT=$(BITS_DIR)/manta-reshard/manta-reshard-zfs-$(_manta-reshard_stamp).imgmanifest
 
@@ -1794,7 +1794,7 @@ clean_manta-reshard:
 #---- pgstatsmon
 
 _pgstatsmon_stamp=$(PGSTATSMON_BRANCH)-$(TIMESTAMP)-g$(PGSTATSMON_SHA)
-PGSTATSMON_BITS=$(BITS_DIR)/pgstatsmon/pgstatsmon-pkg-$(_pgstatsmon_stamp).tar.bz2
+PGSTATSMON_BITS=$(BITS_DIR)/pgstatsmon/pgstatsmon-pkg-$(_pgstatsmon_stamp).tar.gz
 PGSTATSMON_IMAGE_BIT=$(BITS_DIR)/pgstatsmon/pgstatsmon-zfs-$(_pgstatsmon_stamp).zfs.gz
 PGSTATSMON_MANIFEST_BIT=$(BITS_DIR)/pgstatsmon/pgstatsmon-zfs-$(_pgstatsmon_stamp).imgmanifest
 
@@ -1835,7 +1835,7 @@ clean_pgstatsmon:
 #---- Manta Garbage Collector
 
 _manta-garbage-collector_stamp=$(MANTA_GARBAGE_COLLECTOR_BRANCH)-$(TIMESTAMP)-g$(MANTA_GARBAGE_COLLECTOR_SHA)
-MANTA_GARBAGE_COLLECTOR_BITS=$(BITS_DIR)/manta-garbage-collector/manta-garbage-collector-pkg-$(_manta-garbage-collector_stamp).tar.bz2
+MANTA_GARBAGE_COLLECTOR_BITS=$(BITS_DIR)/manta-garbage-collector/manta-garbage-collector-pkg-$(_manta-garbage-collector_stamp).tar.gz
 MANTA_GARBAGE_COLLECTOR_IMAGE_BIT=$(BITS_DIR)/manta-garbage-collector/manta-garbage-collector-zfs-$(_manta-garbage-collector_stamp).zfs.gz
 MANTA_GARBAGE_COLLECTOR_MANIFEST_BIT=$(BITS_DIR)/manta-garbage-collector/manta-garbage-collector-zfs-$(_manta-garbage-collector_stamp).imgmanifest
 
@@ -1876,7 +1876,7 @@ clean_manta-garbage-collector:
 #---- Mola
 
 _mola_stamp=$(MANTA_MOLA_BRANCH)-$(TIMESTAMP)-g$(MANTA_MOLA_SHA)
-MOLA_BITS=$(BITS_DIR)/mola/mola-pkg-$(_mola_stamp).tar.bz2
+MOLA_BITS=$(BITS_DIR)/mola/mola-pkg-$(_mola_stamp).tar.gz
 MOLA_IMAGE_BIT=$(BITS_DIR)/mola/mola-zfs-$(_mola_stamp).zfs.gz
 MOLA_MANIFEST_BIT=$(BITS_DIR)/mola/mola-zfs-$(_mola_stamp).imgmanifest
 
@@ -1919,7 +1919,7 @@ clean_mola:
 #---- Madtom
 
 _madtom_stamp=$(MANTA_MADTOM_BRANCH)-$(TIMESTAMP)-g$(MANTA_MADTOM_SHA)
-MADTOM_BITS=$(BITS_DIR)/madtom/madtom-pkg-$(_madtom_stamp).tar.bz2
+MADTOM_BITS=$(BITS_DIR)/madtom/madtom-pkg-$(_madtom_stamp).tar.gz
 MADTOM_IMAGE_BIT=$(BITS_DIR)/madtom/madtom-zfs-$(_madtom_stamp).zfs.gz
 MADTOM_MANIFEST_BIT=$(BITS_DIR)/madtom/madtom-zfs-$(_madtom_stamp).imgmanifest
 
@@ -1962,7 +1962,7 @@ clean_madtom:
 #---- Marlin Dashboard
 
 _marlin-dashboard_stamp=$(MANTA_MARLIN_DASHBOARD_BRANCH)-$(TIMESTAMP)-g$(MANTA_MARLIN_DASHBOARD_SHA)
-MARLIN_DASHBOARD_BITS=$(BITS_DIR)/marlin-dashboard/marlin-dashboard-pkg-$(_marlin-dashboard_stamp).tar.bz2
+MARLIN_DASHBOARD_BITS=$(BITS_DIR)/marlin-dashboard/marlin-dashboard-pkg-$(_marlin-dashboard_stamp).tar.gz
 MARLIN_DASHBOARD_IMAGE_BIT=$(BITS_DIR)/marlin-dashboard/marlin-dashboard-zfs-$(_marlin-dashboard_stamp).zfs.gz
 MARLIN_DASHBOARD_MANIFEST_BIT=$(BITS_DIR)/marlin-dashboard/marlin-dashboard-zfs-$(_marlin-dashboard_stamp).imgmanifest
 
@@ -2087,7 +2087,7 @@ clean_volapi:
 #---- Moray
 
 _moray_stamp=$(MORAY_BRANCH)-$(TIMESTAMP)-g$(MORAY_SHA)
-MORAY_BITS=$(BITS_DIR)/moray/moray-pkg-$(_moray_stamp).tar.bz2
+MORAY_BITS=$(BITS_DIR)/moray/moray-pkg-$(_moray_stamp).tar.gz
 MORAY_IMAGE_BIT=$(BITS_DIR)/moray/moray-zfs-$(_moray_stamp).zfs.gz
 MORAY_MANIFEST_BIT=$(BITS_DIR)/moray/moray-zfs-$(_moray_stamp).imgmanifest
 
@@ -2130,7 +2130,7 @@ clean_moray:
 #---- Electric-Moray
 
 _electric-moray_stamp=$(ELECTRIC_MORAY_BRANCH)-$(TIMESTAMP)-g$(ELECTRIC_MORAY_SHA)
-ELECTRIC_MORAY_BITS=$(BITS_DIR)/electric-moray/electric-moray-pkg-$(_electric-moray_stamp).tar.bz2
+ELECTRIC_MORAY_BITS=$(BITS_DIR)/electric-moray/electric-moray-pkg-$(_electric-moray_stamp).tar.gz
 ELECTRIC_MORAY_IMAGE_BIT=$(BITS_DIR)/electric-moray/electric-moray-zfs-$(_electric-moray_stamp).zfs.gz
 ELECTRIC_MORAY_MANIFEST_BIT=$(BITS_DIR)/electric-moray/electric-moray-zfs-$(_electric-moray_stamp).imgmanifest
 
@@ -2173,7 +2173,7 @@ clean_electric-moray:
 #---- Muskie
 
 _muskie_stamp=$(MANTA_MUSKIE_BRANCH)-$(TIMESTAMP)-g$(MANTA_MUSKIE_SHA)
-MUSKIE_BITS=$(BITS_DIR)/muskie/muskie-pkg-$(_muskie_stamp).tar.bz2
+MUSKIE_BITS=$(BITS_DIR)/muskie/muskie-pkg-$(_muskie_stamp).tar.gz
 MUSKIE_IMAGE_BIT=$(BITS_DIR)/muskie/muskie-zfs-$(_muskie_stamp).zfs.gz
 MUSKIE_MANIFEST_BIT=$(BITS_DIR)/muskie/muskie-zfs-$(_muskie_stamp).imgmanifest
 
@@ -2216,7 +2216,7 @@ clean_muskie:
 #---- Wrasse
 
 _wrasse_stamp=$(MANTA_WRASSE_BRANCH)-$(TIMESTAMP)-g$(MANTA_WRASSE_SHA)
-WRASSE_BITS=$(BITS_DIR)/wrasse/wrasse-pkg-$(_wrasse_stamp).tar.bz2
+WRASSE_BITS=$(BITS_DIR)/wrasse/wrasse-pkg-$(_wrasse_stamp).tar.gz
 WRASSE_IMAGE_BIT=$(BITS_DIR)/wrasse/wrasse-zfs-$(_wrasse_stamp).zfs.gz
 WRASSE_MANIFEST_BIT=$(BITS_DIR)/wrasse/wrasse-zfs-$(_wrasse_stamp).imgmanifest
 
@@ -2321,7 +2321,7 @@ clean_mackerel:
 #---- Binder
 
 _binder_stamp=$(BINDER_BRANCH)-$(TIMESTAMP)-g$(BINDER_SHA)
-BINDER_BITS=$(BITS_DIR)/binder/binder-pkg-$(_binder_stamp).tar.bz2
+BINDER_BITS=$(BITS_DIR)/binder/binder-pkg-$(_binder_stamp).tar.gz
 BINDER_IMAGE_BIT=$(BITS_DIR)/binder/binder-zfs-$(_binder_stamp).zfs.gz
 BINDER_MANIFEST_BIT=$(BITS_DIR)/binder/binder-zfs-$(_binder_stamp).imgmanifest
 
@@ -2362,7 +2362,7 @@ clean_binder:
 #---- Muppet
 
 _muppet_stamp=$(MUPPET_BRANCH)-$(TIMESTAMP)-g$(MUPPET_SHA)
-MUPPET_BITS=$(BITS_DIR)/muppet/muppet-pkg-$(_muppet_stamp).tar.bz2
+MUPPET_BITS=$(BITS_DIR)/muppet/muppet-pkg-$(_muppet_stamp).tar.gz
 MUPPET_IMAGE_BIT=$(BITS_DIR)/muppet/muppet-zfs-$(_muppet_stamp).zfs.gz
 MUPPET_MANIFEST_BIT=$(BITS_DIR)/muppet/muppet-zfs-$(_muppet_stamp).imgmanifest
 
@@ -2423,7 +2423,7 @@ clean_minnow:
 #---- Mako
 
 _mako_stamp=$(MANTA_MAKO_BRANCH)-$(TIMESTAMP)-g$(MANTA_MAKO_SHA)
-MAKO_BITS=$(BITS_DIR)/mako/mako-pkg-$(_mako_stamp).tar.bz2
+MAKO_BITS=$(BITS_DIR)/mako/mako-pkg-$(_mako_stamp).tar.gz
 MAKO_IMAGE_BIT=$(BITS_DIR)/mako/mako-zfs-$(_mako_stamp).zfs.gz
 MAKO_MANIFEST_BIT=$(BITS_DIR)/mako/mako-zfs-$(_mako_stamp).imgmanifest
 
