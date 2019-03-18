@@ -94,7 +94,6 @@ TTL_DAYS_FROM_NAME='{
     "amonredis": 365,
     "assets": 365,
     "binder": 365,
-    "ca": 365,
     "cloudapi": 365,
     "cmon": 365,
     "cmon-agent": 365,

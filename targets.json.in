@@ -38,7 +38,6 @@ function build_headnode_target()
       "assets",
       "registrar",
       "binder",
-      "ca",
       "cloudapi",
       "cnapi",
       "dhcpd",
@@ -99,36 +98,6 @@ cat <<EOF
     ],
     "public": true,
     "deps": []
-  },
-  "ca": {
-    "appliance": "true",
-    "build_platform": "20151126T062538Z",
-    "image_name": "ca",
-    "image_description": "SDC Cloud Analytics",
-    "image_version": "1.0.0",
-    "image_uuid": "fd2cc906-8938-11e3-beab-4359c665ac99",
-    "pkgsrc": [
-      "zlib-1.2.3",
-      "png-1.5.9",
-      "openssl-0.9.8w",
-      "GeoIP-1.4.8",
-      "GeoLiteCity-201203"
-    ],
-    "repos": [
-      {"url": "$MG_GIT_PREFIX/sdc-cloud-analytics.git", "submodule-update": false}
-    ],
-    "public": true,
-    "deps": [
-      "amon",
-      "config-agent",
-      "registrar",
-      "https://download.joyent.com/pub/build/sdcnode"
-    ],
-    "tarballs": [
-      {"tarball": "registrar/registrar-pkg-*.tar.gz", "sysroot": "/"},
-      {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
-      {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
-    ]
   },
   "amon": {
     "appliance": "true",
@@ -1352,7 +1321,6 @@ cat <<EOF
       "net-agent",
       "vm-agent",
       "amon",
-      "ca",
       "smartlogin",
       "marlin",
       "firewaller",
