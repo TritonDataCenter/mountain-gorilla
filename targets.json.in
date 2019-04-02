@@ -44,6 +44,7 @@ function build_headnode_target()
       ${firmware}
       "fwapi",
       "imgapi",
+      "ipxe",
       "sdc-manatee",
       "mahi",
       "manta-deployment",
@@ -55,7 +56,6 @@ function build_headnode_target()
       "sapi",
       "sdc",
       "sdcadm",
-      "sdcboot",
       "ufds",
       "vmapi",
       "workflow"
@@ -604,6 +604,15 @@ cat <<EOF
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
+  },
+
+  "ipxe": {
+    "build_platform": "20151126T062538Z",
+    "repos": [
+        {"url": "$MG_GIT_PREFIX/ipxe.git"}
+    ],
+    "public": true,
+    "deps": []
   },
 
   "sdc": {
@@ -1449,15 +1458,6 @@ cat <<EOF
     "deps": [
       "https://download.joyent.com/pub/build/sdcnode"
     ]
-  },
-
-  "sdcboot": {
-    "build_platform": "20151126T062538Z",
-    "repos": [
-        {"url": "$MG_GIT_PREFIX/sdcboot.git"}
-    ],
-    "public": true,
-    "deps": []
   },
 
   ${FIRMWARE_TOOLS_ENTRY}

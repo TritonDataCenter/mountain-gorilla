@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright 2016 Joyent, Inc.
+# Copyright 2019, Joyent, Inc.
 #
 
 #
@@ -112,6 +112,7 @@ TTL_DAYS_FROM_NAME='{
     "hagfish-watcher": 365,
     "heartbeater": 365,
     "imgapi": 365,
+    "ipxe": 365,
     "mackerel": 365,
     "madtom": 365,
     "mahi": 365,
@@ -145,7 +146,6 @@ TTL_DAYS_FROM_NAME='{
     "sdc-system-tests": 365,
     "sdc-zookeeper": 365,
     "sdcadm": 365,
-    "sdcboot": 365,
     "smartlogin": 365,
     "smartos": 365,
     "ufds": 365,
