@@ -44,6 +44,7 @@ function build_headnode_target()
       ${firmware}
       "fwapi",
       "imgapi",
+      "ipxe",
       "sdc-manatee",
       "mahi",
       "manta-deployment",
@@ -603,6 +604,15 @@ cat <<EOF
       {"tarball": "amon/amon-agent-*.tgz", "sysroot": "/opt"},
       {"tarball": "config-agent/config-agent-*.tar.gz", "sysroot": "/opt/smartdc"}
     ]
+  },
+
+  "ipxe": {
+    "build_platform": "20151126T062538Z",
+    "repos": [
+        {"url": "$MG_GIT_PREFIX/ipxe.git"}
+    ],
+    "public": true,
+    "deps": []
   },
 
   "sdc": {
