@@ -2538,26 +2538,6 @@ clean_manta-deployment:
 
 
 
-#---- sdcboot (boot utilities for sdc-headnode)
-
-_sdcboot_stamp=$(SDCBOOT_BRANCH)-$(TIMESTAMP)-g$(SDCBOOT_SHA)
-SDCBOOT_BITS=$(BITS_DIR)/sdcboot/sdcboot-$(_sdcboot_stamp).tgz
-
-.PHONY: sdcboot
-sdcboot: $(SDCBOOT_BITS)
-
-$(SDCBOOT_BITS): build/sdcboot
-	mkdir -p $(BITS_DIR)
-	(cd build/sdcboot && TIMESTAMP=$(TIMESTAMP) BITS_DIR=$(BITS_DIR) \
-	    gmake pkg release publish)
-	@echo "# Created sdcboot bits (time `date -u +%Y%m%dT%H%M%SZ`):"
-	@ls -l $(SDCBOOT_BITS)
-	@echo ""
-
-clean_sdcboot:
-	$(RM) -rf $(BITS_DIR)/sdcboot
-	(cd build/sdcboot && gmake clean)
-
 #---- firmware-tools (Legacy-mode FDUM facilities and firmware for Joyent HW)
 
 ifeq ($(JOYENT_BUILD),true)

@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright 2016 Joyent, Inc.
+# Copyright 2019, Joyent, Inc.
 #
 
 #
@@ -145,7 +145,6 @@ TTL_DAYS_FROM_NAME='{
     "sdc-system-tests": 365,
     "sdc-zookeeper": 365,
     "sdcadm": 365,
-    "sdcboot": 365,
     "smartlogin": 365,
     "smartos": 365,
     "ufds": 365,
