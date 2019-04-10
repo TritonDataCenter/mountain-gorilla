@@ -2891,9 +2891,9 @@ $(SMARTOS_BITS):
 	@echo "# Build smartos release: branch $(SMARTOS_LIVE_BRANCH), sha $(SMARTOS_LIVE_SHA), time `date -u +%Y%m%dT%H%M%SZ`"
 	(cd build/smartos-live \
 		&& ./tools/build_changelog \
-		&& ./tools/build_boot_image -I -r .
+		&& ./tools/build_boot_image -I -r . \
 		&& ./tools/build_boot_image -r . \
-		&& ./tools/build_vmware)
+		&& ./tools/build_vmware -r .)
 	mkdir -p $(SMARTOS_BITS_DIR)
 	cp build/smartos-live/output/changelog.txt $(SMARTOS_BITS_DIR)
 	cp build/smartos-live/output/platform-$(TIMESTAMP)/root.password $(SMARTOS_BITS_DIR)/SINGLE_USER_ROOT_PASSWORD.txt
