@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright (c) 2014, Joyent, Inc.
+# Copyright 2019, Joyent, Inc.
 #
 
 # Update the SmartOS release directory
@@ -77,8 +77,8 @@ done
 echo "Updating top level ${SMARTOS} snaplinks"
 mln ${SOURCE}/platform-${TIMESTAMP}.tgz ${SMARTOS}/platform-latest.tgz
 mln ${SOURCE}/smartos-${TIMESTAMP}.iso ${SMARTOS}/smartos-latest.iso
-mln ${SOURCE}/smartos-${TIMESTAMP}-USB.img.bz2 ${SMARTOS}/smartos-latest-USB.img.bz2
-mln ${SOURCE}/smartos-${TIMESTAMP}.vmwarevm.tar.bz2 ${SMARTOS}/smartos-latest.vmwarevm.tar.bz2
+mln ${SOURCE}/smartos-${TIMESTAMP}-USB.img.gz ${SMARTOS}/smartos-latest-USB.img.gz
+mln ${SOURCE}/smartos-${TIMESTAMP}.vmwarevm.tar.gz ${SMARTOS}/smartos-latest.vmwarevm.tar.gz
 
 echo "Updating ${SMARTOS}/latest object"
 echo ${DESTINATION} | mput -v -H 'content-type: text/plain' ${SMARTOS}/latest
