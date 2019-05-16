@@ -6,11 +6,11 @@
 #
 
 #
-# Copyright 2017, Joyent, Inc.
+# Copyright 2019, Joyent, Inc.
 #
 
 #
-# Quick hack script that looks in /Joyent_Dev/stor/builds/...
+# Quick hack script that looks in /Joyent_Dev/public/builds/...
 # for SDC components for which there is no "release-YYYYMMDD"
 # build. These are ones that you may need to manually kick
 # off in jenkins.
@@ -43,15 +43,29 @@ function usage() {
         echo ""
     fi
     echo "usage:"
-    echo "  ls-missing-release-builds RELEASE [TARGETS...]"
+    echo "  ls-missing-release-builds [-s] RELEASE [TARGETS...]"
+    echo "   -s     Do a smartos-only build"
+    echo "          (this influences how we launch the platform build)"
     echo ""
     echo "example:"
     echo "  ls-missing-release-builds release-20140703"
     exit 1
 }
 
+# Specify the type of platform build to do.
+PLATFORM_BUILD_FLAVOR='smartos-and-triton'
 
 #---- mainline
+
+while getopts 'sh' opt; do
+    case $opt in
+    s) PLATFORM_BUILD_FLAVOR=smartos;;
+    h) usage;;
+    :) usage "-$OPTARG requires an argument";;
+    \?) usage "illegal option: -$OPTARG";;
+    esac
+    shift
+done
 
 release=$1
 if [[ -z "$release" ]]; then
@@ -81,9 +95,19 @@ echo "$targets" | while read target public; do
     else
         latest_mpath=/Joyent_Dev/stor/builds/$target/$release-latest
     fi
+
+    case $target in
+        "platform"|"platform-debug")
+            PLAT_FLAVOR_ARG="-F $PLATFORM_BUILD_FLAVOR"
+            ;;
+        *)
+            PLAT_FLAVOR_ARG=""
+            ;;
+    esac
+
     latest=$(mls $latest_mpath 2>/dev/null || true)
     if [[ -z "$latest" ]]; then
         echo "# $target, '$latest_mpath' does not exist" >&2
-        echo "./tools/launch-build -b $release $target"
+        echo "./tools/launch-build ${PLAT_FLAVOR_ARG} -b $release $target"
     fi
 done

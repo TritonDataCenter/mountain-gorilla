@@ -1,4 +1,4 @@
-#! /bin/bash
+#!/bin/bash
 #
 # This Source Code Form is subject to the terms of the Mozilla Public
 # License, v. 2.0. If a copy of the MPL was not distributed with this
@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright 2017, Joyent, Inc.
+# Copyright 2019, Joyent, Inc.
 #
 
 #
@@ -29,17 +29,17 @@ function usage() {
 	if [[ -n $1 ]]; then
 		printf "%s: %s\n" "$PROGNAME" "$1" >&2
 	fi
-	printf "usage:\n    $PROGNAME [-v] [-H url] [-b BRANCH] [-t TRY_BRANCH] [-u auth] project\n" >&2
+	printf "usage:\n    $PROGNAME [-v] [-H url] [-b BRANCH] [-F PLAT_FLAVOR] [-u auth] project\n" >&2
 	exit 2
 }
 
-while getopts ':H:u:b:t:hv' opt; do
+while getopts 'F:H:u:b:hv' opt; do
 	case $opt in
 	H) JENKINS_URL=$OPTARG;;
 	u) JENKINS_AUTH=$OPTARG;;
 	b) BRANCH=$OPTARG;;
-	t) TRY_BRANCH=$OPTARG;;
 	v) VERBOSE=true;;
+	F) PLAT_FLAVOR=$OPTARG;;
 	h) usage;;
 	:) usage "-$OPTARG requires an argument";;
 	\?) usage "illegal option: -$OPTARG";;
@@ -47,6 +47,27 @@ while getopts ':H:u:b:t:hv' opt; do
 done
 
 PROJECT=${@:$OPTIND:1}
+
+if [[ -n "$PLAT_FLAVOR" ]]; then
+	case $PROJECT in
+		"platform"|"platform-debug")
+			case "$PLAT_FLAVOR" in
+				"triton"|"smartos"|"triton-and-smartos")
+					;;
+				*)
+					echo "ERROR: unknown platform flavor, expecting one of:"
+					echo "    smartos"
+					echo "    triton"
+					echo "    triton-and-smartos"
+					exit 1
+					;;
+			esac
+		;;
+	*)
+		usage "-F should only be used for platform or platform-debug builds"
+		;;
+	esac
+fi
 
 if [[ -z $PROJECT ]]; then
 	usage "project to build must be specified"
@@ -60,17 +81,39 @@ if [[ -z $JENKINS_AUTH ]]; then
 	usage "JENKINS_AUTH must be set to <user>:<api token> (get it here: ${JENKINS_URL}/me/configure)"
 fi
 
-if [[ -n $BRANCH && -n $TRY_BRANCH ]]; then
-	usage "-b and -t cannot be used together"
-fi
-
 if [[ -n $BRANCH ]]; then
 	printf "Building %s with BRANCH=%s\n" "$PROJECT" "$BRANCH"
 	BUILD_PARAM=`printf '{"name":"BRANCH", "value": "%s"}' $BRANCH`
-elif [[ -n $TRY_BRANCH ]]; then
-	printf "Building %s with TRY_BRANCH=%s\n" "$PROJECT" "$TRY_BRANCH"
-	BUILD_PARAM=`printf '{"name":"TRY_BRANCH", "value": "%s"}' $TRY_BRANCH`
 fi
+
+#
+# The platform build expects a set of parameters to specify which branches
+# should be built. It's unfortunate we need to pass this parameter at all,
+# but we can't default jenkins to using ${BRANCH} in its CONFIGURE_PROJECTS
+# parameter, because that'll take the long-form git branch and write those
+# into the 'configure-projects' file.
+#
+PLAT_REPOS='illumos-extra illumos local/kvm-cmd local/kvm local/mdata-client local/ur-agent'
+for repo in $PLAT_REPOS; do
+	if [[ -z "$PLAT_PROJECTS_TEMPLATE" ]]; then
+		PLAT_PROJECTS_TEMPLATE="$repo: BRANCH: origin\n"
+	else
+		PLAT_PROJECTS_TEMPLATE="${PLAT_PROJECTS_TEMPLATE}$repo: BRANCH: origin\n"
+	fi
+done
+
+case $PROJECT in
+	"platform"|"platform-debug")
+		if [[ -n "$BRANCH" ]]; then
+			PLAT_PROJECTS=$(echo "${PLAT_PROJECTS_TEMPLATE}" | \
+			    sed -e "s/BRANCH/${BRANCH}/g")
+			BUILD_PARAM="${BUILD_PARAM},$(printf '{"name": "CONFIGURE_PROJECTS", "value": "%s"}' "${PLAT_PROJECTS}")"
+		fi
+		if [[ -n "$PLAT_FLAVOR" ]]; then
+			BUILD_PARAM="${BUILD_PARAM},$(printf '{"name": "PLATFORM_BUILD_FLAVOR", "value": "%s"}' "${PLAT_FLAVOR}")"
+		fi
+		;;
+esac
 
 if [[ -n $VERBOSE ]]; then
 	CURL_OPTS=(-i)
