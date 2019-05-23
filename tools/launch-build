@@ -6,7 +6,7 @@
 #
 
 #
-# Copyright 2019, Joyent, Inc.
+# Copyright 2019 Joyent, Inc.
 #
 
 #
@@ -111,6 +111,11 @@ case $PROJECT in
 		fi
 		if [[ -n "$PLAT_FLAVOR" ]]; then
 			BUILD_PARAM="${BUILD_PARAM},$(printf '{"name": "PLATFORM_BUILD_FLAVOR", "value": "%s"}' "${PLAT_FLAVOR}")"
+		fi
+		;;
+	"headnode"|"headnode-debug"|"headnode-joyent")
+		if [[ -n "$BRANCH" ]]; then
+			BUILD_PARAM="${BUILD_PARAM},$(printf '{"name": "CONFIGURE_BRANCHES", "value": "bits-branch: %s"}' "${BRANCH}")"
 		fi
 		;;
 esac
