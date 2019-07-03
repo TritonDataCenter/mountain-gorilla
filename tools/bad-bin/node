@@ -1,2 +1,0 @@
-echo "$0: Bad node!" 1>&2
-exit 42

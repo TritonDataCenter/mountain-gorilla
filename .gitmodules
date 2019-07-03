@@ -1,3 +1,0 @@
-[submodule "deps/restdown"]
-	path = deps/restdown
-	url = https://github.com/trentm/restdown.git

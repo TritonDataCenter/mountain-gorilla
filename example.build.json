@@ -1,7 +1,0 @@
-{
-	"clapi_url": "https://10.2.122.6",
-	"clapi_user": "rmustacc",
-	"clapi_passwd": "aprettypassword",
-	"ssh_private": "/root/.ssh/id_rsa",
-	"output_dir": "/root/mountain-gorilla/bits/"
-}
